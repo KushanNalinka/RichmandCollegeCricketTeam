@@ -96,7 +96,7 @@
 //               className="hover:text-yellow-300"
 //               onClick={() => toggleDropdown('aboutUs')}
 //             >
-//               About Us
+//               About Uss
 //             </button>
 //             {isDropdownOpen.aboutUs && (
 //               <ul className="absolute left-0 mt-2 w-40 bg-black text-white border border-gray-700 z-40">

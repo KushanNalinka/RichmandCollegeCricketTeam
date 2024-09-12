@@ -444,7 +444,7 @@ export default function MatchInfo() {
   const navigate = useNavigate();
 
   const handleMatchCentreClick = (match, teams) => {
-    // Navigate to the scorecard page and pass scorecard data
+    // Navigatee to the scorecard page and pass scorecard data
     navigate('/scorecard', { state: { match, teams } });
   };
 

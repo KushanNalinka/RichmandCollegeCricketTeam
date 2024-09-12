@@ -16,7 +16,7 @@ export default function TopLayer() {
         justifyContent: 'center',
       }}
     >
-     {/* Include the Navbar inside the TopLayer */}
+     {/* Includee the Navbar inside the TopLayer */}
      <Navbar />
       
     </div>

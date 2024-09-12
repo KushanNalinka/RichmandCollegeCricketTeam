@@ -248,13 +248,18 @@
 // export default HomePage;
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/HomeNavbar';
-import RCCRIC from '../assets/images/bg.png';
+import RCCRIC from '../assets/images/groundback.png';
 import CroppedImage from '../assets/images/Cropped.png';
 
 
 import NewsSlider from '../components/NewsSlider';
 import UpcomingMatches from '../components/UpcommingMatchesSlider';
-
+import ScoreCard from '../components/ScoreCard';
+import MatchSlider from '../components/MatchSlider';
+import Number from '../components/Number';
+import PlayerSlider from '../components/PlayerSlider';
+import ResultsTable from '../components/ResultsTable';
+import Footer from '../components/Footer';
 
 const HomePage = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -271,8 +276,9 @@ const HomePage = () => {
   return (
 
     <>
-
     <div className="relative h-screen w-full">
+  
+
       <div 
         className={`absolute inset-0 ${isImageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
         style={{ 
@@ -280,10 +286,11 @@ const HomePage = () => {
           backgroundSize: 'cover', // Ensures the image covers the entire div
           backgroundRepeat: 'no-repeat', // Prevents the image from repeating
           backgroundPosition: 'center', // Centers the image in the div
+          
         }} 
       >
-        <Navbar />
-
+   <Navbar />
+     
         {/* Cropped Image in the center */}
         <div className="flex items-center justify-center h-full relative">
           {/* "RICHMOND" Text behind Cropped Image */}
@@ -308,7 +315,7 @@ const HomePage = () => {
           <img 
             src={CroppedImage} 
             alt="Cropped" 
-            className="absolute top-1/2 transform -translate-y-1/2 z-20"
+            className="absolute top-72 transform -translate-y-1/2 z-20"
             style={{ width: '85%' }} 
           />
 
@@ -317,7 +324,7 @@ const HomePage = () => {
           <div className="absolute bottom-0 w-full text-center z-20">
 
             <div 
-              className="font-bold text-[#CBECFF] animate-slide-up"
+              className="font-bold text-[#4A0D34] animate-slide-up"
               style={{ 
                 fontSize: '11rem', 
                 lineHeight: '1', 
@@ -332,9 +339,12 @@ const HomePage = () => {
         </div>
       </div>
     </div>
+<ScoreCard />
+<ResultsTable />
 
-    <NewsSlider />
-    <UpcomingMatches />
+  <Number />
+  <PlayerSlider />
+ <Footer />
     </>
 
   );

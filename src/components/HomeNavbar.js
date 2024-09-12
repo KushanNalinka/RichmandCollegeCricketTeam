@@ -56,6 +56,7 @@
 //             {isDropdownOpen.matches && (
 //               <ul className="absolute left-0 mt-2 w-40 bg-black text-white border border-gray-700 z-40">
 //                 <li className="p-2 border-b border-gray-700 hover:bg-gray-800">
+
 //                   <Link to="/under-11">Latest</Link>
 //                 </li>
 //                 <li className="p-2 border-b border-gray-700 hover:bg-gray-800">
@@ -63,6 +64,7 @@
 //                 </li>
 //                 <li className="p-2 border-b border-gray-700 hover:bg-gray-800">
 //                   <Link to="/under-15">Past Matches</Link>
+
 //                 </li>
 //                 <li className="p-2 border-b border-gray-700 hover:bg-gray-800">
 //                   <Link to="/under-17">Under 17</Link>
@@ -96,6 +98,7 @@
 //               className="hover:text-yellow-300"
 //               onClick={() => toggleDropdown('aboutUs')}
 //             >
+
 //               About Uss
 //             </button>
 //             {isDropdownOpen.aboutUs && (
@@ -240,6 +243,7 @@
 //               className="hover:text-yellow-300"
 //               onClick={() => toggleDropdown('aboutUs')}
 //             >
+
 //               About Us
 //             </button>
 //             {isDropdownOpen.aboutUs && (
@@ -275,6 +279,7 @@
 //             )}
 //           </li>
 //         </ul>
+
 
 //         {/* Right section (optional), you can add a search bar or profile menu here */}
 //         <div className="hidden md:block">
@@ -376,6 +381,22 @@ import { Link } from 'react-router-dom';
 import { FaBell, FaUserCircle, FaChevronDown } from 'react-icons/fa'; // Import icons for profile, notifications, and dropdown arrow
 import Logo from '../assets/images/rcclogo.png'; // Import the logo
 
+
+//         {/* Right section (optional), you can add a search bar or profile menu here */}
+//         <div className="hidden md:block">
+//           {/* Additional items can be added here */}
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default Navbar;
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FaBell, FaUserCircle, FaChevronDown } from 'react-icons/fa'; // Import icons for profile, notifications, and dropdown arrow
+import Logo from '../assets/images/rcclogo.png'; // Import the logo
 const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState({
     home: false,
@@ -385,6 +406,7 @@ const Navbar = () => {
     teams: false,
   });
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+
   const [lastScrollTop, setLastScrollTop] = useState(0); // Last scroll position
   const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Navbar visibility state
 
@@ -410,12 +432,14 @@ const Navbar = () => {
     };
   }, [lastScrollTop]);
 
+
   const toggleDropdown = (menu) => {
     setIsDropdownOpen((prev) => ({
       ...prev,
       [menu]: !prev[menu],
     }));
   };
+
 
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
@@ -428,13 +452,15 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo on the left */}
         <div className="flex items-center">
+
           <img src={Logo} alt="Logo" className="h-16" />
           {/* Vertical Divider Line */}
           <div className="border-l-2 border-transparent h-6 mx-5"></div>
         </div>
-
         {/* Centered Navbar Items */}
+
         <ul className="flex space-x-8 text-white font-semibold text-xs justify-center flex-grow">
+
           {['home', 'matches', 'news', 'aboutUs', 'teams'].map((menu) => (
             <li key={menu} className="relative group">
               <button
@@ -444,7 +470,9 @@ const Navbar = () => {
                 {menu.charAt(0).toUpperCase() + menu.slice(1)}
               </button>
               {isDropdownOpen[menu] && (
+
                 <ul className="absolute left-0 mt-2 w-40 bg-black/60 text-white z-40 rounded-lg shadow-lg transition-all duration-300 ease-in-out">
+
                   <li className="p-2 border-b border-gray-700 hover:bg-yellow-500 hover:text-black transition-colors duration-300">
                     <Link to={`/${menu}-item1`}>Item 1</Link>
                   </li>
@@ -456,6 +484,7 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
+
 
         {/* Right section with user profile and notification */}
         <div className="flex items-center">
@@ -470,6 +499,7 @@ const Navbar = () => {
             />
             {isProfileDropdownOpen && (
               <ul className="absolute right-0 top-full mt-2 bg-black/60 text-white z-40 w-48 rounded-lg shadow-lg transition-all duration-300 ease-in-out">
+
                 <li className="p-2 border-b border-gray-700 hover:bg-yellow-500 hover:text-black transition-colors duration-300 rounded-t-lg">
                   <Link to="/profile">Profile</Link>
                 </li>
@@ -484,6 +514,7 @@ const Navbar = () => {
     </nav>
   );
 };
+
 
 export default Navbar;
 
@@ -584,3 +615,4 @@ export default Navbar;
 // };
 
 // export default Navbar;
+

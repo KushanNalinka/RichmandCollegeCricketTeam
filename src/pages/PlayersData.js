@@ -6,14 +6,14 @@ const playersData = [
     {
         id: 1,
         fullName: 'John Doe',
-    birthDate: '1987-05-15',
-    email: 'johndoe@example.com',
-    contactNo: '+1-555-123-4567',
-    battingStyle: 'Right-hand bat',
-    bowlingStyle: 'Right-arm fast',
-    playingRole: 'Batsman',
-    imageUrl: player1Image, // Replace with the actual image path
-    internationalCareer: '2007 - Present',
+        birthDate: '1987-05-15',
+        email: 'johndoe@example.com',
+        contactNo: '+1-555-123-4567',
+        battingStyle: 'Right-hand bat',
+        bowlingStyle: 'Right-arm fast',
+        playingRole: 'Batsman',
+        imageUrl: player1Image, // Replace with the actual image path
+        internationalCareer: '2007 - Present',
         imageUrl: player1Image,
         stats: [
             { format: 'Test', matches: 55, innings:108 , runs: 3667, hs: '173 v BAN', avg: 40.29, sr: 58.16, '100s': 15, '50s': 33, '4s': 435, '6s': 33 },
@@ -29,14 +29,14 @@ const playersData = [
     {
         id: 2,
         fullName: 'Jane Smith',
-    birthDate: '1990-11-22',
-    email: 'janesmith@example.com',
-    contactNo: '+1-555-987-6543',
-    battingStyle: 'Left-hand bat',
-    bowlingStyle: 'Left-arm spin',
-    playingRole: 'All-rounder',
-    imageUrl: player2Image, // Replace with the actual image path
-    internationalCareer: '2010 - Present',
+        birthDate: '1990-11-22',
+        email: 'janesmith@example.com',
+        contactNo: '+1-555-987-6543',
+        battingStyle: 'Left-hand bat',
+        bowlingStyle: 'Left-arm spin',
+        playingRole: 'All-rounder',
+        imageUrl: player2Image, // Replace with the actual image path
+        internationalCareer: '2010 - Present',
         stats: [
             { format: 'Test', matches: 55,innings:98, runs: 3667, hs: '173 v BAN', avg: 40.29, sr: 58.16, '100s': 15, '50s': 33, '4s': 435, '6s': 33 },
             { format: 'ODI', matches: 90, innings:169, runs: 1865, hs: '93 v NED', avg: 25.90, sr: 78.59, '100s': 2, '50s': 10, '4s': 186, '6s': 17 },

@@ -162,7 +162,7 @@ const FormPopup = ({ isOpen, onClose, onSubmit }) => {
     tier: '',
     division: '',
     umpire: '',
-    type: 'Test', // Default value
+    type: 'Test', 
   });
 
   const handleChange = (e) => {

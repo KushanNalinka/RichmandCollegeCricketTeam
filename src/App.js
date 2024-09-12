@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import Initial from './pages/Initial.js';
@@ -11,26 +10,30 @@ import Login from './pages/Login.js';
 import Register from './pages/Register.js';
 import Team from './pages/Team.js';
 
-
-// Create this component if it doesn't exist
+import MatchInfo from './pages/MatchInfo.js';
+import ScorecardData from './pages/ScoreCardData.js';
 
 function App() {
   return (
     <BrowserRouter>
-        <Routes>
+      <Routes>
         <Route path="/" element={<Initial />} />
+
          <Route path="/profile" element={<Profile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/scorecard/:matchId" element={<ScoreCardPage />} />
          <Route path="/team" element={<Team />} />
+         <Route path="/match-info" element={<MatchInfo />} />
+        <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
     
         </Routes>
       
    
+
     </BrowserRouter>
   );
 }

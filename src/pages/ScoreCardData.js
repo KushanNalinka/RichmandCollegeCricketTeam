@@ -255,7 +255,7 @@ const ScorecardData = () => {
                 <option value="2nd INNING">2nd Inning</option>
               </select>
             </div>
-            {/* Score Info */}
+            {/* Score Infog */}
             <div className="text-gray-700 font-medium text-sm">
               180/5 (15.4 overs)
             </div>

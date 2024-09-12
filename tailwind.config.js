@@ -8,6 +8,7 @@ export default {
   ],
   theme: {
     extend: {
+
       colors: {
         baseBlue:'#00175F',
         baseBlue2:'#002488',
@@ -18,6 +19,12 @@ export default {
         'Background': "url('./src/assets/images/wallback.png')",
       },      
     }
+
+      fontSize: {
+        'xxs': '0.625rem', // Custom font size for screens smaller than xs
+      },
+    },
+
   },
   plugins: [],
 }

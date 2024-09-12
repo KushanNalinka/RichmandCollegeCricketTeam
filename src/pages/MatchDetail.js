@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
@@ -14,9 +15,11 @@ import HomeNavbar from "../components/HomeNavbar.js";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 
+
 const MatchDetails = () => {
   const [matches, setMatches] = useState([
     {
+
       matchId:1,
       matchName: "Match 1",
       time: "2024-08-29T10:00",
@@ -37,6 +40,7 @@ const MatchDetails = () => {
       division: "Division B",
       umpire: "Jane Smith",
       type: "T20"
+
     },
     {
       matchId:3,

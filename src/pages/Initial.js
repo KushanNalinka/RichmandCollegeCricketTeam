@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/HomeNavbar';
+import Navbar from '../components/InitialNavbar';
 import RCCRIC from '../assets/images/groundback.png';
 import CroppedImage from '../assets/images/Cropped.png';
 
@@ -29,9 +29,11 @@ const HomePage = () => {
   return (
 
     <>
+
+<Navbar />
     <div className="relative h-screen w-full">
   
-
+   
       <div 
         className={`absolute inset-0 ${isImageLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-500`}
         style={{ 
@@ -42,7 +44,7 @@ const HomePage = () => {
           
         }} 
       >
-   <Navbar />
+  
      
         {/* Cropped Image in the center */}
         <div className="flex items-center justify-center h-full relative">
@@ -68,7 +70,7 @@ const HomePage = () => {
           <img 
             src={CroppedImage} 
             alt="Cropped" 
-            className="absolute top-72 transform -translate-y-1/2 z-20"
+            className="absolute top-96 transform -translate-y-1/2 z-20"
             style={{ width: '85%' }} 
           />
 

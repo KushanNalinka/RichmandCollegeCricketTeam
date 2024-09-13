@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBell, FaUserCircle, FaChevronDown } from 'react-icons/fa'; // Import icons for profile, notifications, and dropdown arrow
 import Logo from '../assets/images/rcclogo.png'; 
@@ -134,5 +134,5 @@ const HomeNavbar = () => {
 
 
 
-export default Navbar;
+export default HomeNavbar;
 

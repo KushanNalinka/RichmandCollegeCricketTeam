@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-100%);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 1s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 1s ease-out forwards;
+}
+
+
+.slick-dots.custom-dots {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+}
+
+.slick-dots.custom-dots li {
+  margin: 0 4px;
+}
+
+.slick-dots.custom-dots li .dot {
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 0.3s ease-in-out;
+}
+
+.slick-dots.custom-dots li.slick-active .dot {
+  width: 40px;
+  height: 10px;
+  background-color:white;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+}
+
+html {
+  scroll-snap-type: y mandatory;
+}
+
+
+

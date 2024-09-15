@@ -237,7 +237,7 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
 
   return (
     <div
-      className={`fixed inset-0  bg-black bg-opacity-80 flex p-20 justify-center ${isOpen
+      className={`fixed inset-0  bg-black bg-opacity-70 flex p-20 justify-center ${isOpen
         ? "block"
         : "hidden"}`}
     >

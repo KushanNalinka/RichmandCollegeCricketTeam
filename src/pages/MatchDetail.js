@@ -8,7 +8,8 @@ import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the Edi
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-import flag from "../assets/images/flagbg.png";
+// import flag from "../assets/images/flagbg.png";
+import flag from "../assets/images/backDrop.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import HomeNavbar from "../components/HomeNavbar.js";
@@ -116,7 +117,7 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 4; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   
@@ -217,7 +218,7 @@ const MatchDetails = () => {
         <Navbar/>
       </div>  
       <div
-        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-5 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
         style={{
           backdropFilter: "blur(10px)",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -226,13 +227,13 @@ const MatchDetails = () => {
       >
         <div className="flex justify-between items-center mb-4">
           <NavbarToggleMenu/>
-          <h2 className="md:text-2xl text-xl mb-6 font-bold text-center font-popins text-gray-800">
+          <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
             Match Details
           </h2>
           <button
             title="Add New"
             onClick={() => setIsFormPopupOpen(true)}
-            className="bg-green-500 hover:bg-green-700 rounded-full p-1 text-white text-lg lg:text-2xl"
+            className="bg-green-700 hover:bg-green-600 rounded-full p-1 text-white text-lg lg:text-2xl"
           >
             <FaPlus />
           </button>
@@ -304,28 +305,28 @@ const MatchDetails = () => {
                     <button
                       title="Edit"
                       onClick={() => handleEdit(index)}
-                      className=" text-green-500 hover:text-green-700"
+                      className=" text-green-700 hover:text-green-600"
                     >
                       <FaEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(index)}
                       title="Delete"
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-700 hover:text-red-600"
                     >
                       <FaTrash />
                     </button>
                     <button
                       onClick={() => handleAddStat(index)}
                       title="Add"
-                      className="text-blue-500 hover:text-blue-700"
+                      className="text-blue-700 hover:text-blue-600"
                     >
                       <FaClipboardList />
                     </button>
                     <button
                       title="Add Score"
                       onClick={() => handleAddScoreCard(match.matchId)}
-                      className="text-yellow-500 hover:text-yellow-700"
+                      className="text-yellow-700 hover:text-yellow-600"
                     >
                       <FaPlus />
                     </button>
@@ -339,7 +340,7 @@ const MatchDetails = () => {
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
           >
             <GrLinkPrevious style={{ color: "#fff" }} />
           </button>
@@ -351,7 +352,7 @@ const MatchDetails = () => {
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
           >
             <GrLinkNext style={{ color: "#fff" }} />
           </button>

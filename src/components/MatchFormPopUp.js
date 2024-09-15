@@ -177,11 +177,11 @@ const FormPopup = ({ isOpen, onClose, onSubmit }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ${isOpen ? 'block' : 'hidden'}`}
+      className={`fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center ${isOpen ? 'block' : 'hidden'}`}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-4xl">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Add Match Details</h2>
+          <h2 className="text-xl font-bold text-[#480D35]">Add Match Details</h2>
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-800 text-2xl"
@@ -189,8 +189,8 @@ const FormPopup = ({ isOpen, onClose, onSubmit }) => {
             <FaTimes />
           </button>
         </div>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
+       
             <div>
               <label className="block mb-2 text-gray-700">Match Name</label>
               <input
@@ -282,18 +282,11 @@ const FormPopup = ({ isOpen, onClose, onSubmit }) => {
                 <option value="T20">T20</option>
               </select>
             </div>
-          </div>
-          <div className="mt-6 flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-4"
-            >
-              Cancel
-            </button>
+       
+          <div className='col-span-2 mt-4'>
             <button
               type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 w-full rounded-lg"
             >
               Add Match
             </button>

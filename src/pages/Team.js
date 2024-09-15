@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaTrashAlt, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
+import { FaTrash, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
 import EditModal from "../components/TeamEditModal"; // Import the EditModal component
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
 import { IoHomeSharp } from "react-icons/io5";
@@ -8,7 +8,8 @@ import { RiTeamFill } from "react-icons/ri";
 import { BiSolidCricketBall } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import logo from "../assets/images/rcclogo.png";
-import flag from "../assets/images/flagbg.png";
+// import flag from "../assets/images/flagbg.png";
+import flag from "../assets/images/backDrop.png";
 import HomeNavbar from "../components/HomeNavbar";
 import { FaXmark, FaBars } from "react-icons/fa6";
 import { GrLinkNext } from "react-icons/gr";
@@ -18,20 +19,24 @@ import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 
-const initialData = [
-  { id: 1, under: "Team A", year: 2024, captain: "Alice" },
-  { id: 2, under: "Team B", year: 2023, captain: "Bob" },
-  { id: 3, under: "Team C", year: 2022, captain: "Charlie" }
-];
-
 const TableComponent = () => {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([
+    { id: 1, under: "Team A", year: 2024, captain: "Alice" },
+    { id: 2, under: "Team B", year: 2023, captain: "Bob" },
+    { id: 3, under: "Team C", year: 2022, captain: "Charlie" },
+    { id: 4, under: "Team A", year: 2024, captain: "Alice" },
+    { id: 5, under: "Team B", year: 2023, captain: "Bob" },
+    { id: 6, under: "Team C", year: 2022, captain: "Charlie" },
+    { id: 7, under: "Team A", year: 2024, captain: "Alice" },
+    { id: 8, under: "Team B", year: 2023, captain: "Bob" },
+    { id: 9, under: "Team C", year: 2022, captain: "Charlie" }
+  ]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 2; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -103,7 +108,7 @@ const TableComponent = () => {
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
-      <div  className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-5 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+      <div  className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
         style={{
           backdropFilter: "blur(10px)",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -111,10 +116,10 @@ const TableComponent = () => {
         }}>
         <div className="flex justify-between items-center mb-4">
           <NavbarToggleMenu/>
-          <h2 className="md:text-2xl text-xl mb-6 font-bold  text-center text-gray-800 ">Team Information</h2>
+          <h2 className="md:text-2xl text-lg font-bold  text-center text-[#480D35] ">Team Information</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className=" right-4 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 transition-colors rounded-full p-1"
+            className=" right-4 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 transition-colors rounded-full p-1"
             title="Add New"
           >
             <FaPlus style={{color:"#fff"}}/>
@@ -122,7 +127,7 @@ const TableComponent = () => {
         </div>
           <div className="flex overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-              <thead className="bg-[#313659] text-white rounded">
+              <thead className="bg-[#480D35] text-white rounded">
                 <tr>
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Under
@@ -139,9 +144,9 @@ const TableComponent = () => {
                 </tr>
               </thead>
               <tbody className=" divide-y divide-gray-300">
-                {paginatedData.map(item =>
+                {paginatedData.map((item,index) =>
                   <tr
-                    key={item.id}
+                    key={index}
                     className=" hover:bg-gray-50 h-full align-middle"
                   >
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
@@ -156,21 +161,21 @@ const TableComponent = () => {
                     <td className="py-4 px-4 flex space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-blue-600 hover:text-blue-800 transition-colors"
+                        className="text-blue-700 hover:text-blue-600 transition-colors"
                         title="Edit"
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDelete(item.id)}
-                        className="text-red-600 hover:text-red-800 transition-colors"
+                        className="text-red-700 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
-                        <FaTrashAlt />
+                        <FaTrash />
                       </button>
                       <button
                         onClick={() => handleViewMembers(item.id)}
-                        className="text-green-600 hover:text-green-800 transition-colors"
+                        className="text-green-700 hover:text-green-600 transition-colors"
                         title="Members"
                       >
                         <FaUsers />
@@ -185,7 +190,7 @@ const TableComponent = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkPrevious style={{ color: "#fff" }} />
             </button>
@@ -197,7 +202,7 @@ const TableComponent = () => {
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkNext style={{ color: "#fff" }} />
             </button>

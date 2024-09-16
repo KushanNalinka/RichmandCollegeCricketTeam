@@ -66,8 +66,8 @@ const MatchDetails = () => {
       type: "T20"
     },
     {
-      matchId:1,
-      matchName: "Match 1",
+      matchId:5,
+      matchName: "Match 5",
       time: "2024-08-29T10:00",
       venue: "Stadium A",
       opponent: "Team X",
@@ -77,8 +77,8 @@ const MatchDetails = () => {
       type: "ODI"
     },
     {
-      matchId:2,
-      matchName: "Match 2",
+      matchId:6,
+      matchName: "Match 6",
       time: "2024-08-30T14:00",
       venue: "Stadium B",
       opponent: "Team Y",
@@ -88,8 +88,8 @@ const MatchDetails = () => {
       type: "T20"
     },
     {
-      matchId:3,
-      matchName: "Match 3",
+      matchId:7,
+      matchName: "Match 7",
       time: "2024-08-29T10:00",
       venue: "Stadium A",
       opponent: "Team X",
@@ -99,8 +99,8 @@ const MatchDetails = () => {
       type: "ODI"
     },
     { 
-      matchId:4,
-      matchName: "Match 4",
+      matchId:8,
+      matchName: "Match 8",
       time: "2024-08-30T14:00",
       venue: "Stadium B",
       opponent: "Team Y",
@@ -117,7 +117,7 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 5; // Number of rows per page
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   
@@ -213,19 +213,19 @@ const MatchDetails = () => {
     }}
   >
     <HomeNavbar/>
-    <div className=" flex relative top-24 p-2 w-full">
+    <div className=" flex relative items-center top-20 p-2 w-full">
       <div className="lg:w-[5%]">
         <Navbar/>
       </div>  
       <div
-        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
         style={{
           backdropFilter: "blur(10px)",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
           border: "1px solid rgba(255, 255, 255, 0.3)"
         }}
       >
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-3">
           <NavbarToggleMenu/>
           <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
             Match Details
@@ -240,7 +240,7 @@ const MatchDetails = () => {
         </div>
         <div className="flex overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-            <thead className=" bg-baseRed2 text-white rounded">
+            <thead className=" bg-[#480D35] text-white rounded">
               <tr>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                   Match Name

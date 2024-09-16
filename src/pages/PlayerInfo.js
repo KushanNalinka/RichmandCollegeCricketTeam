@@ -108,7 +108,7 @@ const TableComponent = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 5; // Number of rows per page
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
@@ -169,20 +169,20 @@ const TableComponent = () => {
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative top-24 p-2 w-full">
+      <div className=" flex relative items-center top-20 p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
         {/* <div className=" md:w-[85%] w-[100%] lg:mx-3 "> */}
         <div
-          className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+          className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
             border: "1px solid rgba(255, 255, 255, 0.3)"
           }}
         >
-          <div className="flex justify-between items-center content-center mb-4">
+          <div className="flex justify-between items-center content-center mb-3">
             <NavbarToggleMenu />
               <h2 className="md:text-2xl text-lg font-bold font-popins text-[#480D35]">
                 Player Details
@@ -240,7 +240,7 @@ const TableComponent = () => {
                       <div
                         className={`flex items-center justify-center h-10 w-10  ${item.status ==
                         "Active"
-                          ? "bg-green-300 p-5  rounded-full font-bold text-green-700"
+                          ? "bg-green-300 p-5 rounded-full font-bold text-green-700"
                           : "bg-slate-300 p-5 text-slate-600 font-bold rounded-full"}`}
                       />
                     </td>

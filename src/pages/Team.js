@@ -14,8 +14,6 @@ import HomeNavbar from "../components/HomeNavbar";
 import { FaXmark, FaBars } from "react-icons/fa6";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 
@@ -104,7 +102,7 @@ const TableComponent = () => {
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative top-24 p-2 w-full">
+      <div className=" flex relative top-20 items-center p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>

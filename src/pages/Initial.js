@@ -13,6 +13,7 @@ import Number from '../components/Number';
 import PlayerSlider from '../components/PlayerSlider';
 import ResultsTable from '../components/ResultsTable';
 import Footer from '../components/Footer';
+import LatestNews from '../components/LatestNews';
 
 const HomePage = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -96,7 +97,7 @@ const HomePage = () => {
     </div>
 <ScoreCard />
 <ResultsTable />
-
+<LatestNews />
   <Number />
   <PlayerSlider />
  <Footer />

@@ -63,5 +63,12 @@ html {
   scroll-snap-type: y mandatory;
 }
 
+/* Add this in your global CSS file (e.g., index.css) */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px #2563eb; /* Tailwind's blue-600 */
+}
+
+
 
 

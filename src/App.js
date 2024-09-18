@@ -11,9 +11,10 @@ import Team from './pages/Team.js';
 
 import MatchInfo from './pages/MatchInfo.js';
 import ScorecardData from './pages/ScoreCardData.js';
-import PlayerProfile from './pages/userProfile.js';
+import PlayerProfile from './pages/playerProfile.js';
 import AddPlayer from './pages/playerProfile.js';
 import ScoreCardPage from './pages/ScoreCardPage.js';
+import PlayerProfileForm from './components/playerProfileForm.js';
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/scorecard" element={<ScoreCardPage/>} />
          <Route path="/team" element={<Team />} />
-          <Route path='/addPlayer' element={<AddPlayer/>}/>
+          <Route path='/addPlayerOld' element={<AddPlayer/>}/>
+          <Route path='/addPlayer'element={<PlayerProfileForm/>}/>
          <Route path="/playerProfile" element={<PlayerProfile/>}/>
          <Route path="/match-info" element={<MatchInfo />} />
         <Route path="/scorecard" element={<ScorecardData />} />

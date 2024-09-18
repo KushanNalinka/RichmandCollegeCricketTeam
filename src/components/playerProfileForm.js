@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
 import HomeNavbar from '../components/HomeNavbar';
+import Navbar from "../components/HomeNavbar";
 import back from "../assets/images/flag.png";
-import profilePic from "../assets/images/kusal.png"
+import profilePic from "../assets/images/kusal.png";
+import flag from "../assets/images/backDrop.png";
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const PlayerProfileForm = ({ isOpen, onSubmit }) => {
@@ -17,6 +19,10 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
     battingStyle:null,
     bowlingStyle:null,
     role: null,
+    username:null,
+    password:null,
+    membershipStartingDate:null,
+    membershipEndingDate:null,
     contactNumber:null
   });
   
@@ -61,8 +67,20 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
   }
 
   return (
+    <div
+      className={`h-screen text-white w-full`}
+      style={{
+        backgroundImage: `url(${flag})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
+    >
+      {/* Navbar */}
+      <Navbar />
+
+      <div className="max-w-screen-full  p-20"></div>
         <div className=" flex relative w-full items-center justify-center px-20">
-            <div className="  h-full pb-20 relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
+            <div className="  h-full relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
             style={{
                 backdropFilter: "blur(10px)",
                 boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -165,13 +183,13 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
                         />
                     </div>
                     <div className='mb-2'>
-                        <label className="block mb-1 text-gray-700">Age</label>
+                        <label className="block mb-1 text-gray-700">username</label>
                         <input
                             type="text"
-                            name="age"
-                            value={formData.age}
+                            name="username"
+                            value={formData.username}
                             onChange={handleChange}
-                            className="w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
                             required
                         />
                     </div>
@@ -181,6 +199,28 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
                             type="email"
                             name="email"
                             value={formData.email}
+                            onChange={handleChange}
+                            className="w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <div className='mb-2'>
+                        <label className="block mb-1 text-gray-700">Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <div className='mb-2'>
+                        <label className="block mb-1 text-gray-700">Age</label>
+                        <input
+                            type="text"
+                            name="age"
+                            value={formData.age}
                             onChange={handleChange}
                             className="w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
                             required
@@ -244,6 +284,28 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
                             <option value="allRounder">All-rounder</option>
                         </select>
                     </div>
+                    <div className='mb-2'>
+                        <label className="block mb-1 text-gray-700">Membership Starting Date</label>
+                        <input
+                            type="date"
+                            name="membershipStartingDate"
+                            value={formData.membershipStartingDate}
+                            onChange={handleChange}
+                            className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
+                    <div className='mb-2'>
+                        <label className="block mb-1 text-gray-700">Membership Ending Date</label>
+                        <input
+                            type="date"
+                            name="membershipEndingDate"
+                            value={formData.membershipEndingDate}
+                            onChange={handleChange}
+                            className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            required
+                        />
+                    </div>
                 </div>
                     
                 </div>
@@ -262,6 +324,7 @@ const PlayerProfileForm = ({ isOpen, onSubmit }) => {
             </form>
         </div>
 
+    </div>
     </div>
             
   );

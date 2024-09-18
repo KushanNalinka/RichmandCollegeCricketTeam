@@ -1,3 +1,5 @@
+
+
 import React, { useState } from "react";
 import img1 from "../assets/images/ladyCrick.jpeg";
 import img2 from "../assets/images/rashidKhan.jpeg";
@@ -39,7 +41,7 @@ const LatestNews = () => {
 
   return (
     <section className="bg-white py-12">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto ">
         <div className="grid grid-cols-3 gap-8">
           {/* Left Heading Section - 1/3 of the width */}
           <div className="col-span-1">
@@ -69,7 +71,7 @@ const LatestNews = () => {
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-56 object-cover rounded-lg"
+                      className="w-full h-96 object-cover rounded-lg"
                     />
                     <div className="p-4">
                       <p className="font-semibold text-gray-700">{item.title}</p>
@@ -84,7 +86,7 @@ const LatestNews = () => {
               {/* Left arrow */}
               <button
                 onClick={prevSlide}
-                className={`text-4xl font-bold focus:outline-none ${
+                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-purple-500 ${
                   currentSlide === 0 ? "text-gray-300" : "text-purple-500 hover:text-purple-700"
                 }`}
                 disabled={currentSlide === 0}
@@ -95,7 +97,7 @@ const LatestNews = () => {
               {/* Right arrow */}
               <button
                 onClick={nextSlide}
-                className={`text-4xl font-bold focus:outline-none ${
+                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-purple-500 ${
                   currentSlide >= newsItems.length - visibleNews
                     ? "text-gray-300"
                     : "text-purple-500 hover:text-purple-700"
@@ -113,3 +115,4 @@ const LatestNews = () => {
 };
 
 export default LatestNews;
+

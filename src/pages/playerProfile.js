@@ -210,12 +210,10 @@ import Navbar from "../components/HomeNavbar";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
-import PlayerProfileForm from "../components/playerProfileForm";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/kusal.png";
 
 const PlayerProfile = () => {
-  const [isPlayerProfileUpdated, setIsPlayerProfileUpdated] = useState(false);
   // Sort players alphabetically by fullName
   const sortedPlayers = [...playersData].sort((a, b) =>
     a.fullName.localeCompare(b.fullName)
@@ -277,7 +275,7 @@ const PlayerProfile = () => {
       <Navbar />
 
       <div className="max-w-screen-full pt-32  p-10">
-        {!isPlayerProfileUpdated
+
           ? <div>
               <div className="flex gap-6 w-full items-center lg:px-5 justify-center">
                 {/* Player Details */}
@@ -558,7 +556,6 @@ const PlayerProfile = () => {
                 </div>
               </div>
             </div>
-          : <PlayerProfileForm onSubmit={handleSavePlayerProfile} />}
         {/* Main Content */}
       </div>
     </div>

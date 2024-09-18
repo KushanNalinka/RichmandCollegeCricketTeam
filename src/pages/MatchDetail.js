@@ -117,7 +117,7 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const rowsPerPage = 8; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   
@@ -213,7 +213,7 @@ const MatchDetails = () => {
     }}
   >
     <HomeNavbar/>
-    <div className=" flex relative items-center top-20 p-2 w-full">
+    <div className=" flex relative items-center top-32 p-2 w-full">
       <div className="lg:w-[5%]">
         <Navbar/>
       </div>  

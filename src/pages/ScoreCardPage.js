@@ -354,7 +354,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative items-center top-20 p-2 w-full">
+      <div className=" flex relative items-center top-32 p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
@@ -379,7 +379,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
           </button>
         </div> */}
           <div
-            className=" relative w-[100%] max-h-[505px] bg-gray-300 flex flex-col hover:overflow-y-auto gap-2 overflow-y-hidden lg:py-2 p-2 rounded-lg shadow-lg"
+            className=" relative min-w-full divide-y divide-gray-300 max-h-[600px] bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(5px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -388,26 +388,33 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
           >
             {paginatedData.map((match) =>
   
-              <div key={match.matchId} className="w-full">
-                <div className=" flex items-center justify-between w-full py-2  px-5 text-lg bg-white rounded text-black">
+              <div key={match.matchId} className="relative flex-grow ">
+                <div className=" flex-grow flex min-w-[750px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
                   <div className="flex gap-5 items-center">
                     <div className="flex flex-col items-center justify-center">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
-                      <p className="text-xs font-semibold uppercase" >Richmand College, Galle</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmand College, Galle</p>
                     </div>
                     <div className="flex flex-col justify-center items-center">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
-                      <p className="text-sm font-serif font-semibold text-[#08165A]">V<span className="text-xl font-bold text-[#480D35]">S</span></p>
+                      <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-xl text-lg font-bold text-[#480D35]">S</span></p>
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
                     </div>
                     <div className="flex flex-col items-center justify-center">
                       <img src={match.opponentLogo} alt={match.matchName} className="w-8 h-8"/>
-                      <p className="text-xs font-semibold uppercase">{match.opponent}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opponent}</p>
                     </div>
                   </div>
-                  <p className="text-xl font-bold uppercase flex justify-between items-center text-[#08165A] font-sans">{match.matchName} <span className="text-[#480D35] px-5 text-sm"> - {match.type}</span> </p>
-                  
-                  <div className="flex items-center justify-between gap-5">
+                  <div>
+                    <p className="lg:text-xl text-lg font-bold uppercase flex justify-between items-center text-[#08165A] font-sans">{match.matchName} <span className="text-[#480D35] px-5 text-sm"> - {match.type}</span> </p>
+                    <p className="lg:hidden flex text-xs font-bold text-[#480D35]">{new Date(match.time).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })} </p>
+                    <p className="flex lg:hidden text-xxs font-semibold">{match.venue} </p>
+                    </div>
+                  <div className="flex items-center justify-between lg:gap-5">
                     <div className="flex items-center gap-3">
                       {match.type === 'Test' && (
                         <div className="flex ">
@@ -425,12 +432,12 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                       ) 
                     }
                     <div>
-                      <p className=" text-sm font-bold text-[#480D35]">{new Date(match.time).toLocaleDateString('en-US', {
+                      <p className="lg:flex hidden text-sm font-bold text-[#480D35]">{new Date(match.time).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
                         })} </p>
-                      <p className="text-xs font-semibold">{match.venue} </p>
+                      <p className="lg:flex hidden text-xs font-semibold">{match.venue} </p>
                     </div>
                     </div>
                     <button
@@ -447,11 +454,11 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                 <div
                   className={`${pressedIndex
                     ? ""
-                    : "hidden"} overflow-x-auto`}
+                    : "hidden"}`}
                 >
                   {pressedIndex[match.matchId] &&
                    <>
-                    <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
+                    <table className="min-w-[750px] md:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -478,8 +485,10 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             100s
                           </th>
-                          <th className="py-2 px-4 text-left justify-between flex text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             <p>strikeRate</p>
+                          </th>
+                          <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                             <p>150/7 (20 overs)</p>
                           </th>
                         </tr>
@@ -522,7 +531,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                         )}
                       </tbody>
                     </table>
-                    <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
+                    <table className="min-w-[750px] md:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -546,8 +555,10 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           Wide Bolls
                         </th>
-                        <th className="py-2 px-4 flex justify-between text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           <p>Economy Rate</p>
+                        </th>
+                        <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                           <p>190/7 (15.4 overs)</p>
                         </th>
                       </tr>

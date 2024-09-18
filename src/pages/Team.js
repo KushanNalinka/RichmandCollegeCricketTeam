@@ -34,7 +34,7 @@ const TableComponent = () => {
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 5; // Number of rows per page
+  const rowsPerPage = 8; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(data.length / rowsPerPage);
@@ -102,7 +102,7 @@ const TableComponent = () => {
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative top-20 items-center p-2 w-full">
+      <div className=" flex relative top-32 items-center p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>

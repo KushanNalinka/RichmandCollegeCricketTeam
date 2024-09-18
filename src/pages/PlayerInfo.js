@@ -108,7 +108,7 @@ const TableComponent = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const rowsPerPage = 8; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
@@ -169,7 +169,7 @@ const TableComponent = () => {
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative items-center top-20 p-2 w-full">
+      <div className=" flex relative items-center justify-center top-32 p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
@@ -244,12 +244,12 @@ const TableComponent = () => {
                           : "bg-slate-300 p-5 text-slate-600 font-bold rounded-full"}`}
                       />
                     </td>
-                    <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold hover:bg-gray-300 text-gray-900">
+                    <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-gray-900">
 
                         <img
                           src={item.image}
                           alt={item.name}
-                          className=" w-[30%] h-14 rounded-full object-cover border border-gray-300"
+                          className=" h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
                     
                       

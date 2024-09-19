@@ -65,7 +65,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
 
   return (
     <div
-      className={`h-full text-white w-full`}
+      className={` text-white pb-40 w-full`}
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
@@ -77,7 +77,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
 
       <div className="max-w-screen-full pt-10 p-20"></div>
         <div className=" flex relative w-full items-center justify-center px-20">
-            <div className="  h-full relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
+            <div className="  relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
             style={{
                 backdropFilter: "blur(10px)",
                 boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -197,7 +197,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            className="w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+                            className="w-full px-3 py-1 h-28 border text-black border-gray-300 rounded-lg"
                             required
                         />
                     </div>

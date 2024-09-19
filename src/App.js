@@ -16,6 +16,7 @@ import ScoreCardPage from './pages/ScoreCardPage.js';
 import CoachProfile from './pages/coachProfile.js';
 import AddPlayer from './components/AddPlayer.js';
 import AddCoachForm from './components/AddCoachForm.js';
+import AdminDashboard from './pages/AdminDashboard.js';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
+         <Route path='/addminDashboard' element={<AdminDashboard/>}/>
         </Routes>
     </BrowserRouter>
   );

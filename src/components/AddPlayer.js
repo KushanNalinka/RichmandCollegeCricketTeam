@@ -68,7 +68,7 @@ const AddPlayer = ({ isOpen, onSubmit }) => {
 
   return (
     <div
-      className={`h-full text-white w-full`}
+      className={`h-full pb-20 text-white w-full`}
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",

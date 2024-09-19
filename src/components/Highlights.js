@@ -232,7 +232,7 @@ const HighlightTabs = () => {
       <div className="flex justify-center space-x-10 mt-64">
         <button
           className={`py-2 px-4 ${
-            activeTab === "latest" ? "text-yellow-500 border-b-2 border-yellow-500" : ""
+            activeTab === "latest" ? "text-yellow-500 border-b-8 border-yellow-500" : ""
           }`}
           onClick={() => handleTabSwitch("latest")}
         >
@@ -240,7 +240,7 @@ const HighlightTabs = () => {
         </button>
         <button
           className={`py-2 px-4 ${
-            activeTab === "match" ? "text-yellow-500 border-b-2 border-yellow-500" : ""
+            activeTab === "match" ? "text-yellow-500 border-b-8 border-yellow-500" : ""
           }`}
           onClick={() => handleTabSwitch("match")}
         >
@@ -248,7 +248,7 @@ const HighlightTabs = () => {
         </button>
         <button
           className={`py-2 px-4 ${
-            activeTab === "player" ? "text-yellow-500 border-b-2 border-yellow-500" : ""
+            activeTab === "player" ? "text-yellow-500 border-b-8 border-yellow-500" : ""
           }`}
           onClick={() => handleTabSwitch("player")}
         >
@@ -257,10 +257,10 @@ const HighlightTabs = () => {
       </div>
 
       {/* Long Line and More Videos Button */}
-      <div className="relative mt-2 flex justify-center items-center">
+      <div className="relative  flex justify-center items-center">
         <hr className="w-full border-gray-300" />
         <button
-          className="absolute right-0 transform -translate-y-1/2 bg-white text-black rounded-lg px-4 py-2 text-sm font-bold"
+          className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-2 text-sm font-bold"
         >
           MORE VIDEOS
         </button>

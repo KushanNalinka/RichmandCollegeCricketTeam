@@ -38,7 +38,7 @@ function AdminDashboard() {
           <a href="/match" className="flex items-center justify-center  w-full h-20 px-20 py-2 bg-gray-200">
            Matches
           </a>
-          <a href="/scoreCard" className="flex items-center justify-center  w-full h-20 px-20 py-2 bg-gray-200">
+          <a href="/admin-scoreCard" className="flex items-center justify-center  w-full h-20 px-20 py-2 bg-gray-200">
             Scores
           </a>
           <a href="/team" className="flex items-center justify-center w-full h-20 px-20 py-2 bg-gray-200">

@@ -160,7 +160,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/matches" className="hover:text-yellow-300 transition-all duration-300 ease-in-out transform hover:scale-105">
+            <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out transform hover:scale-105">
               Matches
             </Link>
           </li>

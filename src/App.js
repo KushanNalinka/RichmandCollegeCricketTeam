@@ -27,7 +27,7 @@ function App() {
          <Route path="/coach" element={<Coaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
-         <Route path="/scorecard" element={<ScoreCardPage/>} />
+         <Route path="/scorecard/:matchId" element={<ScoreCardPage/>} />
          <Route path="/team" element={<Team />} />
           <Route path='/addPlayerOld' element={<AddPlayer/>}/>
           <Route path='/addPlayer'element={<AddPlayer/>}/>

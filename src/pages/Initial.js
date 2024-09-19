@@ -12,6 +12,7 @@ import MatchSlider from '../components/MatchSlider';
 import Number from '../components/Number';
 import PlayerSlider from '../components/PlayerSlider';
 import ResultsTable from '../components/ResultsTable';
+import Highlights from '../components/Highlights';
 import Footer from '../components/Footer';
 import LatestNews from '../components/LatestNews';
 
@@ -98,6 +99,7 @@ const HomePage = () => {
 <ScoreCard />
 <ResultsTable />
 <LatestNews />
+<Highlights />
   <Number />
   <PlayerSlider />
  <Footer />

@@ -141,6 +141,7 @@
 
 // export default MatchStatPopup;
 import React, { useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
 
 const MatchStatPopup = ({ isOpen, onClose, onSubmit }) => {
   const [statData, setStatData] = useState({
@@ -168,10 +169,19 @@ const MatchStatPopup = ({ isOpen, onClose, onSubmit }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Add Match Stat</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
+      <div className="bg-white p-8 pt-2 rounded-lg shadow-lg max-w-lg w-full">
+        <div className='flex justify-end '>
+          <button 
+              onClick={onClose} 
+              className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+              aria-label="Close"
+          >
+              <FaTimes/>
+          </button>
+        </div>
+        <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-4">
             <div>
               <label className="block text-gray-700 font-medium">Inning</label>
@@ -264,17 +274,11 @@ const MatchStatPopup = ({ isOpen, onClose, onSubmit }) => {
               />
             </div>
           </div>
-          <div className="flex justify-end space-x-4 col-span-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400 transition"
-            >
-              Cancel
-            </button>
+          <div className="flex justify-end space-x-4 pt-4 col-span-2">
+          
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+              className="px-4 py-2 bg-[#480D35]  hover:bg-[#5D1245] text-white w-full rounded-md transition"
             >
               Submit
             </button>

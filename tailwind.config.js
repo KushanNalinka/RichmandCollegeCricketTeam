@@ -36,6 +36,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+
       fontSize: {
         'xxs': '0.625rem', // Custom font size for screens smaller than xs
       },

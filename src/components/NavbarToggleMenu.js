@@ -40,7 +40,7 @@ const NavbarToggleMenu = () => {
               <Link to={"/match"} className=" flex gap-3 items-center cursor-pointer  p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-10">
                 {" "}<BiSolidCricketBall /> Match
               </Link>
-              <Link to={"/scorecard/:matchId"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-10">
+              <Link to={"/scorecard"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-10">
                 {" "}<TbScoreboard /> Score
               </Link>
               <Link to={"/team"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-10">

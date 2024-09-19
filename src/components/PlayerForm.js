@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa'; // Import close icon
 
-const FormPopup = ({ closeForm }) => {
+const FormPopup = ({ closeForm, onSave }) => {
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -43,18 +43,20 @@ const FormPopup = ({ closeForm }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
-        <button 
-          onClick={closeForm} 
-          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800 text-2xl"
-          aria-label="Close"
-        >
-          <FaTimes />
-        </button>
-        <h3 className="text-2xl font-bold mb-4">Add New Player</h3>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="col-span-2">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
+      <div className="bg-white p-8 pt-2 mt-16 rounded-lg shadow-lg max-w-lg w-full relative">
+        <div className='flex justify-end '>
+          <button 
+            onClick={closeForm} 
+            className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+            aria-label="Close"
+          >
+            <FaTimes/>
+          </button>
+        </div>
+        <h3 className="text-xl text-[#480D35] font-bold mb-4">Add New Player</h3>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
             <label className="block text-sm font-medium text-gray-700">Name</label>
             <input 
               type="text" 
@@ -134,7 +136,18 @@ const FormPopup = ({ closeForm }) => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div className="col-span-2">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Role</label>
+            <input 
+              type="text" 
+              name="role" 
+              value={formData.role} 
+              onChange={handleChange} 
+              className="mt-1 p-2 border border-gray-300 rounded-lg w-full" 
+              required 
+            />
+          </div>
+          <div className=' col-span-2'>
             <label className="block text-sm font-medium text-gray-700">Image</label>
             <input 
               type="file" 
@@ -148,25 +161,15 @@ const FormPopup = ({ closeForm }) => {
               <img 
                 src={imagePreview} 
                 alt="Image Preview" 
-                className="mt-4 w-24 h-24 rounded-full object-cover border border-gray-300" 
+                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300" 
               />
             )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Role</label>
-            <input 
-              type="text" 
-              name="role" 
-              value={formData.role} 
-              onChange={handleChange} 
-              className="mt-1 p-2 border border-gray-300 rounded-lg w-full" 
-              required 
-            />
           </div>
           <div className="col-span-2">
             <button 
               type="submit" 
-              className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 w-full"
+              onClick={handleSubmit}
+              className="bg-[#480D35] text-white py-2 px-4 rounded-lg hover:bg-[#5D1245] w-full"
             >
               Submit
             </button>

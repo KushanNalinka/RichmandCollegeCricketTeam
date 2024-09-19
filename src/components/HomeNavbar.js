@@ -117,7 +117,7 @@ const HomeNavbar = () => {
               <ul className="absolute right-0 top-full mt-2 bg-black/60 text-white z-40 w-48 rounded-lg shadow-lg transition-all duration-300 ease-in-out">
 
                 <li className="p-2 border-b border-gray-700 hover:bg-yellow-500 hover:text-black transition-colors duration-300 rounded-t-lg">
-                  <Link to="/profile">Profile</Link>
+                  <Link to="/playerProfile">Profile</Link>
 
                 </li>
                 <li className="p-2 hover:bg-yellow-500 hover:text-black transition-colors duration-300 rounded-b-lg">

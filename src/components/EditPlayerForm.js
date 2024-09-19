@@ -1,6 +1,7 @@
 // src/components/EditPlayerForm.jsx
 
 import React, { useState } from 'react';
+import { FaTimes } from 'react-icons/fa'; 
 
 const EditPlayerForm = ({ player, onClose, onSave }) => {
     const [formData, setFormData] = useState({ ...player });
@@ -36,11 +37,20 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-4xl">
-                <h2 className="text-2xl font-bold mb-4">Edit Player</h2>
-                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="mb-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
+            <div className="bg-white px-8 py-2 pb-8  mt-16 rounded-lg shadow-lg max-w-lg w-full relative">
+                <div className='flex justify-end '>
+                    <button 
+                        onClick={onClose} 
+                        className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+                        aria-label="Close"
+                    >
+                        <FaTimes/>
+                    </button>
+                </div>
+                <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player</h2>
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div >
                         <label className="block text-gray-700">Name</label>
                         <input
                             type="text"
@@ -50,7 +60,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div >
                         <label className="block text-gray-700">DOB</label>
                         <input
                             type="date"
@@ -60,7 +70,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div >
                         <label className="block text-gray-700">Email</label>
                         <input
                             type="email"
@@ -70,7 +80,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div >
                         <label className="block text-gray-700">Contact No</label>
                         <input
                             type="text"
@@ -80,7 +90,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div >
                         <label className="block text-gray-700">Batting Style</label>
                         <input
                             type="text"
@@ -90,7 +100,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div >
                         <label className="block text-gray-700">Bowling Style</label>
                         <input
                             type="text"
@@ -100,7 +110,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                     </div>
-                    <div className="mb-4">
+                    <div>
                         <label className="block text-gray-700">Status</label>
                         <select
                             name="status"
@@ -112,7 +122,7 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             <option value="Inactive">Inactive</option>
                         </select>
                     </div>
-                    <div className="mb-4 col-span-2">
+                    <div className="col-span-2">
                         <label className="block text-gray-700">Image</label>
                         <input
                             type="file"
@@ -121,20 +131,14 @@ const EditPlayerForm = ({ player, onClose, onSave }) => {
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         />
                         {imagePreview && (
-                            <img src={imagePreview} alt="Preview" className="mt-2 w-24 h-24 rounded-full object-cover border border-gray-300" />
+                            <img src={imagePreview} alt="Preview" className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300" />
                         )}
                     </div>
                     <div className="flex justify-end col-span-2">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="bg-gray-500 text-white px-4 py-2 rounded-md mr-2"
-                        >
-                            Cancel
-                        </button>
+                       
                         <button
                             type="submit"
-                            className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                            className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 rounded-md w-full"
                         >
                             Save
                         </button>

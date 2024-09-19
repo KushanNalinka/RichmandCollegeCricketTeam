@@ -138,6 +138,7 @@
 
 // export default EditPopup;
 import React, { useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
 
 const EditPopup = ({ isOpen, onClose, onSubmit, matchData }) => {
   const [formData, setFormData] = useState({
@@ -182,11 +183,20 @@ const EditPopup = ({ isOpen, onClose, onSubmit, matchData }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-semibold mb-4">Edit Match</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-2 gap-4">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+      <div className="bg-white p-8 pt-2 rounded-lg shadow-lg max-w-lg w-full">
+        <div className='flex justify-end '>
+          <button 
+              onClick={onClose} 
+              className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+              aria-label="Close"
+          >
+              <FaTimes/>
+          </button>
+        </div>
+        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Match</h2>
+        <form onSubmit={handleSubmit} className='grid grid-cols-1 md:grid-cols-2 gap-3'>
+      
             <div className="mb-4">
               <label className="block text-gray-700 font-semibold mb-2">Match Name</label>
               <input
@@ -275,18 +285,10 @@ const EditPopup = ({ isOpen, onClose, onSubmit, matchData }) => {
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
               />
             </div>
-          </div>
-          <div className="flex justify-end mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 bg-gray-400 text-white rounded-md mr-2 hover:bg-gray-500"
-            >
-              Cancel
-            </button>
+          <div className="col-span-2">
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              className="px-4 py-2 bg-[#480D35] text-white rounded-md hover:bg-[#5D1245] w-full"
             >
               Save Changes
             </button>

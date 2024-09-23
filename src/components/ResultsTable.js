@@ -1,13 +1,11 @@
 
-
 // import React, { useState, useEffect } from 'react';
 // import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-// import backgroundImage from '../assets/images/Score_card_back_image.png'; // Make sure to update the path to your image
-// import backgroundImage1 from '../assets/images/Score_table_back_Image.png'; 
+// import backgroundImage from '../assets/images/ScoreCardTableBackGroundImage.png'; // Make sure to update the path to your image
 
 // const ScorecardSlider = ({ records }) => {
 //   const [currentIndex, setCurrentIndex] = useState(0);
-//   const recordsPerPage = 5;
+//   const recordsPerPage = 6; // Limiting to 6 records (players) per page
 //   const totalPages = Math.ceil(records.length / recordsPerPage);
 //   const autoSlideInterval = 2000; // 2 seconds for auto-slide
 
@@ -34,54 +32,45 @@
 //     // Cleanup the interval on component unmount or when currentIndex changes
 //     return () => clearInterval(autoSlide);
 //   }, [currentIndex]);
+ 
 
 //   return (
-//     <div className="flex w-full h-120 mt-12 mb-12 py-4">
-//       {/* Left Section (1/3 of the width) */}
-//       <div
-//         className="w-1/3 text-white flex justify-center items-center"
-//         style={{
-//           backgroundImage: `url(${backgroundImage})`,
-//           backgroundSize: 'cover',
-//           backgroundRepeat: 'no-repeat',
-//           backgroundPosition: 'center',
-//         }}
-//       >
-//       </div>
-
-//       {/* Right Section (2/3 of the width) */}
-//       <div className="w-2/3 p-6 py-8"
-//         style={{
-//             backgroundImage: `url(${backgroundImage1})`,
-//             backgroundSize: 'cover',
-//             backgroundRepeat: 'no-repeat',
-//             backgroundPosition: 'center',
-//           }}>
-//         <div className="overflow-hidden relative">
+//     <div
+//       className="flex justify-end w-full h-[500px]  py-4"
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         backgroundSize: 'cover',
+//        // backgroundRepeat: 'no-repeat',
+//         backgroundPosition: 'center',
+//       }}
+//     >
+//       {/* Scorecard Section (right-aligned with fixed height) */}
+//       <div className="w-3/5 p-6 py-8 mr-12">
+//         <div className="overflow-hidden relative h-[300px]">
 //           <table className="w-full table-auto text-white">
 //             <thead className="bg-gray-600">
 //               <tr>
-//                 <th className="px-4 py-4">BATSMAN</th>
-//                 <th className="px-4 py-4">R</th>
-//                 <th className="px-4 py-4">B</th>
-//                 <th className="px-4 py-4">4s</th>
-//                 <th className="px-4 py-4">6s</th>
-//                 <th className="px-4 py-4">50</th>
-//                 <th className="px-4 py-4">100</th>
-//                 <th className="px-4 py-4">SR</th>
+//                 <th className="px-4 py-2">BATSMAN</th>
+//                 <th className="px-4 py-2">R</th>
+//                 <th className="px-4 py-2">B</th>
+//                 <th className="px-4 py-2">4s</th>
+//                 <th className="px-4 py-2">6s</th>
+//                 <th className="px-4 py-2">50</th>
+//                 <th className="px-4 py-2">100</th>
+//                 <th className="px-4 py-2">SR</th>
 //               </tr>
 //             </thead>
 //             <tbody>
 //               {records.slice(currentIndex, currentIndex + recordsPerPage).map((record, idx) => (
-//                 <tr key={idx} className="bg-gray-700 text-center space-y-4">
-//                   <td className="px-4 py-4">{record.batsman}</td>
-//                   <td className="px-4 py-4">{record.runs}</td>
-//                   <td className="px-4 py-4">{record.balls}</td>
-//                   <td className="px-4 py-4">{record.fours}</td>
-//                   <td className="px-4 py-4">{record.sixes}</td>
-//                   <td className="px-4 py-4">{record.fifties}</td>
-//                   <td className="px-4 py-4">{record.hundreds}</td>
-//                   <td className="px-4 py-4">{record.strikeRate}</td>
+//                 <tr key={idx} className="bg-gray-700 text-center">
+//                   <td className="px-4 py-2">{record.batsman}</td>
+//                   <td className="px-4 py-2">{record.runs}</td>
+//                   <td className="px-4 py-2">{record.balls}</td>
+//                   <td className="px-4 py-2">{record.fours}</td>
+//                   <td className="px-4 py-2">{record.sixes}</td>
+//                   <td className="px-4 py-2">{record.fifties}</td>
+//                   <td className="px-4 py-2">{record.hundreds}</td>
+//                   <td className="px-4 py-2">{record.strikeRate}</td>
 //                 </tr>
 //               ))}
 //             </tbody>
@@ -139,8 +128,6 @@
 //   { batsman: 'Player 3', runs: 60, balls: 35, fours: 7, sixes: 3, fifties: 1, hundreds: 0, strikeRate: 171.43 },
 //   { batsman: 'Player 4', runs: 30, balls: 20, fours: 2, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 150 },
 //   { batsman: 'Player 5', runs: 20, balls: 15, fours: 1, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 133.33 },
-//   { batsman: 'Player 6', runs: 35, balls: 22, fours: 3, sixes: 2, fifties: 0, hundreds: 0, strikeRate: 159.09 },
-//   { batsman: 'Player 7', runs: 25, balls: 17, fours: 2, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 147.06 },
 //   // Add more records if needed
 // ];
 
@@ -190,41 +177,40 @@ const ScorecardSlider = ({ records }) => {
 
   return (
     <div
-      className="flex justify-end w-full h-[500px]  py-4"
+      className="flex justify-end w-full h-auto md:h-[500px] py-4"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
       }}
     >
-      {/* Scorecard Section (right-aligned with fixed height) */}
-      <div className="w-3/5 p-6 py-8 mr-12">
-        <div className="overflow-hidden relative h-[300px]">
-          <table className="w-full table-auto text-white">
+      {/* Scorecard Section (right-aligned with fixed height on large screens) */}
+      <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
+        <div className="overflow-hidden relative h-auto md:h-[300px]">
+          <table className="w-full table-auto text-white text-xs md:text-base">
             <thead className="bg-gray-600">
               <tr>
-                <th className="px-4 py-2">BATSMAN</th>
-                <th className="px-4 py-2">R</th>
-                <th className="px-4 py-2">B</th>
-                <th className="px-4 py-2">4s</th>
-                <th className="px-4 py-2">6s</th>
-                <th className="px-4 py-2">50</th>
-                <th className="px-4 py-2">100</th>
-                <th className="px-4 py-2">SR</th>
+                <th className="px-2 md:px-4 py-2">BATSMAN</th>
+                <th className="px-2 md:px-4 py-2">R</th>
+                <th className="px-2 md:px-4 py-2">B</th>
+                <th className="px-2 md:px-4 py-2">4s</th>
+                <th className="px-2 md:px-4 py-2">6s</th>
+                <th className="px-2 md:px-4 py-2">50</th>
+                <th className="px-2 md:px-4 py-2">100</th>
+                <th className="px-2 md:px-4 py-2">SR</th>
               </tr>
             </thead>
             <tbody>
               {records.slice(currentIndex, currentIndex + recordsPerPage).map((record, idx) => (
                 <tr key={idx} className="bg-gray-700 text-center">
-                  <td className="px-4 py-2">{record.batsman}</td>
-                  <td className="px-4 py-2">{record.runs}</td>
-                  <td className="px-4 py-2">{record.balls}</td>
-                  <td className="px-4 py-2">{record.fours}</td>
-                  <td className="px-4 py-2">{record.sixes}</td>
-                  <td className="px-4 py-2">{record.fifties}</td>
-                  <td className="px-4 py-2">{record.hundreds}</td>
-                  <td className="px-4 py-2">{record.strikeRate}</td>
+                  <td className="px-2 md:px-4 py-2">{record.batsman}</td>
+                  <td className="px-2 md:px-4 py-2">{record.runs}</td>
+                  <td className="px-2 md:px-4 py-2">{record.balls}</td>
+                  <td className="px-2 md:px-4 py-2">{record.fours}</td>
+                  <td className="px-2 md:px-4 py-2">{record.sixes}</td>
+                  <td className="px-2 md:px-4 py-2">{record.fifties}</td>
+                  <td className="px-2 md:px-4 py-2">{record.hundreds}</td>
+                  <td className="px-2 md:px-4 py-2">{record.strikeRate}</td>
                 </tr>
               ))}
             </tbody>

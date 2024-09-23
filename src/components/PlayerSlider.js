@@ -209,7 +209,7 @@ const CoachSlider = () => {
       }}
     >
       {/* Player Image Slider */}
-      <div className="flex flex-wrap justify-center items-center mt-20 space-x-4">
+      <div className="flex flex-wrap justify-center items-center mt-40 space-x-4">
         {visibleCoaches.map((coach, index) => (
           <div key={index} className="text-center flex-shrink-0">
             <img

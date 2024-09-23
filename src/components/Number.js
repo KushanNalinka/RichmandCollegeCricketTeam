@@ -1,5 +1,7 @@
+
+
 // import React from "react";
-// import AnimatedCounter from "./Counter";
+// import AnimatedCounter from "./Counter"; // Make sure path is correct
 
 // const stats = [
 //   { label: "Tennis Courts", value: 14 },
@@ -10,10 +12,10 @@
 
 // const StatsSection = () => {
 //   return (
-//     <div className="flex justify-center items-center py-10 space-x-12 bg-white">
+//     <div className="flex justify-center items-center py-10 space-x-28 bg-white">
 //       {stats.map((stat) => (
 //         <div key={stat.label} className="text-center">
-//           <div className="text-4xl font-bold text-black">
+//           <div className="text-8xl font-bold text-black">
 //             <AnimatedCounter from={0} to={stat.value} />
 //           </div>
 //           <p className="text-lg text-gray-600 mt-2">{stat.label}</p>
@@ -37,13 +39,13 @@ const stats = [
 
 const StatsSection = () => {
   return (
-    <div className="flex justify-center items-center py-10 space-x-28 bg-white">
+    <div className="flex flex-col md:flex-row justify-center items-center py-10 space-y-8 md:space-y-0 md:space-x-28 bg-white">
       {stats.map((stat) => (
         <div key={stat.label} className="text-center">
-          <div className="text-8xl font-bold text-black">
+          <div className="text-5xl md:text-[8rem] font-bold text-black">
             <AnimatedCounter from={0} to={stat.value} />
           </div>
-          <p className="text-lg text-gray-600 mt-2">{stat.label}</p>
+          <p className="text-md md:text-lg text-gray-600 mt-2">{stat.label}</p>
         </div>
       ))}
     </div>

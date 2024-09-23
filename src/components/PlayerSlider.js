@@ -178,11 +178,10 @@ const CoachSlider = () => {
     );
   };
 
-  // Ensure the slider shows a certain number of coaches based on screen size
+  // Ensure the slider shows 5 coaches at a time
   const getVisibleCoaches = () => {
-    const visibleCount = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 3 : 5;
     const visible = [];
-    for (let i = 0; i < visibleCount; i++) {
+    for (let i = 0; i < 5; i++) {
       visible.push(coaches[(currentIndex + i) % coaches.length]);
     }
     return visible;
@@ -210,30 +209,28 @@ const CoachSlider = () => {
       }}
     >
       {/* Player Image Slider */}
-      <div className="flex justify-center space-x-4 items-center mt-40 overflow-hidden">
+      <div className="flex flex-wrap justify-center items-center mt-20 space-x-4">
         {visibleCoaches.map((coach, index) => (
-          <div key={index} className="text-center">
+          <div key={index} className="text-center flex-shrink-0">
             <img
-              className={`rounded-full mx-auto mb-4 object-cover transition-all duration-300 ${
-                index === Math.floor(visibleCoaches.length / 2)
-                  ? "w-48 h-48 sm:w-64 sm:h-64 lg:w-80 lg:h-80" // Middle image enlarged
-                  : "w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48" // Smaller images
-              }`}
+              className={`rounded-full mx-auto mb-4 transition-all duration-300 ${
+                index === 2 ? "w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72 lg:w-80 lg:h-80" : "w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56"
+              } object-cover`}
               src={coach.imageUrl}
               alt={coach.name}
             />
-            <h3 className="text-sm sm:text-lg lg:text-xl font-semibold">{coach.name}</h3>
-            <p className="text-green-400 text-xs sm:text-sm lg:text-base">{coach.role}</p>
+            <h3 className="text-xl font-semibold">{coach.name}</h3>
+            <p className="text-green-400">{coach.role}</p>
           </div>
         ))}
       </div>
 
       {/* Navigation Arrows Below Slider */}
-      <div className="flex justify-center mt-8 space-x-4">
+      <div className="flex justify-center mt-8 space-x-8">
         {/* Left Arrow */}
         <button
           onClick={handlePrev}
-          className="text-2xl sm:text-4xl p-2 rounded-full bg-white text-green-900 hover:bg-green-400 hover:text-white transition"
+          className="text-4xl p-2 rounded-full bg-white text-green-900 hover:bg-green-400 hover:text-white transition"
         >
           &#8592;
         </button>
@@ -241,7 +238,7 @@ const CoachSlider = () => {
         {/* Right Arrow */}
         <button
           onClick={handleNext}
-          className="text-2xl sm:text-4xl p-2 rounded-full bg-white text-green-900 hover:bg-green-400 hover:text-white transition"
+          className="text-4xl p-2 rounded-full bg-white text-green-900 hover:bg-green-400 hover:text-white transition"
         >
           &#8594;
         </button>

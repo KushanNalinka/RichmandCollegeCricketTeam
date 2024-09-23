@@ -1,4 +1,9 @@
+
+
 // import React from 'react';
+// import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
+// import schoolLogo from '../assets/images/FooterLogo.png'; // Adjust the path for the logo image file
+
 // const Footer = () => {
 //   return (
 //     <footer className="bg-white py-8">
@@ -6,7 +11,7 @@
 //         {/* Top Section */}
 //         <div className="flex justify-center items-center">
 //           <img
-//             src="your-logo-url-here" // Replace with your logo URL
+//             src={schoolLogo} // Imported image used here
 //             alt="School Logo"
 //             className="h-16 mb-4"
 //           />
@@ -14,16 +19,16 @@
 //         {/* Social Media Icons */}
 //         <div className="flex justify-center space-x-6 mb-4">
 //           <a href="https://facebook.com" target="_blank" rel="noreferrer">
-//             <i className="fab fa-facebook-f text-gray-600 hover:text-gray-900 text-xl"></i>
+//             <FaFacebookF className="text-gray-600 hover:text-gray-900 text-xl" />
 //           </a>
 //           <a href="https://twitter.com" target="_blank" rel="noreferrer">
-//             <i className="fab fa-twitter text-gray-600 hover:text-gray-900 text-xl"></i>
+//             <FaTwitter className="text-gray-600 hover:text-gray-900 text-xl" />
 //           </a>
 //           <a href="https://instagram.com" target="_blank" rel="noreferrer">
-//             <i className="fab fa-instagram text-gray-600 hover:text-gray-900 text-xl"></i>
+//             <FaInstagram className="text-gray-600 hover:text-gray-900 text-xl" />
 //           </a>
 //           <a href="https://youtube.com" target="_blank" rel="noreferrer">
-//             <i className="fab fa-youtube text-gray-600 hover:text-gray-900 text-xl"></i>
+//             <FaYoutube className="text-gray-600 hover:text-gray-900 text-xl" />
 //           </a>
 //         </div>
 //         {/* Links */}
@@ -55,8 +60,8 @@
 //     </footer>
 //   );
 // };
-// export default Footer;
 
+// export default Footer;
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 import schoolLogo from '../assets/images/FooterLogo.png'; // Adjust the path for the logo image file
@@ -70,26 +75,26 @@ const Footer = () => {
           <img
             src={schoolLogo} // Imported image used here
             alt="School Logo"
-            className="h-16 mb-4"
+            className="h-16 mb-4" // Adjust height for larger screens
           />
         </div>
         {/* Social Media Icons */}
         <div className="flex justify-center space-x-6 mb-4">
           <a href="https://facebook.com" target="_blank" rel="noreferrer">
-            <FaFacebookF className="text-gray-600 hover:text-gray-900 text-xl" />
+            <FaFacebookF className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noreferrer">
-            <FaTwitter className="text-gray-600 hover:text-gray-900 text-xl" />
+            <FaTwitter className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
           </a>
           <a href="https://instagram.com" target="_blank" rel="noreferrer">
-            <FaInstagram className="text-gray-600 hover:text-gray-900 text-xl" />
+            <FaInstagram className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
           </a>
           <a href="https://youtube.com" target="_blank" rel="noreferrer">
-            <FaYoutube className="text-gray-600 hover:text-gray-900 text-xl" />
+            <FaYoutube className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
           </a>
         </div>
         {/* Links */}
-        <div className="flex justify-center space-x-6 text-sm text-gray-600">
+        <div className="flex flex-wrap justify-center space-x-6 text-sm sm:text-base text-gray-600 mb-4">
           <a href="/lms" className="hover:text-gray-900">
             Access The LMS
           </a>

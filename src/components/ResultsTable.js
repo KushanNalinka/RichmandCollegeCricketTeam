@@ -143,7 +143,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import backgroundImage from '../assets/images/ScoreCardTableBackGroundImage.png'; // Make sure to update the path to your image
+import backgroundImage from '../assets/images/ScoreCardTableBackGroundImage.png'; // Update the path to your image
 
 const ScorecardSlider = ({ records }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -186,9 +186,9 @@ const ScorecardSlider = ({ records }) => {
     >
       {/* Scorecard Section (right-aligned with fixed height on large screens) */}
       <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
-        <div className="overflow-hidden relative h-auto md:h-[300px]">
-          <table className="w-full table-auto text-white text-xs md:text-base">
-            <thead className="bg-gray-600">
+        <div className="overflow-hidden relative h-auto md:h-[300px] rounded-lg shadow-lg bg-gray-800">
+          <table className="w-full table-auto text-white text-xs md:text-base rounded-t-lg overflow-hidden">
+            <thead className="bg-gray-700">
               <tr>
                 <th className="px-2 md:px-4 py-2">BATSMAN</th>
                 <th className="px-2 md:px-4 py-2">R</th>
@@ -202,7 +202,7 @@ const ScorecardSlider = ({ records }) => {
             </thead>
             <tbody>
               {records.slice(currentIndex, currentIndex + recordsPerPage).map((record, idx) => (
-                <tr key={idx} className="bg-gray-700 text-center">
+                <tr key={idx} className="bg-gray-600 text-center">
                   <td className="px-2 md:px-4 py-2">{record.batsman}</td>
                   <td className="px-2 md:px-4 py-2">{record.runs}</td>
                   <td className="px-2 md:px-4 py-2">{record.balls}</td>
@@ -216,27 +216,27 @@ const ScorecardSlider = ({ records }) => {
             </tbody>
           </table>
 
-          {/* Slider controls */}
-          <div className="absolute bottom-0 left-0 w-full flex justify-between p-2">
+          {/* Slider controls - position fixed below the table */}
+          <div className="absolute inset-x-0 bottom-0 flex justify-between px-8 py-2 bg-gray-800">
             <button
               onClick={prevPage}
-              className={`text-white p-2 ${currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-white p-2 rounded-full bg-gray-700 shadow-lg ${currentIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={currentIndex === 0}
             >
-              <FaArrowLeft />
+              <FaArrowLeft size={20} />
             </button>
             <button
               onClick={nextPage}
-              className={`text-white p-2 ${currentIndex + recordsPerPage >= records.length ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`text-white p-2 rounded-full bg-gray-700 shadow-lg ${currentIndex + recordsPerPage >= records.length ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={currentIndex + recordsPerPage >= records.length}
             >
-              <FaArrowRight />
+              <FaArrowRight size={20} />
             </button>
           </div>
         </div>
 
         {/* Pagination dots */}
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-8">
           {[...Array(totalPages)].map((_, pageIdx) => (
             <span
               key={pageIdx}
@@ -267,7 +267,6 @@ const records = [
   { batsman: 'Player 2', runs: 40, balls: 25, fours: 5, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 160 },
   { batsman: 'Player 3', runs: 60, balls: 35, fours: 7, sixes: 3, fifties: 1, hundreds: 0, strikeRate: 171.43 },
   { batsman: 'Player 4', runs: 30, balls: 20, fours: 2, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 150 },
-  { batsman: 'Player 5', runs: 20, balls: 15, fours: 1, sixes: 1, fifties: 0, hundreds: 0, strikeRate: 133.33 },
   // Add more records if needed
 ];
 

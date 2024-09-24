@@ -226,7 +226,7 @@ const HomePage = () => {
       < div className="relative w-full h-screen md:min-h-[600px]">
         {/* Video Background */}
         <video 
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
           autoPlay 
           loop = {false}
           muted

@@ -7,7 +7,7 @@ import image2 from '../assets/images/pabasara.png';
 import image3 from '../assets/images/Desktop - 28.png';
 import image4 from '../assets/images/Desktop - 29.png'; // Additional image
 import image5 from '../assets/images/Desktop - 30.png';
-import backgroundImage from '../assets/images/PScBI.png'; // Background image
+import backgroundImage from '../assets/images/SCBack.png'; // Background image
 
 const coaches = [
   {

@@ -217,7 +217,7 @@ import LatestNews from '../components/LatestNews';
 import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
 import Footer from '../components/Footer';
-import videoSrc from '../assets/images/0924(5).mp4'; // Corrected import for video
+import videoSrc from '../assets/images/SliderVideo.mp4'; // Corrected import for video
 
 const HomePage = () => {
   return (

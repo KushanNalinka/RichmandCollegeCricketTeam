@@ -2,12 +2,12 @@
 
 
 import React, { useState, useEffect } from 'react';
-import image1 from '../assets/images/pabasara.png';
-import image2 from '../assets/images/pabasara.png';
-import image3 from '../assets/images/Desktop - 28.png';
-import image4 from '../assets/images/Desktop - 29.png'; // Additional image
+import image1 from '../assets/images/suranga.png';
+import image2 from '../assets/images/charith.png';
+import image3 from '../assets/images/wanindu.png';
+import image4 from '../assets/images/dhananjay.png'; // Additional image
 import image5 from '../assets/images/Desktop - 30.png';
-import backgroundImage from '../assets/images/PScBI.png'; // Background image
+import backgroundImage from '../assets/images/HBG.png'; // Background image
 
 const coaches = [
   {
@@ -90,7 +90,7 @@ const CoachSlider = () => {
           <div key={index} className="text-center flex-shrink-0">
             <img
               className={`rounded-xl mx-auto mb-4 transition-all duration-300 ${
-                index === 1 ? "w-80 h-120 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-100 lg:h-100" : "w-64 h-96 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-88 lg:h-88"
+                index === 1 ? "w-80 h-120 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-100 lg:h-120" : "w-64 h-96 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-88 lg:h-88"
               } object-cover`}
               src={coach.imageUrl}
               alt={coach.name}

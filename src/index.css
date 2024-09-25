@@ -71,7 +71,7 @@ html {
 
 
 
-/* Custom scroll bar styles */
+/* Custom scroll bar styles For Score card*/
 .table-container::-webkit-scrollbar {
   width: 3px;
 }
@@ -84,4 +84,6 @@ html {
 .table-container::-webkit-scrollbar-track {
   background-color: #f1f1f1; /* Scroll bar background */
 }
+
+
 

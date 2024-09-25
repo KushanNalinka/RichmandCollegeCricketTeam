@@ -159,42 +159,32 @@ const MatchTable = () => {
 
   return (
     <div className="w-full p-4 md:p-6">
-      
-
-      
-
       <div className="relative w-full text-center">
-      {/* Background text */}
-    
-      <h1 className="text-[4rem] md:text-[5rem] lg:text-[8rem] font-bold text-outline">MATCHES</h1>
-      {/* Foreground text */}
-      <h4 className="absolute top-[53%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl md:text-6xl font-bold text-blue-900 uppercase">
-        Upcoming
-      </h4>
-    </div>
-
-
-
-
+        {/* Background and foreground text combined */}
+        <h1 className="text-[4rem] md:text-[5rem] lg:text-[7rem] italic font-bold text-outline">
+          UPCOMING <span className="text-[4rem] md:text-[5rem] lg:text-[7rem] font-extrabold text-[#4A0D34] no-outline">MATCHES</span>
+        </h1>
+      </div>
+  
       {/* Table */}
       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg">
-        <table className="min-w-full border-collapse">
+        <table className="min-w-full border-collapse rounded-lg overflow-hidden">
           {/* Table Header */}
           <thead className="bg-gradient-to-r from-blue-900 to-purple-900 text-white">
             <tr>
-              <th className="px-2 md:px-4 py-2 text-left">Date</th>
+              <th className="px-2 md:px-4 py-2 text-left rounded-tl-lg">Date</th>
               <th className="px-2 md:px-4 py-2 text-left">Time</th>
               <th className="px-2 md:px-4 py-2 text-left">Match</th>
-              <th className="px-2 md:px-4 py-2 text-left">Venue</th>
+              <th className="px-2 md:px-4 py-2 text-left rounded-tr-lg">Venue</th>
             </tr>
           </thead>
           {/* Table Body */}
           <tbody>
             {matches.map((match, index) => (
-              <tr 
-                key={index} 
+              <tr
+                key={index}
                 className={`border-t border-gray-300 ${index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'}`}
-                style={index === 0 ? { fontSize: "1.25rem", height: "80px" } : {}}
+                style={index === 0 ? { fontSize: '1.25rem', height: '80px' } : {}}
               >
                 <td className={`px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
                   {match.date}
@@ -227,6 +217,7 @@ const MatchTable = () => {
       </div>
     </div>
   );
+  
 };
 
 export default MatchTable;

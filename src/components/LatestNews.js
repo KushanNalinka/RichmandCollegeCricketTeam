@@ -278,8 +278,8 @@ const LatestNews = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Heading Section - 1/3 of the width */}
           <div className="col-span-1">
-            <h1 className="text-[4rem] md:text-[5rem] lg:text-[7rem] font-bold text-outline">LATEST</h1>
-            <h2 className="text-[4rem] md:text-[5rem] lg:text-[7rem] font-extrabold text-purple-800 mt-[-3rem]">
+            <h1 className="text-[4rem] md:text-[5rem] lg:text-[7rem] italic font-bold text-outline">LATEST</h1>
+            <h2 className="text-[4rem] md:text-[5rem] lg:text-[7rem] italic font-extrabold text-[#4A0D34] mt-[-3rem]">
               NEWS
             </h2>
             <p className="text-gray-500 mt-4 max-w-xs text-sm md:text-base lg:text-lg">

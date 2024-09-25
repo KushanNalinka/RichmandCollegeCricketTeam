@@ -443,7 +443,7 @@
 // export default ScorecardSlider;
 
 import React, { useState } from 'react';
-import backgroundImage from '../assets/images/ScoreCardTableBackGroundImage.png'; // Update the path to your image
+import backgroundImage from '../assets/images/scorecardtable.png'; // Update the path to your image
 
 const ScorecardSlider = () => {
   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
@@ -725,34 +725,34 @@ const ScorecardSlider = () => {
           </div>
 
           {/* Batsmen or Bowlers Table */}
-          <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-60">
+          <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-72">
             {currentTable === 'batsmen' ? (
               <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
                 <thead className="bg-[#4A0D34] text-white">
                   <tr>
-                    <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">B</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">M</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">4s</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">6s</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">50</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">100</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">SR</th>
+                    <th className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">R</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">B</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">M</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">4s</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">6s</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">50</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">100</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">SR</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {batsmen.map((batsman, index) => (
                     <tr key={index}>
-                      <td className="px-2 py-1 text-sm font-medium text-gray-900">{batsman.name}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.runs}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.balls}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.minutes}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fours}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.sixes}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fifty}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.hundred}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.strikeRate}</td>
+                      <td className="px-2 py-2 text-sm font-medium text-gray-900">{batsman.name}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.runs}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.balls}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.minutes}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fours}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.sixes}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fifty}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.hundred}</td>
+                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.strikeRate}</td>
                     </tr>
                   ))}
                   {/* EXTRAS row */}
@@ -804,7 +804,7 @@ const ScorecardSlider = () => {
           </div>
 
           {/* Toggle Button */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-8">
             <button
               className="bg-[#4A0D34] text-white text-sm font-medium px-4 py-2 rounded-lg"
               onClick={toggleTable}

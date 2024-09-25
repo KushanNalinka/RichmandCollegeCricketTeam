@@ -96,7 +96,7 @@
 import React from "react"; 
 import richLogo from "../assets/images/RLogo.png"; // Adjust the path to your image location
 import mahiLogo from "../assets/images/MLogo.png"; // Adjust the path to your image location
-import titleImage from '../assets/images/Upcomming Matches.png'; // Image path for the title
+
 
 const MatchTable = () => {
   const matches = [
@@ -159,10 +159,22 @@ const MatchTable = () => {
 
   return (
     <div className="w-full p-4 md:p-6">
-      {/* Title Image */}
-      <div className="flex justify-center mb-6 md:mb-8">
-        <img src={titleImage} alt="Upcoming Matches" className="w-full max-w-md md:max-w-lg lg:max-w-2xl h-auto" />
-      </div>
+      
+
+      
+
+      <div className="relative w-full text-center">
+      {/* Background text */}
+    
+      <h1 className="text-[4rem] md:text-[5rem] lg:text-[8rem] font-bold text-outline">MATCHES</h1>
+      {/* Foreground text */}
+      <h4 className="absolute top-[53%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl md:text-6xl font-bold text-blue-900 uppercase">
+        Upcoming
+      </h4>
+    </div>
+
+
+
 
       {/* Table */}
       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg">

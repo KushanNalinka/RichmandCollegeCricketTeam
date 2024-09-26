@@ -135,7 +135,7 @@ import image2 from '../assets/images/charith.png';
 import image3 from '../assets/images/wanindu.png';
 import image4 from '../assets/images/dhanajay.png'; // Additional image
 import image5 from '../assets/images/pabsara.png';
-import backgroundImage from '../assets/images/HeroBack.png'; // Background image
+import backgroundImage from '../assets/images/Highlightss.png'; // Background image
 
 const coaches = [
   {
@@ -202,11 +202,11 @@ const CoachSlider = () => {
         backgroundPosition: 'center', // Centers the image in the div
       }}
     >
-       <div className="relative w-full text-center">
+       <div className="relative w-full ml-20">
         {/* Background and foreground text combined */}
-        <h1 className="text-[4rem] md:text-[5rem] lg:text-[7rem] italic font-bold text-outline">
-          MEET OUR <span className="text-[4rem] md:text-[5rem] lg:text-[7rem] font-extrabold text-[#4A0D34] no-outline">HEROES</span>
-        </h1>
+        <h3 className="text-[4rem] md:text-[5rem] lg:text-[5rem] font-extrabold text-white italic">
+          MEET OUR HEROES
+        </h3>
       </div>
       
       {/* Player Image Slider */}

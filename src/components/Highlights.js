@@ -701,7 +701,7 @@
 
 // Most corrected code with properly displaying videos,
 import React, { useState } from "react";
-import backgroundImage from '../assets/images/Highlights.png'; // Background image path
+import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
 
 const HighlightTabs = () => {
   const [activeTab, setActiveTab] = useState("latest");
@@ -709,8 +709,8 @@ const HighlightTabs = () => {
 
   const latestVideos = [
     { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 1" },
-    { id: 2, url: "https://www.youtube.com/embed/3Le8kZFzaS0", title: "Video 2" },
-    { id: 3, url: "https://www.youtube.com/embed/gXoDp1qGhdw", title: "Video 3" },
+    { id: 2, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 2" },
+    { id: 3, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 3" },
     { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Video 4" },
     { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Video 5" },
     { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Video 6" },
@@ -779,22 +779,30 @@ const HighlightTabs = () => {
         backgroundPosition: 'center',
       }}
     >
+
+       {/* Background and foreground text combined */}
+       <div className="relative w-full ml-20">
+        {/* Background and foreground text combined */}
+        <h3 className="text-[4rem] md:text-[5rem] lg:text-[5rem] font-extrabold text-white italic">
+          RICHMOND HIGHLIGHTS
+        </h3>
+      </div>
       {/* Tabs Section */}
-      <div className="flex flex-col md:flex-row justify-center space-x-0 md:space-x-10 mt-64">
+      <div className="flex flex-col md:flex-row ml-16 space-x-0 md:space-x-10 mt-6">
         <button
-          className={`py-2 px-4 ${activeTab === "latest" ? "text-yellow-500 border-b-8 border-yellow-500" : ""}`}
+          className={`py-2 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
           onClick={() => handleTabSwitch("latest")}
         >
           LATEST VIDEOS
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "match" ? "text-yellow-500 border-b-8 border-yellow-500" : ""}`}
+          className={`py-2 px-4 font-bold ${activeTab === "match" ? "text-white border-b-8 border-white" : ""}`}
           onClick={() => handleTabSwitch("match")}
         >
           MATCH HIGHLIGHTS
         </button>
         <button
-          className={`py-2 px-4 ${activeTab === "player" ? "text-yellow-500 border-b-8 border-yellow-500" : ""}`}
+          className={`py-2 px-4 font-bold ${activeTab === "player" ? "text-white border-b-8 border-white" : ""}`}
           onClick={() => handleTabSwitch("player")}
         >
           PLAYER HIGHLIGHTS
@@ -803,8 +811,8 @@ const HighlightTabs = () => {
 
       {/* Long Line and More Videos Button */}
       <div className="relative flex justify-center items-center">
-        <hr className="w-full border-gray-300" />
-        <button className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-2 text-sm font-bold">
+        <hr className="w-full border-gray-300 ml-16 mr-16" />
+        <button className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-1 text-sm font-bold mr-16">
           MORE VIDEOS
         </button>
       </div>
@@ -827,7 +835,7 @@ const HighlightTabs = () => {
                     allowFullScreen
                     className="rounded-lg"
                   ></iframe>
-                  <p className="text-center">{sliderData[index].title}</p>
+                 
                 </div>
               );
             })
@@ -837,7 +845,7 @@ const HighlightTabs = () => {
         {/* Left Arrow */}
         <button
           onClick={handlePrev}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-yellow-500 rounded-full p-4 ml-2 md:ml-12"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-8xl"
         >
           &lt;
         </button>
@@ -845,7 +853,7 @@ const HighlightTabs = () => {
         {/* Right Arrow */}
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-yellow-500 rounded-full p-4 mr-2 md:mr-12"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-8xl"
         >
           &gt;
         </button>
@@ -858,7 +866,7 @@ const HighlightTabs = () => {
             <span
               key={idx}
               onClick={() => handleDotClick(idx)}
-              className={`mx-1 cursor-pointer ${activeIndex === idx ? "bg-yellow-500 w-8 h-2 rounded-md" : "bg-gray-300 w-2 h-2 rounded-full"}`}
+              className={`mx-1 cursor-pointer ${activeIndex === idx ? "bg-white w-8 h-2 rounded-md" : "bg-gray-300 w-2 h-2 rounded-full"}`}
             ></span>
           ))
         )}

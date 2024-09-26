@@ -218,6 +218,7 @@ import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
 import Footer from '../components/Footer';
 import videoSrc from '../assets/images/new.mp4'; // Corrected import for video
+import Highlights from '../components/Highlights';
 
 const HomePage = () => {
   return (
@@ -246,6 +247,7 @@ const HomePage = () => {
         <ResultsTable />
         <Number />
         <LatestNews />
+        <Highlights />
         <UpcomingMatches />
         <Hero />
       </div>

@@ -175,8 +175,7 @@ const ScoreCard = () => {
     <div className="w-full h-auto flex flex-col items-center  mt-1">
       {/* Title Section */}
       <div className="text-center">
-        <h1 className="text-[7rem] italic font-bold text-outline ">RECENT</h1>
-        <h2 className="text-[7rem] italic font-extrabold text-[#4A0D34] mt-[-3rem]">MATCH  RESULTS</h2>
+        <h1 className="text-[64px] italic font-extrabold text-[#4A0D34] stroke-2">RECENT MATCH  RESULTS</h1>
       </div>
 
       {/* Main Score Card */}

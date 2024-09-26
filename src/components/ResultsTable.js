@@ -443,7 +443,7 @@
 // export default ScorecardSlider;
 
 import React, { useState } from 'react';
-import backgroundImage from '../assets/images/scorecardtable.png'; // Update the path to your image
+import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
 
 const ScorecardSlider = () => {
   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables

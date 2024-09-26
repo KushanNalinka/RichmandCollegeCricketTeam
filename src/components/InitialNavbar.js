@@ -383,6 +383,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import Logo from '../assets/images/rcclogo.png';
+import { FaUser } from 'react-icons/fa'; // Import user icon from react-icons
+
 
 const HomeNavbar = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -540,14 +542,15 @@ const HomeNavbar = () => {
           </li>
         </ul>
 
-        {/* Right section with Login Button */}
+        {/* Right section with Sign In Text and User Icon */}
         <div className="flex items-center">
-          <button
-            className="bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all duration-300 ease-in-out"
-            onClick={handleLoginClick}
+          <div
+            className="flex items-center cursor-pointer text-white font-semibold hover:text-yellow-300 transition-all duration-300 ease-in-out"
+            onClick={handleLoginClick} // Redirect to login page
           >
-            Login
-          </button>
+            <FaUser className="mr-2" /> {/* User icon */}
+            <span>Sign In</span> {/* Sign In text */}
+          </div>
         </div>
       </div>
     </nav>

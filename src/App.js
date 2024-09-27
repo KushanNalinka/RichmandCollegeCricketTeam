@@ -19,6 +19,7 @@ import CoachProfile from './pages/coachProfile.js';
 import AddPlayer from './components/AddPlayer.js';
 import AddCoachForm from './components/AddCoachForm.js';
 import AdminDashboard from './pages/AdminDashboard.js';
+import NewsPage from './pages/NewsPage.js'; 
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
+         <Route path="/news" element={<NewsPage />} />
         </Routes>
     </BrowserRouter>
   );

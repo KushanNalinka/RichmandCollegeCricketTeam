@@ -27,7 +27,9 @@ module.exports = {
         'sans': ['Inter', 'sans-serif'],
       },
       fontSize: {
-        'xxs': '0.625rem', // Custom font size for screens smaller than xs
+        'xxs': '0.625rem',  // Extra small size
+        'xxxs': '0.5rem',   // Extra extra small size
+        'xxxxs': '0.375rem' // Extra extra extra small size
       },
     },
   },

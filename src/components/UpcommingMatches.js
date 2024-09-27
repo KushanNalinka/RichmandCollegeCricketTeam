@@ -158,8 +158,8 @@ const MatchTable = () => {
   ];
 
   return (
-    <div className="w-full p-4 md:p-6 ">
-      <div className="relative w-full ml-20">
+    <div className="w-full ">
+      <div className="relative w-full ml-20 mt-6">
         {/* Background and foreground text combined */}
         <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#4A0D34] italic" >
           UPCOMING MATCHES

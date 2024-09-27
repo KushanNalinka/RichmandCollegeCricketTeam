@@ -260,9 +260,11 @@ import React, { useState } from 'react';
 import image1 from '../assets/images/suranga.png';
 import image2 from '../assets/images/charith.png';
 import image3 from '../assets/images/wanindu.png';
-import image4 from '../assets/images/dhanajay.png';
-import image5 from '../assets/images/pabsara.png';
+import image4 from '../assets/images/dhananjay.png';
+import image5 from '../assets/images/pabasara.png';
 import image6 from '../assets/images/djananjaya.png';
+import image7 from '../assets/images/kamindu.png';
+
 import backgroundImage from '../assets/images/Highlightss.png';
 
 const coaches = [
@@ -295,6 +297,11 @@ const coaches = [
     name: "Sherman Warner",
     role: "All Rounder",
     imageUrl: image6, 
+  },
+  {
+    name: "Sherman Warner",
+    role: "All Rounder",
+    imageUrl: image7, 
   },
 ];
 

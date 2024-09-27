@@ -445,12 +445,13 @@
 import React, { useState } from 'react';
 import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
 
+
 const ScorecardSlider = () => {
   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
 
   const batsmen = [
     {
-      name: 'Player 1',
+      name: 'Lahiru Jayasinghe',
       runs: 50,
       balls: 30,
       minutes: 45,
@@ -461,7 +462,7 @@ const ScorecardSlider = () => {
       strikeRate: 166.67,
     },
     {
-      name: 'Player 2',
+      name: 'Pamitha Pankaja',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -473,7 +474,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Yeran Fernando',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -485,7 +486,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Nuwan Nilupul',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -497,7 +498,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Pasindu Chamika',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -509,7 +510,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Chenuka Kuruppu',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -521,7 +522,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Nimesh Nelanga',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -532,7 +533,7 @@ const ScorecardSlider = () => {
       strikeRate: 171.43,
     },
     {
-      name: 'Player 1',
+      name: 'Kushan Nalinka',
       runs: 50,
       balls: 30,
       minutes: 45,
@@ -543,7 +544,7 @@ const ScorecardSlider = () => {
       strikeRate: 166.67,
     },
     {
-      name: 'Player 2',
+      name: 'Deshan Kavishka',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -555,7 +556,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Ravindu Panditha',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -567,7 +568,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Player 2',
+      name: 'Thilina Maduranga',
       runs: 60,
       balls: 35,
       minutes: 50,
@@ -582,7 +583,7 @@ const ScorecardSlider = () => {
   // Sample bowlers data
   const bowlers = [
     {
-      name: 'Bowler 1',
+      name: 'Peshala Nimnajith',
       overs: 4,
       maidens: 0,
       runs: 30,
@@ -593,7 +594,7 @@ const ScorecardSlider = () => {
       cost: 10,
     },
     {
-      name: 'Bowler 2',
+      name: 'Menuka Sathsara',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -603,7 +604,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Rasindu Pereis',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -613,7 +614,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Gevindu Kumara',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -623,7 +624,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Akila Darshana',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -633,7 +634,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Gayan Pathirana',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -644,7 +645,7 @@ const ScorecardSlider = () => {
     },
 
     {
-      name: 'Bowler 2',
+      name: 'Wanidu De Silva',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -654,7 +655,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Hasaral Madushanka',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -664,7 +665,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Chenuka Manditha',
       overs: 4,
       maidens: 0,
       runs: 25,
@@ -674,7 +675,7 @@ const ScorecardSlider = () => {
       economy: 6.25,
     },
     {
-      name: 'Bowler 2',
+      name: 'Ovindu Mandith',
       overs: 4,
       maidens: 0,
       runs: 25,

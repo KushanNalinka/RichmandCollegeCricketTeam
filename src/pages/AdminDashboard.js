@@ -26,28 +26,28 @@ function AdminDashboard() {
         >
           <h1 className="text-3xl font-bold text-left text-[#480D35] mb-8">Admin Dashboard</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-[#08165A]">
-            <Link to="/player" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/player" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Players</span>
             </Link>
-            <Link to="/addPlayer" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/addPlayer" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Add Player</span>
             </Link>
-            <Link to="/addCoach" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/addCoach" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Add Coach</span>
             </Link>
-            <Link to="/addProfile" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/addProfile" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Add Profile</span>
             </Link>
-            <Link to="/match" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/match" className="flex items-center justify-center w-full h-40 bg-white hover:bg-gray-300 transition duration-200 rounded-lg shadow-[1 1 1 1">
               <span className="text-xl font-semibold">Matches</span>
             </Link>
-            <Link to="/admin-scoreCard" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/admin-scoreCard" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Scores</span>
             </Link>
-            <Link to="/team" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/team" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Teams</span>
             </Link>
-            <Link to="/coaches" className="flex items-center justify-center w-full h-40 bg-gray-200 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/coaches" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Coaches</span>
             </Link>
           </div>

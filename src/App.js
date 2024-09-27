@@ -19,6 +19,7 @@ import AddCoachForm from './components/AddCoachForm.js';
 import AdminDashboard from './pages/AdminDashboard.js';
 import OfficialProfile from './pages/OfficialProfile.js';
 import AddOfficialForm from './components/AddOfficialForm.js';
+import ScoreCardPopup from './components/ScoreCardPopup.js';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
          <Route path='/coachProfile' element={<CoachProfile/>}/>
          <Route path='/officialProfile' element={<OfficialProfile/>}/>
          <Route path="/match-info" element={<MatchInfo />} />
+         <Route path="/scorecard-form" element={<ScoreCardPopup />} />
           <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />

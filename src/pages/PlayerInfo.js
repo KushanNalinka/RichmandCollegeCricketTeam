@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
@@ -104,18 +105,38 @@ const data = [
 ];
 
 const TableComponent = () => {
+  const [playerData, setPlayerData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 8; // Number of rows per page
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    // Fetch player data for playerId 4
+    axios
+      .get(`http://localhost:5000/api/admin/players/all`)
+      .then((response) => {
+        const players = response.data;
+        setPlayerData(players);
+        console.log("Player Data:", playerData);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the player data!", error);
+      });
+  }, []);
+
+  const handleEdit = player => {
+    setCurrentPlayer(player);
+    setIsEditFormOpen(true);
+  };
 
   // Calculate total pages
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = data.slice(
+  const paginatedData = playerData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -132,13 +153,13 @@ const TableComponent = () => {
     }
   };
 
-  const handleEdit = player => {
-    setCurrentPlayer(player);
-    setIsEditFormOpen(true);
-  };
-
-  const handleDelete = index => {
-    console.log("Delete row:", index);
+  const handleDelete = async id => {
+    const deletePayer = await axios.delete(`http://localhost:5000/api/admin/players/delete/${id}`)
+   
+    console.log("Delete row:", id);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const toggleForm = () => {
@@ -150,32 +171,35 @@ const TableComponent = () => {
     setIsFormOpen(false);
   };
 
-  const handleSaveEditPlayer = player => {
-    // Logic to save edited player information, including image upload if necessary
-    console.log("Player updated:", player);
-    setIsEditFormOpen(false);
-  };
   const toggleButton = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <div
-      className="h-screen w-screen"
+      className=" flex flex-col relative"
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        width: "full", // Full viewport width
+        height: "full", // Full viewport height
       }}
     >
-      <HomeNavbar />
-      <div className=" flex relative items-center justify-center top-32 p-2 w-full">
+      
+      
+      
+         <div className="relative flex">
+        <HomeNavbar />
+      </div>
+      
+      <div className=" flex relative items-center justify-center p-2 pt-24 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
         {/* <div className=" md:w-[85%] w-[100%] lg:mx-3 "> */}
         <div
-          className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+          className=" relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -251,13 +275,10 @@ const TableComponent = () => {
                           alt={item.name}
                           className=" h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
-                    
-                      
                         {item.name}
-                      
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
-                      {item.dob}
+                      {item.dateOfBirth}
                     </td>
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
@@ -287,7 +308,7 @@ const TableComponent = () => {
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(item.playerId)}
                         className="text-red-700 hover:text-red-600 text-md"
                         aria-label="Delete"
                         title="Delete"
@@ -330,7 +351,6 @@ const TableComponent = () => {
           <EditPlayerForm
             player={currentPlayer}
             onClose={() => setIsEditFormOpen(false)}
-            onSave={handleSaveEditPlayer}
           />}
       </div>
     </div>

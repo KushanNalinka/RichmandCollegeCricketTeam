@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; 
 import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
@@ -8,7 +8,6 @@ import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the Edi
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-// import flag from "../assets/images/flagbg.png";
 import flag from "../assets/images/backDrop.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
@@ -18,98 +17,8 @@ import PlayerFormPopup from "../components/ScoreCardPopup.js";
 
 
 const MatchDetails = () => {
-  const [matches, setMatches] = useState([
-    {
-
-      matchId:1,
-      matchName: "Match 1",
-      time: "2024-08-29T10:00",
-      venue: "Stadium A",
-      opponent: "Team X",
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    {
-      matchId:2,
-      matchName: "Match 2",
-      time: "2024-08-30T14:00",
-      venue: "Stadium B",
-      opponent: "Team Y",
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-
-    },
-    {
-      matchId:3,
-      matchName: "Match 3",
-      time: "2024-08-29T10:00",
-      venue: "Stadium A",
-      opponent: "Team X",
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    { 
-      matchId:4,
-      matchName: "Match 4",
-      time: "2024-08-30T14:00",
-      venue: "Stadium B",
-      opponent: "Team Y",
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-    },
-    {
-      matchId:5,
-      matchName: "Match 5",
-      time: "2024-08-29T10:00",
-      venue: "Stadium A",
-      opponent: "Team X",
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    {
-      matchId:6,
-      matchName: "Match 6",
-      time: "2024-08-30T14:00",
-      venue: "Stadium B",
-      opponent: "Team Y",
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-    },
-    {
-      matchId:7,
-      matchName: "Match 7",
-      time: "2024-08-29T10:00",
-      venue: "Stadium A",
-      opponent: "Team X",
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    { 
-      matchId:8,
-      matchName: "Match 8",
-      time: "2024-08-30T14:00",
-      venue: "Stadium B",
-      opponent: "Team Y",
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-    }
-  ]);
+ 
+  const [matches,setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
   const navigate = useNavigate();
@@ -117,10 +26,24 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 8; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
-  
+
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/matches/all"); // Update with your API endpoint
+        setMatches(response.data);
+        console.log(response)
+      } catch (error) {
+        console.error("Error fetching matches:", error);
+      }
+    };
+
+    fetchMatches();
+  }, []);
 
   const totalPages = Math.ceil(matches.length / rowsPerPage);
 
@@ -152,8 +75,9 @@ const MatchDetails = () => {
     setMatches(updatedMatches);
   };
 
-  const handleAddStat = index => {
-    setCurrentMatchIndex(index);
+  const handleAddStat = id => {
+    setMatchId(id)
+    setCurrentMatchIndex(id);
     setIsPopupOpen(true); 
   };
 
@@ -174,10 +98,6 @@ const MatchDetails = () => {
     setMatches(updatedMatches);
     setIsEditPopupOpen(false);
     setCurrentMatchIndex(null);
-  };
-
-  const handleFormPopupClose = () =>{
-    setIsFormPopupOpen(false);
   };
 
   const handlePopupClose = () => {
@@ -205,20 +125,23 @@ const MatchDetails = () => {
 
   return (
     <div
-    className="h-screen w-screen"
+    className=""
     style={{
       backgroundImage: `url(${flag})`,
       backgroundSize: "cover",
-      backgroundPosition: "center"
+      backgroundPosition: "center",
+      width: "100vw", // Full viewport width
+      height: "full", // Full viewport height
+      minHeight: "100vh", // Minimum height to cover full screen
     }}
   >
     <HomeNavbar/>
     <div className=" flex relative items-center top-32 p-2 w-full">
-      <div className="lg:w-[5%]">
+      <div className="w-[5%]">
         <Navbar/>
       </div>  
       <div
-        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
         style={{
           backdropFilter: "blur(10px)",
           boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -243,7 +166,7 @@ const MatchDetails = () => {
             <thead className=" bg-[#480D35] text-white rounded">
               <tr>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Match Name
+                  Date
                 </th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                   Time
@@ -274,11 +197,11 @@ const MatchDetails = () => {
             <tbody className=" divide-y divide-gray-300">
               {paginatedData.map((match, index) =>
                 <tr
-                  key={index}
+                  key={match.matchId}
                   className=" hover:bg-gray-50 h-full align-middle"
                 >
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
-                    {match.matchName}
+                    {match.date}
                   </td>
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                     {match.time}
@@ -287,7 +210,7 @@ const MatchDetails = () => {
                     {match.venue}
                   </td>
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
-                    {match.opponent}
+                    {match.opposition}
                   </td>
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                     {match.tier}
@@ -296,7 +219,7 @@ const MatchDetails = () => {
                     {match.division}
                   </td>
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                    {match.umpire}
+                    {match.umpires}
                   </td>
                   <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                     {match.type}
@@ -317,7 +240,7 @@ const MatchDetails = () => {
                       <FaTrash />
                     </button>
                     <button
-                      onClick={() => handleAddStat(index)}
+                      onClick={() => handleAddStat(match.matchId)}
                       title="Add"
                       className="text-blue-700 hover:text-blue-600"
                     >
@@ -344,7 +267,7 @@ const MatchDetails = () => {
           >
             <GrLinkPrevious style={{ color: "#fff" }} />
           </button>
-
+        
           <div className="text-sm font-semibold">
             Page {currentPage} of {totalPages}
           </div>
@@ -362,10 +285,11 @@ const MatchDetails = () => {
       {/* Popup for Adding Form */}
       <FormPopup
         isOpen={isFormPopupOpen}
-        onClose={handleFormPopupClose}
+        onClose={()=>setIsFormPopupOpen(false)}
         onSubmit={handleFormPopupSubmit}
       />
       <MatchStatPopup
+        matchId={matchId}
         isOpen={isPopupOpen}
         onClose={handlePopupClose}
         onSubmit={statData => console.log("Match Stat Submitted:", statData)}

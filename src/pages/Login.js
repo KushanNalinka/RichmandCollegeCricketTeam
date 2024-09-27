@@ -74,7 +74,7 @@ import axios from "axios";
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
-import backgroundImage from "../assets/images/BG1.png"; // Import the background image
+import backgroundImage from "../assets/images/Highlightss.png"; // Import the background image
 
 const Login = () => {
   const [inputs, setInputs] = useState({

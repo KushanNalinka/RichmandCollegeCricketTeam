@@ -42,7 +42,7 @@ function App() {
           <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
-         <Route path='/addminDashboard' element={<AdminDashboard/>}/>
+         <Route path='/adminDashboard' element={<AdminDashboard/>}/>
         </Routes>
     </BrowserRouter>
   );

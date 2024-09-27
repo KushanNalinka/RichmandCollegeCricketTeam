@@ -580,10 +580,10 @@ const PlayerProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-    const playerData = await axios.get( "http://localhost:8080/api/admin/players/4");
+    const playerData = await axios.get( "http://localhost:5000/api/admin/players/4");
     setPlayerProfile(playerData.data);
 
-    const playerStat = await axios.get( "http://localhost:8080/api/playerStats/all-stats/4");
+    const playerStat = await axios.get( "http://localhost:5000/api/playerStats/all-stats/4");
     setPlayerStat(playerStat.data);
     console.log("player stack", playerStat);
   };
@@ -619,6 +619,9 @@ const PlayerProfile = () => {
         acc.innings += stat.inning.length || 0;
         acc.runs += stat.runs || 0;
         acc.highestScore = Math.max(acc.highestScore, stat.highestScore);
+        
+        acc.bestValue =Math.max(acc.bestValue,stat.runConceded/stat.wickets);
+
         acc.battingAvg =
           acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
         acc.sr = (acc.runs / acc.innings).toFixed(2); // Simplified SR calculation

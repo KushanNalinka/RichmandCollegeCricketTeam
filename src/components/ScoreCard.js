@@ -172,11 +172,14 @@ import rightBadge from '../assets/images/MLogo.png'; // Adjust the path accordin
 
 const ScoreCard = () => {
   return (
-    <div className="w-full h-auto flex flex-col items-center  mt-1">
-      {/* Title Section */}
-      <div className="text-center">
-        <h1 className="text-[64px] italic font-extrabold text-[#4A0D34] stroke-2">RECENT MATCH  RESULTS</h1>
+    <>
+    {/* Title Section */}
+    <div className="ml-20">
+        <p className="text-[48px] italic font-extrabold text-[#4A0D34] stroke-2">RECENT MATCH  RESULTS</p>
       </div>
+    
+    <div className="w-full h-auto flex flex-col items-center  mt-1">
+      
 
       {/* Main Score Card */}
       <div className="bg-white shadow-lg rounded-xl py-10 px-10 flex justify-between items-center w-[95%] mt-4 mb-8">
@@ -229,6 +232,7 @@ const ScoreCard = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

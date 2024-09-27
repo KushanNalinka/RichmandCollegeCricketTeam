@@ -158,19 +158,19 @@ const MatchTable = () => {
   ];
 
   return (
-    <div className="w-full p-4 md:p-6">
-      <div className="relative w-full text-left">
+    <div className="w-full p-4 md:p-6 ">
+      <div className="relative w-full ml-20">
         {/* Background and foreground text combined */}
-        <h2  className="text-[4rem] md:text-[5rem] lg:text-[6rem] font-extrabold text-[#4A0D34] italic" >
+        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#4A0D34] italic" >
           UPCOMING MATCHES
-        </h2>
+        </p>
       </div>
   
       {/* Table */}
       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg">
         <table className="min-w-full border-collapse rounded-lg overflow-hidden">
           {/* Table Header */}
-          <thead className="bg-gradient-to-r from-blue-900 to-purple-900 text-white">
+          <thead className="bg-gradient-to-r from-[#00175F] to-[#4A0D34] text-white">
             <tr>
               <th className="px-2 md:px-4 py-2 text-left rounded-tl-lg">Date</th>
               <th className="px-2 md:px-4 py-2 text-left">Time</th>

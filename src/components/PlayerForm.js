@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaTimes } from 'react-icons/fa'; // Import close icon
 
-const FormPopup = ({ closeForm, onSave }) => {
+const FormPopup = ({ closeForm }) => {
   const [formData, setFormData] = useState({
     name: '',
     dob: '',

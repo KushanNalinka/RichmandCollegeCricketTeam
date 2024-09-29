@@ -17,7 +17,7 @@ const TableComponent = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 4; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -178,7 +178,7 @@ const TableComponent = () => {
                           alt={item.name}
                           className=" h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
-                        {item.name}
+                        {item.name.split(' ').slice(-2).join(' ')}
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
                       {item.dateOfBirth}
@@ -249,7 +249,7 @@ const TableComponent = () => {
           </div>
         </div>
         {isFormOpen &&
-          <PlayerForm closeForm={() => setIsFormOpen(false)} onSave={handleSavePlayer} />}
+          <PlayerForm closeForm={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&
           <EditPlayerForm
             player={currentPlayer}

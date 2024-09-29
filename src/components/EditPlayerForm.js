@@ -66,17 +66,6 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
-    if (
-      !formData.name ||
-      !formData.dateOfBirth ||
-      !formData.email ||
-      !formData.username ||
-      !formData.playerRole
-    ) {
-      message.error("Missing required fields");
-
-    } 
-    else{
       try {
         let imageURL = formData.image;
       
@@ -116,7 +105,7 @@ const EditPlayerForm = ({ player, onClose }) => {
         console.error("Error submitting form:", error);
         message.error("Failed!");
       }
-    }
+    
   };
 
   const handleImageUpload = (file) => {
@@ -156,7 +145,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player</h2>
+        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player Details</h2>
         <form
           onSubmit={handleEdit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3 h-[500px] hover:overflow-auto overflow-hidden"
@@ -169,6 +158,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              
             />
           </div>
           <div>
@@ -179,6 +169,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.dateOfBirth}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              
             />
           </div>
           <div className="mb-1">
@@ -189,7 +180,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              required
+          
             />
           </div>
           <div>
@@ -200,6 +191,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              
             />
           </div>
           <div className="mb-1">
@@ -209,7 +201,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               name="password"
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              required
+              
             />
           </div>
           {/* <div className="mb-1">
@@ -231,6 +223,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.contactNo}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              
             />
           </div>
           <div className="mb-1">
@@ -240,7 +233,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.battingStyle}
               onChange={handleChange}
               className=" py-1 px-3 border border-gray-300 text-black rounded-lg w-full"
-              required
+              
             >
               <option value='' disabled>
                 select
@@ -256,7 +249,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.bowlingStyle}
               onChange={handleChange}
               className=" px-3 py-1 border text-black border-gray-300 rounded-lg w-full"
-              required
+              
             >
               <option value='' disabled>
                 select
@@ -272,7 +265,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.playerRole}
               onChange={handleChange}
               className=" px-3 py-1 border text-black border-gray-300 rounded-lg w-full"
-              required
+            
             >
               <option value='' disabled>
                 select
@@ -289,6 +282,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.status}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+          
             >
               <option value='' disabled>
                 select
@@ -307,7 +301,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.startDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              required
+        
             />
           </div>
           <div className="mb-1">
@@ -320,7 +314,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.endDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              required
+            
             />
           </div>
           <div className="col-span-2">

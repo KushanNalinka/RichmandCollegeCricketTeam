@@ -441,7 +441,7 @@ import axios from "axios";
 import { message } from "antd";
 import { FaTimes, FaTrash } from "react-icons/fa";
 
-const FormPopup = ({ isOpen, onClose }) => {
+const FormPopup = ({  onClose }) => {
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
@@ -511,7 +511,22 @@ const FormPopup = ({ isOpen, onClose }) => {
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
-      setSelectedCoaches(null);
+      setFormData({
+        date: "",
+        time: "",
+        venue: "",
+        opposition: "",
+        tier: "",
+        division: "",
+        umpires: "",
+        type: "",
+        matchCaptain: "",
+        team: {
+          teamId: ""
+        },
+        coaches: []
+      })
+      setSelectedCoaches([]);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
@@ -541,18 +556,16 @@ const FormPopup = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-70 flex items-center pt-10 justify-center ${isOpen
-        ? "block"
-        : "hidden"}`}
+      className={"fixed inset-0 bg-black bg-opacity-70 flex items-center pt-16 justify-center"}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+      <div className="bg-white py-5 px-8 rounded-lg shadow-lg w-full max-w-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold text-[#480D35]">
             Add Match Details
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-gray-800 text-2xl"
+            className="text-gray-600 hover:text-gray-800 text-xl"
           >
             <FaTimes />
           </button>
@@ -716,7 +729,7 @@ const FormPopup = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               required
             >
-              <option value="">Select status</option>
+              <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.teamId}>
                   {team.under}
@@ -733,6 +746,7 @@ const FormPopup = ({ isOpen, onClose }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               required
             >
+               <option value="" disabled selected>Select type</option>
               <option value="Test">Test</option>
               <option value="ODI">ODI</option>
               <option value="T20">T20</option>

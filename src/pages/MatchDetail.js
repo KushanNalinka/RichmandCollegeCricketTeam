@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; 
 import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
+import { message } from "antd";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
@@ -72,10 +73,20 @@ const MatchDetails = () => {
     setIsEditPopupOpen(true);
   };
 
-  const handleDelete = index => {
-    const updatedMatches = matches.filter((_, i) => i !== index);
-    setMatches(updatedMatches);
+  const handleDelete = async id => {
+    try{
+      const deleteMatch = await axios.delete(`http://localhost:5000/api/matches/delete/${id}`)
+      message.success("Successfully Deleted!");
+      console.log("Delete row:", id);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+  } catch (error) {
+    console.error("Error deleting match:", error);
+    message.error("Failed!");
+  }
   };
+
 
   const handleAddStat = id => {
     setMatchId(id)
@@ -236,7 +247,7 @@ const MatchDetails = () => {
                       <FaEdit />
                     </button>
                     <button
-                      onClick={() => handleDelete(index)}
+                      onClick={() => handleDelete(match.matchId)}
                       title="Delete"
                       className="text-red-700 hover:text-red-600"
                     >

@@ -11,106 +11,13 @@ import flag from "../assets/images/backDrop.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
 
-// Sample data
-const data = [
-  // Sample data here...
-  {
-    name: "John Doe",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Jane Smith",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "Pathum Nissanke",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Rajapakse",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "John Doe",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Jane Smith",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "Pathum Nissanke",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Rajapakse",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  }
-];
-
 const TableComponent = () => {
   const [playerData, setPlayerData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const rowsPerPage = 4; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -133,7 +40,7 @@ const TableComponent = () => {
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const totalPages = Math.ceil(playerData.length / rowsPerPage);
 
   // Slice data for current page
   const paginatedData = playerData.slice(
@@ -182,24 +89,20 @@ const TableComponent = () => {
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        width: "full", // Full viewport width
+        width: "100vw", // Full viewport width
         height: "full", // Full viewport height
+        minHeight: "100vh"
       }}
     >
-      
-      
-      
-         <div className="relative flex">
         <HomeNavbar />
-      </div>
       
-      <div className=" flex relative items-center justify-center p-2 pt-24 w-full">
-        <div className=" lg:w-[5%] ">
+      <div className=" flex relative items-center justify-center p-2 pt-32 w-full">
+        <div className="w-[5%] ">
           <Navbar />
         </div>
         {/* <div className=" md:w-[85%] w-[100%] lg:mx-3 "> */}
         <div
-          className=" relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+          className="h-full bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",

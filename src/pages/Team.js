@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; 
+import { message } from "antd";
 import { FaTrash, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
 import EditModal from "../components/TeamEditModal"; // Import the EditModal component
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
@@ -18,29 +20,44 @@ import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 
 const TableComponent = () => {
-  const [data, setData] = useState([
-    { id: 1, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 2, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 3, under: "Team C", year: 2022, captain: "Charlie" },
-    { id: 4, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 5, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 6, under: "Team C", year: 2022, captain: "Charlie" },
-    { id: 7, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 8, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 9, under: "Team C", year: 2022, captain: "Charlie" }
-  ]);
+  // const [data, setData] = useState([
+  //   { id: 1, under: "Team A", year: 2024, captain: "Alice" },
+  //   { id: 2, under: "Team B", year: 2023, captain: "Bob" },
+  //   { id: 3, under: "Team C", year: 2022, captain: "Charlie" },
+  //   { id: 4, under: "Team A", year: 2024, captain: "Alice" },
+  //   { id: 5, under: "Team B", year: 2023, captain: "Bob" },
+  //   { id: 6, under: "Team C", year: 2022, captain: "Charlie" },
+  //   { id: 7, under: "Team A", year: 2024, captain: "Alice" },
+  //   { id: 8, under: "Team B", year: 2023, captain: "Bob" },
+  //   { id: 9, under: "Team C", year: 2022, captain: "Charlie" }
+  // ]);
+  const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 8; // Number of rows per page
+  const rowsPerPage = 2; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/teams/all"); // Update with your API endpoint
+        setTeams(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching matches:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
+  const totalPages = Math.ceil(teams.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = data.slice(
+  const paginatedData = teams.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -63,25 +80,37 @@ const TableComponent = () => {
     setIsEditModalOpen(true);
   };
 
-  const handleDelete = id => {
-    setData(data.filter(item => item.id !== id));
-  };
+ 
 
   const handleViewMembers = id => {
     alert(`View members for row with ID: ${id}`);
     // Implement view members functionality here
   };
 
-  const handleAdd = () => {
-    setData([...data, { id: Date.now(), ...form }]);
-    setForm({ under: "", year: "", captain: "" });
-    setIsModalOpen(false);
-  };
+  // const handleAdd = () => {
+  //   setData([...data, { id: Date.now(), ...form }]);
+  //   setForm({ under: "", year: "", captain: "" });
+  //   setIsModalOpen(false);
+  // };
 
-  const handleEditSubmit = () => {
-    setData(data.map(item => (item.id === editItem.id ? form : item)));
-    setEditItem(null);
-    setIsEditModalOpen(false);
+  // const handleEditSubmit = () => {
+  //   setData(data.map(item => (item.id === editItem.id ? form : item)));
+  //   setEditItem(null);
+  //   setIsEditModalOpen(false);
+  // };
+
+  const handleDelete = async id => {
+    try{
+      const deleteTeam = await axios.delete(`http://localhost:5000/api/teams/delete/${id}`)
+      message.success("Successfully Deleted!");
+      console.log("Delete row:", id);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+  } catch (error) {
+    console.error("Error deleting match:", error);
+    message.error("Failed!");
+  }
   };
 
   const handleInputChange = e => {
@@ -210,10 +239,7 @@ const TableComponent = () => {
         {/* Modal for adding new item */}
         {isModalOpen &&
           <AddNewModal
-            form={form}
-            onInputChange={handleInputChange}
             onClose={() => setIsModalOpen(false)}
-            onAdd={handleAdd}
           />}
 
         {/* Edit Modal */}
@@ -224,7 +250,7 @@ const TableComponent = () => {
             form={form}
             onInputChange={handleInputChange}
             onClose={() => setIsEditModalOpen(false)}
-            onSubmit={handleEditSubmit}
+           
           />}
       </div>
       </div>

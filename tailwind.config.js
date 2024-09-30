@@ -1,44 +1,35 @@
 
+
 // /** @type {import('tailwindcss').Config} */
-// export default {
+// module.exports = {
 //   content: [
-//     "./src/**/*.{js,ts,jsx,tsx}",
-//     "./public/index.html",
-//     'node_modules/flowbite-react/lib/esm/**/*.js',
+//     "./src/**/*.{js,jsx,ts,tsx}",
 //   ],
 //   theme: {
 //     extend: {
-
-//       colors: {
-//         baseBlue:'#00175F',
-//         baseBlue2:'#002488',
-//         baseRed1:'#802F3B',
-//         baseRed2:'#823944'
-//       },
-//       backgroundImage: {
-//         'Background': "url('./src/assets/images/wallback.png')",
-//       },      
-//     }
 
 //       fontSize: {
 //         'xxs': '0.625rem', // Custom font size for screens smaller than xs
 //       },
 //     },
-
 //   },
 //   plugins: [],
 // }
 
-/** @type {import('tailwindcss').Config} */
+/** @type {import('tailwindcss').Config} */ 
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {
-
+      fontFamily: {
+        'sans': ['Inter', 'sans-serif'],
+      },
       fontSize: {
-        'xxs': '0.625rem', // Custom font size for screens smaller than xs
+        'xxs': '0.625rem',  // Extra small size
+        'xxxs': '0.5rem',   // Extra extra small size
+        'xxxxs': '0.375rem' // Extra extra extra small size
       },
     },
   },

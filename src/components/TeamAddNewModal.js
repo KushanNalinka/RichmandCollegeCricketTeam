@@ -48,7 +48,8 @@ const AddNewModal = ({  onClose }) => {
       setFormData({
         under:'',
         year:'',
-        captain:''
+        captain:'',
+        players:[]
       });
       setSelectedPlayers([]);
     } catch (error) {
@@ -58,8 +59,11 @@ const AddNewModal = ({  onClose }) => {
   };
 
   const handlePlayerSelect = player => {
-    // Avoid adding duplicate coaches
-    if (!selectedPlayers.includes(player)) {
+    if (selectedPlayers.includes(player)) {
+      // If player is already selected, remove them
+      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    } else {
+      // Otherwise, add the player to the list
       setSelectedPlayers([...selectedPlayers, player]);
     }
   };
@@ -172,22 +176,24 @@ const AddNewModal = ({  onClose }) => {
                 <FaTrash/>
               </button>
             </div>
-            <select
-              className="w-full px-3 py-1 border border-gray-200 rounded mb-2"
-              onChange={e =>
-                handlePlayerSelect(
-                  players.find(
-                    player => player.playerId === parseInt(e.target.value)
-                  )
-                )}
-            >
-              <option value="" disabled selected >Select players</option>
-              {players.map((player) => (
-                <option key={player.playerId} value={player.playerId}>
-                  {player.name.split(' ').slice(-2).join(' ')}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <div className="border overflow-auto h-40 border-gray-300 rounded-lg mt-2 px-3 py-2">
+                {players.map((player) => (
+                  <div key={player.playerId} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`player-${player.playerId}`}
+                      className="mr-2"
+                      checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                      onChange={() => handlePlayerSelect(player)}
+                    />
+                    <label htmlFor={`player-${player.playerId}`} className="text-gray-700">
+                      {player.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+          </div>
           </div>
           <div className="flex justify-end space-x-2 ">
             <button

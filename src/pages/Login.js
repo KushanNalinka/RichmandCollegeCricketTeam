@@ -94,7 +94,12 @@ const Login = () => {
     try {
       if (inputs.username === "Admin" && inputs.password === "123456") {
         navigate("/adminDashboard");
-      } else {
+      } 
+      else if (inputs.username === "User" && inputs.password === "123456") {
+        
+        navigate("/member");
+      }
+      else {
         await login(inputs);
         navigate("/");
       }

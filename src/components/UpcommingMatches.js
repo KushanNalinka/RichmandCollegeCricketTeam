@@ -161,7 +161,7 @@ const MatchTable = () => {
     <div className="w-full ">
       <div className="relative w-fit ml-20 mt-6">
         {/* Background and foreground text combined */}
-        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#4A0D34] italic" >
+        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#4A0D34] " >
           UPCOMING MATCHES
         </p>
       </div>

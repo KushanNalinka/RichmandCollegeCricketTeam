@@ -23,7 +23,7 @@ module.exports = {
   ],
   theme: {
     extend: {
-      fontFamily: {
+     /* fontFamily: {
         'sans': ['Inter', 'sans-serif'],
       },
       
@@ -31,7 +31,7 @@ module.exports = {
         'xxs': '0.625rem',  // Extra small size
         'xxxs': '0.5rem',   // Extra extra small size
         'xxxxs': '0.375rem' // Extra extra extra small size
-      },
+      },*/
     },
   },
   plugins: [],

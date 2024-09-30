@@ -773,11 +773,13 @@ const HomeNavbar = () => {
       <div className="flex items-center justify-between w-fit bg-transparent backdrop-blur-md rounded-full shadow-lg px-6 py-2">
         {/* Logo on the left */}
         <div className="flex items-center">
+        <Link to="/">
           <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
+          </Link >
         </div>
 
         {/* Centered Navbar Items */}
-        <ul className="flex space-x-8 text-white font-semibold text-lg">
+        <ul className="flex space-x-8 text-white font-semibold text-14px">
           <li>
             <Link to="/" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Home
@@ -785,29 +787,20 @@ const HomeNavbar = () => {
           </li>
           <li>
             <Link to="/about" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              About
+              About Us
             </Link>
           </li>
           <li>
-            <Link to="/projects" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Projects
+            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              News
             </Link>
           </li>
           <li>
             <Link to="/testimonials" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Testimonials
+             Contact Us
             </Link>
           </li>
-          <li>
-            <Link to="/careers" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Careers
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Contact
-            </Link>
-          </li>
+          
         </ul>
 
         {/* Right section with Sign In Button */}
@@ -826,3 +819,5 @@ const HomeNavbar = () => {
 };
 
 export default HomeNavbar;
+
+

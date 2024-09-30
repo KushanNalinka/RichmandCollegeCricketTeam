@@ -265,7 +265,7 @@ import image5 from '../assets/images/pabasara.png';
 import image6 from '../assets/images/djananjaya.png';
 import image7 from '../assets/images/kamindu.png';
 
-import backgroundImage from '../assets/images/Highlightss.png';
+import backgroundImage from '../assets/images/Hero.png';
 
 const coaches = [
   {
@@ -342,7 +342,7 @@ const CoachSlider = () => {
         backgroundPosition: 'center', 
       }}
     >
-      <div className="relative w-full ml-20">
+      <div className="relative w-fit ml-20">
         <h3 className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white italic">
           MEET OUR HEROES
         </h3>

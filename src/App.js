@@ -3,6 +3,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 import Initial from './pages/Initial.js';
+import MemberInitial from './pages/MemberInitial.js';
 import Profile from './pages/Profile.js';
 import Coaches from './pages/Coaches.js';
 import PlayerInfo from './pages/PlayerInfo.js';
@@ -32,6 +33,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Initial />} />
+        <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path='/player' element={<PlayerInfo/>} />

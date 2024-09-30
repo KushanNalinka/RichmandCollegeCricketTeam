@@ -139,7 +139,7 @@ const MatchDetails = () => {
 
   return (
     <div
-    className=""
+    className=" flex items-center justify-center"
     style={{
       backgroundImage: `url(${flag})`,
       backgroundSize: "cover",
@@ -150,7 +150,7 @@ const MatchDetails = () => {
     }}
   >
     <HomeNavbar/>
-    <div className=" flex relative items-center pt-32 p-2 w-full">
+    <div className=" flex relative items-center justify-center p-2 pt-24  w-full">
       <div className="w-[5%]">
         <Navbar/>
       </div>  

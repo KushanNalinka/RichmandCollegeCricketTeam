@@ -84,7 +84,7 @@ const TableComponent = () => {
 
   return (
     <div
-      className=" flex flex-col relative"
+      className=" flex flex-col relative justify-center items-center"
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
@@ -96,7 +96,7 @@ const TableComponent = () => {
     >
         <HomeNavbar />
       
-      <div className=" flex relative items-center justify-center p-2 pt-32 w-full">
+      <div className=" flex relative items-center justify-center p-2 pt-24 w-full">
         <div className="w-[5%] ">
           <Navbar />
         </div>

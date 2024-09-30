@@ -346,15 +346,18 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
 
   return (
     <div
-      className="h-screen w-full"
+      className=" flex items-center justify-center"
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        width: "100vw", // Full viewport width
+        height: "full", // Full viewport height
+        minHeight: "100vh",
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative items-center top-32 p-2 w-full">
+      <div className=" flex relative items-center  p-2 w-full ">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>

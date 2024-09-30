@@ -512,7 +512,7 @@ const LatestNews = () => {
   };
 
   return (
-    <section className="bg-white py-12">
+    <section className="bg-white py-12 ">
      
         <div className="flex gap-0">
           {/* Left Heading Section */}
@@ -531,7 +531,7 @@ const LatestNews = () => {
           </div>
 
           {/* Right News Section */}
-          <div className="w-[100%] ml-20">
+          <div className="w-[100%] ml-20 ">
             {/* News carousel */}
             <div className="overflow-hidden w-full">
               <div

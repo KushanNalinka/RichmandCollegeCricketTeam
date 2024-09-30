@@ -1,8 +1,95 @@
 // src/components/AddNewModal.js
-import React from 'react';
-import { FaTimes } from 'react-icons/fa';
+import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+import { message } from 'antd';
+import { FaTimes,  FaTrash } from 'react-icons/fa';
 
-const AddNewModal = ({ form, onInputChange, onClose, onAdd }) => {
+const AddNewModal = ({  onClose }) => {
+  const [players, setPlayers] = useState([]);
+  const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [formData, setFormData] = useState({
+    under:'',
+    year:'',
+    captain:'',
+    players:[]
+  });
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/api/admin/players/all`)
+      .then(response => {
+        const players = response.data;
+        setPlayers(players);
+        console.log("players Data:", players);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
+  }, []);
+
+  const handleChange = e => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      // Make a POST request to the backend API
+      const response = await axios.post(
+        "http://localhost:5000/api/teams/add",
+        formData
+      );
+      console.log("Form submitted succedded: ", response.data);
+      message.success("Successfull!");
+      setFormData({
+        under:'',
+        year:'',
+        captain:'',
+        players:[]
+      });
+      setSelectedPlayers([]);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      message.error("Failed!");
+    }
+  };
+
+  const handlePlayerSelect = player => {
+    if (selectedPlayers.includes(player)) {
+      // If player is already selected, remove them
+      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    } else {
+      // Otherwise, add the player to the list
+      setSelectedPlayers([...selectedPlayers, player]);
+    }
+  };
+
+  const clearSelectedPlayers = () => {
+    setSelectedPlayers([]); // Clear all selected players
+  };
+  
+  useEffect(
+    () => {
+      // Update formData when selected coaches change
+      setFormData({
+        ...formData,
+        players: selectedPlayers.map(player => ({ playerId: player.playerId }))
+      });
+    },
+    [selectedPlayers]
+  );
+
+
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let i = currentYear; i >= 1900; i--) {
+    years.push(i);
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
       <div className="bg-white p-8 pt-2 rounded-lg shadow-lg w-full max-w-md">
@@ -22,29 +109,39 @@ const AddNewModal = ({ form, onInputChange, onClose, onAdd }) => {
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="under">
               Under
             </label>
-            <input
-              type="text"
+            <select
               id="under"
               name="under"
-              value={form.under}
-              onChange={onInputChange}
+              value={formData.under}
+              onChange={handleChange}
               className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter team name"
-            />
+            >
+              <option value="" disabled>Select year</option>
+              <option  value="Under 13">Under 13</option>
+              <option  value="Under 15">Under 15</option>
+              <option  value="Under 17">Under 17</option>
+              <option  value="Under 19">Under 19</option>
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
               Year
             </label>
-            <input
-              type="number"
+            <select
               id="year"
               name="year"
-              value={form.year}
-              onChange={onInputChange}
+              value={formData.year}
+              onChange={handleChange}
               className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter year"
-            />
+            >
+              <option value="" disabled>Select year</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="captain">
@@ -54,16 +151,54 @@ const AddNewModal = ({ form, onInputChange, onClose, onAdd }) => {
               type="text"
               id="captain"
               name="captain"
-              value={form.captain}
-              onChange={onInputChange}
+              value={formData.captain}
+              onChange={handleChange}
               className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter captain's name"
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
+              Players
+            </label>
+            <div className="flex border border-gray-300 rounded-lg">
+              <input
+                type="text"
+                className="py-2 px-3 w-[80%] rounded-lg "
+                value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
+                readOnly
+              />
+              <button
+                type="button"
+                className="flex items-center w-[20%] justify-center text-red-700 hover:text-red-600 rounded-lg"
+                onClick={clearSelectedPlayers}
+              >
+                <FaTrash/>
+              </button>
+            </div>
+            <div className="relative">
+              <div className="border overflow-auto h-40 border-gray-300 rounded-lg mt-2 px-3 py-2">
+                {players.map((player) => (
+                  <div key={player.playerId} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`player-${player.playerId}`}
+                      className="mr-2"
+                      checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                      onChange={() => handlePlayerSelect(player)}
+                    />
+                    <label htmlFor={`player-${player.playerId}`} className="text-gray-700">
+                      {player.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+          </div>
+          </div>
           <div className="flex justify-end space-x-2 ">
             <button
               type="button"
-              onClick={onAdd}
+              onClick={handleSubmit}
               className="bg-[#480D35] text-white w-full py-2 px-4 rounded-lg hover:bg-[#5D1245]"
             >
               Add

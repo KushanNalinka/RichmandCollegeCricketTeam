@@ -69,15 +69,15 @@ const CoachProfile = () => {
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
       }}
     >
       {/* Navbar */}
       <Navbar />
 
-      <div className="max-w-screen-full pt-32  p-10">
+      <div className=" pt-32  p-10">
         <div>
-          <div className="flex gap-6 w-full items-center lg:px-5 justify-center">
+          <div className="flex gap-6 items-center lg:px-5 justify-center">
             {/* Player Details */}
 
             <div

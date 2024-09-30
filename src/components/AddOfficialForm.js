@@ -7,7 +7,7 @@ import profilePic from "../assets/images/kusal.png";
 import flag from "../assets/images/backDrop.png";
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const AddCoachForm = ({ isOpen, onSubmit }) => {
+const AddOfficialForm = ({ isOpen, onSubmit }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);  
   const [isEditImage, setIsEditImage] = useState(false);  
   const [formData, setFormData] = useState({
@@ -75,7 +75,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
       {/* Navbar */}
       <Navbar />
 
-      <div className="max-w-screen-full pt-24 md:p-20 p-5"></div>
+      <div className="max-w-screen-full pt-24 md:p-20"></div>
         <div className=" flex relative w-full items-center justify-center px-5 md:px-20">
             <div className="  relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
             style={{
@@ -83,7 +83,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
                 boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
                 border: "1px solid rgba(255, 255, 255, 0.3)"
               }}>
-            <h1 className='text-2xl font-bold text-[#480D35]'>Edit Coach Profile</h1>    
+            <h1 className='text-2xl font-bold text-[#480D35]'>Edit Official Profile</h1>    
             <div className="flex justify-center rounded-xl h-32 mt-2 items-end mb-6" 
                 style={{
                     backgroundImage: `url(${back})`,
@@ -283,4 +283,4 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
   );
 };
 
-export default AddCoachForm;
+export default AddOfficialForm;

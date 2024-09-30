@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
@@ -10,112 +11,39 @@ import flag from "../assets/images/backDrop.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
 
-// Sample data
-const data = [
-  // Sample data here...
-  {
-    name: "John Doe",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Jane Smith",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "Pathum Nissanke",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Rajapakse",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "John Doe",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Jane Smith",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  },
-  {
-    name: "Pathum Nissanke",
-    dob: "1990-01-01",
-    email: "john.doe@example.com",
-    contactNo: "123-456-7890",
-    battingStyle: "Right-hand bat",
-    bowlingStyle: "Right-arm fast",
-    status: "Active",
-    image: "https://static.toiimg.com/photo/104624341/104624341.jpg", // Example image URL
-    role: "Player"
-  },
-  {
-    name: "Rajapakse",
-    dob: "1992-02-02",
-    email: "jane.smith@example.com",
-    contactNo: "098-765-4321",
-    battingStyle: "Left-hand bat",
-    bowlingStyle: "Left-arm spin",
-    status: "Inactive",
-    image: "https://static.toiimg.com/photo/104624442/104624442.jpg", // Example image URL
-    role: "Coach"
-  }
-];
-
 const TableComponent = () => {
+  const [playerData, setPlayerData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 8; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    // Fetch player data for playerId 4
+    axios
+      .get(`http://localhost:5000/api/admin/players/all`)
+      .then((response) => {
+        const players = response.data;
+        setPlayerData(players);
+        console.log("Player Data:", playerData);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the player data!", error);
+      });
+  }, []);
+
+  const handleEdit = player => {
+    setCurrentPlayer(player);
+    setIsEditFormOpen(true);
+  };
+
   // Calculate total pages
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  const totalPages = Math.ceil(playerData.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = data.slice(
+  const paginatedData = playerData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -132,13 +60,13 @@ const TableComponent = () => {
     }
   };
 
-  const handleEdit = player => {
-    setCurrentPlayer(player);
-    setIsEditFormOpen(true);
-  };
-
-  const handleDelete = index => {
-    console.log("Delete row:", index);
+  const handleDelete = async id => {
+    const deletePayer = await axios.delete(`http://localhost:5000/api/admin/players/delete/${id}`)
+   
+    console.log("Delete row:", id);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const toggleForm = () => {
@@ -150,32 +78,31 @@ const TableComponent = () => {
     setIsFormOpen(false);
   };
 
-  const handleSaveEditPlayer = player => {
-    // Logic to save edited player information, including image upload if necessary
-    console.log("Player updated:", player);
-    setIsEditFormOpen(false);
-  };
   const toggleButton = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <div
-      className="h-screen w-screen"
+      className=" flex flex-col relative justify-center items-center"
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        width: "100vw", // Full viewport width
+        height: "full", // Full viewport height
+        minHeight: "100vh"
       }}
     >
-      <HomeNavbar />
-      <div className=" flex relative items-center justify-center top-32 p-2 w-full">
-        <div className=" lg:w-[5%] ">
+        <HomeNavbar />
+      
+      <div className=" flex relative items-center justify-center p-2 pt-24 w-full">
+        <div className="w-[5%] ">
           <Navbar />
         </div>
         {/* <div className=" md:w-[85%] w-[100%] lg:mx-3 "> */}
         <div
-          className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+          className="h-full bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -251,13 +178,10 @@ const TableComponent = () => {
                           alt={item.name}
                           className=" h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
-                    
-                      
-                        {item.name}
-                      
+                        {item.name.split(' ').slice(-2).join(' ')}
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
-                      {item.dob}
+                      {item.dateOfBirth}
                     </td>
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
@@ -287,7 +211,7 @@ const TableComponent = () => {
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(item.playerId)}
                         className="text-red-700 hover:text-red-600 text-md"
                         aria-label="Delete"
                         title="Delete"
@@ -325,12 +249,11 @@ const TableComponent = () => {
           </div>
         </div>
         {isFormOpen &&
-          <PlayerForm closeForm={() => setIsFormOpen(false)} onSave={handleSavePlayer} />}
+          <PlayerForm closeForm={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&
           <EditPlayerForm
             player={currentPlayer}
             onClose={() => setIsEditFormOpen(false)}
-            onSave={handleSaveEditPlayer}
           />}
       </div>
     </div>

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; 
+import { message } from "antd";
 import { FaTrash, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
 import EditModal from "../components/TeamEditModal"; // Import the EditModal component
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
@@ -18,29 +20,33 @@ import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 
 const TableComponent = () => {
-  const [data, setData] = useState([
-    { id: 1, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 2, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 3, under: "Team C", year: 2022, captain: "Charlie" },
-    { id: 4, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 5, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 6, under: "Team C", year: 2022, captain: "Charlie" },
-    { id: 7, under: "Team A", year: 2024, captain: "Alice" },
-    { id: 8, under: "Team B", year: 2023, captain: "Bob" },
-    { id: 9, under: "Team C", year: 2022, captain: "Charlie" }
-  ]);
+  const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 8; // Number of rows per page
+  const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/teams/all"); // Update with your API endpoint
+        setTeams(response.data);
+        console.log(response.data)
+      } catch (error) {
+        console.error("Error fetching matches:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
+  const totalPages = Math.ceil(teams.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = data.slice(
+  const paginatedData = teams.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -59,50 +65,47 @@ const TableComponent = () => {
 
   const handleEdit = item => {
     setEditItem(item);
-    setForm(item);
     setIsEditModalOpen(true);
   };
 
-  const handleDelete = id => {
-    setData(data.filter(item => item.id !== id));
-  };
+ 
 
   const handleViewMembers = id => {
     alert(`View members for row with ID: ${id}`);
-    // Implement view members functionality here
   };
 
-  const handleAdd = () => {
-    setData([...data, { id: Date.now(), ...form }]);
-    setForm({ under: "", year: "", captain: "" });
-    setIsModalOpen(false);
+  const handleDelete = async id => {
+    try{
+      const deleteTeam = await axios.delete(`http://localhost:5000/api/teams/delete/${id}`)
+      message.success("Successfully Deleted!");
+      console.log("Delete row:", id);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+  } catch (error) {
+    console.error("Error deleting match:", error);
+    message.error("Failed!");
+  }
   };
 
-  const handleEditSubmit = () => {
-    setData(data.map(item => (item.id === editItem.id ? form : item)));
-    setEditItem(null);
-    setIsEditModalOpen(false);
-  };
-
-  const handleInputChange = e => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
   const toggleButton = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
     <div
-      className="h-screen w-screen"
+      className="flex items-center justify-center"
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
-        backgroundPosition: "center"
+        backgroundPosition: "center",
+        width: "100vw", // Full viewport width
+        height: "full", // Full viewport height
+        minHeight: "100vh", // Minimum height to cover full screen
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative top-32 items-center p-2 w-full">
+      <div className=" flex relative pt-24 items-center p-2 w-full">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>
@@ -144,7 +147,7 @@ const TableComponent = () => {
               <tbody className=" divide-y divide-gray-300">
                 {paginatedData.map((item,index) =>
                   <tr
-                    key={index}
+                    key={item.teamId}
                     className=" hover:bg-gray-50 h-full align-middle"
                   >
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
@@ -165,7 +168,7 @@ const TableComponent = () => {
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => handleDelete(item.teamId)}
                         className="text-red-700 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
@@ -210,21 +213,16 @@ const TableComponent = () => {
         {/* Modal for adding new item */}
         {isModalOpen &&
           <AddNewModal
-            form={form}
-            onInputChange={handleInputChange}
             onClose={() => setIsModalOpen(false)}
-            onAdd={handleAdd}
           />}
 
         {/* Edit Modal */}
         {isEditModalOpen &&
           editItem &&
           <EditModal
-            item={editItem}
-            form={form}
-            onInputChange={handleInputChange}
+            team={editItem}
             onClose={() => setIsEditModalOpen(false)}
-            onSubmit={handleEditSubmit}
+           
           />}
       </div>
       </div>

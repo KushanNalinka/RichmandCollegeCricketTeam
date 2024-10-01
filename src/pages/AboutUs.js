@@ -1,3 +1,6 @@
+
+
+
 import Navbar from '../components/HomeNavbar';
 import topImage from '../assets/images/BG3.png'; // Your local background image
 import '../index.css'; // Make sure to include your main CSS
@@ -27,7 +30,7 @@ const AboutUs = () => {
 
         {/* Text on the right */}
         <div className="lg:w-1/2 lg:pl-10">
-          <h2 className="text-left text-2xl font-bold text-gray-800 fancy-font">ABOUT RICHMOND SCHOOL CRICKET TEAM</h2>
+          <h2 className="text-left text-l font-bold text-gray-800 fancy-font">ABOUT RICHMOND SCHOOL CRICKET TEAM</h2>
           <p className="pt-serif-font text-base text-gray-600 mt-6">
             The Richmond School Cricket Team has a long-standing history of nurturing young talent and building champions.
             Our dedication to fostering both athletic and academic excellence is the cornerstone of our cricketing journey.
@@ -42,7 +45,7 @@ const AboutUs = () => {
       {/* Our Journey Section */}
       <div className="bg-gray-100 p-8 flex flex-col lg:flex-row items-start">
         <div className="lg:w-1/2 mb-6 lg:mb-0">
-          <h2 className="text-left text-2xl font-bold text-gray-800 fancy-font">OUR JOURNEY</h2>
+          <h2 className="text-left text-xl font-bold text-gray-800 fancy-font">OUR JOURNEY</h2>
           <p className="pt-serif-font text-m text-gray-600 mt-4">
             Richmond School Cricket has produced top players who have gone on to represent national teams, with numerous
             victories in inter-school championships. Below are some of the key moments in our journey.
@@ -70,13 +73,13 @@ const AboutUs = () => {
 
       {/* Vision and Mission Section */}
       <div className="max-w-7xl mx-auto p-8 text-center">
-        <h2 className="text-3xl font-bold text-gray-800 fancy-font">OUR MISSION</h2>
+        <h2 className="text-xl font-bold text-gray-800 fancy-font">OUR MISSION</h2>
         <p className="pt-serif-font text-lg text-gray-600 mt-4">
           Our mission is to promote teamwork, discipline, and leadership through cricket, while instilling the values of
           sportsmanship in every player.
         </p>
 
-        <h2 className="text-3xl font-bold text-gray-800 fancy-font mt-8">OUR VISION</h2>
+        <h2 className="text-xl font-bold text-gray-800 fancy-font mt-8">OUR VISION</h2>
         <p className="pt-serif-font text-lg text-gray-600 mt-4">
           Our vision is to develop future cricket stars and foster a sense of community among players and supporters.
         </p>
@@ -84,7 +87,7 @@ const AboutUs = () => {
 
       {/* Gallery Section */}
       <div className="bg-gray-100 p-8">
-        <h2 className="text-left text-3xl font-bold text-gray-800 fancy-font">OUR JOURNEY IN PICTURES</h2>
+        <h2 className="text-left text-xl font-bold text-gray-800 fancy-font">OUR JOURNEY IN PICTURES</h2>
         <div className="flex flex-wrap justify-center gap-6 mt-8">
           {/* Change flex direction to row for horizontal alignment */}
           <div className="flex flex-row space-x-6">

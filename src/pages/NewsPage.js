@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TopLayer from '../components/TopLayer';
+
 import topImage from '../assets/images/BG3.png';
 
 // Sample data for the news articles and sidebar
@@ -101,13 +101,8 @@ const NewsPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <div className="relative">
-        <TopLayer />
-        <div
-          className="relative bg-cover bg-center h-24 flex items-center justify-center mb-6"
-          style={{
-            backgroundImage: `url(${topImage})`,
-          }}
-        ></div>
+        
+      
 
         <div className="container mx-auto p-4 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
           {/* Main News Section */}

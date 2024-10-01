@@ -518,7 +518,7 @@ const LatestNews = () => {
           {/* Left Heading Section */}
           <div className="w-[50%] mt-24 ml-20"> {/* Set fixed width for the heading section */}
             <div className="flex items-end space-x-0">
-              <h1 className="text-[3rem] font-extrabold text-[#4A0D34] tracking-wide ">
+              <h1 className="text-[3rem] font-extrabold text-[#00175F] tracking-wide ">
                 LATEST NEWS
               </h1>
             </div>

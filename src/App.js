@@ -27,6 +27,7 @@ import ScoreCardPopup from './components/ScoreCardPopup.js';
 import InitialNewsPage from './pages/InitialNewsPage.js';
 
 import NewsPage from './pages/NewsPage.js'; 
+import AboutUs from './pages/AboutUs.js';
 
 
 function App() {
@@ -59,6 +60,8 @@ function App() {
 
          <Route path="/news" element={<NewsPage />} />
          <Route path="/initial-news" element={<InitialNewsPage />} />
+         <Route path="/about-us" element={<AboutUs />} />
+
 
         </Routes>
     </BrowserRouter>

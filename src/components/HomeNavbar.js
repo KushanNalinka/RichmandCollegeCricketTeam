@@ -458,6 +458,15 @@ const HomeNavbar = () => {
                     Contact Us
                   </button>
                 </li>
+
+                <li>
+                  <button
+                    className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                    onClick={() => handleDropdownClick('/about-us/about-us')}
+                  >
+                    About Us
+                  </button>
+                </li>
               </ul>
             )}
           </li>

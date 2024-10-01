@@ -75,8 +75,8 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
       {/* Navbar */}
       <Navbar />
 
-      <div className="max-w-screen-full pt-10 p-20"></div>
-        <div className=" flex relative w-full items-center justify-center px-20">
+      <div className="max-w-screen-full pt-24 md:p-20 p-5"></div>
+        <div className=" flex relative w-full items-center justify-center px-5 md:px-20">
             <div className="  relative  w-full lg:mx-3 lg:px-40 lg:pt-8 p-8 bg-white rounded-lg shadow-lg"
             style={{
                 backdropFilter: "blur(10px)",
@@ -265,10 +265,10 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
                 
                
                   
-                    <div className=" md:ml-32 col-span-2">
+                    <div className=" md:ml-32 col-span-2 mt-5">
                         <button
                         type="submit"
-                        className="bg-[#480D35] text-white px-4 py-2 rounded-lg"
+                        className="bg-[#480D35] w-full md:w-20 text-white px-4 py-2 rounded-lg"
                         onClick={handleSubmit}
                         >
                             Save

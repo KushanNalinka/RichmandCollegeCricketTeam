@@ -158,24 +158,24 @@ const MatchTable = () => {
   ];
 
   return (
-    <div className="w-full p-4 md:p-6 ">
-      <div className="relative w-full ml-20">
+    <div className="w-full ">
+      <div className="relative w-fit ml-20 mt-6">
         {/* Background and foreground text combined */}
-        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#4A0D34] italic" >
+        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#00175F] " >
           UPCOMING MATCHES
         </p>
       </div>
   
       {/* Table */}
-      <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg">
+      <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg mb-12 ml-20 mr-20">
         <table className="min-w-full border-collapse rounded-lg overflow-hidden">
           {/* Table Header */}
           <thead className="bg-gradient-to-r from-[#00175F] to-[#4A0D34] text-white">
             <tr>
-              <th className="px-2 md:px-4 py-2 text-left rounded-tl-lg">Date</th>
-              <th className="px-2 md:px-4 py-2 text-left">Time</th>
-              <th className="px-2 md:px-4 py-2 text-left">Match</th>
-              <th className="px-2 md:px-4 py-2 text-left rounded-tr-lg">Venue</th>
+              <th className="px-2 md:px-4 py-2 text-center rounded-tl-lg">Date</th>
+              <th className="px-2 md:px-4 py-2 text-center">Time</th>
+              <th className="px-2 md:px-4 py-2 text-center">Match</th>
+              <th className="px-2 md:px-4 py-2 text-center rounded-tr-lg">Venue</th>
             </tr>
           </thead>
           {/* Table Body */}
@@ -183,23 +183,23 @@ const MatchTable = () => {
             {matches.map((match, index) => (
               <tr
                 key={index}
-                className={`border-t border-gray-300 ${index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'}`}
+                className={`border-t text-center border-gray-300 ${index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'}`}
                 style={index === 0 ? { fontSize: '1.25rem', height: '80px' } : {}}
               >
-                <td className={`px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td className={` text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
                   {match.date}
                 </td>
-                <td className={`px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
                   {match.time}
                 </td>
-                <td className={`px-2 md:px-4 py-4 flex items-center ${index === 0 ? 'font-semibold' : ''}`}>
+                <td className={`text-center px-2 md:px-4 py-4 flex items-center ${index === 0 ? 'font-semibold' : ''}`}>
                   <img
                     src={match.team1Logo}
                     alt={`${match.team1} logo`}
                     className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
                   />
                   {match.team1}
-                  <span className="mx-2">vs</span>
+                  <span className="mx-2 ">vs</span>
                   <img
                     src={match.team2Logo}
                     alt={`${match.team2} logo`}
@@ -207,7 +207,7 @@ const MatchTable = () => {
                   />
                   {match.team2}
                 </td>
-                <td className={`px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
                   {match.venue}
                 </td>
               </tr>

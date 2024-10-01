@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaWindowClose } from "react-icons/fa";
@@ -10,166 +11,82 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [pressedPlus, setPressedPlus] = useState(null);
   const [isNewScoreAdded, setIsNewScoreAdded] = useState(false);
-  const [matchStack, setMatchStack] = useState([
-    // Dummy data for players
-    {
-      id: 1,
-      match_id: 1,
-      player_id: 1,
-      playerName: "Player 1",
-      runs: 45,
-      wickets: 2,
-      overs: 10,
-      runConceded: 55,
-      fours: 6,
-      sixes: 2,
-      fifties: 0,
-      hundreds: 0,
-      balls: 30,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    },
-    {
-      id: 2,
-      match_id: 1,
-      playerId: 2,
-      playerName: "Player 2",
-      runs: 78,
-      wickets: 0,
-      overs: 8,
-      runConceded: 45,
-      fours: 8,
-      sixes: 3,
-      fifties: 1,
-      hundreds: 0,
-      balls: 48,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    },
-    {
-      id: 3,
-      match_id: 1,
-      playerId: 3,
-      playerName: "Player 3",
-      runs: 45,
-      wickets: 2,
-      overs: 10,
-      runConceded: 55,
-      fours: 6,
-      sixes: 2,
-      fifties: 0,
-      hundreds: 0,
-      balls: 30,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    },
-    {
-      id: 4,
-      match_id: 2,
-      playerId: 1,
-      playerName: "Player 1",
-      runs: 78,
-      wickets: 0,
-      overs: 8,
-      runConceded: 45,
-      fours: 8,
-      sixes: 3,
-      fifties: 1,
-      hundreds: 0,
-      balls: 48,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    },
-    {
-      id: 5,
-      match_id: 2,
-      playerId: 2,
-      playerName: "Player 2",
-      runs: 45,
-      wickets: 2,
-      overs: 10,
-      runConceded: 55,
-      fours: 6,
-      sixes: 2,
-      fifties: 0,
-      hundreds: 0,
-      balls: 30,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    },
-    {
-      id: 6,
-      match_id: 2,
-      playerId: 3,
-      playerName: "Player 3",
-      runs: 45,
-      wickets: 2,
-      overs: 10,
-      runConceded: 55,
-      fours: 6,
-      sixes: 2,
-      fifties: 0,
-      hundreds: 0,
-      balls: 30,
-      strikeRate: 166.67,
-      economyRate: 7.8,
-      Maidens:40,
-      wides:2,
-      noBolls:1,
-    }
-  ]);
+  const [matchStack, setMatchStack] = useState([]);
   
   const [formData, setFormData] = useState({
-    id: null,
-    match_id: null,
-    player_id: null,
-    playerName: "",
-    runs: null,
-    wickets: null,
-    overs: null,
-    runConceded: null,
-    fours: null,
-    sixes: null,
-    fifties: null,
-    hundreds: null,
-    balls: null
+    inning: "1",
+    runs: "",
+    wickets: "",
+    overs: "",
+    runsConceded: "",
+    fours: "",
+    sixers: "",
+    fifties: "",
+    centuries: "",
+    balls: "",
+    playerId: "",
   });
+  useEffect(() => {
+        const fetchPlayers = async () => {
+          try {
+            const response = await axios.get("http://localhost:5000/api/admin/players/all"); // Replace with your players endpoint
+            setMatchStack(response.data);
+          } catch (error) {
+            console.error("Error fetching players:", error);
+          }
+        };
+    
+        fetchPlayers();
+      }, []);
 
   const handleInputChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   //add player score
-  const handleSavePlayer = e => {
+  const handleSavePlayer =async e => {
     e.preventDefault();
-    if (formData.playerName && formData.runs && formData.fours) {
-      setMatchStack([
-        ...matchStack,
-        {
-          ...formData,
-          id: matchStack.length + 1,
-          match_id: matchId,
-          player_id: 1
-        }
-      ]);
-      setFormData({ id: null, name: "", age: "", position: "" });
+    const payload = {
+      inning: formData.inning,
+      runs: Number(formData.runs),
+      wickets: Number(formData.wickets),
+      fours: Number(formData.fours),
+      sixers: Number(formData.sixers),
+      fifties: Number(formData.fifties),
+      centuries: Number(formData.centuries),
+      balls: Number(formData.balls),
+      overs: Number(formData.overs),
+      runsConceded: Number(formData.runsConceded),
+      player: {
+        playerId: Number(formData.playerId),
+      },
+      match: {
+        matchId: matchId, // Use the matchId passed as prop
+      },
+    };
+
+    try {
+      const response = await axios.post("http://localhost:8080/api/playerStats/add", payload);
+      console.log("Player stats saved successfully:", response.data);
+      // Optionally, add the new stat to the local state to reflect in the UI
+      setMatchStack([...matchStack, response.data]);
+      setFormData({
+        inning: "1",
+        runs: "",
+        wickets: "",
+        overs: "",
+        runsConceded: "",
+        fours: "",
+        sixers: "",
+        fifties: "",
+        centuries: "",
+        balls: "",
+        playerId: "",
+      });
       setIsAdding(false);
       setIsNewScoreAdded(!isNewScoreAdded);
+    } catch (error) {
+      console.error("Error saving player stats:", error);
     }
   };
 
@@ -243,9 +160,9 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
     >
       <div className="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-7xl">
         <div className=" overflow-auto">
-          <h className="flex text-xl py-3 font-bold text-baseRed1">Add Player Score Details of the Match</h>
+          <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
           <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-            <thead className=" bg-baseRed1 text-white rounded">
+            <thead className=" bg-[#480D35] text-white rounded">
               <tr>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                   Player Name
@@ -558,7 +475,7 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
                   <td className="border px-4 py-2">
                     <button
                       onClick={handleSavePlayer}
-                      className="bg-baseRed1 hover:bg-baseRed2 text-white py-1 px-3 rounded"
+                      className="bg-[#480D35] hover:bg-baseRed2 text-white py-1 px-3 rounded"
                     >
                       Add
                     </button>
@@ -569,7 +486,7 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
                   <button
                     title="Add New"
                     onClick={() => handleAddRow(matchId)}
-                    className="bg-baseRed1 hover:bg-baseRed2 text-sm text-white font-bold p-1 rounded-full"
+                    className="bg-[#480D35] hover:bg-baseRed2 text-sm text-white font-bold p-1 rounded-full"
                   >
                     {!isAdding ? <FaPlus /> : <FaMinus />}
                   </button>
@@ -588,7 +505,7 @@ const ScoreCardPopup = ({ isOpen, onClose, onSubmit, matchId }) => {
           </button>
           <button
             type="submit"
-            className="bg-baseRed2 text-white px-4 py-2 rounded-lg"
+            className="bg-[#480D35] text-white px-4 py-2 rounded-lg"
           >
             save
           </button>

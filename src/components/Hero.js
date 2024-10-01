@@ -260,10 +260,12 @@ import React, { useState } from 'react';
 import image1 from '../assets/images/suranga.png';
 import image2 from '../assets/images/charith.png';
 import image3 from '../assets/images/wanindu.png';
-import image4 from '../assets/images/dhanajay.png';
-import image5 from '../assets/images/pabsara.png';
+import image4 from '../assets/images/dhananjay.png';
+import image5 from '../assets/images/pabasara.png';
 import image6 from '../assets/images/djananjaya.png';
-import backgroundImage from '../assets/images/Highlightss.png';
+import image7 from '../assets/images/kamindu.png';
+
+import backgroundImage from '../assets/images/Hero.png';
 
 const coaches = [
   {
@@ -295,6 +297,11 @@ const coaches = [
     name: "Sherman Warner",
     role: "All Rounder",
     imageUrl: image6, 
+  },
+  {
+    name: "Sherman Warner",
+    role: "All Rounder",
+    imageUrl: image7, 
   },
 ];
 
@@ -335,8 +342,8 @@ const CoachSlider = () => {
         backgroundPosition: 'center', 
       }}
     >
-      <div className="relative w-full ml-20">
-        <h3 className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white italic">
+      <div className="relative w-fit ml-20">
+        <h3 className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
           MEET OUR HEROES
         </h3>
       </div>
@@ -347,7 +354,7 @@ const CoachSlider = () => {
         {/* Left Arrow with plain ">" style */}
         <button
           onClick={handlePrev}
-          className="absolute left-[-40px] text-6xl text-white hover:text-[#4A0D34] transition"
+          className="absolute left-[-40px] text-6xl text-white hover:text-white transition"
           style={{ top: '50%', transform: 'translateY(-50%)' }} // Center vertically
         >
           {"<"}
@@ -369,7 +376,7 @@ const CoachSlider = () => {
         {/* Right Arrow with plain ">" style */}
         <button
           onClick={handleNext}
-          className="absolute right-[-40px] text-6xl text-white hover:text-[#4A0D34] transition"
+          className="absolute right-[-40px] text-6xl text-white hover:text-white transition"
           style={{ top: '50%', transform: 'translateY(-50%)' }} // Center vertically
         >
           {">"}

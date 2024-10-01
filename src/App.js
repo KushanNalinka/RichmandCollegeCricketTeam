@@ -3,6 +3,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
 import Initial from './pages/Initial.js';
+import MemberInitial from './pages/MemberInitial.js';
 import Profile from './pages/Profile.js';
 import Coaches from './pages/Coaches.js';
 import PlayerInfo from './pages/PlayerInfo.js';
@@ -19,30 +20,44 @@ import CoachProfile from './pages/coachProfile.js';
 import AddPlayer from './components/AddPlayer.js';
 import AddCoachForm from './components/AddCoachForm.js';
 import AdminDashboard from './pages/AdminDashboard.js';
+
+import OfficialProfile from './pages/OfficialProfile.js';
+import AddOfficialForm from './components/AddOfficialForm.js';
+import ScoreCardPopup from './components/ScoreCardPopup.js';
+
 import NewsPage from './pages/NewsPage.js'; 
+
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Initial />} />
+        <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
-         <Route path="/scorecard/:matchId" element={<ScoreCardPage/>} />
+
+         <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
+
          <Route path="/team" element={<Team />} />
           <Route path='/addPlayerOld' element={<AddPlayer/>}/>
           <Route path='/addPlayer'element={<AddPlayer/>}/>
           <Route path='/addCoach' element={<AddCoachForm/>}/>
+          <Route path='/addOfficial' element={<AddOfficialForm/>}/>
          <Route path="/playerProfile" element={<PlayerProfile/>}/>
          <Route path='/coachProfile' element={<CoachProfile/>}/>
+         <Route path='/officialProfile' element={<OfficialProfile/>}/>
          <Route path="/match-info" element={<MatchInfo />} />
-        <Route path="/scorecard" element={<ScorecardData />} />
+         <Route path="/scorecard-form" element={<ScoreCardPopup />} />
+          <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
+
          <Route path="/news" element={<NewsPage />} />
+
         </Routes>
     </BrowserRouter>
   );

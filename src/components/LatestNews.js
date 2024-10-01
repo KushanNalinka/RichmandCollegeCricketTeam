@@ -512,26 +512,26 @@ const LatestNews = () => {
   };
 
   return (
-    <section className="bg-white py-12">
+    <section className="bg-white py-12 ">
      
         <div className="flex gap-0">
           {/* Left Heading Section */}
           <div className="w-[50%] mt-24 ml-20"> {/* Set fixed width for the heading section */}
             <div className="flex items-end space-x-0">
-              <h1 className="text-6xl font-extrabold text-[#4A0D34] tracking-wide">
+              <h1 className="text-[3rem] font-extrabold text-[#00175F] tracking-wide ">
                 LATEST NEWS
               </h1>
             </div>
             <p className="text-gray-500 mt-4 max-w-md">
               Stay tuned for the latest news from our school cricket teams! From thrilling match victories to upcoming tournaments and player achievements, this is your go-to spot for all the action.
             </p>
-            <button className="mt-6 px-8 py-4 bg-blue-600 text-white font-semibold rounded-full shadow-lg hover:bg-blue-700 transition">
+            <button className="mt-6 px-8 py-4 bg-[#00175F] text-white font-semibold rounded-full shadow-lg hover:bg-[#00175F] transition">
               MORE HERE &rarr;
             </button>
           </div>
 
           {/* Right News Section */}
-          <div className="w-[100%] ml-20">
+          <div className="w-[100%] ml-20 ">
             {/* News carousel */}
             <div className="overflow-hidden w-full">
               <div
@@ -561,8 +561,8 @@ const LatestNews = () => {
               {/* Left arrow */}
               <button
                 onClick={prevSlide}
-                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-purple-500 ${
-                  currentSlide === 0 ? "text-gray-300" : "text-purple-500 hover:text-purple-700"
+                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-[#4A0D34] ${
+                  currentSlide === 0 ? "text-gray-300" : "text-[#4A0D34] hover:text-[#DCF2FF]"
                 }`}
                 disabled={currentSlide === 0}
               >
@@ -572,10 +572,10 @@ const LatestNews = () => {
               {/* Right arrow */}
               <button
                 onClick={nextSlide}
-                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-purple-500 ${
+                className={`text-4xl font-bold focus:outline-none p-4 rounded-full border-2 border-[#4A0D34] ${
                   currentSlide >= newsItems.length - visibleNews
                     ? "text-gray-300"
-                    : "text-purple-500 hover:text-purple-700"
+                    : "text-purple-[#4A0D34] hover:text-[#DCF2FF]"
                 }`}
                 disabled={currentSlide >= newsItems.length - visibleNews}
               >

@@ -24,6 +24,7 @@ import AdminDashboard from './pages/AdminDashboard.js';
 import OfficialProfile from './pages/OfficialProfile.js';
 import AddOfficialForm from './components/AddOfficialForm.js';
 import ScoreCardPopup from './components/ScoreCardPopup.js';
+import InitialNewsPage from './pages/InitialNewsPage.js';
 
 import NewsPage from './pages/NewsPage.js'; 
 
@@ -57,6 +58,7 @@ function App() {
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
 
          <Route path="/news" element={<NewsPage />} />
+         <Route path="/initial-news" element={<InitialNewsPage />} />
 
         </Routes>
     </BrowserRouter>

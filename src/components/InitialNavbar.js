@@ -791,7 +791,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            <Link to="/initial-news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               News
             </Link>
           </li>

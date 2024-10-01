@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from "../components/HomeNavbar";
 
 import topImage from '../assets/images/BG3.png';
 
@@ -99,6 +100,25 @@ const NewsPage = () => {
   const goToLastPage = () => setCurrentPage(totalPages);
 
   return (
+
+    <div>
+
+       {/* Navbar */}
+       <Navbar />
+
+       <div
+          style={{
+            backgroundImage: `url(${topImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            height: '180px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+     </div>
     <div className="min-h-screen flex flex-col bg-gray-100">
       <div className="relative">
 
@@ -200,6 +220,8 @@ const NewsPage = () => {
         </div>
       </div>
     </div>
+    </div>
+   
   );
 };
 

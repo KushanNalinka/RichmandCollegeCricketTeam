@@ -58,10 +58,10 @@ import AnimatedCounter from "./Counter"; // Make sure path is correct
 import CricketBallIcon from "../assets/images/CricketBall.gif"; // Import the SVG icon
 
 const stats = [
-  { label: "Cricket Grounds", value: 14 },
-  { label: "Professional Coaches", value: 37 },
+  
+  { label: "BigMatch Won", value: 37 },
   { label: "Club Members", value: 205 },
-  { label: "Worldcups Won", value: 16 },
+  { label: " Professional Coaches", value: 16 },
 ];
 
 const StatsSection = () => {

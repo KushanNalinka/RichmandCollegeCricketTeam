@@ -447,17 +447,10 @@ const HomeNavbar = () => {
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
                     onClick={() => handleDropdownClick('/about-us/team')}
                   >
-                    Our Team
+                    Our History
                   </button>
                 </li>
-                <li>
-                  <button
-                    className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/about-us/contact')}
-                  >
-                    Contact Us
-                  </button>
-                </li>
+               
               </ul>
             )}
           </li>
@@ -493,7 +486,15 @@ const HomeNavbar = () => {
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
                     onClick={() => handleDropdownClick('/big-match')}
                   >
-                    Big Match
+                    Under 17
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                    onClick={() => handleDropdownClick('/big-match')}
+                  >
+                    Under 19
                   </button>
                 </li>
               </ul>
@@ -510,11 +511,7 @@ const HomeNavbar = () => {
               News
             </Link>
           </li>
-          <li>
-            <Link to="/contact" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Contact Us
-            </Link>
-          </li>
+       
         </ul>
 
         {/* Right section with User Icon and Dropdown */}

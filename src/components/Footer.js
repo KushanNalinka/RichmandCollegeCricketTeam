@@ -68,7 +68,7 @@ import schoolLogo from '../assets/images/FooterLogo.png'; // Adjust the path for
 
 const Footer = () => {
   return (
-    <footer className="bg-white py-8">
+    <footer id="contact-us" className="bg-white py-8">
       <div className="container mx-auto px-4">
         {/* Top Section */}
         <div className="flex justify-center items-center">

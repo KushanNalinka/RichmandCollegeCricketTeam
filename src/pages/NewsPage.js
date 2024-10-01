@@ -69,11 +69,11 @@ const sidebarData = [
     image: 'https://assets.roar.media/assets/vIQdBIQUTIQgJr8Q_Article-Cover_Wall-Street-Journal.jpg?w=679',
   },
   
-  // Add more sidebar items as needed
+ 
 ];
 
 // Pagination settings
-const itemsPerPage = 4;
+const itemsPerPage = 5;
 
 const NewsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -101,13 +101,11 @@ const NewsPage = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
       <div className="relative">
-        
-      
 
         <div className="container mx-auto p-4 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
           {/* Main News Section */}
           <div className="lg:w-3/4 w-full flex flex-col">
-            <div className="border border-gray-300 p-6 sm:p-8 lg:p-10 rounded-lg bg-white shadow-xxs">
+            <div className="border border-gray-300 p-6 sm:p-8 lg:p-10 rounded-lg bg-white shadow-xxs ">
               <h1 className="text-2xl sm:text-3xl font-bold mb-6">Richmond Cricket News</h1>
               {currentNews.map((news, index) => (
                 <div key={news.id} className="mb-6">
@@ -118,7 +116,7 @@ const NewsPage = () => {
                       className="w-full sm:w-40 h-28 object-cover rounded-lg mb-4 sm:mb-0 sm:mr-4"
                     />
                     <div className="flex-1">
-                      <h2 className="text-sm sm:text-sm font-bold">{news.title}</h2>
+                      <h2 className="text-sm sm:text-sm font-bold cursor-pointer">{news.title}</h2>
                       <p className="text-gray-700 mt-2 text-xs">{news.description}</p>
                       <span className="text-xxs text-gray-500 mt-2 block">
                         {news.date} • {news.time} • {news.author}
@@ -188,7 +186,7 @@ const NewsPage = () => {
                       className="w-16 h-16 object-cover rounded-lg mr-3"
                     />
                     <div className="flex-1">
-                      <h3 className="text-sm font-medium">{sidebarItem.title}</h3>
+                      <h3 className="text-sm font-medium cursor-pointer">{sidebarItem.title}</h3>
                       <span className="text-xs text-gray-500">
                         {sidebarItem.date} • {sidebarItem.time} • {sidebarItem.author}
                       </span>

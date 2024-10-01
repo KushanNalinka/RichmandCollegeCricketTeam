@@ -417,6 +417,7 @@ const HomeNavbar = () => {
 
         {/* Centered Navbar Items */}
         <ul className="flex space-x-8 text-white font-semibold text-14px">
+
           <li>
             <Link to="/" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Home

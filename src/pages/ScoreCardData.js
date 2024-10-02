@@ -10,7 +10,7 @@ const ScorecardData = () => {
 
   useEffect(() => {
     if (match) {
-      fetch(`http://localhost:8080/api/playerStats/match/player-stats?matchId=${match.matchId}`)
+      fetch(`playerStats/match/player-stats?matchId=${match.matchId}`)
         .then((response) => response.json())
         .then((data) => {
           setPlayerStats(data);

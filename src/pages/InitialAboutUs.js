@@ -1,7 +1,6 @@
 
 
-
-import Navbar from '../components/HomeNavbar';
+import InitialNavbar from "../components/InitialNavbar";
 import topImage from '../assets/images/BG3.png'; // Your local background image
 import '../index.css'; // Make sure to include your main CSS
 import Footer from '../components/Footer';
@@ -10,7 +9,7 @@ const AboutUs = () => {
   return (
     <div>
       {/* Navbar */}
-      <Navbar />
+      <InitialNavbar />
       
 
       {/* Top Section */}

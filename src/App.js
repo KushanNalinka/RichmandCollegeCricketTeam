@@ -29,6 +29,8 @@ import InitialNewsPage from './pages/InitialNewsPage.js';
 import AdminNewsPage from './pages/AdminNewsPage.js';
 import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
+import CoachTable from './pages/CoachInfo.js';
+import CoachesProfile from './pages/Coaches.js';
 
 import AboutUs from './pages/AboutUs.js';
 import AdminAboutUs from './pages/AdminAboutUs.js';
@@ -45,9 +47,14 @@ function App() {
         <Route path="/" element={<Initial />} />
         <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
+
+         <Route path="/coach" element={<CoachesProfile/>} />
+         <Route path="/coachInfo" element={<CoachTable/>} />
+
          <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path="/admin-coach" element={<AdminCoaches />} />
+
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
@@ -86,4 +93,3 @@ function App() {
 export default App;
 // "proxy": "https://richmond-cricket.up.railway.app/api/"
 // "proxy": "http://localhost:8080/api/"
-

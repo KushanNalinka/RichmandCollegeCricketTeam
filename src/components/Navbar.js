@@ -5,6 +5,7 @@ import { RiTeamFill } from "react-icons/ri";
 import { BiSolidCricketBall } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
 
 const Navbar = () => {
     return (
@@ -13,8 +14,8 @@ const Navbar = () => {
                 className={`md:flex hidden flex-col justify-center  rounded-tr-md items-center`}
             >
                 <ul className="flex flex-col w-full items-center justify-center mt-5 pl-1">
-                    <Link to={"/"} className={` group flex flex-col gap-2 pl-2 py-4 cursor-pointer text-2xl items-center text-center justify-center p-2 text-white w-full `}>
-                        {" "}<IoHomeSharp /> <span className="text-sm  text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">Home</span>
+                    <Link to={"/adminDashboard"} className={` group flex flex-col gap-2 pl-2 py-4 cursor-pointer text-2xl items-center text-center justify-center p-2 text-white w-full `}>
+                        {" "}<MdDashboard /> <span className="text-sm  text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">Dashboard</span>
                     </Link>
                     <Link to={"/player"} className=" group flex flex-col gap-2 pl-2 py-4 items-center text-2xl text-center justify-center p-2 text-white w-full">
                         {" "}<BsPersonFill /> <span className="text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">Player</span>

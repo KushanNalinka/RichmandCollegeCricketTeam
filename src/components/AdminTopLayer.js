@@ -1,6 +1,6 @@
 import React from 'react';
 import topImage from '../assets/images/BG3.png'; // Import your image
-import Navbar from '../components/MemberNavbar'
+import HomeNavbar from '../components/HomeNavbar';
 export default function TopLayer() {
   return (
     
@@ -17,7 +17,7 @@ export default function TopLayer() {
       }}
     >
      {/* Includee the Navbar inside the TopLayer */}
-     <Navbar />
+     <HomeNavbar />
       
     </div>
   );

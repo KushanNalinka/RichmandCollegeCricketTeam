@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import Navbar from "../components/MemberNavbar";
+import Navbar from "../components/HomeNavbar";
 import backgroundFlag from "../assets/images/flag.png";
 import coachesData from "./coachData";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";

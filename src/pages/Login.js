@@ -71,9 +71,8 @@
 // export default Login;
 
 import axios from "axios";
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -81,30 +80,65 @@ const Login = () => {
     password: "",
   });
   const [err, setError] = useState(null);
-
+  const [validationError, setValidationError] = useState({});
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!inputs.username) {
+      errors.username = "Username is required.";
+    }
+    if (!inputs.password) {
+      errors.password = "Password is required.";
+    } else if (inputs.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
+    }
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
+    // Perform front-end validations
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationError(errors);
+      return;
+    } else {
+      setValidationError({});
+    }
+
     try {
-      if (inputs.username === "Admin" && inputs.password === "123456") {
+      // API call to backend for sign-in
+      const res = await axios.post("http://localhost:8080/api/auth/signin", inputs);
+
+      // Check if roles exist to navigate to admin or user dashboard
+      const roles = res.data.roles;
+      if (roles.includes("ROLE_ADMIN")) {
         navigate("/adminDashboard");
-      } 
-      else if (inputs.username === "User" && inputs.password === "123456") {
-        
+      } else if (roles.includes("ROLE_PLAYER") || roles.includes("ROLE_COACH")) {
         navigate("/member");
-      }
-      else {
-        await login(inputs);
+      } else {
         navigate("/");
       }
     } catch (err) {
-      setError(err.response.data);
+      // Specific error handling for incorrect username or password
+      if (err.response) {
+        if (err.response.status === 500) {
+          setError("Invalid username or password. Please check your credentials and try again.");
+        } else if (err.response.status === 404) {
+          setError("Username not found. Please register or verify your username.");
+        } else {
+          setError("An unexpected error occurred. Please try again later.");
+        }
+      } else {
+        setError("Network error. Please check your connection and try again.");
+      }
     }
   };
 
@@ -122,10 +156,8 @@ const Login = () => {
       <div className="flex w-full lg:w-1/2 justify-center items-center bg-white">
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
           <h1 className="text-3xl font-bold text-gray-900 text-center">Login</h1>
-          <p className="text-center text-gray-500">
-            Welcome back! Please login to your account.
-          </p>
-          
+          <p className="text-center text-gray-500">Welcome back! Please login to your account.</p>
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
@@ -136,10 +168,14 @@ const Login = () => {
                 type="text"
                 id="username"
                 name="username"
-                placeholder="username@gmail.com"
+                placeholder="username"
                 onChange={handleChange}
-                className=" text-sm mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={inputs.username}
+                className={`text-sm mt-1 w-full px-4 py-2 border ${
+                  validationError.username ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500`}
               />
+              {validationError.username && <p className="text-sm text-red-500">{validationError.username}</p>}
             </div>
 
             <div>
@@ -153,8 +189,12 @@ const Login = () => {
                 name="password"
                 placeholder="********"
                 onChange={handleChange}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                value={inputs.password}
+                className={`mt-1 w-full px-4 py-2 border ${
+                  validationError.password ? "border-red-500" : "border-gray-300"
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500`}
               />
+              {validationError.password && <p className="text-sm text-red-500">{validationError.password}</p>}
             </div>
 
             <div className="flex justify-between items-center">
@@ -162,9 +202,7 @@ const Login = () => {
                 <input type="checkbox" className="form-checkbox text-purple-500" />
                 <span className="ml-2 text-sm text-gray-600">Remember Me</span>
               </label>
-              <Link to="/forgot-password" className="text-sm text-purple-500 hover:underline">
-                Forgot Password?
-              </Link>
+             
             </div>
 
             <button
@@ -174,13 +212,9 @@ const Login = () => {
               Login
             </button>
 
+            {/* Display error message */}
             {err && <p className="text-sm text-red-500 text-center mt-2">{err}</p>}
           </form>
-
-          <div className="text-center mt-6">
-          
-           
-          </div>
         </div>
       </div>
     </div>
@@ -188,5 +222,3 @@ const Login = () => {
 };
 
 export default Login;
-
-

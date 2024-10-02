@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer  } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { FaMinus, FaPlus } from "react-icons/fa";
@@ -16,32 +16,32 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   const [playerStats, setPlayerStats] = useState([]);
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({
-      inning: 1,
-      runs: 0,
-      wickets: 0,
-      fours: 0,
-      sixers: 0,
-      fifties: 0,
-      centuries: 0,
-      balls: 0,
-      overs: 0,
-      runsConceded: 0,
-      player: {
-        playerId: 0,
-        name: "",
-      },
-      match: {
-        matchId: matchId, // Use the matchId passed as prop
-      },
+    inning: 1,
+    runs: 0,
+    wickets: 0,
+    fours: 0,
+    sixers: 0,
+    fifties: 0,
+    centuries: 0,
+    balls: 0,
+    overs: 0,
+    runsConceded: 0,
+    player: {
+      playerId: 0,
+      name: "",
+    },
+    match: {
+      matchId: matchId, // Use the matchId passed as prop
+    },
   });
   useEffect(() => {
         const fetchPlayerStat = async () => {
           try {
-            const players = await axios.get("http://localhost:5000/api/admin/players/all"); // Replace with your players endpoint
+            const players = await axios.get("admin/players/all"); // Replace with your players endpoint
             setPlayers(players.data);
             console.log("players in scores:", players.data);
             console.log("matchId for player Stack:", matchId);
-            const stats = await axios.get(`http://localhost:5000/api/playerStats/match/player-stats?matchId=${matchId}`); // Replace with your players endpoint
+            const stats = await axios.get(`playerStats/match/player-stats?matchId=${matchId}`); // Replace with your players endpoint
             setPlayerStats(stats.data);
             console.log("playerStats in scores:", stats.data);
           } catch (error) {
@@ -50,7 +50,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
         };
     
         fetchPlayerStat();
-      }, []);
+      }, [matchId]);
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -76,7 +76,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     e.preventDefault();
     console.log("submit Data:", formData);
     try {
-      const response = await axios.post("http://localhost:5000/api/playerStats/add", formData);
+      const response = await axios.post("playerStats/add", formData);
       console.log("Player stats saved successfully:", response.data);
       // Optionally, add the new stat to the local state to reflect in the UI
       //setMatchStack([...matchStack, response.data]);
@@ -145,7 +145,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     try {
       // Make a POST request to the backend APIonsole.log{"id "}
       const response = await axios.put(
-        `http://localhost:5000/api/playerStats/update/${id}`,
+        `playerStats/update/${id}`,
         formData
       );
       console.log("Form submitted succedded: ", response.data);
@@ -164,7 +164,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   //delete player score
   const handleDelete = async id => {
     try{
-      const deleteMatch = await axios.delete(`http://localhost:5000/api/playerStats/${id}`)
+      const deleteMatch = await axios.delete(`playerStats/${id}`)
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);
       setTimeout(() => {

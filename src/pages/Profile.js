@@ -10,15 +10,15 @@ const PlayerProfile = () => {
     const [selectedPlayer, setSelectedPlayer] = useState(sortedPlayers[0]);
 
     return (
-        <div className="bg-gray-900 min-h-screen text-white">
+        <div className="bg-gray-50 min-h-screen text-white">
             {/* Navbar */}
             <Navbar />
 
             {/* Main Content */}
-            <div className="max-w-screen-lg pt-16">
+            <div className="max-w-screen pt-20">
                 {/* Header Section */}
-                <div className="justify-right w-full">
-                    <div className="relative bg-[#000000] rounded-lg shadow-md overflow-hidden mb-8 lef-20" style={{ width: '150%' }}>
+                <div className="justify-center w-full px-10">
+                    <div className="relative bg-[#000000] rounded-lg shadow-md overflow-hidden mb-8 lef-20" >
                         <img
                             src={backgroundImage}
                             alt="Background"
@@ -41,10 +41,10 @@ const PlayerProfile = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-6">
+                <div className="flex gap-6 justify-center px-10">
                     {/* Player List */}
                     <div 
-                        className="bg-gray-800 rounded-lg shadow-md" 
+                        className="bg-gray-200 rounded-lg shadow-md" 
                         style={{ 
                             width: '350px', 
                             flexShrink: 0, 
@@ -52,11 +52,10 @@ const PlayerProfile = () => {
                             maxHeight: '469px',  
                             display: 'flex',
                             flexDirection: 'column',
-                            marginLeft: '60px'
                         }}
                     >
                         {/* Fixed Heading */}
-                        <div className="p-4 border-b border-gray-600">
+                        <div className="p-4 border-b text-black border-gray-100">
                             <h2 className="text-xl font-bold text-gray-200">Our Players</h2>
                         </div>
 
@@ -70,11 +69,11 @@ const PlayerProfile = () => {
                                 msOverflowStyle: 'none',  
                             }}
                         >
-                            <ul className="space-y-3" style={{ paddingRight: '10px' }}>  
+                            <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>  
                                 {sortedPlayers.map((player) => (
                                     <li
                                         key={player.id}
-                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.id === selectedPlayer.id ? 'bg-gray-700 font-bold' : 'bg-gray-800'}`}
+                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.id === selectedPlayer.id ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`}
                                         onClick={() => setSelectedPlayer(player)}
                                     >
                                         <img
@@ -90,52 +89,52 @@ const PlayerProfile = () => {
                     </div>
 
                     {/* Player Details */}
-                    <div className="flex-grow bg-gray-800 p-6 rounded-lg shadow-md ml-18">
-                        <div className="bg-gray-900 p-6 rounded-lg">
+                    <div className="flex-grow text-gray-700 bg-gray-200 p-6 rounded-lg shadow-md ml-18">
+                        <div className="bg-gray-100 p-6 rounded-lg">
                             <h2 className="text-xl font-bold mb-4 text-center">Personal Information</h2>
                             {/* Personal Info Table */}
-                            <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg mb-6">
+                            <table className="min-w-full bg-white border-gray-300 rounded-lg mb-6">
                                 <tbody>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Name:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Name:</td>
                                         <td className="py-2 px-5">{selectedPlayer.fullName}</td>
                                     </tr>
-                                    <tr className="border-b border-gray-700 bg-gray-800">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Date of Birth:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Date of Birth:</td>
                                         <td className="py-2 px-5">{selectedPlayer.birthDate}</td>
                                     </tr>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Email:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Email:</td>
                                         <td className="py-2 px-5">{selectedPlayer.email}</td>
                                     </tr>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Contact No:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Contact No:</td>
                                         <td className="py-2 px-5">{selectedPlayer.contactNo}</td>
                                     </tr>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Batting Style:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Batting Style:</td>
                                         <td className="py-2 px-5">{selectedPlayer.battingStyle}</td>
                                     </tr>
-                                    <tr className="border-b border-gray-700">
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Bowling Style:</td>
+                                    <tr className="border-b border-gray-300">
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Bowling Style:</td>
                                         <td className="py-2 px-5">{selectedPlayer.bowlingStyle}</td>
                                     </tr>
                                     <tr>
-                                        <td className="py-2 px-5 font-semibold text-gray-400">Role:</td>
+                                        <td className="py-2 px-5 font-semibold text-gray-900">Role:</td>
                                         <td className="py-2 px-5">{selectedPlayer.playingRole}</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="mt-6 bg-gray-900 p-6 rounded-lg shadow-md">
-                            <h2 className="text-xl font-bold mb-4 text-center">Player Statistics</h2>
+                        <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
+                            <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
 
                             {/* Batting Stats */}
                             <h3 className="text-lg font-bold mb-4">Batting and Fielding Stats</h3>
-                            <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg mb-6">
+                            <table className="min-w-full bg-white border-gray-300 rounded-lg mb-6">
                                 <thead>
-                                    <tr className="bg-gray-700">
+                                    <tr className="bg-gray-200">
                                         <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Format</th>
                                         <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Matches</th>
                                         <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Innings</th>
@@ -151,7 +150,7 @@ const PlayerProfile = () => {
                                 </thead>
                                 <tbody>
                                     {selectedPlayer.stats.map((stat) => (
-                                        <tr key={stat.format} className="border-b border-gray-700">
+                                        <tr key={stat.format} className="border-b border-gray-300">
                                             <td className="py-2 px-5 text-center align-middle">{stat.format}</td>
                                             <td className="py-2 px-5 text-center align-middle">{stat.matches}</td>
                                             <td className="py-2 px-5 text-center align-middle">{stat.innings}</td>
@@ -170,9 +169,9 @@ const PlayerProfile = () => {
 
                              {/* Bowling Stats */}
         <h3 className="text-lg font-bold mb-4">Bowling Stats</h3>
-        <table className="min-w-full bg-gray-800 border border-gray-700 rounded-lg">
+        <table className="min-w-full bg-white  border-gray-300 rounded-lg">
             <thead>
-                <tr className="bg-gray-700">
+                <tr className="bg-gray-200">
                     <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Format</th>
                     <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Inns</th>
                     <th className="py-2 px-5 text-center align-middle whitespace-nowrap">Overs</th>
@@ -186,7 +185,7 @@ const PlayerProfile = () => {
             </thead>
             <tbody>
                 {selectedPlayer.bowlingStats.map((stat) => (
-                    <tr key={stat.format} className="border-b border-gray-700">
+                    <tr key={stat.format} className="border-b border-gray-300">
                         <td className="py-2 px-5 text-center align-middle">{stat.format}</td>
                         <td className="py-2 px-5 text-center align-middle">{stat.innings}</td>
                         <td className="py-2 px-5 text-center align-middle">{stat.overs}</td>

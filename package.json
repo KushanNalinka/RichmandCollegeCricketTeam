@@ -7,7 +7,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "antd": "^5.21.0",
+    "antd": "^5.21.2",
     "assert": "^2.1.0",
     "axios": "^1.7.7",
     "firebase": "^10.13.1",
@@ -51,7 +51,5 @@
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10"
   },
-   
   "proxy": "http://localhost:5000/api/"
 }
-

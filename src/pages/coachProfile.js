@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../components/HomeNavbar";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
@@ -7,6 +8,9 @@ import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
 
 const CoachProfile = () => {
+
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [editSchedule, setEditSchedule] = useState(null);
   // Sort players alphabetically by fullName
   const sortedPlayers = [...playersData].sort((a, b) =>
     a.fullName.localeCompare(b.fullName)
@@ -62,6 +66,11 @@ const CoachProfile = () => {
       }
     ]);
   };
+  const handleEditSchedule = schedule => {
+    setEditSchedule(schedule);
+    setIsEditFormOpen(true);
+  };
+
 
   return (
     <div
@@ -72,13 +81,13 @@ const CoachProfile = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Navbar */}
+      {/ Navbar /}
       <Navbar />
 
       <div className=" pt-32  p-10">
         <div>
           <div className="flex gap-6 items-center lg:px-5 justify-center">
-            {/* Player Details */}
+            {/ Player Details /}
 
             <div
               className="flex-grow flex-col flex bg p-8 items-center justify-center rounded-lg lg:px-20 bg-white shadow-md ml-18"
@@ -115,7 +124,7 @@ const CoachProfile = () => {
                   </p>
                 </div>
 
-                {/* <img src={profilePic} alt='' className='bg-cover w-24 h-24 rounded-full'/> */}
+                {/* {/ <img src={profilePic} alt='' className='bg-cover w-24 h-24 rounded-full'/> /} */}
               </div>
               <div className="bg-gray-100 p-6 w-2/3 self-center rounded-lg">
                 <h2 className="text-xl font-bold mb-4 text-black text-center">
@@ -194,6 +203,9 @@ const CoachProfile = () => {
                     <th className="py-2 px-16 text-center text-gray-800 font-semibold align-middle whitespace-nowrap">
                       Type
                     </th>
+                    <th className="py-2 px-16 text-center text-gray-800 font-semibold align-middle whitespace-nowrap">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -217,6 +229,19 @@ const CoachProfile = () => {
                       <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
                         {schedule.type}
                       </td>
+                      <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
+                        <div className="flex justify-center space-x-2">
+                          <button
+                            className="text-blue-500 hover:text-blue-700"
+                            onClick={() => handleEditSchedule(schedule)}
+                          >
+                            <FaEdit className="text-sm" />
+                          </button>
+                          <button className="text-red-500 hover:text-red-700">
+                            <FaTrash className="text-sm" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   )}
                 </tbody>
@@ -225,7 +250,6 @@ const CoachProfile = () => {
             </div>
           </div>
         </div>
-        {/* Main Content */}
       </div>
     </div>
   );

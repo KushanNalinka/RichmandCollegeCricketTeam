@@ -9,7 +9,7 @@ const PlayerProfile = () => {
     const [selectedPlayer, setSelectedPlayer] = useState(sortedPlayers[0]);
 
     return (
-        <div className="bg-gray-50 min-h-screen text-white">
+        <div className="bg-gray-900 min-h-screen text-white">
             {/* Navbar */}
             <Navbar />
 
@@ -55,7 +55,7 @@ const PlayerProfile = () => {
                     >
                         {/* Fixed Heading */}
                         <div className="p-4 border-b text-black border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-200">Our Players</h2>
+                            <h2 className="text-xl font-bold text-gray-900">Our Players</h2>
                         </div>
 
                         {/* Scrollable Player List */}

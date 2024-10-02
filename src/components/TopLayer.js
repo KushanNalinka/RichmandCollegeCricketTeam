@@ -1,6 +1,6 @@
 import React from 'react';
 import topImage from '../assets/images/BG3.png'; // Import your image
-import Navbar from '../components/HomeNavbar'
+import Navbar from '../components/MemberNavbar'
 export default function TopLayer() {
   return (
     

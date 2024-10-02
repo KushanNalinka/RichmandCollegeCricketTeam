@@ -157,11 +157,13 @@ const MatchTable = () => {
     // Add more matches as needed
   ];
 
+  
+  
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <div className="relative w-fit ml-20 mt-6">
         {/* Background and foreground text combined */}
-        <p  className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#00175F] " >
+        <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#00175F]">
           UPCOMING MATCHES
         </p>
       </div>
@@ -183,31 +185,51 @@ const MatchTable = () => {
             {matches.map((match, index) => (
               <tr
                 key={index}
-                className={`border-t text-center border-gray-300 ${index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'}`}
+                className={`border-t text-center border-gray-300 ${
+                  index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'
+                }`}
                 style={index === 0 ? { fontSize: '1.25rem', height: '80px' } : {}}
               >
-                <td className={` text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td
+                  className={`text-center px-2 md:px-4 py-4 ${
+                    index === 0 ? 'font-semibold' : ''
+                  }`}
+                >
                   {match.date}
                 </td>
-                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td
+                  className={`text-center px-2 md:px-4 py-4 ${
+                    index === 0 ? 'font-semibold' : ''
+                  }`}
+                >
                   {match.time}
                 </td>
-                <td className={`text-center px-2 md:px-4 py-4 flex items-center ${index === 0 ? 'font-semibold' : ''}`}>
-                  <img
-                    src={match.team1Logo}
-                    alt={`${match.team1} logo`}
-                    className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
-                  />
-                  {match.team1}
-                  <span className="mx-2 ">vs</span>
-                  <img
-                    src={match.team2Logo}
-                    alt={`${match.team2} logo`}
-                    className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
-                  />
-                  {match.team2}
+                <td
+                  className={`text-center px-2 md:px-4 py-4 ${
+                    index === 0 ? 'font-semibold' : ''
+                  }`}
+                >
+                  <div className="flex justify-center items-center">
+                    <img
+                      src={match.team1Logo}
+                      alt={`${match.team1} logo`}
+                      className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+                    />
+                    {match.team1}
+                    <span className="mx-2">vs</span>
+                    <img
+                      src={match.team2Logo}
+                      alt={`${match.team2} logo`}
+                      className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+                    />
+                    {match.team2}
+                  </div>
                 </td>
-                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? 'font-semibold' : ''}`}>
+                <td
+                  className={`text-center px-2 md:px-4 py-4 ${
+                    index === 0 ? 'font-semibold' : ''
+                  }`}
+                >
                   {match.venue}
                 </td>
               </tr>

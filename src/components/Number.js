@@ -59,7 +59,7 @@ import CricketBallIcon from "../assets/images/CricketBall.gif"; // Import the SV
 
 const stats = [
   
-  { label: "BigMatch Won", value: 37 },
+  { label: "Big Matches Won", value: 37 },
   { label: "Club Members", value: 205 },
   { label: " Professional Coaches", value: 16 },
 ];

@@ -35,10 +35,10 @@ function AdminDashboard() {
             <Link to="/addCoach" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Add Coach</span>
             </Link>
-            <Link to="/addProfile" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
-              <span className="text-xl font-semibold">Add Profile</span>
+            <Link to="/addOfficial" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+              <span className="text-xl font-semibold">Add Officials</span>
             </Link>
-            <Link to="/match" className="flex items-center justify-center w-full h-40 bg-white hover:bg-gray-300 transition duration-200 rounded-lg shadow-[1 1 1 1">
+            <Link to="/match" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Matches</span>
             </Link>
             <Link to="/admin-scoreCard" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
@@ -47,7 +47,7 @@ function AdminDashboard() {
             <Link to="/team" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Teams</span>
             </Link>
-            <Link to="/coaches" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
+            <Link to="/coach" className="flex items-center justify-center w-full h-40 bg-gray-50 hover:bg-gray-300 transition duration-200 rounded-lg shadow-md">
               <span className="text-xl font-semibold">Coaches</span>
             </Link>
           </div>

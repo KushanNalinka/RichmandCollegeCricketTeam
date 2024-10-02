@@ -9,7 +9,7 @@ import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the Edi
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-import flag from "../assets/images/backDrop.png";
+import flag from "../assets/images/backDrop3.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import HomeNavbar from "../components/HomeNavbar.js";
@@ -312,13 +312,13 @@ const MatchDetails = () => {
         match={currentMatch}
       />}
       {/* Player Form Popup */}
-      <ScoreCardPopup    
-        isOpen={isScorePopupOpen}
-        onClose={handleScorePopupClose}
-        onSubmit={handleAddScoreCard}
-        matchId={matchId}
-        
-      />
+      {isScorePopupOpen &&
+          <ScoreCardPopup    
+          onClose={handleScorePopupClose}
+          matchId={matchId}
+        />
+      }
+      
     </div>
   </div>
   );

@@ -36,30 +36,28 @@ function App() {
          <Route path="/coach" element={<Coaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
-
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
-
          <Route path="/team" element={<Team />} />
-          <Route path='/addPlayerOld' element={<AddPlayer/>}/>
-          <Route path='/addPlayer'element={<AddPlayer/>}/>
-          <Route path='/addCoach' element={<AddCoachForm/>}/>
-          <Route path='/addOfficial' element={<AddOfficialForm/>}/>
+         <Route path='/addPlayerOld' element={<AddPlayer/>}/>
+         <Route path='/addPlayer'element={<AddPlayer/>}/>
+         <Route path='/addCoach' element={<AddCoachForm/>}/>
+         <Route path='/addOfficial' element={<AddOfficialForm/>}/>
          <Route path="/playerProfile" element={<PlayerProfile/>}/>
          <Route path='/coachProfile' element={<CoachProfile/>}/>
          <Route path='/officialProfile' element={<OfficialProfile/>}/>
          <Route path="/match-info" element={<MatchInfo />} />
          <Route path="/scorecard-form" element={<ScoreCardPopup />} />
-          <Route path="/scorecard" element={<ScorecardData />} />
+         <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
-
          <Route path="/news" element={<NewsPage />} />
-
         </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+// "proxy": "https://richmond-cricket.up.railway.app/api/"
+// "proxy": "http://localhost:8080/api/"
 

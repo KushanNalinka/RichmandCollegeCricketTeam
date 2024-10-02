@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from "../components/MemberNavbar";
+import InitialNavbar from "../components/HomeNavbar";
 
 import topImage from '../assets/images/BG3.png';
 
@@ -76,7 +76,7 @@ const sidebarData = [
 // Pagination settings
 const itemsPerPage = 5;
 
-const NewsPage = () => {
+const InitialNewsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate total pages
@@ -104,7 +104,7 @@ const NewsPage = () => {
     <div>
 
        {/* Navbar */}
-       <Navbar />
+       <InitialNavbar />
 
        <div
           style={{
@@ -225,4 +225,4 @@ const NewsPage = () => {
   );
 };
 
-export default NewsPage;
+export default InitialNewsPage;

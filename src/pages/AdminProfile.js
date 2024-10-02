@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import Navbar from '../components/MemberNavbar';
+import Navbar from '../components/HomeNavbar';
 import backgroundImage from '../assets/images/flag.png';
 import playersData from './PlayersData';
 

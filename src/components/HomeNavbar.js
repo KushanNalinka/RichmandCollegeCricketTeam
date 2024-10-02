@@ -392,7 +392,7 @@ const HomeNavbar = () => {
   }, []);
 
   const handleLoginClick = () => {
-    navigate('/home'); // Redirect to home page after logout
+    navigate('/'); // Redirect to home page after logout
   };
 
   const handleDropdownClick = (path) => {
@@ -410,7 +410,7 @@ const HomeNavbar = () => {
       <div className="flex items-center justify-between w-fit bg-transparent backdrop-blur-md rounded-full shadow-lg px-6 py-2">
         {/* Logo on the left */}
         <div className="flex items-center">
-          <Link to="/">
+          <Link to="/adminDashboard">
             <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
           </Link>
         </div>
@@ -419,7 +419,7 @@ const HomeNavbar = () => {
         <ul className="flex space-x-8 text-white font-semibold text-14px">
 
           <li>
-            <Link to="/" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            <Link to="/adminDashboard" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Home
             </Link>
           </li>
@@ -437,7 +437,7 @@ const HomeNavbar = () => {
                 <li>
                   <button
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/coach')}
+                    onClick={() => handleDropdownClick('/admin-coach')}
                   >
                     Coaches
                   </button>
@@ -468,7 +468,7 @@ const HomeNavbar = () => {
                 <li>
                   <button
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/under-13')}
+                    onClick={() => handleDropdownClick('/admin-profile')}
                   >
                     Under 13
                   </button>
@@ -476,7 +476,7 @@ const HomeNavbar = () => {
                 <li>
                   <button
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/under-15')}
+                    onClick={() => handleDropdownClick('/admin-profile')}
                   >
                     Under 15
                   </button>
@@ -484,7 +484,7 @@ const HomeNavbar = () => {
                 <li>
                   <button
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/big-match')}
+                    onClick={() => handleDropdownClick('/admin-profile')}
                   >
                     Under 17
                   </button>
@@ -492,7 +492,7 @@ const HomeNavbar = () => {
                 <li>
                   <button
                     className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                    onClick={() => handleDropdownClick('/big-match')}
+                    onClick={() => handleDropdownClick('/admin-profile')}
                   >
                     Under 19
                   </button>
@@ -502,12 +502,12 @@ const HomeNavbar = () => {
           </li>
 
           <li>
-            <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            <Link to="/admin-match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Matches
             </Link>
           </li>
           <li>
-            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            <Link to="/admin-news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               News
             </Link>
           </li>
@@ -528,7 +528,7 @@ const HomeNavbar = () => {
               <li>
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/profile')}
+                  onClick={() => handleDropdownClick('/adminDashboard')}
                 >
                   Profile
                 </button>

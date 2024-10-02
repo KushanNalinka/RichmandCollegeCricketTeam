@@ -25,7 +25,7 @@ const ScoreCardPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/matchSummary/all`)
+      .get(`matchSummary/all`)
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);

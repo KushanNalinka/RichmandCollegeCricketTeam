@@ -13,6 +13,7 @@ import Register from './pages/Register.js';
 import Team from './pages/Team.js';
 
 import MatchInfo from './pages/MatchInfo.js';
+import AdminMatchInfo from './pages/AdminMatchInfo.js';
 import ScorecardData from './pages/ScoreCardData.js';
 import PlayerProfile from './pages/playerProfile.js';
 import ScoreCardPage from './pages/ScoreCardPage.js';
@@ -25,9 +26,10 @@ import OfficialProfile from './pages/OfficialProfile.js';
 import AddOfficialForm from './components/AddOfficialForm.js';
 import ScoreCardPopup from './components/ScoreCardPopup.js';
 import InitialNewsPage from './pages/InitialNewsPage.js';
-
+import AdminNewsPage from './pages/AdminNewsPage.js';
+import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
-
+import AdminProfile from './pages/AdminProfile.js';
 
 function App() {
   return (
@@ -36,7 +38,9 @@ function App() {
         <Route path="/" element={<Initial />} />
         <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
+         <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
+         <Route path="/admin-coach" element={<AdminCoaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
@@ -57,6 +61,8 @@ function App() {
          <Route path="/news" element={<NewsPage />} />
 
          <Route path="/initial-news" element={<InitialNewsPage />} />
+         <Route path="/admin-news" element={<AdminNewsPage />} />
+         <Route path="/admin-match-info" element={<AdminMatchInfo />} />
 
 
         </Routes>

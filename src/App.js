@@ -28,6 +28,8 @@ import InitialNewsPage from './pages/InitialNewsPage.js';
 
 import NewsPage from './pages/NewsPage.js'; 
 import AboutUs from './pages/AboutUs.js';
+import AdminAboutUs from './pages/AdminAboutUs.js';
+import InitialAboutUs from './pages/InitialAboutUs.js';
 
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
          <Route path="/news" element={<NewsPage />} />
          <Route path="/initial-news" element={<InitialNewsPage />} />
          <Route path="/about-us" element={<AboutUs />} />
+         <Route path="/admin-about-us" element={<AdminAboutUs />} />
+         <Route path="/initial-about-us" element={<InitialAboutUs />} />
 
 
         </Routes>

@@ -1313,7 +1313,7 @@ export default function MatchInfo() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/matchSummary/all")
+    fetch("matchSummary/all")
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);

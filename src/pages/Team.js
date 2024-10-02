@@ -32,7 +32,7 @@ const TableComponent = () => {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/teams/all"); // Update with your API endpoint
+        const response = await axios.get("teams/all"); // Update with your API endpoint
         setTeams(response.data);
         console.log(response.data)
       } catch (error) {
@@ -76,7 +76,7 @@ const TableComponent = () => {
 
   const handleDelete = async id => {
     try{
-      const deleteTeam = await axios.delete(`http://localhost:5000/api/teams/delete/${id}`)
+      const deleteTeam = await axios.delete(`teams/delete/${id}`)
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);
       setTimeout(() => {

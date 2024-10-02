@@ -36,7 +36,7 @@ const MatchDetails = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/matches/all"); // Update with your API endpoint
+        const response = await axios.get("matches/all"); // Update with your API endpoint
         setMatches(response.data);
         console.log(response)
       } catch (error) {
@@ -75,7 +75,7 @@ const MatchDetails = () => {
 
   const handleDelete = async id => {
     try{
-      const deleteMatch = await axios.delete(`http://localhost:5000/api/matches/delete/${id}`)
+      const deleteMatch = await axios.delete(`matches/delete/${id}`)
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);
       setTimeout(() => {

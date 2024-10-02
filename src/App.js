@@ -13,6 +13,7 @@ import Register from './pages/Register.js';
 import Team from './pages/Team.js';
 
 import MatchInfo from './pages/MatchInfo.js';
+import AdminMatchInfo from './pages/AdminMatchInfo.js';
 import ScorecardData from './pages/ScoreCardData.js';
 import PlayerProfile from './pages/playerProfile.js';
 import ScoreCardPage from './pages/ScoreCardPage.js';
@@ -25,11 +26,16 @@ import OfficialProfile from './pages/OfficialProfile.js';
 import AddOfficialForm from './components/AddOfficialForm.js';
 import ScoreCardPopup from './components/ScoreCardPopup.js';
 import InitialNewsPage from './pages/InitialNewsPage.js';
-
+import AdminNewsPage from './pages/AdminNewsPage.js';
+import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
+
 import AboutUs from './pages/AboutUs.js';
 import AdminAboutUs from './pages/AdminAboutUs.js';
 import InitialAboutUs from './pages/InitialAboutUs.js';
+
+
+import AdminProfile from './pages/AdminProfile.js';
 
 
 function App() {
@@ -39,32 +45,37 @@ function App() {
         <Route path="/" element={<Initial />} />
         <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
+         <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
+         <Route path="/admin-coach" element={<AdminCoaches />} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
-
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
-
          <Route path="/team" element={<Team />} />
-          <Route path='/addPlayerOld' element={<AddPlayer/>}/>
-          <Route path='/addPlayer'element={<AddPlayer/>}/>
-          <Route path='/addCoach' element={<AddCoachForm/>}/>
-          <Route path='/addOfficial' element={<AddOfficialForm/>}/>
+         <Route path='/addPlayerOld' element={<AddPlayer/>}/>
+         <Route path='/addPlayer'element={<AddPlayer/>}/>
+         <Route path='/addCoach' element={<AddCoachForm/>}/>
+         <Route path='/addOfficial' element={<AddOfficialForm/>}/>
          <Route path="/playerProfile" element={<PlayerProfile/>}/>
          <Route path='/coachProfile' element={<CoachProfile/>}/>
          <Route path='/officialProfile' element={<OfficialProfile/>}/>
          <Route path="/match-info" element={<MatchInfo />} />
          <Route path="/scorecard-form" element={<ScoreCardPopup />} />
-          <Route path="/scorecard" element={<ScorecardData />} />
+         <Route path="/scorecard" element={<ScorecardData />} />
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
-
          <Route path="/news" element={<NewsPage />} />
+
          <Route path="/initial-news" element={<InitialNewsPage />} />
+
          <Route path="/about-us" element={<AboutUs />} />
          <Route path="/admin-about-us" element={<AdminAboutUs />} />
          <Route path="/initial-about-us" element={<InitialAboutUs />} />
+
+         <Route path="/admin-news" element={<AdminNewsPage />} />
+         <Route path="/admin-match-info" element={<AdminMatchInfo />} />
+
 
 
         </Routes>
@@ -73,4 +84,6 @@ function App() {
 }
 
 export default App;
+// "proxy": "https://richmond-cricket.up.railway.app/api/"
+// "proxy": "http://localhost:8080/api/"
 

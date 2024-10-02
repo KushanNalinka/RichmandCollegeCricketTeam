@@ -50,5 +50,8 @@
   "devDependencies": {
     "postcss": "^8.4.41",
     "tailwindcss": "^3.4.10"
-  }
+  },
+
+  "proxy" :"https://richmond-cricket.up.railway.app/api/"
+
 }

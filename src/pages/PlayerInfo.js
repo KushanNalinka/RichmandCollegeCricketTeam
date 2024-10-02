@@ -7,7 +7,7 @@ import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
 // import flag from "../assets/images/flagbg.png";
-import flag from "../assets/images/backDrop.png";
+import flag from "../assets/images/backDrop3.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
 
@@ -23,7 +23,7 @@ const TableComponent = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`http://localhost:5000/api/admin/players/all`)
+      .get(`admin/players/all`)
       .then((response) => {
         const players = response.data;
         setPlayerData(players);
@@ -61,7 +61,7 @@ const TableComponent = () => {
   };
 
   const handleDelete = async id => {
-    const deletePayer = await axios.delete(`http://localhost:5000/api/admin/players/delete/${id}`)
+    const deletePayer = await axios.delete(`admin/players/delete/${id}`)
    
     console.log("Delete row:", id);
     setTimeout(() => {
@@ -199,7 +199,7 @@ const TableComponent = () => {
                     <img src={item.image} alt={item.name} className="w-14 h-14 rounded-full object-cover border border-gray-300" />
                   </td> */}
                     <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600">
-                      {item.role}
+                      {item.playerRole}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button

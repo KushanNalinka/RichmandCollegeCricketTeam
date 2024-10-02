@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Navbar from "../components/HomeNavbar";
+import Navbar from "../components/MemberNavbar";
 
 import topImage from '../assets/images/BG3.png';
 

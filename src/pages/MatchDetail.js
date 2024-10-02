@@ -9,7 +9,7 @@ import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the Edi
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
-import flag from "../assets/images/backDrop.png";
+import flag from "../assets/images/backDrop3.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import HomeNavbar from "../components/HomeNavbar.js";
@@ -36,7 +36,7 @@ const MatchDetails = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/matches/all"); // Update with your API endpoint
+        const response = await axios.get("matches/all"); // Update with your API endpoint
         setMatches(response.data);
         console.log(response)
       } catch (error) {
@@ -75,7 +75,7 @@ const MatchDetails = () => {
 
   const handleDelete = async id => {
     try{
-      const deleteMatch = await axios.delete(`http://localhost:5000/api/matches/delete/${id}`)
+      const deleteMatch = await axios.delete(`matches/delete/${id}`)
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);
       setTimeout(() => {
@@ -312,13 +312,13 @@ const MatchDetails = () => {
         match={currentMatch}
       />}
       {/* Player Form Popup */}
-      <ScoreCardPopup    
-        isOpen={isScorePopupOpen}
-        onClose={handleScorePopupClose}
-        onSubmit={handleAddScoreCard}
-        matchId={matchId}
-        
-      />
+      {isScorePopupOpen &&
+          <ScoreCardPopup    
+          onClose={handleScorePopupClose}
+          matchId={matchId}
+        />
+      }
+      
     </div>
   </div>
   );

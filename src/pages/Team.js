@@ -4,35 +4,31 @@ import { message } from "antd";
 import { FaTrash, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
 import EditModal from "../components/TeamEditModal"; // Import the EditModal component
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
-import { IoHomeSharp } from "react-icons/io5";
-import { TbScoreboard } from "react-icons/tb";
-import { RiTeamFill } from "react-icons/ri";
-import { BiSolidCricketBall } from "react-icons/bi";
-import { BsPersonFill } from "react-icons/bs";
-import logo from "../assets/images/rcclogo.png";
-// import flag from "../assets/images/flagbg.png";
-import flag from "../assets/images/backDrop.png";
+import flag from "../assets/images/backDrop3.png";
 import HomeNavbar from "../components/HomeNavbar";
-import { FaXmark, FaBars } from "react-icons/fa6";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
+import TeamMembers from "../components/TeamMembers";
 
 const TableComponent = () => {
   const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isTeamMembersOpen, setIsTeamMembersOpen] = useState(false);
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
+  const [teamMembers, setTeamMembers] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchTeams = async () => {
+      console.log("members:", teamMembers);
       try {
-        const response = await axios.get("http://localhost:5000/api/teams/all"); // Update with your API endpoint
+        const response = await axios.get("teams/all"); // Update with your API endpoint
         setTeams(response.data);
         console.log(response.data)
       } catch (error) {
@@ -70,13 +66,17 @@ const TableComponent = () => {
 
  
 
-  const handleViewMembers = id => {
-    alert(`View members for row with ID: ${id}`);
+  const handleViewMembers = members => {
+    console.log("selected team:" , members);
+    setIsTeamMembersOpen(true);
+    setTeamMembers(members);
   };
 
   const handleDelete = async id => {
     try{
-      const deleteTeam = await axios.delete(`http://localhost:5000/api/teams/delete/${id}`)
+
+      const deleteTeam = await axios.delete(`teams/delete/${id}`)
+
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);
       setTimeout(() => {
@@ -175,7 +175,9 @@ const TableComponent = () => {
                         <FaTrash />
                       </button>
                       <button
-                        onClick={() => handleViewMembers(item.id)}
+                        onClick={() => handleViewMembers(item.players
+                          
+                        )}
                         className="text-green-700 hover:text-green-600 transition-colors"
                         title="Members"
                       >
@@ -222,6 +224,13 @@ const TableComponent = () => {
           <EditModal
             team={editItem}
             onClose={() => setIsEditModalOpen(false)}
+           
+          />}
+          {isTeamMembersOpen &&
+          teamMembers &&
+          <TeamMembers
+            members={teamMembers}
+            onClose={() => setIsTeamMembersOpen(false)}
            
           />}
       </div>

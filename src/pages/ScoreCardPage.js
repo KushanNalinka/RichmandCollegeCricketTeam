@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState  } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
@@ -7,7 +8,7 @@ import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import { FaEdit, FaTrash } from "react-icons/fa";
 // import flag from "../assets/images/flagbg.png";
-import flag from "../assets/images/backDrop.png";
+import flag from "../assets/images/backDrop3.png";
 import mahindaLogo from "../assets/images/MLogo.png";
 import richmandLogo from "../assets/images/RLogo.png";
 import thurstanLogo from "../assets/images/thurstanLogo.png";
@@ -17,293 +18,34 @@ import { IoIosArrowDropup } from "react-icons/io";
 
 const ScoreCardPage = () => {
   const { matchId } = useParams(); // Extract matchId from URL parameters
+  const [matchSummary, setMatchSummary] = useState([]);
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState();
   const [isEditPopupOpen, setIsEditPopupOpen] = useState();
-  const [matches, setMatches] = useState([
-    {
-      id:1,
-      matchId: 1,
-      matchName: "Match",
-      time: "2024-08-29T10:00",
-      venue: "Stadium A",
-      opponent: "Mahinda College, Galle",
-      opponentLogo:mahindaLogo,
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    {
-      id:2,
-      matchId: 2,
-      matchName: "Match 2",
-      time: "2024-08-30T14:00",
-      venue: "Stadium B",
-      opponent: "Thurstan College, Colombo",
-      opponentLogo:thurstanLogo,
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-    },
-    {
-      id:3,
-      matchId: 3,
-      matchName: "Match 3",
-      time: "2024-08-20T10:00",
-      venue: "Stadium A",
-      opponent: "Mahinda College, Galle",
-      opponentLogo:mahindaLogo,
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "John Doe",
-      type: "ODI"
-    },
-    {
-      id:4,
-      matchId: 4,
-      matchName: "Match 4",
-      time: "2024-07-30T14:00",
-      venue: "Stadium B",
-      opponent: "Thurstan College, Colombo",
-      opponentLogo:thurstanLogo,
-      tier: "Tier 2",
-      division: "Division B",
-      umpire: "Jane Smith",
-      type: "T20"
-    },
-    {
-      id:5,
-      matchId: 5,
-      matchName: "Test Match 2",
-      time: "2024-09-20T10:00",
-      venue: "Stadium D",
-      opponent: "Mahinda College,Galle",
-      opponentLogo: mahindaLogo,
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "Michael Scott",
-      type: "Test",
-      innings: [
-        {
-          inningId: 1,
-          runs: 200,
-          wickets: 5,
-        },
-        {
-          inningId: 2,
-          runs: 150,
-          wickets: 10,
-        },
-      ],
-    },
-    {
-      id:6,
-      matchId: 6,
-      matchName: "Test Match 2",
-      time: "2024-09-21T10:00",
-      venue: "Stadium D",
-      opponent: "Mahinda College, Galle",
-      opponentLogo: mahindaLogo,
-      tier: "Tier 1",
-      division: "Division A",
-      umpire: "Michael Scott",
-      type: "Test",
-      innings: [
-        {
-          inningId: 1,
-          runs: 200,
-          wickets: 5,
-        },
-        {
-          inningId: 2,
-          runs: 150,
-          wickets: 10,
-        },
-      ],
-    },
-  ]);
-  const sortedMatches = matches.sort(
+
+  useEffect(() => {
+    axios
+      .get(`matchSummary/all`)
+      .then(response => {
+        const matchSummary = response.data;
+        setMatchSummary(matchSummary);
+        console.log("Match summary Data:", matchSummary);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
+  }, []);
+
+  const sortedMatches = matchSummary && matchSummary.sort(
     (a, b) => new Date(b.time) - new Date(a.time)
   );
-
-const [matchStackBatting, setMatchStackBatting] = useState([
-  // Dummy data for batting side
-  {
-    id: 1,
-    match_id: 1,
-    player_id: 1,
-    playerName: "Player 1",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  },
-  {
-    id: 2,
-    match_id: 1,
-    player_id: 2,
-    playerName: "Player 2",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  },
-  {
-    id: 3,
-    match_id: 1,
-    player_id: 3,
-    playerName: "Player 3",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  },
-  {
-    id: 4,
-    match_id: 2,
-    player_id: 4,
-    playerName: "Player 4",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  },
-  {
-    id: 5,
-    match_id: 2,
-    player_id: 5,
-    playerName: "Player 5",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  },
-  {
-    id: 6,
-    match_id: 2,
-    player_id: 6,
-    playerName: "Player 6",
-    runs: 45,
-    balls: 30,
-    Maidens:40,
-    fours: 6,
-    sixes: 2,
-    fifties: 0,
-    hundreds: 0,
-    strikeRate: 166.67
-  }
-]);
-
-const [matchStackBowlig, setMatchStackBowling] = useState([
-  // Dummy data for batting side
-  {
-    id: 1,
-    match_id: 1,
-    player_id: 1,
-    playerName: "Player 1",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  },
-  {
-    id: 2,
-    match_id: 1,
-    player_id: 2,
-    playerName: "Player 2",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  },
-  {
-    id: 3,
-    match_id: 1,
-    player_id: 3,
-    playerName: "Player 3",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  },
-  {
-    id: 4,
-    match_id: 2,
-    player_id: 4,
-    playerName: "Player 4",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  },
-  {
-    id: 5,
-    match_id: 2,
-    player_id: 5,
-    playerName: "Player 5",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  },
-  {
-    id: 6,
-    match_id: 2,
-    player_id: 6,
-    playerName: "Player 6",
-    overs: 10,
-    Maidens:40,
-    runConceded: 55,
-    wickets: 2,
-    wides:2,
-    noBolls:1,
-    economyRate: 7.8
-  }
-]);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedInning, setSelectedInning] = useState({}); // Tracks selected inning per Test match
   const [pressedIndex, setPressedIndex] = useState({}); // Tracks dropdown state for each match
   const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(matches.length / rowsPerPage);
+  const totalPages = Math.ceil(matchSummary.length / rowsPerPage);
 
   // Slice data for current page
   const paginatedData = sortedMatches.slice(
@@ -405,12 +147,12 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                     </div>
                     <div className="flex flex-col items-center justify-center">
                       <img src={match.opponentLogo} alt={match.matchName} className="w-8 h-8"/>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opponent}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
                     </div>
                   </div>
                   <div>
-                    <p className="lg:text-xl text-lg font-bold uppercase flex justify-between items-center text-[#08165A] font-sans">{match.matchName} <span className="text-[#480D35] px-5 text-sm"> - {match.type}</span> </p>
-                    <p className="lg:hidden flex text-xs font-bold text-[#480D35]">{new Date(match.time).toLocaleDateString('en-US', {
+                    <p className="lg:text-xl text-lg font-bold uppercase flex justify-between items-center text-[#08165A] font-sans">{match.under} <span className="text-[#480D35] px-5 text-sm"> - {match.type}</span> </p>
+                    <p className="lg:hidden flex text-xs font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'short',
                         day: 'numeric',
@@ -435,7 +177,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                       ) 
                     }
                     <div>
-                      <p className="lg:flex hidden text-sm font-bold text-[#480D35]">{new Date(match.time).toLocaleDateString('en-US', {
+                      <p className="lg:flex hidden text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'short',
                           day: 'numeric',
@@ -498,7 +240,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                       </thead>
 
                       <tbody className=" divide-y  divide-gray-300">
-                        {matchStackBatting.map((player, index2) =>
+                        {matchSummary.map((player, index2) =>
                           <tr
                             key={index2}
                             className=" hover:bg-gray-50 h-full align-middle"
@@ -568,7 +310,7 @@ const [matchStackBowlig, setMatchStackBowling] = useState([
                     </thead>
 
                     <tbody className=" divide-y  divide-gray-300">
-                      {matchStackBowlig.map((player, index3) =>
+                      {matchSummary.map((player, index3) =>
                         <tr
                           key={index3}
                           className=" hover:bg-gray-50 h-full align-middle"

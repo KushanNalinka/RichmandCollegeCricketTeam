@@ -29,12 +29,13 @@ const EditModal = ({ team, onClose }) => {
     });
   };
 
-  const handleSubmit = async e => {
+  const handleEdit = async e => {
     e.preventDefault();
+    console.log("coachIds;", formData.coaches);
     try {
       // Make a POST request to the backend API
       const response = await axios.put(
-        `http://localhost:5000/api/teams/update/${team.teamId}`,
+        `http://localhost:5000/api/teams/${team.teamId}`,
         formData
       );
       console.log("Form update succedded: ", response.data);
@@ -190,7 +191,7 @@ const EditModal = ({ team, onClose }) => {
           <div className="flex justify-end space-x-2">
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={handleEdit}
               className="bg-[#480D35] text-white py-2 px-4 w-full rounded-lg hover:bg-[#5D1245]"
             >
               Save Changes

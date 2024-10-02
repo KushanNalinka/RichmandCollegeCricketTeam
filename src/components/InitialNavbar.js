@@ -796,9 +796,10 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/testimonials" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-             Contact Us
-            </Link>
+           {/* Anchor link that scrolls to the Footer */}
+           <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Contact Us
+            </a>
           </li>
           
         </ul>

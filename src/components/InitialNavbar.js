@@ -786,7 +786,7 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/about" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            <Link to="/initial-about-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               About Us
             </Link>
           </li>

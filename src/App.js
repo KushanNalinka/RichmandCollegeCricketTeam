@@ -29,7 +29,16 @@ import InitialNewsPage from './pages/InitialNewsPage.js';
 import AdminNewsPage from './pages/AdminNewsPage.js';
 import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
+import CoachTable from './pages/CoachInfo.js';
+import CoachesProfile from './pages/Coaches.js';
+
+import AboutUs from './pages/AboutUs.js';
+import AdminAboutUs from './pages/AdminAboutUs.js';
+import InitialAboutUs from './pages/InitialAboutUs.js';
+
+
 import AdminProfile from './pages/AdminProfile.js';
+
 
 function App() {
   return (
@@ -38,9 +47,14 @@ function App() {
         <Route path="/" element={<Initial />} />
         <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
+
+         <Route path="/coach" element={<CoachesProfile/>} />
+         <Route path="/coachInfo" element={<CoachTable/>} />
+
          <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path="/admin-coach" element={<AdminCoaches />} />
+
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
@@ -61,8 +75,14 @@ function App() {
          <Route path="/news" element={<NewsPage />} />
 
          <Route path="/initial-news" element={<InitialNewsPage />} />
+
+         <Route path="/about-us" element={<AboutUs />} />
+         <Route path="/admin-about-us" element={<AdminAboutUs />} />
+         <Route path="/initial-about-us" element={<InitialAboutUs />} />
+
          <Route path="/admin-news" element={<AdminNewsPage />} />
          <Route path="/admin-match-info" element={<AdminMatchInfo />} />
+
 
 
         </Routes>
@@ -73,4 +93,3 @@ function App() {
 export default App;
 // "proxy": "https://richmond-cricket.up.railway.app/api/"
 // "proxy": "http://localhost:8080/api/"
-

@@ -781,9 +781,9 @@ const HighlightTabs = () => {
     >
 
        {/* Background and foreground text combined */}
-       <div className="relative w-full ml-20">
+       <div className="relative w-fit ml-20">
         {/* Background and foreground text combined */}
-        <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white italic">
+        <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
           RICHMOND HIGHLIGHTS
         </p>
       </div>

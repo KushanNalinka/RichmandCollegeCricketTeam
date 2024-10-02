@@ -580,10 +580,10 @@ const PlayerProfile = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-    const playerData = await axios.get( "http://localhost:5000/api/admin/players/4");
+    const playerData = await axios.get( "admin/players/4");
     setPlayerProfile(playerData.data);
 
-    const playerStat = await axios.get( "http://localhost:5000/api/playerStats/all-stats/4");
+    const playerStat = await axios.get( "playerStats/all-stats/4");
     setPlayerStat(playerStat.data);
     console.log("player stack", playerStat);
   };

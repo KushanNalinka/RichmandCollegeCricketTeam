@@ -12,10 +12,11 @@ import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
 
 const CoachTable = () => {
-  const [playerData, setPlayerData] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
+  const [coachData, setCoachData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [currentCoach, setCurrentCoach] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,26 +24,26 @@ const CoachTable = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`admin/players/all`)
+      .get(`${API_URL}coaches/all`)
       .then((response) => {
-        const players = response.data;
-        setPlayerData(players);
+        const coaches = response.data;
+        setCoachData(coaches);
       })
       .catch((error) => {
         console.error("There was an error fetching the player data!", error);
       });
   }, []);
 
-  const handleEdit = player => {
-    setCurrentPlayer(player);
+  const handleEdit = coach => {
+    setCurrentCoach(coach);
     setIsEditFormOpen(true);
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(playerData.length / rowsPerPage);
+  const totalPages = Math.ceil(coachData.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = playerData.slice(
+  const paginatedData = coachData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -60,25 +61,12 @@ const CoachTable = () => {
   };
 
   const handleDelete = async id => {
-    const deletePayer = await axios.delete(`admin/players/delete/${id}`)
+    const deletePayer = await axios.delete(`${API_URL}coaches/delete/${id}`)
    
     console.log("Delete row:", id);
     setTimeout(() => {
       window.location.reload();
     }, 1500);
-  };
-
-  const toggleForm = () => {
-    setIsFormOpen(!isFormOpen);
-  };
-
-  const handleSavePlayer = player => {
-    // Logic to save player information, including image upload if necessary
-    setIsFormOpen(false);
-  };
-
-  const toggleButton = () => {
-    setIsMenuOpen(!isMenuOpen);
   };
 
   return (
@@ -127,29 +115,22 @@ const CoachTable = () => {
               <thead className=" bg-[#480D35] text-white rounded">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Name
+                    COACH
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DOB
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Email
+                    AGE
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                    EMAIL
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     Contact No
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Batting Style
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Bowling Style
-                  </th>
-                     {/* <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> */}
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    Role
+                    ADDRESS
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
@@ -162,14 +143,7 @@ const CoachTable = () => {
                     key={index}
                     className=" hover:bg-gray-50 h-full align-middle"
                   >
-                    <td className={`px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600`}>
-                      <div
-                        className={`flex items-center justify-center h-10 w-10  ${item.status ==
-                        "Active"
-                          ? "bg-green-300 p-5 rounded-full font-bold text-green-700"
-                          : "bg-slate-300 p-5 text-slate-600 font-bold rounded-full"}`}
-                      />
-                    </td>
+                    
                     <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-gray-900">
 
                         <img
@@ -180,7 +154,10 @@ const CoachTable = () => {
                         {item.name.split(' ').slice(-2).join(' ')}
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
-                      {item.dateOfBirth}
+                      {item.dob}
+                    </td>
+                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                      {item.age}
                     </td>
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
@@ -189,16 +166,7 @@ const CoachTable = () => {
                       {item.contactNo}
                     </td>
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
-                      {item.battingStyle}
-                    </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
-                      {item.bowlingStyle}
-                    </td>
-                    {/* <td className="px-6 py-4 h-16 whitespace-nowrap">
-                    <img src={item.image} alt={item.name} className="w-14 h-14 rounded-full object-cover border border-gray-300" />
-                  </td> */}
-                    <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600">
-                      {item.playerRole}
+                      {item.address}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
@@ -247,13 +215,13 @@ const CoachTable = () => {
             </button>
           </div>
         </div>
-        {isFormOpen &&
+        {/* {isFormOpen &&
           <PlayerForm closeForm={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&
           <EditPlayerForm
-            player={currentPlayer}
+            player={currentCoach}
             onClose={() => setIsEditFormOpen(false)}
-          />}
+          />} */}
       </div>
     </div>
   );

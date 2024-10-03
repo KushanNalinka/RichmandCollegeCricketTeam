@@ -6,6 +6,8 @@ import { BiSolidCricketBall } from "react-icons/bi";
 import { BsPersonFill } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
+import { FaPeopleGroup } from "react-icons/fa6";
+import { FaPersonWalkingWithCane } from "react-icons/fa6";
 
 const Navbar = () => {
     return (
@@ -28,6 +30,9 @@ const Navbar = () => {
                     </Link>
                     <Link to={"/team"} className=" gap-3 flex flex-col group cursor-pointer pl-2 py-4 text-2xl items-center justify-center p-2  text-white w-full">
                         {" "}<RiTeamFill /> <span className="text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">Team</span>
+                    </Link>
+                    <Link to={"/coachInfo"} className=" gap-3 flex flex-col group cursor-pointer pl-2 py-4 text-2xl items-center justify-center p-2  text-white w-full">
+                        {" "}<BsPersonFill /> <span className="text-sm text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-1">Coaches</span>
                     </Link>
                 </ul>
             </div>

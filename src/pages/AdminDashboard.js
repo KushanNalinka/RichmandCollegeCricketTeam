@@ -90,7 +90,6 @@ function AdminDashboard() {
               </span>
               <span className="text-xl font-bold">Officials</span>
             </Link>
-           
           </div>
         </div>
       </div>

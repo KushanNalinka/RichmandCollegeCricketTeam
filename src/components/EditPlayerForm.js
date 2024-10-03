@@ -13,6 +13,7 @@ const EditPlayerForm = ({ player, onClose }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -41,29 +42,6 @@ const EditPlayerForm = ({ player, onClose }) => {
     }
   };
 
-  // const handleChange = e => {
-  //   const { name, value } = e.target;
-  //   setFormData(prevState => ({
-  //     ...prevState,
-  //     [name]: value
-  //   }));
-  // };
-
-  // const handleFileChange = e => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setImagePreview(reader.result);
-  //       setFormData(prevState => ({
-  //         ...prevState,
-  //         image: file
-  //       }));
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
   const handleEdit = async e => {
     e.preventDefault();
       try {
@@ -79,7 +57,7 @@ const EditPlayerForm = ({ player, onClose }) => {
         image: imageURL, // Assign the uploaded image URL to formData
       };
         const response = await axios.put(
-          `http://localhost:5000/api/admin/players/update/${player.playerId}`,
+          `${API_URL}admin/players/update/${player.playerId}`,
           playerData 
         );
         console.log("Form submitted succedded: ", response.data);
@@ -101,6 +79,9 @@ const EditPlayerForm = ({ player, onClose }) => {
           },
           contactNo: ""
         });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -320,8 +301,10 @@ const EditPlayerForm = ({ player, onClose }) => {
           <div className="col-span-2">
             <label className="block text-gray-700">Image</label>
             <input
-              type="file"
-              accept="image/*"
+              id="image"
+              type="file" 
+              name="image" 
+              accept="image/*" 
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
             />

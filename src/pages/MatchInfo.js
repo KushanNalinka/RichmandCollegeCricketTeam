@@ -1449,6 +1449,12 @@ export default function MatchInfo() {
       <option>Under 15</option>
       <option>Under 17</option>
       <option>Under 19</option>
+      <option>Richmond legend  over  40
+      </option>
+      <option>Richmond legend over 50</option>
+      <option>Old boys
+      </option>
+      <option>Academy</option>
       <option>All</option>
     </select>
 

@@ -17,6 +17,7 @@ import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosArrowDropup } from "react-icons/io";
 
 const ScoreCardPage = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
@@ -25,7 +26,7 @@ const ScoreCardPage = () => {
 
   useEffect(() => {
     axios
-      .get(`matchSummary/all`)
+      .get(`${API_URL}matchSummary/all`)
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
@@ -88,7 +89,7 @@ const ScoreCardPage = () => {
 
   return (
     <div
-      className=" flex items-center justify-center"
+      className=" flex items-center justify-center "
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
@@ -99,7 +100,7 @@ const ScoreCardPage = () => {
       }}
     >
       <HomeNavbar />
-      <div className=" flex relative items-center  p-2 w-full ">
+      <div className=" flex relative items-center pt-20 p-2 w-full ">
         <div className=" lg:w-[5%] ">
           <Navbar />
         </div>

@@ -19,11 +19,12 @@ const TableComponent = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`admin/players/all`)
+      .get(`${API_URL}admin/players/all`)
       .then((response) => {
         const players = response.data;
         setPlayerData(players);
@@ -61,7 +62,8 @@ const TableComponent = () => {
   };
 
   const handleDelete = async id => {
-    const deletePayer = await axios.delete(`admin/players/delete/${id}`)
+    console.log("Delete Player: ", id);
+    const deletePayer = await axios.delete(`${API_URL}admin/players/delete/${id}`)
    
     console.log("Delete row:", id);
     setTimeout(() => {
@@ -249,7 +251,7 @@ const TableComponent = () => {
           </div>
         </div>
         {isFormOpen &&
-          <PlayerForm closeForm={() => setIsFormOpen(false)} />}
+          <PlayerForm onClose={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&
           <EditPlayerForm
             player={currentPlayer}

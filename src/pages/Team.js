@@ -13,6 +13,7 @@ import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import TeamMembers from "../components/TeamMembers";
 
 const TableComponent = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [teams, setTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -28,7 +29,7 @@ const TableComponent = () => {
     const fetchTeams = async () => {
       console.log("members:", teamMembers);
       try {
-        const response = await axios.get("teams/all"); // Update with your API endpoint
+        const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
         setTeams(response.data);
         console.log(response.data)
       } catch (error) {
@@ -75,7 +76,7 @@ const TableComponent = () => {
   const handleDelete = async id => {
     try{
 
-      const deleteTeam = await axios.delete(`teams/delete/${id}`)
+      const deleteTeam = await axios.delete(`${API_URL}teams/delete/${id}`)
 
       message.success("Successfully Deleted!");
       console.log("Delete row:", id);

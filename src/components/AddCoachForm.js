@@ -172,7 +172,7 @@ const AddCoachForm = ({ isOpen, onSubmit }) => {
                         <label className="block mb-1 text-gray-700">Date of Birth</label>
                         <input
                             type="date"
-                            name="lastName"
+                            name="dateOfBirth"
                             value={formData.dateOfBirth}
                             onChange={handleChange}
                             className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"

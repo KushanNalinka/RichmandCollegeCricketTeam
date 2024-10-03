@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { FaTimes,  FaTrash } from 'react-icons/fa';
 
 const AddNewModal = ({  onClose }) => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [formData, setFormData] = useState({
@@ -16,7 +17,7 @@ const AddNewModal = ({  onClose }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/admin/players/all`)
+      .get(`${API_URL}admin/players/all`)
       .then(response => {
         const players = response.data;
         setPlayers(players);
@@ -40,7 +41,7 @@ const AddNewModal = ({  onClose }) => {
     try {
       // Make a POST request to the backend API
       const response = await axios.post(
-        "http://localhost:5000/api/teams/add",
+        `${API_URL}teams/add`,
         formData
       );
       console.log("Form submitted succedded: ", response.data);
@@ -52,6 +53,9 @@ const AddNewModal = ({  onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
@@ -91,7 +95,7 @@ const AddNewModal = ({  onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-70 pt-16 flex items-center justify-center z-50">
       <div className="bg-white p-8 pt-2 rounded-lg shadow-lg w-full max-w-md">
         <div className='flex justify-end '>
             <button 
@@ -105,7 +109,7 @@ const AddNewModal = ({  onClose }) => {
         <h3 className="text-xl text-[#480D35] font-bold mb-4">Add New Team</h3>
         <form onSubmit={(e) => e.preventDefault()}>
           
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="under">
               Under
             </label>
@@ -114,7 +118,7 @@ const AddNewModal = ({  onClose }) => {
               name="under"
               value={formData.under}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter team name"
             >
               <option value="" disabled>Select year</option>
@@ -122,9 +126,13 @@ const AddNewModal = ({  onClose }) => {
               <option  value="Under 15">Under 15</option>
               <option  value="Under 17">Under 17</option>
               <option  value="Under 19">Under 19</option>
+              <option  value="Richmond Legend Over 50">Richmond Legend Over 50</option>
+              <option  value="Richmond Legend Over 40">Richmond Legend Over 40</option>
+              <option  value="Old Boys">Old Boys</option>
+              <option  value="Academy">Academy</option>
             </select>
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
               Year
             </label>
@@ -133,7 +141,7 @@ const AddNewModal = ({  onClose }) => {
               name="year"
               value={formData.year}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
               <option value="" disabled>Select year</option>
               {years.map((year) => (
@@ -143,7 +151,7 @@ const AddNewModal = ({  onClose }) => {
               ))}
             </select>
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="captain">
               Captain
             </label>
@@ -153,18 +161,18 @@ const AddNewModal = ({  onClose }) => {
               name="captain"
               value={formData.captain}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-2 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter captain's name"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
               Players
             </label>
             <div className="flex border border-gray-300 rounded-lg">
               <input
                 type="text"
-                className="py-2 px-3 w-[80%] rounded-lg "
+                className="py-1 px-3 w-[80%] rounded-lg "
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly
               />
@@ -177,7 +185,7 @@ const AddNewModal = ({  onClose }) => {
               </button>
             </div>
             <div className="relative">
-              <div className="border overflow-auto h-40 border-gray-300 rounded-lg mt-2 px-3 py-2">
+              <div className="border overflow-auto h-40 border-gray-300 rounded-lg mt-2 px-3 py-1">
                 {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input

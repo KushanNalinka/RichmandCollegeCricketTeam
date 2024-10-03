@@ -1294,6 +1294,8 @@ export default function MatchInfo() {
   const [selectedMatchType, setSelectedMatchType] = useState('All');
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
+
 
   const navigate = useNavigate();
 
@@ -1313,7 +1315,7 @@ export default function MatchInfo() {
   };
 
   useEffect(() => {
-    fetch("matchSummary/all")
+    fetch(`${API_URL}matchSummary/all`)
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);

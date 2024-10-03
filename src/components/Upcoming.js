@@ -5,6 +5,7 @@ const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
+const API_URL = process.env.REACT_APP_API_URL;
 
 // Function to check if a match is upcoming (future date)
 const isUpcomingMatch = (matchDate) => {
@@ -20,7 +21,7 @@ export default function Upcoming() {
   const [matchDataList, setMatchDataList] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/matches/all")
+    fetch(`${API_URL}matches/all`)
       .then(response => response.json())
       .then(data => {
         // Filter only the upcoming matches (strictly after today's date)

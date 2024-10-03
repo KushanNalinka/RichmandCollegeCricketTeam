@@ -51,7 +51,7 @@ function AdminDashboard() {
               <span className="text-2xl text-[white] bg-[#00175F] rounded-full p-2 ">
               <BsPersonFill /> 
               </span>
-              <span className="text-xl font-semibold">Coaches</span>
+              <span className="text-xl font-bold">Coaches</span>
             </Link>
             
             <Link
@@ -79,7 +79,7 @@ function AdminDashboard() {
               <span className="text-2xl text-[white] bg-[#00175F] rounded-full p-2 ">
               <RiTeamFill />
               </span>
-              <span className="text-xl font-semibold">Teams</span>
+              <span className="text-xl font-bold">Teams</span>
             </Link>
             <Link
               to="/addOfficial"

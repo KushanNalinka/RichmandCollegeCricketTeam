@@ -133,7 +133,7 @@ import { HiOutlineLocationMarker } from 'react-icons/hi';
 
 const Footer = () => {
   return (
-    <footer id="contact-us" className="bg-white py-8">
+    <footer id="contact-us" className="bg-white mt-10">
       <div className="flex flex-col">
         {/* Header */}
         <div className="flex justify-between items-center">
@@ -159,29 +159,29 @@ const Footer = () => {
 
         
        {/* Contact Form & Map */}
-       <div className="flex justify-center items-center p-8 bg-[#00175F]  text-white">
+       <div className="flex justify-center items-center p-8 bg-gray-200   text-white">
           <div className="flex flex-col space-y-4 w-full max-w-md">
-            <h2 className="text-2xl mb-4">Contact Us</h2>
+            <h2 className="text-2xl mb-4 text-[#00175F] ">Contact Us</h2>
             <input
               type="text"
               placeholder="Name"
-              className="p-3 rounded-lg bg-gray-800 text-white"
+              className="p-3 rounded-lg bg-[#00175F] text-white"
             />
             <input
               type="email"
               placeholder="Email"
-              className="p-3 rounded-lg bg-gray-800 text-white"
+              className="p-3 rounded-lg bg-[#00175F] text-white"
             />
             <input
               type="text"
               placeholder="Phone"
-              className="p-3 rounded-lg bg-gray-800 text-white"
+              className="p-3 rounded-lg bg-[#00175F] text-white"
             />
             <textarea
               placeholder="Type your message"
-              className="p-3 rounded-lg bg-gray-800 text-white"
+              className="p-3 rounded-lg bg-[#00175F] text-white"
             ></textarea>
-            <button className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700">
+            <button className="bg-[#00175F] text-white p-3 rounded-lg hover:bg-blue-700">
               Send
             </button>
           </div>
@@ -213,16 +213,16 @@ const Footer = () => {
 
             {/* Social Media Icons */}
             <div className="flex justify-center space-x-6 mb-4">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
+              <a href="https://web.facebook.com/richmondcollegecricket/?_rdc=1&_rdr" target="_blank" rel="noreferrer">
                 <FaFacebookF className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
               </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer">
+              <a href="https://x.com/i/flow/login?redirect_after_login=%2Fcheerrichmond" target="_blank" rel="noreferrer">
                 <FaTwitter className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
+              <a href="https://www.instagram.com/richmondcollege?igsh=aXhoOG9nMWNxZ3hx" target="_blank" rel="noreferrer">
                 <FaInstagram className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer">
+              <a href="https://www.youtube.com/channel/UC66Y9YztiHjs3H-kX8_OKPg" target="_blank" rel="noreferrer">
                 <FaYoutube className="text-gray-600 hover:text-gray-900 text-xl sm:text-2xl" />
               </a>
             </div>

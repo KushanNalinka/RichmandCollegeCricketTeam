@@ -541,12 +541,12 @@ const LatestNews = () => {
                 {newsItems.map((item, index) => (
                   <div
                     key={index}
-                    className="w-[40%] p-4 flex-shrink-0 rounded-lg overflow-hidden shadow-lg"
+                    className="w-[40%]  p-4 flex-shrink-0 rounded-lg overflow-hidden shadow-lg"
                   >
                     <img
                       src={item.image}
                       alt={item.title}
-                      className="w-full h-96 object-cover rounded-lg"
+                      className="w-full h-[500px] object-cover rounded-lg"
                     />
                     <div className="p-4">
                       <p className="font-semibold text-gray-700">{item.title}</p>

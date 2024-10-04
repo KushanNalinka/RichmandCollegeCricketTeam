@@ -15,6 +15,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   const [isNewScoreAdded, setIsNewScoreAdded] = useState(false);
   const [matchStack, setMatchStack] = useState([]);
   const [playerStats, setPlayerStats] = useState([]);
+  const [addedPlayerStats, setAddedPlayerStats] = useState([]);
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({
     inning: 1,
@@ -55,7 +56,18 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
-    if (name.includes(".")) {
+    if (name === "player.playerId") {
+      const selectedPlayer = players.find((player) => player.playerId === parseInt(value));
+      if (selectedPlayer) {
+        setFormData({
+          ...formData,
+          player: {
+            playerId: value,
+            name: selectedPlayer.name, // Set both playerId and name
+          }
+        });
+      }
+    }else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
         ...formData,
@@ -79,8 +91,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     try {
       const response = await axios.post(`${API_URL}playerStats/add`, formData);
       console.log("Player stats saved successfully:", response.data);
-      // Optionally, add the new stat to the local state to reflect in the UI
-      //setMatchStack([...matchStack, response.data]);
+      setPlayerStats([...playerStats, response.data]); 
       setFormData({
         inning: "",
         runs: 0,
@@ -112,11 +123,6 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     setIsAdding(!isAdding);
   };
 
-  // const handleSubmit = e => {
-  //   e.preventDefault();
-  //   onSubmit(formData);
-  // };
-  //edit player score
   const handleEditPlayerStack = player => {
     setCurrentPlayerStackId(player.id);
     setIsEditButtonPressed(true);
@@ -140,6 +146,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
       }
     });
   };
+
   const handleSaveEdit = async id => {
      console.log("Stats id: ", id);
      console.log("form stat data: ", formData);
@@ -149,32 +156,47 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
         `${API_URL}playerStats/update/${id}`,
         formData
       );
-      console.log("Form submitted succedded: ", response.data);
-      message.success("Successfull!");
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      if (response.status === 200) {
+        console.log("Form submitted succeeded: ", response.data);
+        message.success("Successfully Updated!");
+  
+        // Update playerStats state only on success
+        setPlayerStats((prevStats) =>
+          prevStats.map((stat) =>
+            stat.id === id ? { ...stat, ...response.data } : stat
+          )
+        );
+        setIsEditButtonPressed(false); // Close edit mode
+        
+      } else {
+        message.error("Update Failed!");
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
     }
   };
+
   const handleEditClose = () => {
     setIsEditButtonPressed(false);
   }
-  //delete player score
+  
   const handleDelete = async id => {
     try{
       const deleteMatch = await axios.delete(`${API_URL}playerStats/${id}`)
-      message.success("Successfully Deleted!");
-      console.log("Delete row:", id);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-  } catch (error) {
-    console.error("Error deleting match:", error);
-    message.error("Failed!");
-  }
+      if (deleteMatch.status === 200) {
+        message.success("Successfully Deleted!");
+        console.log("Delete row:", id);
+  
+        // Update playerStats state to remove the deleted entry
+        setPlayerStats((prevStats) => prevStats.filter((stat) => stat.id !== id));
+      } else {
+        message.error("Deletion Failed!");
+      }
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      message.error("Failed!");
+    }
   };
 
   return (
@@ -414,9 +436,9 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
                     >
                        <option value="">Select Player</option>
                          {players.map((player) => (
-                           <option key={player.playerId} value={player.playerId}>
-                           {player.name}
-                           </option>
+                            <option key={player.playerId} value={player.playerId}>
+                              {player.name}
+                            </option>
                          ))}
                     </select>
                   </td>

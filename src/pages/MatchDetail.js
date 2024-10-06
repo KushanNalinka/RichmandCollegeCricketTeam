@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
+import { MdAssignmentAdd } from "react-icons/md";
 import { GrLinkPrevious } from "react-icons/gr";
 import flag from "../assets/images/backDrop3.png";
 import Navbar from "../components/Navbar.js";
@@ -258,7 +259,7 @@ const MatchDetails = () => {
                     </button>
                     <button
                       onClick={() => handleAddStat(match.matchId)}
-                      title="Add"
+                      title="Add match stats"
                       className="text-blue-600 hover:text-blue-700"
                     >
                       <FaClipboardList />
@@ -268,7 +269,7 @@ const MatchDetails = () => {
                       onClick={() => handleAddScoreCard(match.matchId)}
                       className="text-yellow-600 hover:text-yellow-700"
                     >
-                      <FaPlus />
+                      <MdAssignmentAdd />
                     </button>
                   </td>
                 </tr>

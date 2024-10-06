@@ -4,7 +4,7 @@ import { message } from "antd";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaWindowClose } from "react-icons/fa";
-import { FaSave } from "react-icons/fa";
+import { FaSave, FaTimes } from "react-icons/fa";
 
 const ScoreCardPopup = ({  onClose, matchId }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -204,6 +204,14 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
       className={`fixed inset-0  bg-black bg-opacity-70 flex p-20 justify-center`}
     >
       <div className="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-7xl">
+        <div className="flex justify-end items-center">
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800 text-xl"
+          >
+            <FaTimes />
+          </button>
+        </div>
         <div className=" overflow-auto">
           <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
           <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
@@ -526,7 +534,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
                   <td className="border px-4 py-2">
                     <button
                       onClick={handleSubmit}
-                      className="bg-[#480D35] hover:bg-baseRed2 text-white py-1 px-3 rounded"
+                      className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white py-1 px-3 rounded"
                     >
                       Add
                     </button>
@@ -537,7 +545,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
                   <button
                     title="Add New"
                     onClick={() => handleAddRow(matchId)}
-                    className="bg-[#480D35] hover:bg-baseRed2 text-sm text-white font-bold p-1 rounded-full"
+                    className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-sm text-white font-bold p-1 rounded-full"
                   >
                     {!isAdding ? <FaPlus /> : <FaMinus />}
                   </button>
@@ -545,22 +553,6 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
               </tr>
             </tbody>
           </table>
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-4"
-          >
-            Cancel
-          </button>
-          {/* <button
-            type="submit"
-            onClick={handleSubmit}
-            className="bg-[#480D35] text-white px-4 py-2 rounded-lg"
-          >
-            save
-          </button> */}
         </div>
       </div>
     </div>

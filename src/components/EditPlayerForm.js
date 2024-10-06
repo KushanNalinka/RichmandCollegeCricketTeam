@@ -10,7 +10,7 @@ import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const EditPlayerForm = ({ player, onClose }) => {
   const [formData, setFormData] = useState({ ...player });
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
@@ -46,7 +46,7 @@ const EditPlayerForm = ({ player, onClose }) => {
     e.preventDefault();
       try {
         let imageURL = formData.image;
-      
+
       // Upload image if an image file is added
       if (formData.image instanceof File) {
         imageURL = await handleImageUpload(formData.image);
@@ -116,11 +116,11 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-white px-8 py-2 pb-8 top-10 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
         <div className="flex justify-end ">
           <button
             onClick={onClose}
-            className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+            className="flex relative items-center justify-end cursor-pointer text-xl text-gray-600 hover:text-gray-800"
             aria-label="Close"
           >
             <FaTimes />
@@ -129,7 +129,7 @@ const EditPlayerForm = ({ player, onClose }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player Details</h2>
         <form
           onSubmit={handleEdit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3 h-[500px] hover:overflow-auto overflow-hidden"
+          className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
           <div >
             <label className="block text-gray-700">Name</label>
@@ -185,17 +185,6 @@ const EditPlayerForm = ({ player, onClose }) => {
               
             />
           </div>
-          {/* <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Age</label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              required
-            />
-          </div> */}
           <div>
             <label className="block text-gray-700">Contact No</label>
             <input
@@ -298,7 +287,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
             <label className="block text-gray-700">Image</label>
             <input
               id="image"
@@ -312,13 +301,13 @@ const EditPlayerForm = ({ player, onClose }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
+                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
           </div>
           <div className="flex justify-end col-span-2">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 rounded-md w-full"
+              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
             >
               Save
             </button>

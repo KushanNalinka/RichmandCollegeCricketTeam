@@ -9,6 +9,7 @@ import { MdPeople } from "react-icons/md";
 import { MdDashboard } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { FaXmark, FaBars } from "react-icons/fa6";
+import { MdOutlineNewspaper } from "react-icons/md";
 
 const NavbarToggleMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,7 +29,7 @@ const NavbarToggleMenu = () => {
             </button>
           </div>
           <div
-            className={`absolute space-y-2 z-30 mt-72 left-5 w-[200px] mb-2 bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${isMenuOpen
+            className={`absolute space-y-2 z-30 mt-80 left-5 w-[200px] mb-2 bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${isMenuOpen
               ? " h-auto w-48 block justify-center items-center mb-10"
               : "hidden"}`}
           >
@@ -50,6 +51,9 @@ const NavbarToggleMenu = () => {
               </Link>
               <Link to={"/coachInfo"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<MdPeople className="text-[#00175F]"/> Coaches
+              </Link>
+              <Link to={"/official"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
+                {" "}<MdOutlineNewspaper className="text-[#00175F]"/> Official
               </Link>
             </ul>
           </div> 

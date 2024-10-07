@@ -8,6 +8,7 @@ import { MdPeople } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { FaPersonWalkingWithCane } from "react-icons/fa6";
+import { MdOutlineNewspaper } from "react-icons/md";
 
 const Navbar = () => {
     return (
@@ -31,6 +32,12 @@ const Navbar = () => {
                     </Link>
                     <Link to={"/coachInfo"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
                         {" "}<MdPeople className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Coaches</span>
+                    </Link>
+                    <Link to={"/official"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
+                        {" "}<MdPeople className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">officials</span>
+                    </Link>
+                    <Link to={"/news-create"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
+                        {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Create News</span>
                     </Link>
                 </ul>
             </div>

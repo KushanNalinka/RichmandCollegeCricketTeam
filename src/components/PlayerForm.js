@@ -202,7 +202,7 @@ const PlayerForm = ({  onClose }) => {
             />
           </div>
           <div className="mb-1">
-            <label className="block mb-1 text-gray-700">New Password</label>
+            <label className="block mb-1 text-gray-700">Password</label>
             <input
               type="password"
               name="password"

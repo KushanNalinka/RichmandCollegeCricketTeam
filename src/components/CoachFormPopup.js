@@ -83,7 +83,7 @@ const CoachForm = ({  onClose }) => {
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `players/${file.name}`);
+      const storageRef = ref(storage, `coaches/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(

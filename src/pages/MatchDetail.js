@@ -160,7 +160,7 @@ const MatchDetails = () => {
         <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
             backdropFilter: "blur(10px)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.4)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
             border: "1px solid rgba(255, 255, 255, 0.3)",
             
           }}

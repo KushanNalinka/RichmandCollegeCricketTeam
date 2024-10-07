@@ -48,7 +48,7 @@ const EditCoachForm = ({ coach, onClose }) => {
         image: imageURL, // Assign the uploaded image URL to formData
       };
         const response = await axios.put(
-          `${API_URL}admin/coaches/${coach.coachId}`,
+          `${API_URL}admin/coaches/update/${coach.coachId}`,
           coachData 
         );
         console.log("Form submitted succedded: ", response.data);

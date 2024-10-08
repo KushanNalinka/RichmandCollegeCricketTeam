@@ -11,6 +11,8 @@ import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import TeamMembers from "../components/TeamMembers";
+import logo from "../assets/images/RLogo.png";
+import MainNavbarToggle from "../components/MainNavBarToggle";
 
 const TableComponent = () => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -94,34 +96,37 @@ const TableComponent = () => {
   };
 
   return (
-    <div
-      className="flex items-center justify-center"
-      style={{
-        backgroundImage: `url(${flag})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "100vw", // Full viewport width
-        height: "full", // Full viewport height
-        minHeight: "100vh", // Minimum height to cover full screen
-      }}
-    >
-      <HomeNavbar />
-      <div className=" flex relative pt-24 items-center p-2 w-full">
-        <div className=" lg:w-[5%] ">
-          <Navbar />
+    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
+    <div className=" flex relative items-center justify-center h-full w-full">
+      <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+         style={{
+          backgroundImage: `url(${flag})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <Navbar />
+      </div>
+      <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+        <div className="flex justify-between w-full lg:px-10 py-3">
+           <MainNavbarToggle/>
+           <img src={logo} className="h-12 w-12"/>
         </div>
-      <div  className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
-        style={{
-          backdropFilter: "blur(10px)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          border: "1px solid rgba(255, 255, 255, 0.3)"
-        }}>
+        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+          style={{
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            
+          }}
+          
+        >
         <div className="flex justify-between items-center mb-4">
           <NavbarToggleMenu/>
-          <h2 className="md:text-2xl text-lg font-bold  text-center text-[#480D35] ">Team Information</h2>
+          <h2 className="md:text-2xl text-lg font-bold  text-center text-[#480D35] ">Team Details</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className=" right-4 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 transition-colors rounded-full p-1"
+            className=" right-4 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 transition-colors rounded-full p-1"
             title="Add New"
           >
             <FaPlus style={{color:"#fff"}}/>
@@ -170,7 +175,7 @@ const TableComponent = () => {
                       </button>
                       <button
                         onClick={() => handleDelete(item.teamId)}
-                        className="text-red-700 hover:text-red-600 transition-colors"
+                        className="text-red-600 hover:text-red-700 transition-colors"
                         title="Delete"
                       >
                         <FaTrash />
@@ -179,7 +184,7 @@ const TableComponent = () => {
                         onClick={() => handleViewMembers(item.players
                           
                         )}
-                        className="text-green-700 hover:text-green-600 transition-colors"
+                        className="text-green-600 hover:text-green-700 transition-colors"
                         title="Members"
                       >
                         <FaUsers />
@@ -194,7 +199,7 @@ const TableComponent = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
             >
               <GrLinkPrevious style={{ color: "#fff" }} />
             </button>
@@ -206,7 +211,7 @@ const TableComponent = () => {
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
             >
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
@@ -234,6 +239,7 @@ const TableComponent = () => {
             onClose={() => setIsTeamMembersOpen(false)}
            
           />}
+      </div>
       </div>
       </div>
   );

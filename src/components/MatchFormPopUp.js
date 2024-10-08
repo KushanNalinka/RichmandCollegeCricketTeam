@@ -122,13 +122,10 @@ const FormPopup = ({  onClose }) => {
 
   return (
     <div
-      className={"fixed inset-0 bg-black bg-opacity-70 flex items-center pt-16 justify-center"}
+      className={"fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center"}
     >
-      <div className="bg-white py-5 px-8 rounded-lg shadow-lg w-full max-w-lg">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#480D35]">
-            Add Match Details
-          </h2>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-800 text-xl"
@@ -136,6 +133,9 @@ const FormPopup = ({  onClose }) => {
             <FaTimes />
           </button>
         </div>
+        <h2 className="text-xl font-bold mb-6 text-[#480D35]">
+            Add Match Details
+          </h2>
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-2"
@@ -262,7 +262,7 @@ const FormPopup = ({  onClose }) => {
               />
               <button
                 type="button"
-                className="flex items-center w-[20%] justify-center text-red-700 hover:text-red-600 rounded-lg"
+                className="flex items-center w-[20%] justify-center text-red-600 hover:text-red-700 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>
@@ -322,7 +322,7 @@ const FormPopup = ({  onClose }) => {
           <div className="col-span-2 mt-4">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 w-full rounded-lg"
+              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 w-full rounded-lg"
             >
               Add Match
             </button>

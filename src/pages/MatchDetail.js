@@ -8,14 +8,16 @@ import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
 import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
 import { GrLinkNext } from "react-icons/gr";
+import { MdAssignmentAdd } from "react-icons/md";
 import { GrLinkPrevious } from "react-icons/gr";
 import flag from "../assets/images/backDrop3.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
+import MainNavbarToggle from "../components/MainNavBarToggle";
 import HomeNavbar from "../components/HomeNavbar.js";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
-
+import logo from "../assets/images/RLogo.png";
 
 const MatchDetails = () => {
  
@@ -139,30 +141,31 @@ const MatchDetails = () => {
   };
 
   return (
-    <div
-    className=" flex items-center justify-center"
-    style={{
-      backgroundImage: `url(${flag})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      width: "100vw", // Full viewport width
-      height: "full", // Full viewport height
-      minHeight: "100vh", // Minimum height to cover full screen
-    }}
-  >
-    <HomeNavbar/>
-    <div className=" flex relative items-center justify-center p-2 pt-24  w-full">
-      <div className="w-[5%]">
-        <Navbar/>
-      </div>  
-      <div
-        className="  h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
-        style={{
-          backdropFilter: "blur(10px)",
-          boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-          border: "1px solid rgba(255, 255, 255, 0.3)"
+    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
+    <div className=" flex relative items-center justify-center h-full w-full">
+      <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+         style={{
+          backgroundImage: `url(${flag})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
       >
+        <Navbar />
+      </div>
+      <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+        <div className="flex justify-between w-full lg:px-10 py-3">
+           <MainNavbarToggle/>
+           <img src={logo} className="h-12 w-12"/>
+        </div>
+        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+          style={{
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            
+          }}
+          
+        >
         <div className="flex justify-between items-center mb-3">
           <NavbarToggleMenu/>
           <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
@@ -171,7 +174,7 @@ const MatchDetails = () => {
           <button
             title="Add New"
             onClick={() => setIsFormPopupOpen(true)}
-            className="bg-green-700 hover:bg-green-600 rounded-full p-1 text-white text-lg lg:text-2xl"
+            className="bg-green-600 hover:bg-green-700 rounded-full p-1 text-white text-lg lg:text-2xl"
           >
             <FaPlus />
           </button>
@@ -243,30 +246,30 @@ const MatchDetails = () => {
                     <button
                       title="Edit"
                       onClick={() => handleEdit(match)}
-                      className=" text-green-700 hover:text-green-600"
+                      className=" text-green-600 hover:text-green-700"
                     >
                       <FaEdit />
                     </button>
                     <button
                       onClick={() => handleDelete(match.matchId)}
                       title="Delete"
-                      className="text-red-700 hover:text-red-600"
+                      className="text-red-600 hover:text-red-700"
                     >
                       <FaTrash />
                     </button>
                     <button
                       onClick={() => handleAddStat(match.matchId)}
-                      title="Add"
-                      className="text-blue-700 hover:text-blue-600"
+                      title="Add match stats"
+                      className="text-blue-600 hover:text-blue-700"
                     >
                       <FaClipboardList />
                     </button>
                     <button
                       title="Add Score"
                       onClick={() => handleAddScoreCard(match.matchId)}
-                      className="text-yellow-700 hover:text-yellow-600"
+                      className="text-yellow-600 hover:text-yellow-700"
                     >
-                      <FaPlus />
+                      <MdAssignmentAdd />
                     </button>
                   </td>
                 </tr>
@@ -278,7 +281,7 @@ const MatchDetails = () => {
           <button
             onClick={handlePrevPage}
             disabled={currentPage === 1}
-            className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
           >
             <GrLinkPrevious style={{ color: "#fff" }} />
           </button>
@@ -290,7 +293,7 @@ const MatchDetails = () => {
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
-            className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
           >
             <GrLinkNext style={{ color: "#fff" }} />
           </button>
@@ -321,6 +324,7 @@ const MatchDetails = () => {
       }
       
     </div>
+  </div>
   </div>
   );
 };

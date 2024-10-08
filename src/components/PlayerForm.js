@@ -141,11 +141,11 @@ const PlayerForm = ({  onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-white px-8 py-2 pb-8 top-10 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
         <div className="flex justify-end ">
           <button
             onClick={onClose}
-            className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+            className="flex relative items-center justify-end cursor-pointer text-xl text-gray-600 hover:text-gray-800"
             aria-label="Close"
           >
             <FaTimes />
@@ -154,7 +154,7 @@ const PlayerForm = ({  onClose }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Player Details</h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3 h-[500px] hover:overflow-auto overflow-hidden"
+          className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
           <div >
             <label className="block text-gray-700">Name</label>
@@ -202,7 +202,7 @@ const PlayerForm = ({  onClose }) => {
             />
           </div>
           <div className="mb-1">
-            <label className="block mb-1 text-gray-700">New Password</label>
+            <label className="block mb-1 text-gray-700">Password</label>
             <input
               type="password"
               name="password"
@@ -325,7 +325,7 @@ const PlayerForm = ({  onClose }) => {
               required
             />
           </div>
-          <div className="col-span-2">
+          <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
             <label className="block text-gray-700">Image</label>
             <input
               id="image"
@@ -339,13 +339,13 @@ const PlayerForm = ({  onClose }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
+                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
           </div>
           <div className="flex justify-end col-span-2">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 rounded-md w-full"
+              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
             >
               Save
             </button>

@@ -10,6 +10,10 @@ import Navbar from "../components/Navbar";
 import flag from "../assets/images/backDrop3.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
+import logo from "../assets/images/RLogo.png";
+import MainNavbarToggle from "../components/MainNavBarToggle";
+import CoachForm from "../components/CoachFormPopup";
+import EditCoachForm from "../components/EditCoachPopup";
 
 const CoachTable = () => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -28,6 +32,7 @@ const CoachTable = () => {
       .then((response) => {
         const coaches = response.data;
         setCoachData(coaches);
+        console.log("All coaches:", coaches);
       })
       .catch((error) => {
         console.error("There was an error fetching the player data!", error);
@@ -61,7 +66,7 @@ const CoachTable = () => {
   };
 
   const handleDelete = async id => {
-    const deletePayer = await axios.delete(`${API_URL}coaches/delete/${id}`)
+    const deletePayer = await axios.delete(`${API_URL}coaches/${id}`)
    
     console.log("Delete row:", id);
     setTimeout(() => {
@@ -70,40 +75,39 @@ const CoachTable = () => {
   };
 
   return (
-    <div
-      className=" flex flex-col relative justify-center items-center"
-      style={{
-        backgroundImage: `url(${flag})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "100vw", // Full viewport width
-        height: "full", // Full viewport height
-        minHeight: "100vh"
-      }}
-    >
-        <HomeNavbar />
-      
-      <div className=" flex relative items-center justify-center p-2 pt-24 w-full">
-        <div className="w-[5%] ">
-          <Navbar />
+    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
+    <div className=" flex relative items-center justify-center h-full w-full">
+      <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+         style={{
+          backgroundImage: `url(${flag})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <Navbar />
+      </div>
+      <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+        <div className="flex justify-between w-full lg:px-10 py-3">
+           <MainNavbarToggle/>
+           <img src={logo} className="h-12 w-12"/>
         </div>
-        {/* <div className=" md:w-[85%] w-[100%] lg:mx-3 "> */}
-        <div
-          className="h-full bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
+        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
             backdropFilter: "blur(10px)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.3)"
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            
           }}
+          
         >
           <div className="flex justify-between items-center content-center mb-3">
             <NavbarToggleMenu />
               <h2 className="md:text-2xl text-lg font-bold font-popins text-[#480D35]">
-                Coaches Details
+                Coach Details
               </h2>
             <button
               onClick={() => setIsFormOpen(true)}
-              className="bg-green-700 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
+              className="bg-green-600 hover hover:bg-green-700 text-white rounded-full p-1 lg:text-2xl text-lg"
               aria-label="Add"
               title="Add New"
             >
@@ -121,9 +125,6 @@ const CoachTable = () => {
                     DOB
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                    AGE
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     EMAIL
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -131,6 +132,9 @@ const CoachTable = () => {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     ADDRESS
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                    DESCRIPTION
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
@@ -154,10 +158,7 @@ const CoachTable = () => {
                         {item.name.split(' ').slice(-2).join(' ')}
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
-                      {item.dob}
-                    </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
-                      {item.age}
+                      {item.dateOfBirth}
                     </td>
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
@@ -168,18 +169,21 @@ const CoachTable = () => {
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.address}
                     </td>
+                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                      {item.description}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-green-700 hover:text-green-600 text-md"
+                        className="text-green-600 hover:text-green-700 text-md"
                         aria-label="Edit"
                         title="Edit"
                       >
                         <FaEdit />
                       </button>
                       <button
-                        onClick={() => handleDelete(item.playerId)}
-                        className="text-red-700 hover:text-red-600 text-md"
+                        onClick={() => handleDelete(item.coachId)}
+                        className="text-red-600 hover:text-red-700 text-md"
                         aria-label="Delete"
                         title="Delete"
                       >
@@ -196,7 +200,7 @@ const CoachTable = () => {
               onClick={handlePrevPage}
               title="Prev"
               disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
             >
               <GrLinkPrevious style={{ color: "#fff" }} />
             </button>
@@ -209,21 +213,22 @@ const CoachTable = () => {
               onClick={handleNextPage}
               title="Next"
               disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-700 hover:bg-green-600 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
             >
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
           </div>
         </div>
-        {/* {isFormOpen &&
-          <PlayerForm closeForm={() => setIsFormOpen(false)} />}
+        {isFormOpen &&
+          <CoachForm onClose={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&
-          <EditPlayerForm
-            player={currentCoach}
+          <EditCoachForm
+            coach={currentCoach}
             onClose={() => setIsEditFormOpen(false)}
-          />} */}
+          />}
       </div>
     </div>
+  </div>  
   );
 };
 

@@ -95,12 +95,12 @@ const AddNewModal = ({  onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 pt-16 flex items-center justify-center z-50">
-      <div className="bg-white p-8 pt-2 rounded-lg shadow-lg w-full max-w-md">
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <div className='flex justify-end '>
             <button 
               onClick={onClose} 
-              className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+              className="flex relative items-center justify-end cursor-pointer text-xl text-gray-600 hover:text-gray-800"
               aria-label="Close"
             >
               <FaTimes/>
@@ -172,13 +172,13 @@ const AddNewModal = ({  onClose }) => {
             <div className="flex border border-gray-300 rounded-lg">
               <input
                 type="text"
-                className="py-1 px-3 w-[80%] rounded-lg "
+                className="py-1 px-3 w-[90%] rounded-lg "
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly
               />
               <button
                 type="button"
-                className="flex items-center w-[20%] justify-center text-red-700 hover:text-red-600 rounded-lg"
+                className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-lg"
                 onClick={clearSelectedPlayers}
               >
                 <FaTrash/>
@@ -207,7 +207,7 @@ const AddNewModal = ({  onClose }) => {
             <button
               type="button"
               onClick={handleSubmit}
-              className="bg-[#480D35] text-white w-full py-2 px-4 rounded-lg hover:bg-[#5D1245]"
+              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white w-full py-2 px-4 rounded-lg"
             >
               Add
             </button>

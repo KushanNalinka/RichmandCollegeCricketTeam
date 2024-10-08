@@ -81,11 +81,11 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
-      <div className="bg-white p-8 pt-2 rounded-lg shadow-lg max-w-lg w-full">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
         <div className='flex justify-end '>
           <button 
               onClick={onClose} 
-              className="flex relative items-center justify-end h-10 w-10 cursor-pointer text-xl text-gray-600 hover:text-gray-800"
+              className="flex relative items-center justify-end cursor-pointer text-xl text-gray-600 hover:text-gray-800"
               aria-label="Close"
           >
               <FaTimes/>
@@ -193,7 +193,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
           
             <button
               type="submit"
-              className="px-4 py-2 bg-[#480D35]  hover:bg-[#5D1245] text-white w-full rounded-md transition"
+              className="px-4 py-2 bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white w-full rounded-md transition"
             >
               Submit
             </button>

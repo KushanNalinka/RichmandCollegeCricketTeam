@@ -242,7 +242,7 @@ const Login = () => {
     e.preventDefault();
     try {
       if (inputs.username === "Admin" && inputs.password === "123456") {
-        navigate("/adminDashboard");
+        navigate("/player");
       }
       else if (inputs.username === "User" && inputs.password === "123456") {
         navigate("/member");

@@ -1,4 +1,3 @@
-// src/components/EditPlayerForm.jsx
 
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -8,9 +7,9 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const EditPlayerForm = ({ player, onClose }) => {
-  const [formData, setFormData] = useState({ ...player });
-  const [imagePreview, setImagePreview] = useState(player.image);
+const EditOfficialForm = ({ official, onClose }) => {
+  const [formData, setFormData] = useState({ ...official });
+  const [imagePreview, setImagePreview] = useState(official.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
@@ -52,13 +51,13 @@ const EditPlayerForm = ({ player, onClose }) => {
         imageURL = await handleImageUpload(formData.image);
       }
 
-      const playerData = {
+      const officialData = {
         ...formData,
         image: imageURL, // Assign the uploaded image URL to formData
       };
         const response = await axios.put(
-          `${API_URL}admin/players/update/${player.playerId}`,
-          playerData 
+          `${API_URL}admin/official/update/${official.officialId}`,
+          officialData 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
@@ -68,15 +67,9 @@ const EditPlayerForm = ({ player, onClose }) => {
           dateOfBirth: "",
           age: "",
           email: "",
-          battingStyle: "",
-          bowlingStyle: "",
-          playerRole: "",
+          role: "",
           username: "",
           password: "",
-          membership: {
-            startDate:"",
-            endDate:"",
-          },
           contactNo: ""
         });
         setTimeout(() => {
@@ -91,7 +84,7 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `players/${file.name}`);
+      const storageRef = ref(storage, `officials/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       setUploading(true);
@@ -126,7 +119,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player Details</h2>
+        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Official Details</h2>
         <form
           onSubmit={handleEdit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
@@ -197,38 +190,6 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
           </div>
           <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Batting Style</label>
-            <select
-              name="battingStyle"
-              value={formData.battingStyle}
-              onChange={handleChange}
-              className=" py-1 px-3 border border-gray-300 text-black rounded-lg w-full"
-              
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Left-hand batting">Left-hand batting</option>
-              <option value="Right-hand batting">Right-hand batting</option>
-            </select>
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Bowling Style</label>
-            <select
-              name="bowlingStyle"
-              value={formData.bowlingStyle}
-              onChange={handleChange}
-              className=" px-3 py-1 border text-black border-gray-300 rounded-lg w-full"
-              
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Left-arm spin">Left-arm spin</option>
-              <option value="Right-arm spin">Right-arm spin</option>
-            </select>
-          </div>
-          <div className="mb-1">
             <label className="block mb-1 text-gray-700">Role</label>
             <select
               name="playerRole"
@@ -240,52 +201,10 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value='' disabled>
                 select
               </option>
-              <option value="Batsman">Batsman</option>
-              <option value="Bowler">Bowler</option>
-              <option value="All-rounder">All-rounder</option>
+              <option value="Batsman">Teacher</option>
+              <option value="Bowler">Principle</option>
+              <option value="All-rounder">Non-academic</option>
             </select>
-          </div>
-          <div>
-            <label className="block text-gray-700">Status</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-          
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">
-              Membership Starting Date
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-        
-            />
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">
-              Membership Ending Date
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-            
-            />
           </div>
           <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
             <label className="block text-gray-700">Image</label>
@@ -318,4 +237,4 @@ const EditPlayerForm = ({ player, onClose }) => {
   );
 };
 
-export default EditPlayerForm;
+export default EditOfficialForm;

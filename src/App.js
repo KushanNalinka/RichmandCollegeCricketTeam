@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-
 import Initial from './pages/Initial.js';
 import MemberInitial from './pages/MemberInitial.js';
 import Profile from './pages/Profile.js';
@@ -11,7 +10,6 @@ import MatchDetail from './pages/MatchDetail.js';
 import Login from './pages/Login.js';
 import Register from './pages/Register.js';
 import Team from './pages/Team.js';
-
 import MatchInfo from './pages/MatchInfo.js';
 import AdminMatchInfo from './pages/AdminMatchInfo.js';
 import ScorecardData from './pages/ScoreCardData.js';
@@ -21,7 +19,6 @@ import CoachProfile from './pages/coachProfile.js';
 import AddPlayer from './components/AddPlayer.js';
 import AddCoachForm from './components/AddCoachForm.js';
 import AdminDashboard from './pages/AdminDashboard.js';
-
 import OfficialProfile from './pages/OfficialProfile.js';
 import AddOfficialForm from './components/AddOfficialForm.js';
 import ScoreCardPopup from './components/ScoreCardPopup.js';
@@ -31,13 +28,12 @@ import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
 import CoachTable from './pages/CoachInfo.js';
 import CoachesProfile from './pages/Coaches.js';
-
 import AboutUs from './pages/AboutUs.js';
 import AdminAboutUs from './pages/AdminAboutUs.js';
 import InitialAboutUs from './pages/InitialAboutUs.js';
-
-
 import AdminProfile from './pages/AdminProfile.js';
+import OfficialsTable from './components/OfficialInfo.js';
+import NewsCreator from './pages/NewsCreatingPage.js';
 
 
 function App() {
@@ -50,11 +46,11 @@ function App() {
 
          <Route path="/coach" element={<CoachesProfile/>} />
          <Route path="/coachInfo" element={<CoachTable/>} />
-
+         <Route path="/news-create" element={<NewsCreator/>} />
          <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path="/admin-coach" element={<AdminCoaches />} />
-
+         <Route path='/official' element={<OfficialsTable/>} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
@@ -73,7 +69,6 @@ function App() {
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
          <Route path="/news" element={<NewsPage />} />
-
          <Route path="/initial-news" element={<InitialNewsPage />} />
 
          <Route path="/about-us" element={<AboutUs />} />

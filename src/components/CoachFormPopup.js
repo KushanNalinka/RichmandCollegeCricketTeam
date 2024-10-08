@@ -1,4 +1,3 @@
-// src/components/EditPlayerForm.jsx
 
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -8,32 +7,31 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const EditPlayerForm = ({ player, onClose }) => {
-  const [formData, setFormData] = useState({ ...player });
-  const [imagePreview, setImagePreview] = useState(player.image);
-  const [isImageAdded, setIsImageAdded] = useState(false);
-  const [uploading, setUploading] = useState(false);
+const CoachForm = ({  onClose }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const [formData, setFormData] = useState({
+    image: "",
+    name: "",
+    dateOfBirth: "",
+    username:"",
+    password:"",
+    email: "",
+    address: "",
+    contactNo: "",
+    description: ""
+  });
+
+  const [imagePreview, setImagePreview] = useState("");
 
   const handleChange = e => {
     const { name, value, files } = e.target;
-    if (name.includes(".")) {
-      const [mainKey, subKey] = name.split(".");
-      setFormData({
-        ...formData,
-        [mainKey]: {
-          ...formData[mainKey],
-          [subKey]: value
-        }
-      });
-    }else if (files && files[0]) {
+    if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
       setFormData({
         ...formData,
         [name]: file
       });
-      setIsImageAdded(true);
     } else {
       setFormData({
         ...formData,
@@ -42,11 +40,11 @@ const EditPlayerForm = ({ player, onClose }) => {
     }
   };
 
-  const handleEdit = async e => {
+  const handleSubmit = async e => {
     e.preventDefault();
       try {
         let imageURL = formData.image;
-
+      
       // Upload image if an image file is added
       if (formData.image instanceof File) {
         imageURL = await handleImageUpload(formData.image);
@@ -56,28 +54,22 @@ const EditPlayerForm = ({ player, onClose }) => {
         ...formData,
         image: imageURL, // Assign the uploaded image URL to formData
       };
-        const response = await axios.put(
-          `${API_URL}admin/players/update/${player.playerId}`,
+        const response = await axios.post(
+          `${API_URL}auth/signupCoach`,
           playerData 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
-          image: "",
-          name: "",
-          dateOfBirth: "",
-          age: "",
-          email: "",
-          battingStyle: "",
-          bowlingStyle: "",
-          playerRole: "",
-          username: "",
-          password: "",
-          membership: {
-            startDate:"",
-            endDate:"",
-          },
-          contactNo: ""
+            image: "",
+            name: "",
+            dateOfBirth: "",
+            username:"",
+            password:"",
+            email: "",
+            address: "",
+            contactNo: "",
+            description: ""
         });
         setTimeout(() => {
           window.location.reload();
@@ -91,28 +83,25 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
-      const storageRef = ref(storage, `players/${file.name}`);
+      const storageRef = ref(storage, `coaches/${file.name}`);
       const uploadTask = uploadBytesResumable(storageRef, file);
-
-      setUploading(true);
 
       uploadTask.on(
         'state_changed',
         (snapshot) => {},
         (error) => {
           console.error('Image upload failed:', error);
-          setUploading(false);
           reject(error);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setUploading(false);
             resolve(downloadURL);
           });
         }
       );
     });
   };
+
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
@@ -126,9 +115,9 @@ const EditPlayerForm = ({ player, onClose }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player Details</h2>
+        <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Coach Details</h2>
         <form
-          onSubmit={handleEdit}
+          onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
           <div >
@@ -139,6 +128,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              required
               
             />
           </div>
@@ -150,7 +140,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.dateOfBirth}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              required
             />
           </div>
           <div className="mb-1">
@@ -161,7 +151,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-          
+              required
             />
           </div>
           <div>
@@ -172,17 +162,18 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              required
             />
           </div>
           <div className="mb-1">
-            <label className="block mb-1 text-gray-700">New Password</label>
+            <label className="block mb-1 text-gray-700">Password</label>
             <input
               type="password"
               name="password"
+              value={formData.password}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              
+              required
             />
           </div>
           <div>
@@ -196,98 +187,18 @@ const EditPlayerForm = ({ player, onClose }) => {
               
             />
           </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Batting Style</label>
-            <select
-              name="battingStyle"
-              value={formData.battingStyle}
-              onChange={handleChange}
-              className=" py-1 px-3 border border-gray-300 text-black rounded-lg w-full"
-              
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Left-hand batting">Left-hand batting</option>
-              <option value="Right-hand batting">Right-hand batting</option>
-            </select>
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Bowling Style</label>
-            <select
-              name="bowlingStyle"
-              value={formData.bowlingStyle}
-              onChange={handleChange}
-              className=" px-3 py-1 border text-black border-gray-300 rounded-lg w-full"
-              
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Left-arm spin">Left-arm spin</option>
-              <option value="Right-arm spin">Right-arm spin</option>
-            </select>
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Role</label>
-            <select
-              name="playerRole"
-              value={formData.playerRole}
-              onChange={handleChange}
-              className=" px-3 py-1 border text-black border-gray-300 rounded-lg w-full"
-            
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Batsman">Batsman</option>
-              <option value="Bowler">Bowler</option>
-              <option value="All-rounder">All-rounder</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-gray-700">Status</label>
-            <select
-              name="status"
-              value={formData.status}
+        
+          <div className="col-span-2">
+            <label className="block text-gray-700">Description</label>
+            <textarea
+              name="description"
+              value={formData.description}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
-          
-            >
-              <option value='' disabled>
-                select
-              </option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
-          </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">
-              Membership Starting Date
-            </label>
-            <input
-              type="date"
-              name="startDate"
-              value={formData.startDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-        
+
             />
           </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">
-              Membership Ending Date
-            </label>
-            <input
-              type="date"
-              name="endDate"
-              value={formData.endDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-            
-            />
-          </div>
-          <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
+          <div className="col-span-2">
             <label className="block text-gray-700">Image</label>
             <input
               id="image"
@@ -301,7 +212,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
+                className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
           </div>
           <div className="flex justify-end col-span-2">
@@ -318,4 +229,5 @@ const EditPlayerForm = ({ player, onClose }) => {
   );
 };
 
-export default EditPlayerForm;
+export default CoachForm;
+

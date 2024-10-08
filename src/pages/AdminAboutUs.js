@@ -1,5 +1,3 @@
-
-
 import Navbar from "../components/HomeNavbar";
 import topImage from '../assets/images/BG3.png'; // Your local background image
 import '../index.css'; // Make sure to include your main CSS

@@ -913,7 +913,7 @@ const ResultsTable = ({ matchId }) => {
             </div>
             <div className="text-gray-700 font-medium text-sm">
               {/* Display total score */}
-              180/5 (15.4 overs)
+              RICHMOND COLLEGE GALLE
             </div>
           </div>
 

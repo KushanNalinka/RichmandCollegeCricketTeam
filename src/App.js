@@ -33,7 +33,7 @@ import AdminAboutUs from './pages/AdminAboutUs.js';
 import InitialAboutUs from './pages/InitialAboutUs.js';
 import AdminProfile from './pages/AdminProfile.js';
 import OfficialsTable from './components/OfficialInfo.js';
-import NewsCreator from './pages/NewsCreatingPage.js';
+//import NewsCreator from './pages/NewsCreatingPage.js';
 
 
 function App() {
@@ -46,7 +46,7 @@ function App() {
 
          <Route path="/coach" element={<CoachesProfile/>} />
          <Route path="/coachInfo" element={<CoachTable/>} />
-         <Route path="/news-create" element={<NewsCreator/>} />
+      
          <Route path="/admin-profile" element={<AdminProfile />} />
          <Route path="/coach" element={<Coaches />} />
          <Route path="/admin-coach" element={<AdminCoaches />} />

@@ -446,7 +446,7 @@ import React, { useState } from 'react';
 import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
 
 
-const ScorecardSlider = () => {
+const ResultsTable = ({ matchId }) => {
   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
 
   const batsmen = [
@@ -699,6 +699,7 @@ const ScorecardSlider = () => {
   return (
     <div
       className="flex justify-end w-full h-auto md:h-[500px] py-4"
+
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
@@ -708,8 +709,10 @@ const ScorecardSlider = () => {
       {/* Scorecard Section (right-aligned with fixed height on large screens) */}
       <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
         {/* Additional Sections */}
+        
         <div className="p-6 max-w-screen-xl mx-auto mt-5">
           {/* Top Bar */}
+           
           <div className="flex items-center justify-between bg-gray-300 p-2 rounded-t-lg shadow-md">
             <div className="flex items-center">
               <select
@@ -819,4 +822,4 @@ const ScorecardSlider = () => {
   );
 };
 
-export default ScorecardSlider;
+export default ResultsTable;

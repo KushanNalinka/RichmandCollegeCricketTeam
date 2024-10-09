@@ -564,7 +564,7 @@ const ScoreCard = ({ onMatchId }) => {  // Receive onMatchId as a prop
 
   // Fetch data from API
   useEffect(() => {
-    fetch('https://richmond-cricket.up.railway.app/api/matchSummary/all')
+    fetch('http://localhost:8080/api/matchSummary/all')
       .then((response) => response.json())
       .then((data) => {
         const firstMatch = data[0]; // Get the first match data (1st inning)

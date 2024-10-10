@@ -36,8 +36,8 @@ const Navbar = () => {
                     <Link to={"/official"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
                         {" "}<MdPeople className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">officials</span>
                     </Link>
-                    <Link to={"/news-create"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
-                        {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Create News</span>
+                    <Link to={"/admin-news"} className=" gap-3 flex flex-wrap group cursor-pointer pl-4 py-4 text-2xl items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20">
+                        {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">News</span>
                     </Link>
                 </ul>
             </div>

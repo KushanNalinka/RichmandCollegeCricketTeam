@@ -34,9 +34,6 @@ const NavbarToggleMenu = () => {
               : "hidden"}`}
           >
             <ul className=" flex flex-col gap-1 relative w-full !mt-[8.00px] !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
-              <Link to={"/adminDashboard"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
-                {" "}<MdDashboard  className="text-[#00175F]"/> Dashboard
-              </Link>
               <Link to={"/player"} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<FaPeopleGroup className="text-[#00175F]"/> Players
               </Link>
@@ -53,7 +50,10 @@ const NavbarToggleMenu = () => {
                 {" "}<MdPeople className="text-[#00175F]"/> Coaches
               </Link>
               <Link to={"/official"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
-                {" "}<MdOutlineNewspaper className="text-[#00175F]"/> Official
+                {" "}<MdPeople className="text-[#00175F]"/> Official
+              </Link>
+              <Link to={"/admin-news"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
+                {" "}<MdOutlineNewspaper className="text-[#00175F]"/> News
               </Link>
             </ul>
           </div> 

@@ -109,7 +109,7 @@ const TableComponent = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
              <MainNavbarToggle/>
              <img src={logo} className="h-12 w-12"/>

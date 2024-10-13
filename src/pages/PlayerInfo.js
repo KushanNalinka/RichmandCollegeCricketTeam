@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
@@ -19,6 +20,8 @@ const TableComponent = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [playerToDelete, setPlayerToDelete] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -72,16 +75,25 @@ const TableComponent = () => {
     }
   };
 
-  const handleDelete = async id => {
-    console.log("Delete Player: ", id);
-    const deletePayer = await axios.delete(
-      `${API_URL}admin/players/delete/${id}`
-    );
+  const handleDelete = id => {
+    setPlayerToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
 
-    console.log("Delete row:", id);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+  const confirmDelete = async () => {
+    try{
+      const deletePayer = await axios.delete(
+        `${API_URL}admin/players/delete/${playerToDelete}`
+      );
+      message.success("Successfully Deleted!");
+      setShowDeleteModal(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      message.error("Failed!");
+    }
   };
 
   const toggleForm = () => {
@@ -130,7 +142,7 @@ const TableComponent = () => {
               </h2>
               <button
                 onClick={() => setIsFormOpen(true)}
-                className="bg-green-600 hover hover:bg-green-700 text-white rounded-full p-1 lg:text-2xl text-lg"
+                className="bg-green-500 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
                 aria-label="Add"
                 title="Add New"
               >
@@ -214,7 +226,7 @@ const TableComponent = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
-                          className="text-green-600 hover:text-green-700 text-md"
+                          className="text-green-500 hover:text-green-600 text-md"
                           aria-label="Edit"
                           title="Edit"
                         >
@@ -222,7 +234,7 @@ const TableComponent = () => {
                         </button>
                         <button
                           onClick={() => handleDelete(item.playerId)}
-                          className="text-red-600 hover:text-red-700 text-md"
+                          className="text-red-500 hover:text-red-600 text-md"
                           aria-label="Delete"
                           title="Delete"
                         >
@@ -239,7 +251,7 @@ const TableComponent = () => {
                 onClick={handlePrevPage}
                 title="Prev"
                 disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
               >
                 <GrLinkPrevious style={{ color: "#fff" }} />
               </button>
@@ -252,12 +264,34 @@ const TableComponent = () => {
                 onClick={handleNextPage}
                 title="Next"
                 disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
               >
                 <GrLinkNext style={{ color: "#fff" }} />
               </button>
             </div>
           </div>
+          {showDeleteModal && (
+              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+                  <p>Are you sure you want to delete this player?</p>
+                  <div className="flex justify-end mt-4 space-x-4">
+                    <button
+                      onClick={() => setShowDeleteModal(false)}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           {isFormOpen && <PlayerForm onClose={() => setIsFormOpen(false)} />}
           {isEditFormOpen &&
             <EditPlayerForm

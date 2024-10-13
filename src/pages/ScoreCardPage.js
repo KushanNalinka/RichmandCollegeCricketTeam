@@ -143,7 +143,7 @@ const ScoreCardPage = () => {
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <img src={match.opponentLogo} alt={match.matchName} className="w-8 h-8"/>
+                      <img src={match.logo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
                     </div>
                   </div>

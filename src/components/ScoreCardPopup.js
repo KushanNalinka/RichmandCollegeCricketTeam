@@ -6,6 +6,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaWindowClose } from "react-icons/fa";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { MdFileDownloadDone } from "react-icons/md";
+import ScoreCardAIModel from "./ScoreCardAIModel";
 
 
 const playerStatsReducer = (state, action) => {
@@ -40,10 +41,8 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   const [isAdding, setIsAdding] = useState(false);
   const [pressedPlus, setPressedPlus] = useState(null);
   const [isNewScoreAdded, setIsNewScoreAdded] = useState(false);
-  const [matchStack, setMatchStack] = useState([]);
-  const [playerStats, setPlayerStats] = useState([]);
-  const [addedPlayerStats, setAddedPlayerStats] = useState([]);
-  const [players, setPlayers] = useState([]);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [scoreToDelete, setScoreToDelete] = useState(null);
 
   const [formData, setFormData] = useState({
     inning: 1,
@@ -187,11 +186,15 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
       console.error("Error editing player stats:", error);
     }
   };
+  const handleDelete = id => {
+    setScoreToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
 
-  const handleDelete = async id => {
+  const confirmDelete = async () => {
     try {
-      await axios.delete(`${API_URL}playerStats/${id}`);
-      dispatch({ type: "DELETE_PLAYER_STAT", payload: id });
+      await axios.delete(`${API_URL}playerStats/${scoreToDelete}`);
+      dispatch({ type: "DELETE_PLAYER_STAT", payload: scoreToDelete });
       message.success("Player stats deleted successfully!");
     } catch (error) {
       message.error("Failed to delete player stats. Please try again.");
@@ -206,13 +209,13 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
 
   const handleEditClose = () => {
     setIsEditButtonPressed(false);
-  }
+  };
 
   return (
     <div
-      className={`fixed inset-0  bg-black bg-opacity-70 flex p-20 justify-center`}
+      className={`fixed inset-0 bg-gray-600 bg-opacity-75 flex p-20 justify-center`}
     >
-      <div className="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-7xl">
+      <div className="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-full max-h-full">
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -221,44 +224,24 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
             <FaTimes />
           </button>
         </div>
+        <div>
+      <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
+    </div>
         <div className=" overflow-auto">
-          <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
           <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
             <thead className=" bg-[#480D35] text-white rounded">
               <tr>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Player Name
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Runs
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Wickets
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Overs
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Run Conceded
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  4s
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  6s
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  50s
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  100s
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  Balls
-                </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                  {" "}Actions
-                </th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Player Name</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Runs </th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
             </thead>
 
@@ -564,6 +547,28 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
             </tbody>
           </table>
         </div>
+        {showDeleteModal && (
+              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+                  <p>Are you sure you want to delete this player?</p>
+                  <div className="flex justify-end mt-4 space-x-4">
+                    <button
+                      onClick={() => setShowDeleteModal(false)}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
       </div>
     </div>
   );

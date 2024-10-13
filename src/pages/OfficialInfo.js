@@ -130,7 +130,7 @@ const OfficialsTable = () => {
               </h2>
               <button
                 onClick={() => setIsFormOpen(true)}
-                className="bg-green-600 hover hover:bg-green-700 text-white rounded-full p-1 lg:text-2xl text-lg"
+                className="bg-green-500 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
                 aria-label="Add"
                 title="Add New"
               >
@@ -191,7 +191,7 @@ const OfficialsTable = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
-                          className="text-green-600 hover:text-green-700 text-md"
+                          className="text-green-500 hover:text-green-600 text-md"
                           aria-label="Edit"
                           title="Edit"
                         >
@@ -199,7 +199,7 @@ const OfficialsTable = () => {
                         </button>
                         <button
                           onClick={() => handleDelete(item.playerId)}
-                          className="text-red-600 hover:text-red-700 text-md"
+                          className="text-red-500 hover:text-red-600 text-md"
                           aria-label="Delete"
                           title="Delete"
                         >
@@ -216,7 +216,7 @@ const OfficialsTable = () => {
                 onClick={handlePrevPage}
                 title="Prev"
                 disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
               >
                 <GrLinkPrevious style={{ color: "#fff" }} />
               </button>
@@ -229,7 +229,7 @@ const OfficialsTable = () => {
                 onClick={handleNextPage}
                 title="Next"
                 disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
               >
                 <GrLinkNext style={{ color: "#fff" }} />
               </button>

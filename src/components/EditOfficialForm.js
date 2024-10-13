@@ -72,6 +72,7 @@ const EditOfficialForm = ({ official, onClose }) => {
           password: "",
           contactNo: ""
         });
+        setImagePreview();
         setTimeout(() => {
           window.location.reload();
         }, 1500);

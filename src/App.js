@@ -4,6 +4,10 @@ import 'slick-carousel/slick/slick-theme.css';
 import Initial from './pages/Initial.js';
 import MemberInitial from './pages/MemberInitial.js';
 import Profile from './pages/Profile.js';
+import Under13 from './pages/Under13.js';
+import Under15 from './pages/Under15.js';
+import Under17 from './pages/Under17.js';
+import Under19 from './pages/Under19.js';
 import Coaches from './pages/Coaches.js';
 import PlayerInfo from './pages/PlayerInfo.js';
 import MatchDetail from './pages/MatchDetail.js';
@@ -43,6 +47,10 @@ function App() {
         <Route path="/" element={<Initial />} />
         <Route path="/member" element={<MemberInitial />} />
          <Route path="/profile" element={<Profile />} />
+         <Route path="/under13" element={<Under13 />} />
+         <Route path="/under15" element={<Under15 />} />
+         <Route path="/under17" element={<Under17 />} />
+         <Route path="/under19" element={<Under19 />} />
 
          <Route path="/coach" element={<CoachesProfile/>} />
          <Route path="/coachInfo" element={<CoachTable/>} />

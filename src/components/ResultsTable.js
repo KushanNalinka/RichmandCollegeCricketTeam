@@ -838,7 +838,7 @@ const ResultsTable = ({ matchId }) => {
     const fetchMatchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/playerStats/match?playerId=1&matchId=${matchId}`
+          `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
         );
         const data = await response.json();
         setMatchData(data);

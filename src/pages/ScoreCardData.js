@@ -41,8 +41,17 @@ const ScorecardData = () => {
       <div className="relative">
         <TopLayer />
         <div
-          className="relative bg-cover bg-center h-64 flex items-center justify-center"
-          style={{ backgroundImage: `url(${topImage})` }}
+          style={{
+            backgroundImage: `url(${topImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            height: '250px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: "relative",
+          }}
         >
           <div className="absolute inset-0 flex items-center justify-center p-8">
             <div className="bg-[#012D5E]/70 text-white rounded-3xl shadow-lg p-4 md:p-6 w-full max-w-5xl flex flex-col md:flex-row items-center justify-between">
@@ -50,9 +59,9 @@ const ScorecardData = () => {
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
                   <img src={teams[0].logo} alt={teams[0].name} className="w-10 h-10 rounded-full text-xs" />
                   <div className="text-center">
-                    <h3 className="text-xxs tracking-wide">{teams[0].name.toUpperCase()}</h3>
-                    <p className="text-xxs md:text-xxs mt-2">{teams[0].score}</p>
-                    <p className="text-xxs md:text-xxs mt-1">{teams[0].overs}</p>
+                    <h3 className="text-xxxs tracking-wide">{teams[0].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xxs mt-2">{teams[0].score}</p>
+                    <p className="text-xxxs md:text-xxs mt-1">{teams[0].overs}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center mx-4">
@@ -63,9 +72,9 @@ const ScorecardData = () => {
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
                   <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 rounded-full" />
                   <div className="text-center">
-                    <h3 className="text-xxs md:text-xxs tracking-wide">{teams[1].name.toUpperCase()}</h3>
-                    <p className="text-xxs md:text-xxs mt-2">{teams[1].score}</p>
-                    <p className="text-xxs md:text-xxs mt-1">{teams[1].overs}</p>
+                    <h3 className="text-xxxs md:text-xxs tracking-wide">{teams[1].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xxs mt-2">{teams[1].score}</p>
+                    <p className="text-xxxs md:text-xxs mt-1">{teams[1].overs}</p>
                   </div>
                 </div>
               </div>
@@ -73,12 +82,12 @@ const ScorecardData = () => {
                 <h4 className="text-xxxs md:text-base font-bold text-[#53A2F6]">{match.league}</h4>
                 <div className="flex justify-between mt-2">
                   <div className="flex flex-col">
-                    <p className="text-xxs md:text-xxs text-white">{match.date}</p>
-                    <p className="text-xxs md:text-xxs text-white mt-2">{match.stadiumLine1}</p>
-                    <p className="text-xxs md:text-xxs text-white">{match.stadiumLine2}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.date}</p>
+                    <p className="text-xxxs md:text-xxs text-white mt-2">{match.stadiumLine1}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.stadiumLine2}</p>
                   </div>
                   <div className="flex flex-col text-right">
-                    <p className="text-xxs md:text-xxs text-white">{match.result}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.result}</p>
                     <p className="text-xxs md:text-xxs mt-1 text-gray-400 mt-2">{match.tossResult}</p>
                   </div>
                 </div>

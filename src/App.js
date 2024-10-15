@@ -29,6 +29,7 @@ import InitialNewsPage from './pages/InitialNewsPage.js';
 import AdminNewsPage from './pages/AdminNewsPage.js';
 import AdminCoaches from './pages/AdminCoaches.js';
 import NewsPage from './pages/NewsPage.js'; 
+import NewsDetailPage from './pages/NewsDetailPage';
 
 import AboutUs from './pages/AboutUs.js';
 import AdminAboutUs from './pages/AdminAboutUs.js';
@@ -66,6 +67,7 @@ function App() {
          <Route path="/register" element={<Register />} />
          <Route path='/adminDashboard' element={<AdminDashboard/>}/>
          <Route path="/news" element={<NewsPage />} />
+         <Route path="/news/:id" element={<NewsDetailPage />} />
 
          <Route path="/initial-news" element={<InitialNewsPage />} />
 

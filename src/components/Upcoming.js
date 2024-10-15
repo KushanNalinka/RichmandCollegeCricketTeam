@@ -34,18 +34,18 @@ const filterMatches = (data, selectedAgeGroup, selectedMatchType) => {
 };
 export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
   const [matchDataList, setMatchDataList] = useState([]);
+
+  
   useEffect(() => {
-    console.log("Fetching matches for upcoming..."); // Debug log
-    // Fetch matches and apply filters
     fetch("http://localhost:8080/api/matches/all")
       .then(response => response.json())
       .then(data => {
-        console.log("Fetched matches:", data); // Debug log
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);
         setMatchDataList(upcomingMatches);
       })
       .catch(error => console.error('Error fetching match summaries:', error));
-  }, [selectedAgeGroup, selectedMatchType]); // Re-fetch when filters change
+  }, [selectedAgeGroup, selectedMatchType]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7 px-4">
       {matchDataList.length === 0 ? (
@@ -58,8 +58,8 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
           >
             {/* Richmond College Info */}
             <div className="flex flex-col items-center space-y-2 w-1/4">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/en/1/1d/Richmond_College_Crest.jpg"
+            <img
+                src={require('../assets/images/LOGO.png')} // Dynamic import for assets in React
                 alt="RICHMOND COLLEGE"
                 className="w-10 h-10 sm:w-10 sm:h-10 rounded-full"
               />
@@ -78,8 +78,9 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
             </div>
             {/* Opposition Info */}
             <div className="flex flex-col items-center space-y-2 w-1/4">
+              {/* Dynamically load opposition logo */}
               <img
-                src="https://upload.wikimedia.org/wikipedia/en/6/6d/MahindaCollegeLogo.JPG"
+                src={matchData.logo}  // <-- Use the logo from match data
                 alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
                 className="w-10 h-10 sm:w-10 sm:h-10 rounded-full"
               />
@@ -108,10 +109,3 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
     </div>
   );
 }
-
-
-
-
-
-
-

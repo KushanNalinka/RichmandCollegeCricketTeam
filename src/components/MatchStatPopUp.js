@@ -80,7 +80,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
         <div className='flex justify-end '>
           <button 
@@ -102,7 +102,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.inning}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md "
               >
                 <option value="">Select Status</option>
                   <option value="1">1</option>
@@ -117,7 +117,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.oppositionOvers}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div>
@@ -128,7 +128,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.runs}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div>
@@ -139,7 +139,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.wickets}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md "
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.overs}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md "
               />
             </div>
             <div>
@@ -163,7 +163,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.oppositionRuns}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div>
@@ -174,7 +174,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.oppositionWickets}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md "
               />
             </div>
             <div>
@@ -185,7 +185,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 value={statData.result}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
           </div>

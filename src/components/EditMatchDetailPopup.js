@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { message } from "antd";
+import { storage } from '../config/firebaseConfig'; // Import Firebase storage
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
 
 const EditPopup = ({ onClose, match }) => {
@@ -8,6 +10,9 @@ const EditPopup = ({ onClose, match }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [imagePreview, setImagePreview] = useState(match.logo);
+  const [isImageAdded, setIsImageAdded] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     ...match, 
@@ -36,9 +41,8 @@ const EditPopup = ({ onClose, match }) => {
       });
   }, []);
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
@@ -48,6 +52,14 @@ const EditPopup = ({ onClose, match }) => {
           [subKey]: value
         }
       });
+    }else if (files && files[0]) {
+      const file = files[0];
+      setImagePreview(URL.createObjectURL(file));
+      setFormData({
+        ...formData,
+        [name]: file
+      });
+      setIsImageAdded(true);
     } else {
       setFormData({
         ...formData,
@@ -60,10 +72,21 @@ const EditPopup = ({ onClose, match }) => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
     try {
+      let imageURL = formData.logo;
+
+      // Upload image if an image file is added
+      if (formData.logo instanceof File) {
+        imageURL = await handleImageUpload(formData.logo);
+      }
+
+      const matchData = {
+        ...formData,
+        logo: imageURL, // Assign the uploaded image URL to formData
+      };
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        formData
+        matchData
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
@@ -73,6 +96,7 @@ const EditPopup = ({ onClose, match }) => {
         venue: "",
         opposition: "",
         tier: "",
+        logo:"",
         division: "",
         umpires: "",
         type: "",
@@ -83,6 +107,7 @@ const EditPopup = ({ onClose, match }) => {
         coaches: []
       })
       setSelectedCoaches([]);
+      setImagePreview();
       setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -112,8 +137,33 @@ const EditPopup = ({ onClose, match }) => {
     [selectedCoaches]
   );
 
+  const handleImageUpload = (file) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, `match/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      setUploading(true);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {},
+        (error) => {
+          console.error('Image upload failed:', error);
+          setUploading(false);
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setUploading(false);
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
         <div className="flex justify-end items-center">
           <button
@@ -255,6 +305,23 @@ const EditPopup = ({ onClose, match }) => {
                 </option>
               )}
             </select>
+          </div>
+          <div>
+            <label className="block text-gray-700">Logo</label>
+            <input
+              id="logo"
+              type="file" 
+              name="logo" 
+              accept="image/*" 
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+            />
+            {imagePreview &&
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
+              />}
           </div>
           <div>
             <label className="block mb-2 text-gray-700">Type</label>

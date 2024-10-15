@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
@@ -24,6 +25,8 @@ const CoachTable = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [coachToDelete, setCoachToDelete] = useState(null);
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -65,13 +68,23 @@ const CoachTable = () => {
     }
   };
 
-  const handleDelete = async id => {
-    const deletePayer = await axios.delete(`${API_URL}coaches/${id}`)
-   
-    console.log("Delete row:", id);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+  const handleDelete = id => {
+    setCoachToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const confirmDelete = async () => {
+    try{
+      const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
+      message.success("Successfully Deleted!");
+        setShowDeleteModal(false);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      message.error("Failed!");
+    }
   };
 
   return (
@@ -86,7 +99,7 @@ const CoachTable = () => {
       >
         <Navbar />
       </div>
-      <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+      <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
@@ -107,7 +120,7 @@ const CoachTable = () => {
               </h2>
             <button
               onClick={() => setIsFormOpen(true)}
-              className="bg-green-600 hover hover:bg-green-700 text-white rounded-full p-1 lg:text-2xl text-lg"
+              className="bg-green-500 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
               aria-label="Add"
               title="Add New"
             >
@@ -175,7 +188,7 @@ const CoachTable = () => {
                     <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-green-600 hover:text-green-700 text-md"
+                        className="text-green-500 hover:text-green-600 text-md"
                         aria-label="Edit"
                         title="Edit"
                       >
@@ -183,7 +196,7 @@ const CoachTable = () => {
                       </button>
                       <button
                         onClick={() => handleDelete(item.coachId)}
-                        className="text-red-600 hover:text-red-700 text-md"
+                        className="text-red-500 hover:text-red-600 text-md"
                         aria-label="Delete"
                         title="Delete"
                       >
@@ -200,7 +213,7 @@ const CoachTable = () => {
               onClick={handlePrevPage}
               title="Prev"
               disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkPrevious style={{ color: "#fff" }} />
             </button>
@@ -213,12 +226,34 @@ const CoachTable = () => {
               onClick={handleNextPage}
               title="Next"
               disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
           </div>
         </div>
+        {showDeleteModal && (
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+              <p>Are you sure you want to delete this player?</p>
+              <div className="flex justify-end mt-4 space-x-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {isFormOpen &&
           <CoachForm onClose={() => setIsFormOpen(false)} />}
         {isEditFormOpen &&

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import backgroundImage from '../assets/images/flag.png';
 import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
+import Footer from '../components/Footer';
 
 const PlayerProfile = () => {
     const [players, setPlayers] = useState([]); // Stores list of players
@@ -329,6 +330,7 @@ const PlayerProfile = () => {
                     )}
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

@@ -659,7 +659,7 @@ const ScoreCard = ({ onMatchId }) => {  // Receive onMatchId as a prop
 
           {/* Right Badge */}
           <div className="flex items-center space-x-2">
-            <img src={rightBadge} alt="Mahinda College Badge" className="w-36 h-36" />
+            <img src={matchData.logo} alt={`${matchData.opposition} Badge`} className="w-36 h-36" />
           </div>
         </div>
       </div>

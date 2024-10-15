@@ -729,6 +729,8 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavbar";
 import backgroundFlag from "../assets/images/flag.png";
+import Footer from '../components/Footer';
+
 
 const CoachesProfile = () => {
   const [coachesData, setCoachesData] = useState([]);
@@ -775,9 +777,9 @@ const CoachesProfile = () => {
   }
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-300 min-h-screen text-white">
       <Navbar />
-      <div className="max-w-screen-lg pt-16">
+      <div className="max-w-screen-lg pt-24">
         <div className="flex gap-6">
           {/* Sidebar: Our Coaches Section */}
           <div
@@ -838,7 +840,7 @@ const CoachesProfile = () => {
           </div>
 
           {/* Coach Details */}
-          <div className="flex-grow bg-cover bg-center bg-no-repeat p-6 rounded-lg shadow-md bg-gray-800">
+          <div className="flex-grow bg-cover bg-center bg-no-repeat p-6 rounded-lg shadow-md bg-gray-800 ">
             <div
               className="flex items-center space-x-6 bg-white bg-opacity-75 p-6 rounded-lg"
               style={{
@@ -945,6 +947,7 @@ const CoachesProfile = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

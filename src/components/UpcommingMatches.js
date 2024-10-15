@@ -267,11 +267,11 @@ const MatchTable = () => {
         const mappedMatches = upcomingMatches.map((match) => ({
           date: new Date(match.date).toLocaleDateString(), // Format the date
           time: match.time,
-          team1: "RICH", // Replace with actual team if available
+          team1: "Richmond College", // Replace with actual team if available
           team2: match.opposition, // Opposition is the other team
           venue: match.venue,
           team1Logo: richLogo, // Placeholder logo
-          team2Logo: mahiLogo, // Placeholder logo for now
+          team2Logo: match.logo, // Placeholder logo for now
         }));
 
         setMatches(mappedMatches);
@@ -328,7 +328,7 @@ const MatchTable = () => {
                       className={`w-6 h-6 mr-2 ${index === 0 ? "w-10 h-10" : ""}`}
                     />
                     {match.team1}
-                    <span className="mx-2">vs</span>
+                    <span className="mx-2">  vs  </span>
                     <img
                       src={match.team2Logo}
                       alt={`${match.team2} logo`}

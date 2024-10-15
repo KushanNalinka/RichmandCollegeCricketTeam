@@ -2717,6 +2717,8 @@ export default function MatchInfo() {
   const [selectedMatchType, setSelectedMatchType] = useState('All');
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
+
 
   const navigate = useNavigate();
 
@@ -2736,7 +2738,9 @@ export default function MatchInfo() {
   };
 
   useEffect(() => {
+
     fetch("http://localhost:8080/api/matchSummary/all")
+
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);
@@ -2913,6 +2917,12 @@ export default function MatchInfo() {
       <option>Under 15</option>
       <option>Under 17</option>
       <option>Under 19</option>
+      <option>Richmond legend  over  40
+      </option>
+      <option>Richmond legend over 50</option>
+      <option>Old boys
+      </option>
+      <option>Academy</option>
       <option>All</option>
     </select>
 

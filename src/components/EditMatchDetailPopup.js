@@ -1,145 +1,8 @@
-// // src/components/EditPopup.js
-// import React, { useState, useEffect } from 'react';
-
-// const EditPopup = ({ isOpen, onClose, onSubmit, matchData }) => {
-//   const [formData, setFormData] = useState(matchData);
-
-//   useEffect(() => {
-//     setFormData(matchData);
-//   }, [matchData]);
-
-//   const handleChange = (e) => {
-//     const { name, value } = e.target;
-//     setFormData({ ...formData, [name]: value });
-//   };
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     onSubmit(formData);
-//   };
-
-//   if (!isOpen) return null;
-
-//   return (
-//     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-//       <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-//         <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Match Details</h2>
-//         <form onSubmit={handleSubmit}>
-//           <div className="grid grid-cols-2 gap-6">
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Match Name</label>
-//               <input
-//                 type="text"
-//                 name="matchName"
-//                 value={formData.matchName}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Time</label>
-//               <input
-//                 type="datetime-local"
-//                 name="time"
-//                 value={formData.time}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Venue</label>
-//               <input
-//                 type="text"
-//                 name="venue"
-//                 value={formData.venue}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Opponent</label>
-//               <input
-//                 type="text"
-//                 name="opponent"
-//                 value={formData.opponent}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Tier</label>
-//               <input
-//                 type="text"
-//                 name="tier"
-//                 value={formData.tier}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Division</label>
-//               <input
-//                 type="text"
-//                 name="division"
-//                 value={formData.division}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Umpire</label>
-//               <input
-//                 type="text"
-//                 name="umpire"
-//                 value={formData.umpire}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//             <div className="mb-4">
-//               <label className="block text-gray-700 font-semibold mb-2">Type</label>
-//               <input
-//                 type="text"
-//                 name="type"
-//                 value={formData.type}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-//               />
-//             </div>
-//           </div>
-//           <div className="text-center mt-6">
-//             <button
-//               type="submit"
-//               className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-//             >
-//               Save Changes
-//             </button>
-//             <button
-//               type="button"
-//               onClick={onClose}
-//               className="ml-4 px-6 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
-//             >
-//               Cancel
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EditPopup;
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { message } from "antd";
+import { storage } from '../config/firebaseConfig'; // Import Firebase storage
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
 
 const EditPopup = ({ onClose, match }) => {
@@ -147,6 +10,10 @@ const EditPopup = ({ onClose, match }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [imagePreview, setImagePreview] = useState(match.logo);
+  const [isImageAdded, setIsImageAdded] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     ...match, 
     team: {
@@ -157,13 +24,13 @@ const EditPopup = ({ onClose, match }) => {
   useEffect(() => {
     // Fetch player data for playerId 4
     
-    axios.get(`http://localhost:5000/api/coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
       console.log("Coaches Data:", coaches);
     });
     axios
-      .get(`http://localhost:5000/api/teams/all`)
+      .get(`${API_URL}teams/all`)
       .then(response => {
         const teams = response.data;
         setTeams(teams);
@@ -174,9 +41,8 @@ const EditPopup = ({ onClose, match }) => {
       });
   }, []);
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, files } = e.target;
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
@@ -186,6 +52,14 @@ const EditPopup = ({ onClose, match }) => {
           [subKey]: value
         }
       });
+    }else if (files && files[0]) {
+      const file = files[0];
+      setImagePreview(URL.createObjectURL(file));
+      setFormData({
+        ...formData,
+        [name]: file
+      });
+      setIsImageAdded(true);
     } else {
       setFormData({
         ...formData,
@@ -198,10 +72,21 @@ const EditPopup = ({ onClose, match }) => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
     try {
+      let imageURL = formData.logo;
+
+      // Upload image if an image file is added
+      if (formData.logo instanceof File) {
+        imageURL = await handleImageUpload(formData.logo);
+      }
+
+      const matchData = {
+        ...formData,
+        logo: imageURL, // Assign the uploaded image URL to formData
+      };
       // Make a POST request to the backend API
       const response = await axios.put(
-        `http://localhost:5000/api/matches/update/${match.matchId}`,
-        formData
+        `${API_URL}matches/update/${match.matchId}`,
+        matchData
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
@@ -211,6 +96,7 @@ const EditPopup = ({ onClose, match }) => {
         venue: "",
         opposition: "",
         tier: "",
+        logo:"",
         division: "",
         umpires: "",
         type: "",
@@ -221,6 +107,7 @@ const EditPopup = ({ onClose, match }) => {
         coaches: []
       })
       setSelectedCoaches([]);
+      setImagePreview();
       setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -250,13 +137,35 @@ const EditPopup = ({ onClose, match }) => {
     [selectedCoaches]
   );
 
+  const handleImageUpload = (file) => {
+    return new Promise((resolve, reject) => {
+      const storageRef = ref(storage, `match/${file.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      setUploading(true);
+
+      uploadTask.on(
+        'state_changed',
+        (snapshot) => {},
+        (error) => {
+          console.error('Image upload failed:', error);
+          setUploading(false);
+          reject(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setUploading(false);
+            resolve(downloadURL);
+          });
+        }
+      );
+    });
+  };
+
   return (
-    <div className="fixed inset-0 pt-16 bg-black bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white py-5 px-8 rounded-lg shadow-lg max-w-lg w-full">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-[#480D35]">
-            Edit Match Details
-          </h2>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+        <div className="flex justify-end items-center">
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-800 text-xl"
@@ -264,7 +173,8 @@ const EditPopup = ({ onClose, match }) => {
             <FaTimes />
           </button>
         </div>
-        <form onSubmit={handleEdit} className='grid grid-cols-1 md:grid-cols-2 gap-1'>
+        <h2 className="text-xl font-bold mb-6 text-[#480D35]"> Edit Match Details</h2>
+        <form onSubmit={handleEdit} className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <div>
             <label className="block mb-2 text-gray-700">Date</label>
             <input
@@ -272,7 +182,7 @@ const EditPopup = ({ onClose, match }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -282,7 +192,7 @@ const EditPopup = ({ onClose, match }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -292,7 +202,7 @@ const EditPopup = ({ onClose, match }) => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -302,7 +212,7 @@ const EditPopup = ({ onClose, match }) => {
               name="opposition"
               value={formData.opposition}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -312,7 +222,7 @@ const EditPopup = ({ onClose, match }) => {
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -322,7 +232,7 @@ const EditPopup = ({ onClose, match }) => {
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -332,7 +242,7 @@ const EditPopup = ({ onClose, match }) => {
               name="umpires"
               value={formData.umpires}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -342,7 +252,7 @@ const EditPopup = ({ onClose, match }) => {
               name="matchCaptain"
               value={formData.matchCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             />
           </div>
           <div>
@@ -350,13 +260,13 @@ const EditPopup = ({ onClose, match }) => {
             <div className="flex border border-gray-300 rounded-lg">
               <input
                 type="text"
-                className="py-2 px-3 w-[80%] rounded-lg "
+                className="py-1 px-3 w-[80%] rounded-lg "
                 value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
                 readOnly
               />
               <button
                 type="button"
-                className="flex items-center w-[20%] justify-center text-red-700 hover:text-red-600 rounded-lg"
+                className="flex items-center w-[20%] justify-center text-red-600 hover:text-red-700 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>
@@ -386,7 +296,7 @@ const EditPopup = ({ onClose, match }) => {
               name="team.teamId"
               value={formData.team.teamId}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             >
               <option value="">Select team</option>
               {teams.map(team =>
@@ -397,12 +307,29 @@ const EditPopup = ({ onClose, match }) => {
             </select>
           </div>
           <div>
+            <label className="block text-gray-700">Logo</label>
+            <input
+              id="logo"
+              type="file" 
+              name="logo" 
+              accept="image/*" 
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+            />
+            {imagePreview &&
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
+              />}
+          </div>
+          <div>
             <label className="block mb-2 text-gray-700">Type</label>
             <select
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
             >
                <option value="" disabled selected>Select type</option>
               <option value="Test">Test</option>
@@ -414,7 +341,7 @@ const EditPopup = ({ onClose, match }) => {
           <div className="col-span-2 mt-4">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-[#5D1245] text-white px-4 py-2 w-full rounded-lg"
+              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 w-full rounded-lg"
             >
               Save
             </button>

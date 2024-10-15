@@ -15,8 +15,11 @@ import thurstanLogo from "../assets/images/thurstanLogo.png";
 import HomeNavbar from "../components/HomeNavbar.js";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosArrowDropup } from "react-icons/io";
+import logo from "../assets/images/RLogo.png";
+import MainNavbarToggle from "../components/MainNavBarToggle";
 
 const ScoreCardPage = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
@@ -25,7 +28,7 @@ const ScoreCardPage = () => {
 
   useEffect(() => {
     axios
-      .get(`matchSummary/all`)
+      .get(`${API_URL}matchSummary/all`)
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
@@ -87,42 +90,36 @@ const ScoreCardPage = () => {
   };
 
   return (
-    <div
-      className=" flex items-center justify-center"
-      style={{
-        backgroundImage: `url(${flag})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        width: "100vw", // Full viewport width
-        height: "full", // Full viewport height
-        minHeight: "100vh",
-      }}
-    >
-      <HomeNavbar />
-      <div className=" flex relative items-center  p-2 w-full ">
-        <div className=" lg:w-[5%] ">
-          <Navbar />
-        </div>
-        <div
-          className=" h-full relative bg-gray-100 lg:w-[95%] w-[100%] lg:mx-3 lg:px-10 lg:py-5 p-5 lg:rounded-tl-[3rem] rounded-lg shadow-lg"
-          style={{
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-            border: "1px solid rgba(255, 255, 255, 0.3)"
+    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
+      <div className=" flex relative items-center justify-center h-full w-full">
+        <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+           style={{
+            backgroundImage: `url(${flag})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         >
-          <h2 className="md:text-2xl text-xl mb-1 font-bold text-start text-[#480D35]">
-            Scorecards
-          </h2>
-          {/* <div className="flex justify-between items-center mb-4">
-          <NavbarToggleMenu/>
-          <button
-            onClick={handleFormOpen}
-            className="bg-green-500 hover:bg-green-700 rounded-full p-1 text-white text-lg lg:text-2xl"
+          <Navbar />
+        </div>
+        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+          <div className="flex justify-between w-full lg:px-10 py-3">
+             <MainNavbarToggle/>
+             <img src={logo} className="h-12 w-12"/>
+          </div>
+          <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+            style={{
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              
+            }}
           >
-            <FaPlus />
-          </button>
-        </div> */}
+            <div className="flex justify-between items-center content-center mb-3" >
+              <NavbarToggleMenu />
+              <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
+                Match Updates
+              </h2>
+            </div>
           <div
             className=" relative min-w-full divide-y divide-gray-300 max-h-[600px] bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
             style={{
@@ -138,7 +135,7 @@ const ScoreCardPage = () => {
                   <div className="flex gap-5 items-center">
                     <div className="flex flex-col items-center justify-center">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmand College, Galle</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
                     </div>
                     <div className="flex flex-col justify-center items-center">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
@@ -146,7 +143,7 @@ const ScoreCardPage = () => {
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
                     </div>
                     <div className="flex flex-col items-center justify-center">
-                      <img src={match.opponentLogo} alt={match.matchName} className="w-8 h-8"/>
+                      <img src={match.logo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
                     </div>
                   </div>
@@ -380,6 +377,7 @@ const ScoreCardPage = () => {
         matchId={matchId}
       /> */}
       </div>
+    </div>
     </div>
   );
 };

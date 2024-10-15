@@ -7,11 +7,13 @@ const ScorecardData = () => {
   const location = useLocation();
   const { match, teams, matchType } = location.state || {};
   const [playerStats, setPlayerStats] = useState([]);
+
   const [selectedInning, setSelectedInning] = useState('1st');
 
   useEffect(() => {
     if (match) {
       fetch(`http://localhost:8080/api/playerStats/match/player-stats?matchId=${match.matchId}`)
+
         .then((response) => response.json())
         .then((data) => {
           console.log('Fetched player stats:', data);

@@ -1,6 +1,7 @@
 // import React, { useState } from 'react';
 // import Navbar from "../components/MemberNavbar";
 
+
 // import topImage from '../assets/images/BG3.png';
 // import Footer from '../components/Footer';
 
@@ -53,6 +54,10 @@
 //   },
 //   // Add more news items here as needed
 // ];
+
+import topImage from '../assets/images/BG3.png';
+import Footer from '../components/Footer';
+
 
 // const sidebarData = [
 //   {
@@ -473,6 +478,7 @@ import topImage from '../assets/images/BG3.png';
 // Pagination settings
 const itemsPerPage = 4;
 
+
 // Utility function to calculate time difference
 const timeAgo = (dateTime) => {
   const now = new Date();
@@ -715,10 +721,11 @@ const NewsPage = () => {
 
           </div>
         </div>
-      </div>
+
 
       {/* Footer */}
       <Footer />
+
     </div>
   );
 };

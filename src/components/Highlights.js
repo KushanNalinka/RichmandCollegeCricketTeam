@@ -825,7 +825,7 @@ const HighlightTabs = () => {
             Array.from({ length: 3 }).map((_, idx) => {
               const index = (activeIndex + idx) % sliderData.length;
               return (
-                <div key={index} className="w-full md:w-[400px] h-[250px] md:h-[500px] bg-transparent text-black p-4 rounded-xl">
+                <div key={index} className="w-full md:w-[400px] h-[300px] md:h-[600px] bg-transparent text-black p-4 rounded-xl">
                   <iframe
                     width="100%"
                     height="100%"

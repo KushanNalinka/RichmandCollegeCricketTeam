@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import InitialNavbar from "../components/HomeNavbar";
 
 import topImage from '../assets/images/BG3.png';
-
+import Footer from '../components/Footer';
 // Sample data for the news articles and sidebar
 const newsData = [
   {
@@ -74,7 +74,7 @@ const sidebarData = [
 ];
 
 // Pagination settings
-const itemsPerPage = 5;
+const itemsPerPage = 4;
 
 const InitialNewsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -219,6 +219,7 @@ const InitialNewsPage = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
     </div>
    

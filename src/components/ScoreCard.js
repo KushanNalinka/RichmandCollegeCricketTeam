@@ -618,7 +618,7 @@ const ScoreCard = ({ onMatchId }) => {  // Receive onMatchId as a prop
                   <span className={`text-lg font-bold ${richmondWon ? 'text-blue-600' : 'text-red-600'}`}>
                     {richmondWon ? 'WIN' : 'LOSE'}
                   </span>
-                  <span className="text-gray-700 text-2xl font-bold mt-2">RICHMOND</span>
+                  <span className="text-gray-700 text-2xl font-bold mt-2">RICHMOND COLLEGE</span>
                 </div>
 
                 {/* Score Section */}

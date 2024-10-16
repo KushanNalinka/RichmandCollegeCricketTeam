@@ -5,16 +5,18 @@ import topImage from '../assets/images/BG3.png';
 
 const ScorecardData = () => {
   const location = useLocation();
-  const { match, teams } = location.state || {}; // Extract match and teams data from state
+  const { match, teams, matchType } = location.state || {};
   const [playerStats, setPlayerStats] = useState([]);
-  const API_URL = process.env.REACT_APP_API_URL;
 
+  const [selectedInning, setSelectedInning] = useState('1st');
 
   useEffect(() => {
     if (match) {
-      fetch(`${API_URL}playerStats/match/player-stats?matchId=${match.matchId}`)
+      fetch(`http://localhost:8080/api/playerStats/match/player-stats?matchId=${match.matchId}`)
+
         .then((response) => response.json())
         .then((data) => {
+          console.log('Fetched player stats:', data);
           setPlayerStats(data);
         })
         .catch((error) => console.error('Error fetching player stats:', error));
@@ -25,9 +27,10 @@ const ScorecardData = () => {
     return <div>No match data found</div>;
   }
 
-  // Filter batting and bowling data
-  const battingStats = playerStats.filter((stat) => stat.balls > 0); // Batting stats
-  const bowlingStats = playerStats.filter((stat) => stat.overs > 0); // Bowling stats
+  // Filter batting and bowling data based on selected inning
+  const filteredStats = playerStats.filter((stat) => stat.inning === (selectedInning === '1st' ? '1' : '2'));
+  const battingStats = filteredStats.filter((stat) => stat.balls > 0); // Batting stats
+  const bowlingStats = filteredStats.filter((stat) => stat.overs > 0); // Bowling stats
 
   // Calculate total runs for batting
   const totalRuns = battingStats.reduce((sum, batsman) => sum + batsman.runs, 0);
@@ -39,68 +42,54 @@ const ScorecardData = () => {
     <div className="min-h-screen flex flex-col bg-gray-100">
       <div className="relative">
         <TopLayer />
-        {/* Top background image */}
         <div
-          className="relative bg-cover bg-center h-64 flex items-center justify-center"
           style={{
             backgroundImage: `url(${topImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+            height: '250px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: "relative",
           }}
         >
-           {/* Scorecard Section */}
-           <div className="absolute inset-0 flex items-center justify-center p-8">
+          <div className="absolute inset-0 flex items-center justify-center p-8">
             <div className="bg-[#012D5E]/70 text-white rounded-3xl shadow-lg p-4 md:p-6 w-full max-w-5xl flex flex-col md:flex-row items-center justify-between">
               <div className="flex items-center justify-between w-full">
-                {/* Left side (Team 1) */}
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img
-                    src={teams[0].logo}
-                    alt={teams[0].name}
-                    className="w-10 h-10 rounded-full text-xs"
-                  />
+                  <img src={teams[0].logo} alt={teams[0].name} className="w-10 h-10 rounded-full text-xs" />
                   <div className="text-center">
-                    <h3 className="text-xxs  tracking-wide">
-                      {teams[0].name.toUpperCase()}
-                    </h3>
-                    <p className="text-xxs md:text-xxs  mt-2">{teams[0].score}</p>
-                    <p className="text-xxs md:text-xxs mt-1">{teams[0].overs}</p>
+                    <h3 className="text-xxxs tracking-wide">{teams[0].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xxs mt-2">{teams[0].score}</p>
+                    <p className="text-xxxs md:text-xxs mt-1">{teams[0].overs}</p>
                   </div>
                 </div>
-
-                {/* VS Divider */}
                 <div className="flex flex-col items-center justify-center mx-4">
                   <div className="h-8 md:h-12 w-px bg-gradient-to-b from-transparent via-white to-transparent" />
                   <span className="text-white text-xs md:text-xs my-2">VS</span>
                   <div className="h-8 md:h-12 w-px bg-gradient-to-t from-transparent via-white to-transparent" />
                 </div>
-
-                {/* Right side (Team 2) */}
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img
-                    src={teams[1].logo}
-                    alt={teams[1].name}
-                    className="w-10 h-10 rounded-full"
-                  />
+                  <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 rounded-full" />
                   <div className="text-center">
-                    <h3 className="text-xxs md:text-xxs  tracking-wide">
-                      {teams[1].name.toUpperCase()}
-                    </h3>
-                    <p className="text-xxs md:text-xxs  mt-2">{teams[1].score}</p>
-                    <p className="text-xxs md:text-xxs mt-1">{teams[1].overs}</p>
+                    <h3 className="text-xxxs md:text-xxs tracking-wide">{teams[1].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xxs mt-2">{teams[1].score}</p>
+                    <p className="text-xxxs md:text-xxs mt-1">{teams[1].overs}</p>
                   </div>
                 </div>
               </div>
-
-              {/* Match details */}
               <div className="w-full md:w-1/2 p-4 md:p-6 text-left">
                 <h4 className="text-xxxs md:text-base font-bold text-[#53A2F6]">{match.league}</h4>
                 <div className="flex justify-between mt-2">
                   <div className="flex flex-col">
-                    <p className="text-xxs md:text-xxs text-white">{match.date}</p>
-                    <p className="text-xxs md:text-xxs text-white mt-2">{match.stadiumLine1}</p>
-                    <p className="text-xxs md:text-xxs text-white">{match.stadiumLine2}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.date}</p>
+                    <p className="text-xxxs md:text-xxs text-white mt-2">{match.stadiumLine1}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.stadiumLine2}</p>
                   </div>
                   <div className="flex flex-col text-right">
-                    <p className="text-xxs md:text-xxs  text-white">{match.result}</p>
+                    <p className="text-xxxs md:text-xxs text-white">{match.result}</p>
                     <p className="text-xxs md:text-xxs mt-1 text-gray-400 mt-2">{match.tossResult}</p>
                   </div>
                 </div>
@@ -108,34 +97,46 @@ const ScorecardData = () => {
             </div>
           </div>
         </div>
-
-        {/* Table with Dropdown and Score Info */}
         <div className="p-6 max-w-screen-xl mx-auto mt-6">
-          <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
-            <tbody>
-              {/* Dropdown and Score Info Row */}
-              <tr className="bg-gray-200">
-                <td colSpan="7" className="px-3 py-2">
-                  <div className="flex justify-between items-center">
-                    {/* Dropdown for innings */}
-                   {/* Only show dropdown for Test matches */}
-{match.format === 'Test' && (
-  <select
-    className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-64 text-xs"
-    defaultValue="1st Inning"
-  >
-    <option value="1st INNING">1st Inning</option>
-    <option value="2nd INNING">2nd Inning</option>
-  </select>
-)}
-{/* Score Info - Dynamic score and overs for Team 1 */}
-<div className="text-gray-700 font-medium text-sm text-right">
-                      Score: {teams[0].score} ({teams[0].overs} overs)
-                    </div>
+  <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+    <tbody>
+      <tr className="bg-gray-200">
+        <td colSpan="7" className="px-3 py-2">
+          <div className="flex justify-between items-center">
+            {matchType === 'Test' && (
+              <select
+                className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 w-64 text-xs"
+                value={selectedInning}
+                onChange={(e) => {
+                  setSelectedInning(e.target.value);
+                  console.log('Selected Inning:', e.target.value); // Logs the selected inning
+                }}
+              >
+                <option value="1st">1st Inning</option>
+                <option value="2nd">2nd Inning</option>
+              </select>
+            )}
+           <div className="text-gray-700 font-medium text-sm text-right">
+  {selectedInning === '1st' ? (
+    // Display first innings
+    <span>
+      Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[0] : teams[0].score} 
+      ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[0] : teams[0].overs} overs)
+    </span>
+  ) : (
+    // Display second innings if selected
+    <span>
+       Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[1] : 'N/A'} 
+      ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[1] : 'N/A'} overs)
+    </span>
+  )}
+</div>
+
+
                   </div>
                 </td>
               </tr>
-              {/* Batting Table */}
+               {/* Batting Table */}
              {/* Batting Table */}
 <tr>
   <td colSpan="7">

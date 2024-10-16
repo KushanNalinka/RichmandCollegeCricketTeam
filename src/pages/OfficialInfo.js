@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import PlayerForm from "../components/PlayerForm";
-import EditPlayerForm from "../components/EditPlayerForm";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
@@ -11,17 +8,17 @@ import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
+import OfficialForm from "../components/OfficialsPopupForm";
+import EditOfficialForm from "../components/EditOfficialForm";
 
-const TableComponent = () => {
-  const [playerData, setPlayerData] = useState([]);
+const OfficialsTable = () => {
+  const [officialData, setOfficialData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [currentOfficial, setCurrentOfficial] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [playerToDelete, setPlayerToDelete] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -31,11 +28,11 @@ const TableComponent = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/officials/all`)
       .then(response => {
-        const players = response.data;
-        setPlayerData(players);
-        console.log("Player Data:", playerData);
+        const officials = response.data;
+        setOfficialData(officials);
+        console.log("Player Data:", officialData);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
@@ -49,16 +46,16 @@ const TableComponent = () => {
     }
   }, []);
 
-  const handleEdit = player => {
-    setCurrentPlayer(player);
+  const handleEdit = official => {
+    setCurrentOfficial(official);
     setIsEditFormOpen(true);
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(playerData.length / rowsPerPage);
+  const totalPages = Math.ceil(officialData.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = playerData.slice(
+  const paginatedData = officialData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -75,32 +72,23 @@ const TableComponent = () => {
     }
   };
 
-  const handleDelete = id => {
-    setPlayerToDelete(id);
-    setShowDeleteModal(true); // Show confirmation modal
-  };
+  const handleDelete = async id => {
+    console.log("Delete Official: ", id);
+    const deleteOfficial = await axios.delete(
+      `${API_URL}admin/officials/delete/${id}`
+    );
 
-  const confirmDelete = async () => {
-    try{
-      const deletePayer = await axios.delete(
-        `${API_URL}admin/players/delete/${playerToDelete}`
-      );
-      message.success("Successfully Deleted!");
-      setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
-    } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
-    }
+    console.log("Delete row:", id);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
   };
 
-  const handleSavePlayer = player => {
+  const handleSaveOfficials = official => {
     // Logic to save player information, including image upload if necessary
     setIsFormOpen(false);
   };
@@ -138,7 +126,7 @@ const TableComponent = () => {
             <div className="flex justify-between items-center content-center mb-3" >
               <NavbarToggleMenu />
               <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
-                Player Details
+                Official Details
               </h2>
               <button
                 onClick={() => setIsFormOpen(true)}
@@ -154,9 +142,6 @@ const TableComponent = () => {
                 <thead className=" rounded-t-3xl border text-white bg-transparent">
                   <tr className="rounded-t-3xl bg-[#480D35]">
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Name
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
@@ -167,12 +152,6 @@ const TableComponent = () => {
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Contact No
-                    </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Batting Style
-                    </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Bowling Style
                     </th>
                     {/* <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> */}
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
@@ -189,15 +168,7 @@ const TableComponent = () => {
                       key={index}
                       className=" hover:bg-gray-50 h-full align-middle text-gray-900"
                     >
-                      <td className={`px-4 py-2 h-14 whitespace-nowrap text-sm`}>
-                        <div
-                          className={`flex items-center justify-center h-6 w-6  ${item.status ==
-                          "Active"
-                            ? "bg-green-600 p-3 rounded-full font-bold text-green-700"
-                            : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
-                        />
-                      </td>
-                      <td className="flex gap-4 px-2  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-black">
+                      <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-black">
                         <img
                           src={item.image}
                           alt={item.name}
@@ -214,14 +185,8 @@ const TableComponent = () => {
                       <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
                         {item.contactNo}
                       </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.battingStyle}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.bowlingStyle}
-                      </td>
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
-                        {item.playerRole}
+                        {item.role}
                       </td>
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm space-x-4">
                         <button
@@ -270,32 +235,10 @@ const TableComponent = () => {
               </button>
             </div>
           </div>
-          {showDeleteModal && (
-              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-                  <p>Are you sure you want to delete this player?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
-                    <button
-                      onClick={() => setShowDeleteModal(false)}
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={confirmDelete}
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                    >
-                      Confirm
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          {isFormOpen && <PlayerForm onClose={() => setIsFormOpen(false)} />}
+          {isFormOpen && <OfficialForm onClose={() => setIsFormOpen(false)} />}
           {isEditFormOpen &&
-            <EditPlayerForm
-              player={currentPlayer}
+            <EditOfficialForm
+              official={currentOfficial}
               onClose={() => setIsEditFormOpen(false)}
             />}
         </div>
@@ -303,4 +246,4 @@ const TableComponent = () => {
     </div>
   );
 };
-export default TableComponent;
+export default OfficialsTable;

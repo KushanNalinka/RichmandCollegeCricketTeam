@@ -26,6 +26,8 @@ const TableComponent = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 5; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [teamToDelete, setTeamToDelete] = useState(null);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -75,13 +77,15 @@ const TableComponent = () => {
     setTeamMembers(members);
   };
 
-  const handleDelete = async id => {
+  const handleDelete = id => {
+    setTeamToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const confirmDelete = async () => {
     try{
-
-      const deleteTeam = await axios.delete(`${API_URL}teams/delete/${id}`)
-
+      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`)
       message.success("Successfully Deleted!");
-      console.log("Delete row:", id);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -107,7 +111,7 @@ const TableComponent = () => {
       >
         <Navbar />
       </div>
-      <div className="w-[88%] h-full py-10 flex flex-col items-center justify-center">
+      <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
@@ -126,7 +130,7 @@ const TableComponent = () => {
           <h2 className="md:text-2xl text-lg font-bold  text-center text-[#480D35] ">Team Details</h2>
           <button
             onClick={() => setIsModalOpen(true)}
-            className=" right-4 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 transition-colors rounded-full p-1"
+            className=" right-4 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 transition-colors rounded-full p-1"
             title="Add New"
           >
             <FaPlus style={{color:"#fff"}}/>
@@ -168,14 +172,14 @@ const TableComponent = () => {
                     <td className="py-4 px-4 flex space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
-                        className="text-blue-700 hover:text-blue-600 transition-colors"
+                        className="text-blue-500 hover:text-blue-600 transition-colors"
                         title="Edit"
                       >
                         <FaEdit />
                       </button>
                       <button
                         onClick={() => handleDelete(item.teamId)}
-                        className="text-red-600 hover:text-red-700 transition-colors"
+                        className="text-red-500 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
                         <FaTrash />
@@ -184,7 +188,7 @@ const TableComponent = () => {
                         onClick={() => handleViewMembers(item.players
                           
                         )}
-                        className="text-green-600 hover:text-green-700 transition-colors"
+                        className="text-green-500 hover:text-green-600 transition-colors"
                         title="Members"
                       >
                         <FaUsers />
@@ -199,7 +203,7 @@ const TableComponent = () => {
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkPrevious style={{ color: "#fff" }} />
             </button>
@@ -211,7 +215,7 @@ const TableComponent = () => {
             <button
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-600 hover:bg-green-700 rounded disabled:bg-gray-300"
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
             >
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
@@ -219,6 +223,28 @@ const TableComponent = () => {
         </div>
 
         {/* Modal for adding new item */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+              <p>Are you sure you want to delete this team?</p>
+              <div className="flex justify-end mt-4 space-x-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {isModalOpen &&
           <AddNewModal
             onClose={() => setIsModalOpen(false)}

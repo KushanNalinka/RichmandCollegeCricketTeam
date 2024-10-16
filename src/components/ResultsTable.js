@@ -838,7 +838,7 @@ const ResultsTable = ({ matchId }) => {
     const fetchMatchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/playerStats/match?playerId=1&matchId=${matchId}`
+          `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
         );
         const data = await response.json();
         setMatchData(data);
@@ -913,7 +913,7 @@ const ResultsTable = ({ matchId }) => {
             </div>
             <div className="text-gray-700 font-medium text-sm">
               {/* Display total score */}
-              180/5 (15.4 overs)
+              RICHMOND COLLEGE GALLE
             </div>
           </div>
 

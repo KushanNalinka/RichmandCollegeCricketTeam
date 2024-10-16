@@ -79,6 +79,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           },
           contactNo: ""
         });
+        setImagePreview();
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -115,7 +116,7 @@ const EditPlayerForm = ({ player, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
+    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
         <div className="flex justify-end ">
           <button

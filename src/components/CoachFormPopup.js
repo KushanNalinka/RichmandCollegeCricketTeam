@@ -43,20 +43,20 @@ const CoachForm = ({  onClose }) => {
   const handleSubmit = async e => {
     e.preventDefault();
       try {
-        let imageURL = formData.image;
+      let imageURL = formData.image;
       
       // Upload image if an image file is added
       if (formData.image instanceof File) {
         imageURL = await handleImageUpload(formData.image);
       }
 
-      const playerData = {
+      const coachData = {
         ...formData,
         image: imageURL, // Assign the uploaded image URL to formData
       };
         const response = await axios.post(
           `${API_URL}auth/signupCoach`,
-          playerData 
+          coachData 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
@@ -71,6 +71,7 @@ const CoachForm = ({  onClose }) => {
             contactNo: "",
             description: ""
         });
+        setImagePreview();
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -104,7 +105,7 @@ const CoachForm = ({  onClose }) => {
 
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
+    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
         <div className="flex justify-end ">
           <button
@@ -185,6 +186,17 @@ const CoachForm = ({  onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
               
+            />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-gray-700">Address</label>
+            <input
+            type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+
             />
           </div>
         

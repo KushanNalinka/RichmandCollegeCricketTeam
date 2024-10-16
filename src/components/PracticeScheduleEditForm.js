@@ -3,49 +3,56 @@ import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message } from "antd";
 
-const PracticeScheduleForm = ({ onClose }) => {
+const PracticeScheduleEditForm = ({ onClose, practiceSchedule }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     venue: "",
-    starTime: "",
+    startTime: "",
     endTime: "",
-    type: "",
-    team:""
+    type: ""
   });
 
   const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    const { name, value, files } = e.target;
+    if (name.includes(".")) {
+      const [mainKey, subKey] = name.split(".");
+      setFormData({
+        ...formData,
+        [mainKey]: {
+          ...formData[mainKey],
+          [subKey]: value
+        }
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
-  const handleSubmit = async e => {
+  const handleEdit = async e => {
     e.preventDefault();
-    console.log("FormData: ",formData);
-      try {
-        const response = await axios.post(
-          `${API_URL}practiseSessions/add`,
-          formData 
-        );
-        console.log("Form submitted succedded: ", response.data);
-        message.success("Successfull!");
-        setFormData({
-          venue: "",
-          starTime: "",
-          endTime: "",
-          type: "",
-          team:""
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        message.error("Failed!");
-      }
-    
+    try {
+      const response = await axios.put(
+        `${API_URL}/${practiceSchedule.id}`,
+        formData
+      );
+      console.log("Form submitted succedded: ", response.data);
+      message.success("Successfull!");
+      setFormData({
+        venue: "",
+        startTime: "",
+        endTime: "",
+        type: ""
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      message.error("Failed!");
+    }
   };
 
   return (
@@ -61,11 +68,11 @@ const PracticeScheduleForm = ({ onClose }) => {
           </button>
         </div>
         <h2 className="text-xl text-[#480D35] font-bold mb-4">
-          Add Practice Schedule Details
+          Edit Practice Schedule Details
         </h2>
         <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 text-[black] md:grid-cols-1 gap-3"
+          onSubmit={handleEdit}
+          className="grid grid-cols-1 md:grid-cols-1 gap-3"
         >
           <div className="mb-4">
             <label
@@ -93,9 +100,9 @@ const PracticeScheduleForm = ({ onClose }) => {
             </label>
             <input
               type="time"
-              id="starTime"
-              name="starTime"
-              value={formData.starTime}
+              id="startTime"
+              name="startTime"
+              value={formData.startTime}
               onChange={handleChange}
               className="w-full border border-gray-300 p-2 rounded"
               required
@@ -119,26 +126,28 @@ const PracticeScheduleForm = ({ onClose }) => {
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-2 text-gray-700">Type</label>
-            <select
+            <label
+              className="block text-gray-700 font-semibold mb-2"
+              htmlFor="type"
+            >
+              Type
+            </label>
+            <input
+              type="text"
+              id="type"
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 p-2 rounded"
               required
-            >
-               <option value="" disabled selected>Select type</option>
-              <option value="Test">Test</option>
-              <option value="ODI">ODI</option>
-              <option value="T20">T20</option>
-            </select>
+            />
           </div>
           <div>
             <button
               type="submit"
               className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
             >
-              Add schedule
+              Save
             </button>
           </div>
         </form>
@@ -147,4 +156,4 @@ const PracticeScheduleForm = ({ onClose }) => {
   );
 };
 
-export default PracticeScheduleForm;
+export default PracticeScheduleEditForm;

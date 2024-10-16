@@ -9,15 +9,35 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const EditCoachForm = ({ coach, onClose }) => {
-  const [formData, setFormData] = useState({ ...coach });
-  const [imagePreview, setImagePreview] = useState("");
+  const [formData, setFormData] = useState({ 
+    image: coach.image,
+    name: coach.name,
+    dateOfBirth: coach.dateOfBirth,
+    address: coach.address,
+    contactNo: coach.contactNo,
+    description: coach.description,
+    user:{
+      email: coach.email,
+      username: coach.username,
+      password: coach.password
+    } });
+  const [imagePreview, setImagePreview] = useState(coach.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = e => {
     const { name, value, files } = e.target;
-    if (files && files[0]) {
+    if (name.includes(".")) {
+      const [mainKey, subKey] = name.split(".");
+      setFormData({
+        ...formData,
+        [mainKey]: {
+          ...formData[mainKey],
+          [subKey]: value
+        }
+      });
+    }else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
       setFormData({
@@ -35,6 +55,7 @@ const EditCoachForm = ({ coach, onClose }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
+    console.log("edited1 coaches: ", formData);
       try {
         let imageURL = formData.image;
       
@@ -47,9 +68,10 @@ const EditCoachForm = ({ coach, onClose }) => {
         ...formData,
         image: imageURL, // Assign the uploaded image URL to formData
       };
+      console.log("edited coaches: ", coachData);
         const response = await axios.put(
-          `${API_URL}admin/coaches/update/${coach.coachId}`,
-          coachData 
+          `${API_URL}coaches/${coach.coachId}`,
+            coachData 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
@@ -57,11 +79,19 @@ const EditCoachForm = ({ coach, onClose }) => {
             image: "",
             name: "",
             dateOfBirth: "",
-            email: "",
             address: "",
             contactNo: "",
-            description: ""
+            description: "",
+            user:{
+              email: "",
+              username:"",
+              Password:""
+            }
         });
+        setImagePreview();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -95,7 +125,7 @@ const EditCoachForm = ({ coach, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
+    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
         <div className="flex justify-end ">
           <button
@@ -137,8 +167,8 @@ const EditCoachForm = ({ coach, onClose }) => {
             <label className="block mb-1 text-gray-700">Username</label>
             <input
               type="text"
-              name="username"
-              value={formData.username}
+              name="user.username"
+              value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
           
@@ -148,20 +178,21 @@ const EditCoachForm = ({ coach, onClose }) => {
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
+              name="user.email"
+              value={formData.user.email}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
               
             />
           </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">New Password</label>
+          <div>
+            <label className="block text-gray-700">Password</label>
             <input
               type="password"
-              name="password"
+              name="user.password"
+              value={formData.user.password}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md"
               
             />
           </div>
@@ -181,6 +212,17 @@ const EditCoachForm = ({ coach, onClose }) => {
             <textarea
               name="description"
               value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+          
+            />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-gray-700">Address</label>
+            <input
+            type="text"
+              name="address"
+              value={formData.address}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md"
           

@@ -5,7 +5,6 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
-const API_URL = process.env.REACT_APP_API_URL;
 
 const isUpcomingMatch = (matchDate) => {
   const today = new Date();
@@ -40,7 +39,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
 
   
   useEffect(() => {
-    fetch(`${API_URL}matches/all`)
+    fetch("http://localhost:8080/api/matches/all")
       .then(response => response.json())
       .then(data => {
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);

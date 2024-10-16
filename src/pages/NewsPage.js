@@ -55,8 +55,8 @@
 //   // Add more news items here as needed
 // ];
 
-import topImage from '../assets/images/BG3.png';
-import Footer from '../components/Footer';
+// import topImage from '../assets/images/BG3.png';
+// import Footer from '../components/Footer';
 
 
 // const sidebarData = [
@@ -720,7 +720,9 @@ const NewsPage = () => {
             </div>
 
           </div>
-        </div>
+          </div>
+            </div>
+       
 
 
       {/* Footer */}

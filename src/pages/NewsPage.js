@@ -55,8 +55,8 @@
 //   // Add more news items here as needed
 // ];
 
-import topImage from '../assets/images/BG3.png';
-import Footer from '../components/Footer';
+// import topImage from '../assets/images/BG3.png';
+// import Footer from '../components/Footer';
 
 
 // const sidebarData = [
@@ -469,10 +469,12 @@ import Footer from '../components/Footer';
 
 
 import React, { useState, useEffect } from 'react';
+import Footer from '../components/Footer';  // Make sure this is only imported once
+
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import Navbar from "../components/MemberNavbar";
-import Footer from '../components/Footer';
+
 import topImage from '../assets/images/BG3.png';
 
 // Pagination settings
@@ -720,6 +722,7 @@ const NewsPage = () => {
             </div>
 
           </div>
+        </div>
         </div>
 
 

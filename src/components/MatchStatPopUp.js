@@ -110,14 +110,14 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
                 </select>
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">opposition Overs</label>
+              <label className="block text-gray-700 font-medium">Overs</label>
               <input
                 type="number"
-                name="oppositionOvers"
-                value={statData.oppositionOvers}
+                name="overs"
+                value={statData.overs}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 border rounded-md "
               />
             </div>
             <div>
@@ -145,14 +145,14 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium">Overs</label>
+              <label className="block text-gray-700 font-medium">opposition Overs</label>
               <input
                 type="number"
-                name="overs"
-                value={statData.overs}
+                name="oppositionOvers"
+                value={statData.oppositionOvers}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md "
+                className="w-full px-3 py-2 border rounded-md"
               />
             </div>
             <div>

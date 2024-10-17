@@ -68,6 +68,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           dateOfBirth: "",
           age: "",
           email: "",
+          roles: ["ROLE_PLAYER"], 
           battingStyle: "",
           bowlingStyle: "",
           playerRole: "",
@@ -288,7 +289,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             
             />
           </div>
-          <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
+          <div className="col-span-2 ">
             <label className="block text-gray-700">Image</label>
             <input
               id="image"

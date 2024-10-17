@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
@@ -16,6 +15,7 @@ const PlayerForm = ({  onClose }) => {
     name: "",
     dateOfBirth: "",
     email: "",
+    roles: ["ROLE_PLAYER"], 
     battingStyle: "",
     bowlingStyle: "",
     playerRole: "",
@@ -138,7 +138,6 @@ const PlayerForm = ({  onClose }) => {
       );
     });
   };
-
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
@@ -326,7 +325,7 @@ const PlayerForm = ({  onClose }) => {
               required
             />
           </div>
-          <div className="col-span-2 hover:overflow-auto overflow-hidden h-20">
+          <div className="col-span-2 ">
             <label className="block text-gray-700">Image</label>
             <input
               id="image"

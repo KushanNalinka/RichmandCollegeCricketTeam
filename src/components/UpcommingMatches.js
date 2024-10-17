@@ -93,72 +93,196 @@
 
 // export default MatchTable;
 
-import React from "react"; 
+// import React from "react"; 
+// import richLogo from "../assets/images/RLogo.png"; // Adjust the path to your image location
+// import mahiLogo from "../assets/images/MLogo.png"; // Adjust the path to your image location
+
+
+// const MatchTable = () => {
+//   const matches = [
+//     {
+//       date: "09/19/2024",
+//       time: "8:30 A.M.",
+//       team1: "RICH",
+//       team2: "MAHI",
+//       venue: "Richmond Cricket Ground",
+//       team1Logo: richLogo,
+//       team2Logo: mahiLogo,
+//     },
+//     {
+//       date: "09/19/2024",
+//       time: "8:30 A.M.",
+//       team1: "RICH",
+//       team2: "MAHI",
+//       venue: "Richmond Cricket Ground",
+//       team1Logo: richLogo,
+//       team2Logo: mahiLogo,
+//     },
+//     {
+//       date: "09/19/2024",
+//       time: "8:30 A.M.",
+//       team1: "RICH",
+//       team2: "MAHI",
+//       venue: "Richmond Cricket Ground",
+//       team1Logo: richLogo,
+//       team2Logo: mahiLogo,
+//     },
+//     {
+//         date: "09/19/2024",
+//         time: "8:30 A.M.",
+//         team1: "RICH",
+//         team2: "MAHI",
+//         venue: "Richmond Cricket Ground",
+//         team1Logo: richLogo,
+//         team2Logo: mahiLogo,
+//       },
+//       {
+//         date: "09/19/2024",
+//         time: "8:30 A.M.",
+//         team1: "RICH",
+//         team2: "MAHI",
+//         venue: "Richmond Cricket Ground",
+//         team1Logo: richLogo,
+//         team2Logo: mahiLogo,
+//       },
+//       {
+//         date: "09/19/2024",
+//         time: "8:30 A.M.",
+//         team1: "RICH",
+//         team2: "MAHI",
+//         venue: "Richmond Cricket Ground",
+//         team1Logo: richLogo,
+//         team2Logo: mahiLogo,
+//       },
+//     // Add more matches as needed
+//   ];
+
+  
+  
+//   return (
+//     <div className="w-full">
+//       <div className="relative w-fit ml-20 mt-6">
+//         {/* Background and foreground text combined */}
+//         <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-[#00175F]">
+//           UPCOMING MATCHES
+//         </p>
+//       </div>
+  
+//       {/* Table */}
+//       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg mb-12 ml-20 mr-20">
+//         <table className="min-w-full border-collapse rounded-lg overflow-hidden">
+//           {/* Table Header */}
+//           <thead className="bg-gradient-to-r from-[#00175F] to-[#4A0D34] text-white">
+//             <tr>
+//               <th className="px-2 md:px-4 py-2 text-center rounded-tl-lg">Date</th>
+//               <th className="px-2 md:px-4 py-2 text-center">Time</th>
+//               <th className="px-2 md:px-4 py-2 text-center">Match</th>
+//               <th className="px-2 md:px-4 py-2 text-center rounded-tr-lg">Venue</th>
+//             </tr>
+//           </thead>
+//           {/* Table Body */}
+//           <tbody>
+//             {matches.map((match, index) => (
+//               <tr
+//                 key={index}
+//                 className={`border-t text-center border-gray-300 ${
+//                   index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'
+//                 }`}
+//                 style={index === 0 ? { fontSize: '1.25rem', height: '80px' } : {}}
+//               >
+//                 <td
+//                   className={`text-center px-2 md:px-4 py-4 ${
+//                     index === 0 ? 'font-semibold' : ''
+//                   }`}
+//                 >
+//                   {match.date}
+//                 </td>
+//                 <td
+//                   className={`text-center px-2 md:px-4 py-4 ${
+//                     index === 0 ? 'font-semibold' : ''
+//                   }`}
+//                 >
+//                   {match.time}
+//                 </td>
+//                 <td
+//                   className={`text-center px-2 md:px-4 py-4 ${
+//                     index === 0 ? 'font-semibold' : ''
+//                   }`}
+//                 >
+//                   <div className="flex justify-center items-center">
+//                     <img
+//                       src={match.team1Logo}
+//                       alt={`${match.team1} logo`}
+//                       className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+//                     />
+//                     {match.team1}
+//                     <span className="mx-2">vs</span>
+//                     <img
+//                       src={match.team2Logo}
+//                       alt={`${match.team2} logo`}
+//                       className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+//                     />
+//                     {match.team2}
+//                   </div>
+//                 </td>
+//                 <td
+//                   className={`text-center px-2 md:px-4 py-4 ${
+//                     index === 0 ? 'font-semibold' : ''
+//                   }`}
+//                 >
+//                   {match.venue}
+//                 </td>
+//               </tr>
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+  
+// };
+
+// export default MatchTable;
+import React, { useEffect, useState } from "react";
 import richLogo from "../assets/images/RLogo.png"; // Adjust the path to your image location
 import mahiLogo from "../assets/images/MLogo.png"; // Adjust the path to your image location
 
-
 const MatchTable = () => {
-  const matches = [
-    {
-      date: "09/19/2024",
-      time: "8:30 A.M.",
-      team1: "RICH",
-      team2: "MAHI",
-      venue: "Richmond Cricket Ground",
-      team1Logo: richLogo,
-      team2Logo: mahiLogo,
-    },
-    {
-      date: "09/19/2024",
-      time: "8:30 A.M.",
-      team1: "RICH",
-      team2: "MAHI",
-      venue: "Richmond Cricket Ground",
-      team1Logo: richLogo,
-      team2Logo: mahiLogo,
-    },
-    {
-      date: "09/19/2024",
-      time: "8:30 A.M.",
-      team1: "RICH",
-      team2: "MAHI",
-      venue: "Richmond Cricket Ground",
-      team1Logo: richLogo,
-      team2Logo: mahiLogo,
-    },
-    {
-        date: "09/19/2024",
-        time: "8:30 A.M.",
-        team1: "RICH",
-        team2: "MAHI",
-        venue: "Richmond Cricket Ground",
-        team1Logo: richLogo,
-        team2Logo: mahiLogo,
-      },
-      {
-        date: "09/19/2024",
-        time: "8:30 A.M.",
-        team1: "RICH",
-        team2: "MAHI",
-        venue: "Richmond Cricket Ground",
-        team1Logo: richLogo,
-        team2Logo: mahiLogo,
-      },
-      {
-        date: "09/19/2024",
-        time: "8:30 A.M.",
-        team1: "RICH",
-        team2: "MAHI",
-        venue: "Richmond Cricket Ground",
-        team1Logo: richLogo,
-        team2Logo: mahiLogo,
-      },
-    // Add more matches as needed
-  ];
+  const [matches, setMatches] = useState([]);
 
-  
-  
+  // Fetch data from API and filter upcoming matches
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/matches/all");
+        const data = await response.json();
+
+        // Filter matches that are after today
+        const today = new Date();
+        const upcomingMatches = data
+          .filter((match) => new Date(match.date) > today)
+          .sort((a, b) => new Date(a.date) - new Date(b.date)); // Sort by date
+
+        // Map API response to match the table structure
+        const mappedMatches = upcomingMatches.map((match) => ({
+          date: new Date(match.date).toLocaleDateString(), // Format the date
+          time: match.time,
+          team1: "Richmond College", // Replace with actual team if available
+          team2: match.opposition, // Opposition is the other team
+          venue: match.venue,
+          team1Logo: richLogo, // Placeholder logo
+          team2Logo: match.logo, // Placeholder logo for now
+        }));
+
+        setMatches(mappedMatches);
+      } catch (error) {
+        console.error("Failed to fetch matches:", error);
+      }
+    };
+
+    fetchMatches();
+  }, []);
+
   return (
     <div className="w-full">
       <div className="relative w-fit ml-20 mt-6">
@@ -167,7 +291,7 @@ const MatchTable = () => {
           UPCOMING MATCHES
         </p>
       </div>
-  
+
       {/* Table */}
       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg mb-12 ml-20 mr-20">
         <table className="min-w-full border-collapse rounded-lg overflow-hidden">
@@ -186,50 +310,34 @@ const MatchTable = () => {
               <tr
                 key={index}
                 className={`border-t text-center border-gray-300 ${
-                  index === 0 ? 'bg-blue-200 text-lg py-6' : 'bg-blue-50'
+                  index === 0 ? "bg-blue-200 text-lg py-6" : "bg-blue-50"
                 }`}
-                style={index === 0 ? { fontSize: '1.25rem', height: '80px' } : {}}
+                style={index === 0 ? { fontSize: "1.25rem", height: "80px" } : {}}
               >
-                <td
-                  className={`text-center px-2 md:px-4 py-4 ${
-                    index === 0 ? 'font-semibold' : ''
-                  }`}
-                >
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? "font-semibold" : ""}`}>
                   {match.date}
                 </td>
-                <td
-                  className={`text-center px-2 md:px-4 py-4 ${
-                    index === 0 ? 'font-semibold' : ''
-                  }`}
-                >
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? "font-semibold" : ""}`}>
                   {match.time}
                 </td>
-                <td
-                  className={`text-center px-2 md:px-4 py-4 ${
-                    index === 0 ? 'font-semibold' : ''
-                  }`}
-                >
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? "font-semibold" : ""}`}>
                   <div className="flex justify-center items-center">
                     <img
                       src={match.team1Logo}
                       alt={`${match.team1} logo`}
-                      className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+                      className={`w-6 h-6 mr-2 ${index === 0 ? "w-10 h-10" : ""}`}
                     />
                     {match.team1}
-                    <span className="mx-2">vs</span>
+                    <span className="mx-2">  vs  </span>
                     <img
                       src={match.team2Logo}
                       alt={`${match.team2} logo`}
-                      className={`w-6 h-6 mr-2 ${index === 0 ? 'w-10 h-10' : ''}`}
+                      className={`w-6 h-6 mr-2 ${index === 0 ? "w-10 h-10" : ""}`}
                     />
                     {match.team2}
                   </div>
                 </td>
-                <td
-                  className={`text-center px-2 md:px-4 py-4 ${
-                    index === 0 ? 'font-semibold' : ''
-                  }`}
-                >
+                <td className={`text-center px-2 md:px-4 py-4 ${index === 0 ? "font-semibold" : ""}`}>
                   {match.venue}
                 </td>
               </tr>
@@ -239,7 +347,6 @@ const MatchTable = () => {
       </div>
     </div>
   );
-  
 };
 
 export default MatchTable;

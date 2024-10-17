@@ -7,10 +7,12 @@ const ScorecardData = () => {
   const location = useLocation();
   const { match, teams } = location.state || {}; // Extract match and teams data from state
   const [playerStats, setPlayerStats] = useState([]);
+  const API_URL = process.env.REACT_APP_API_URL;
+
 
   useEffect(() => {
     if (match) {
-      fetch(`playerStats/match/player-stats?matchId=${match.matchId}`)
+      fetch(`${API_URL}playerStats/match/player-stats?matchId=${match.matchId}`)
         .then((response) => response.json())
         .then((data) => {
           setPlayerStats(data);

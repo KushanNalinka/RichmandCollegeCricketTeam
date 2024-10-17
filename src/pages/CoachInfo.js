@@ -31,7 +31,7 @@ const CoachTable = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}coaches/all`)
+      .get(`http://localhost:8080/api/coaches/all`)
       .then((response) => {
         const coaches = response.data;
         setCoachData(coaches);

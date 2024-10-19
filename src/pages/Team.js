@@ -116,7 +116,7 @@ const TableComponent = () => {
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
         </div>
-        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -137,10 +137,10 @@ const TableComponent = () => {
           </button>
         </div>
           <div className="flex overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-              <thead className="bg-[#480D35] text-white rounded">
-                <tr>
-                  <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+            <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
+              <thead className=" text-white">
+                <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                  <th className="py-3 px-4 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Under
                   </th>
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -149,18 +149,19 @@ const TableComponent = () => {
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Captain
                   </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="py-3 px-4 rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
+                <tr className=" h-2"></tr>
               </thead>
-              <tbody className=" divide-y divide-gray-300">
+              <tbody className=" divide-y-2 divide-gray-300">
                 {paginatedData.map((item,index) =>
                   <tr
                     key={item.teamId}
-                    className=" hover:bg-gray-50 h-full align-middle"
+                    className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle"
                   >
-                    <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
+                    <td className="py-4 px-4 rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
                       {item.under}
                     </td>
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
@@ -169,7 +170,7 @@ const TableComponent = () => {
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.captain}
                     </td>
-                    <td className="py-4 px-4 flex space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                    <td className="py-4 px-4 rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-500 hover:text-blue-600 transition-colors"

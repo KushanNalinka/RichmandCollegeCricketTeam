@@ -31,7 +31,7 @@ const CoachTable = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`http://localhost:8080/api/coaches/all`)
+    .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
         setCoachData(coaches);
@@ -104,7 +104,7 @@ const CoachTable = () => {
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
         </div>
-        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -128,10 +128,10 @@ const CoachTable = () => {
             </button>
           </div>
           <div className="flex overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-              <thead className=" bg-[#480D35] text-white rounded">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+            <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
+              <thead className=" text-white">
+                <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                  <th className="px-6 py-3 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -149,26 +149,28 @@ const CoachTable = () => {
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DESCRIPTION
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-6 py-3 rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
+                <tr className=" h-2"></tr>
               </thead>
-              <tbody className=" divide-y divide-gray-300">
+              <tbody className=" divide-y-2 divide-gray-300">
                 {paginatedData.map((item, index) =>
                   <tr
-                    key={index}
-                    className=" hover:bg-gray-50 h-full align-middle"
+                    key={item.coachId}
+                    className=" hover:bg-gray-50 rounded-lg bg-white h-full align-middle"
                   >
                     
-                    <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-gray-900">
-
+                    <td className="gap-4 px-4 rounded-l-lg py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-gray-900">
+                      <div className="flex items-center justify-start gap-1 ">
                         <img
                           src={item.image}
                           alt={item.name}
                           className=" h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
                         {item.name.split(' ').slice(-2).join(' ')}
+                      </div>  
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
                       {item.dateOfBirth}
@@ -185,7 +187,7 @@ const CoachTable = () => {
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.description}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
+                    <td className="px-6 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-green-500 hover:text-green-600 text-md"

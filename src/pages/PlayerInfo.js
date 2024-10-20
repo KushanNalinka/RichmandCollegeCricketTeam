@@ -126,7 +126,7 @@ const TableComponent = () => {
              <MainNavbarToggle/>
              <img src={logo} className="h-12 w-12"/>
           </div>
-          <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+          <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -150,10 +150,10 @@ const TableComponent = () => {
               </button>
             </div>
             <div className="flex overflow-x-auto" >
-              <table className="min-w-full divide-y rounded-t-3xl divide-transparent shadow-md">
-                <thead className=" rounded-t-3xl border text-white bg-transparent">
-                  <tr className="rounded-t-3xl bg-[#480D35]">
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
+              <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">
+                <thead className=" text-white">
+                  <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                    <th className="px-4 py-3 rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
@@ -178,22 +178,23 @@ const TableComponent = () => {
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-2 py-3 rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
+                  <tr className=" h-2"></tr>
                 </thead>
-                <tbody className=" divide-y divide-gray-300 bg-white">
+                <tbody className=" divide-y-2 divide-gray-300 ">
                   {paginatedData.map((item, index) =>
                     <tr
                       key={index}
-                      className=" hover:bg-gray-50 h-full align-middle text-gray-900"
+                      className=" hover:bg-gray-50 rounded-lg h-full bg-white align-middle text-gray-900"
                     >
-                      <td className={`px-4 py-2 h-14 whitespace-nowrap text-sm`}>
+                      <td className={`px-4 py-2 rounded-l-lg h-14 whitespace-nowrap text-sm`}>
                         <div
                           className={`flex items-center justify-center h-6 w-6  ${item.status ==
                           "Active"
-                            ? "bg-green-600 p-3 rounded-full font-bold text-green-700"
+                            ? "bg-green-500 p-3 rounded-full font-bold text-green-500"
                             : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
                         />
                       </td>
@@ -223,7 +224,7 @@ const TableComponent = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.playerRole}
                       </td>
-                      <td className="px-2 py-4 whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"

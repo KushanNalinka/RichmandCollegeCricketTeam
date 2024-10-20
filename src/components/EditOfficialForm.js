@@ -52,7 +52,7 @@ const EditOfficialForm = ({ official, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full relative">
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -68,75 +68,75 @@ const EditOfficialForm = ({ official, onClose }) => {
           className=" gap-3"
         >
           <div className="mb-4">
-            <label className="block text-gray-700">Name</label>
+            <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-1 text-gray-700">Username</label>
+            <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-          
+              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="@username"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="you@example.com"
             />
           </div>
           <div className="mb-4">
-            <label className="block mb-1 text-gray-700">New Password</label>
+            <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
-              
+              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="********"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Contact No</label>
+            <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
               name="contactNo"
               value={formData.contactNo}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="+1 (555) 123-4567"
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700">Position</label>
+            <label className="block text-black text-sm font-semibold">Position</label>
             <input
               type="text"
               name="position"
               value={formData.position}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="Teacher"
             />
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end mt-8 col-span-2">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
+              className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Save
             </button>

@@ -95,97 +95,97 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium">Inning</label>
+              <label className="block text-black text-sm font-semibold">Inning</label>
               <select
                 type="text"
                 name="inning"
                 value={statData.inning}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md "
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               >
-                <option value="">Select Status</option>
+                <option value="">Select inning</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
                 </select>
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Overs</label>
+              <label className="block text-black text-sm font-semibold">Overs</label>
               <input
                 type="number"
                 name="overs"
                 value={statData.overs}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md "
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Runs</label>
+              <label className="block text-black text-sm font-semibold">Runs</label>
               <input
                 type="number"
                 name="runs"
                 value={statData.runs}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Wickets</label>
+              <label className="block text-black text-sm font-semibold">Wickets</label>
               <input
                 type="number"
                 name="wickets"
                 value={statData.wickets}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md "
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium">opposition Overs</label>
+              <label className="block text-black text-sm font-semibold">opposition Overs</label>
               <input
                 type="number"
                 name="oppositionOvers"
                 value={statData.oppositionOvers}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Opposition Runs</label>
+              <label className="block text-black text-sm font-semibold">Opposition Runs</label>
               <input
                 type="number"
                 name="oppositionRuns"
                 value={statData.oppositionRuns}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Opposition Wickets</label>
+              <label className="block text-black text-sm font-semibold">Opposition Wickets</label>
               <input
                 type="number"
                 name="oppositionWickets"
                 value={statData.oppositionWickets}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md "
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium">Result</label>
+              <label className="block text-black text-sm font-semibold">Result</label>
               <input
                 type="text"
                 name="result"
                 value={statData.result}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
           </div>
@@ -193,7 +193,7 @@ const MatchStatPopup = ({ matchId,isOpen, onClose }) => {
           
             <button
               type="submit"
-              className="px-4 py-2 bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white w-full rounded-md transition"
+              className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Submit
             </button>

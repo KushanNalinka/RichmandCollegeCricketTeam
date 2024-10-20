@@ -179,7 +179,7 @@ const MatchDetails = () => {
             <img src={logo} className="h-12 w-12" />
           </div>
           <div
-            className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg"
+            className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -200,10 +200,13 @@ const MatchDetails = () => {
               </button>
             </div>
             <div className="flex overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-                <thead className=" bg-[#480D35] text-white rounded">
-                  <tr>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+              <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
+                <thead className=" text-white ">
+                  <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                    <th className="py-3 px-4 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                      Opponent
+                    </th>
+                    <th className="py-3  px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Date
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -211,9 +214,6 @@ const MatchDetails = () => {
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Venue
-                    </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                      Opponent
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Tier
@@ -227,18 +227,30 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className="py-3 rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
+                  <tr className=" h-2"></tr>
                 </thead>
-                <tbody className=" divide-y divide-gray-300">
+                <tbody className=" divide-y-2 divide-gray-300">
+                  
                   {paginatedData.map((match, index) =>
                     <tr
                       key={match.matchId}
-                      className=" hover:bg-gray-50 h-full align-middle"
+                      className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle"
                     >
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
+                      <td className="py-4 rounded-l-lg px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold ">
+                        <div className="flex items-center justify-start gap-1 ">
+                          <img
+                            className="h-10 w-10"
+                            src={match.logo}
+                            alt={match.matchId}
+                          />
+                          {match.opposition}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
@@ -246,14 +258,6 @@ const MatchDetails = () => {
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
-                      </td>
-                      <td className="py-4 flex items-center justify-start px-4 h-16 whitespace-nowrap gap-1 text-sm text-gray-600 ">
-                        <img
-                          className="h-10 w-10"
-                          src={match.logo}
-                          alt={match.matchId}
-                        />
-                        {match.opposition}
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.tier}
@@ -267,7 +271,7 @@ const MatchDetails = () => {
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
-                      <td className="py-4 px-4 flex space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -348,23 +352,23 @@ const MatchDetails = () => {
           {choiseModelOpen &&
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-600 bg-opacity-75">
               <div className="bg-white rounded-lg shadow-xl max-w-lg w-full p-6">
-                <h3 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+                <h3 className="text-2xl font-bold text-[#480D35] mb-6 text-center">
                   Add Match Score Details
                 </h3>
-                <p className="text-center text-gray-600 mb-8">
+                <p className="text-center text-gray-700 mb-8">
                   How would you like to proceed?
                 </p>
 
                 <div className="flex flex-col space-y-4">
                   <button
                     onClick={handleScorePopupAIOpen}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-lg transition duration-300"
+                    className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Upload Score Images for Two Teams
                   </button>
                   <button
                     onClick={handleScorePopupOpen}
-                    className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-lg transition duration-300"
+                    className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
                   </button>
@@ -373,7 +377,7 @@ const MatchDetails = () => {
                 <div className="flex justify-center mt-6">
                   <button
                     onClick={() => setChoiseModelOpen(false)}
-                    className="text-gray-500 hover:text-gray-800 bg-gray-200 hover:bg-gray-300 py-2 px-6 rounded-lg transition duration-300"
+                    className="text-white bg-gray-300 hover:bg-gray-400 py-2 px-6 rounded-md transition duration-300"
                   >
                     Cancel
                   </button>

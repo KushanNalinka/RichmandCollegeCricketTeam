@@ -110,7 +110,7 @@ const AddNewModal = ({  onClose }) => {
         <form onSubmit={(e) => e.preventDefault()}>
           
           <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="under">
+            <label className="block text-black text-sm font-semibold" htmlFor="under">
               Under
             </label>
             <select
@@ -118,7 +118,7 @@ const AddNewModal = ({  onClose }) => {
               name="under"
               value={formData.under}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 rounded-md w-full py-1 px-3 text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Enter team name"
             >
               <option value="" disabled>Select year</option>
@@ -133,7 +133,7 @@ const AddNewModal = ({  onClose }) => {
             </select>
           </div>
           <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
+            <label className="block text-black text-sm font-semibold" htmlFor="year">
               Year
             </label>
             <select
@@ -141,7 +141,7 @@ const AddNewModal = ({  onClose }) => {
               name="year"
               value={formData.year}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 rounded-md w-full py-1 px-3 text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="" disabled>Select year</option>
               {years.map((year) => (
@@ -152,7 +152,7 @@ const AddNewModal = ({  onClose }) => {
             </select>
           </div>
           <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="captain">
+            <label className="block text-black text-sm font-semibold" htmlFor="captain">
               Captain
             </label>
             <input
@@ -161,31 +161,32 @@ const AddNewModal = ({  onClose }) => {
               name="captain"
               value={formData.captain}
               onChange={handleChange}
-              className="border border-gray-300 rounded-lg w-full py-1 px-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="border border-gray-300 text-gray-600 rounded-md w-full py-1 px-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Enter captain's name"
             />
           </div>
-          <div className="mb-2">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="year">
+          <div className="mb-4">
+            <label className="block text-black text-sm font-semibold" htmlFor="year">
               Players
             </label>
-            <div className="flex border border-gray-300 rounded-lg">
+            <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md  focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
               <input
                 type="text"
-                className="py-1 px-3 w-[90%] rounded-lg "
+                className="border-0 py-1 px-3 w-[90%] rounded-md focus:outline-non pointer-events-none"
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly
+                placeholder='Choose players from the list...'
               />
               <button
                 type="button"
-                className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-lg"
+                className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-md"
                 onClick={clearSelectedPlayers}
               >
                 <FaTrash/>
               </button>
             </div>
             <div className="relative">
-              <div className="border overflow-auto h-40 border-gray-300 rounded-lg mt-2 px-3 py-1">
+              <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input
@@ -195,7 +196,7 @@ const AddNewModal = ({  onClose }) => {
                       checked={selectedPlayers.some(p => p.playerId === player.playerId)}
                       onChange={() => handlePlayerSelect(player)}
                     />
-                    <label htmlFor={`player-${player.playerId}`} className="text-gray-700">
+                    <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
                       {player.name}
                     </label>
                   </div>
@@ -207,7 +208,7 @@ const AddNewModal = ({  onClose }) => {
             <button
               type="button"
               onClick={handleSubmit}
-              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white w-full py-2 px-4 rounded-lg"
+              className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Add
             </button>

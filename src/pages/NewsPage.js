@@ -743,6 +743,8 @@
 
 
 import React, { useState, useEffect } from 'react';
+import Footer from '../components/Footer';  // Make sure this is only imported once
+
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/MemberNavbar";
@@ -991,7 +993,9 @@ const NewsPage = () => {
             </div>
           </div>
         </div>
+
       </div>
+
 
       {/* Footer */}
     

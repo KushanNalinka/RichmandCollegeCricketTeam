@@ -700,48 +700,227 @@
 // export default HighlightTabs;
 
 // Most corrected code with properly displaying videos,
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
+
+// const HighlightTabs = () => {
+//   const [activeTab, setActiveTab] = useState("latest");
+//   const [activeIndex, setActiveIndex] = useState(0);
+
+//   const latestVideos = [
+//     { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 1" },
+//     { id: 2, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 2" },
+//     { id: 3, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 3" },
+//     { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Video 4" },
+//     { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Video 5" },
+//     { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Video 6" },
+//   ];
+
+//   const matchHighlights = [
+//     { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 1" },
+//     { id: 2, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 2" },
+//     { id: 3, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 3" },
+//     { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Video 4" },
+//     { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Video 5" },
+//     { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Video 6" },
+//   ];
+
+//   const playerHighlights = [
+//     { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Player 1" },
+//     { id: 2, url: "https://www.youtube.com/embed/RklFfjO5ynM", title: "Player 2" },
+//     { id: 3, url: "https://www.youtube.com/embed/uKptso4JzjM", title: "Player 3" },
+//     { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Player 4" },
+//     { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Player 5" },
+//     { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Player 6" },
+//   ];
+
+//   const getSliderData = () => {
+//     switch (activeTab) {
+//       case "latest":
+//         return latestVideos;
+//       case "match":
+//         return matchHighlights;
+//       case "player":
+//         return playerHighlights;
+//       default:
+//         return [];
+//     }
+//   };
+
+//   const sliderData = getSliderData();
+
+//   const handleTabSwitch = (tab) => {
+//     setActiveTab(tab);
+//     setActiveIndex(0); // Reset slider to the first item
+//   };
+
+//   const handlePrev = () => {
+//     setActiveIndex((prevIndex) =>
+//       prevIndex === 0 ? sliderData.length - 1 : prevIndex - 1
+//     );
+//   };
+
+//   const handleNext = () => {
+//     setActiveIndex((prevIndex) =>
+//       prevIndex === sliderData.length - 1 ? 0 : prevIndex + 1
+//     );
+//   };
+
+//   const handleDotClick = (index) => {
+//     setActiveIndex(index);
+//   };
+
+//   return (
+//     <div
+//       className="bg-cover bg-center text-white py-10 "
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         backgroundSize: 'cover',
+//         backgroundPosition: 'center',
+//       }}
+//     >
+
+//        {/* Background and foreground text combined */}
+//        <div className="relative w-fit ml-20">
+//         {/* Background and foreground text combined */}
+//         <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
+//           RICHMOND HIGHLIGHTS
+//         </p>
+//       </div>
+//       {/* Tabs Section */}
+//       <div className="flex flex-col md:flex-row ml-20 space-x-0 md:space-x-10 mt-6">
+//         <button
+//           className={`py-2 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
+//           onClick={() => handleTabSwitch("latest")}
+//         >
+//           LATEST VIDEOS
+//         </button>
+//         <button
+//           className={`py-2 px-4 font-bold ${activeTab === "match" ? "text-white border-b-8 border-white" : ""}`}
+//           onClick={() => handleTabSwitch("match")}
+//         >
+//           MATCH HIGHLIGHTS
+//         </button>
+//         <button
+//           className={`py-2 px-4 font-bold ${activeTab === "player" ? "text-white border-b-8 border-white" : ""}`}
+//           onClick={() => handleTabSwitch("player")}
+//         >
+//           PLAYER HIGHLIGHTS
+//         </button>
+//       </div>
+
+//       {/* Long Line and More Videos Button */}
+//       <div className="relative flex justify-center items-center">
+//         <hr className="w-full border-gray-300 ml-20 mr-20" />
+//         <button className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-1 text-sm font-bold mr-16">
+//           MORE VIDEOS
+//         </button>
+//       </div>
+
+//       {/* Slider Section */}
+//       <div className="relative mt-10">
+//         {/* Slider Videos */}
+//         <div className="flex justify-center space-x-4">
+//           {sliderData.length > 0 && (
+//             Array.from({ length: 3 }).map((_, idx) => {
+//               const index = (activeIndex + idx) % sliderData.length;
+//               return (
+//                 <div key={index} className="w-full md:w-[400px] h-[300px] md:h-[600px] bg-transparent text-black p-4 rounded-xl">
+//                   <iframe
+//                     width="100%"
+//                     height="100%"
+//                     src={sliderData[index].url}
+//                     title={sliderData[index].title}
+//                     frameBorder="0"
+//                     allowFullScreen
+//                     className="rounded-lg"
+//                   ></iframe>
+                 
+//                 </div>
+//               );
+//             })
+//           )}
+//         </div>
+
+//         {/* Left Arrow */}
+//         <button
+//           onClick={handlePrev}
+//           className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-6xl"
+//         >
+//           &lt;
+//         </button>
+
+//         {/* Right Arrow */}
+//         <button
+//           onClick={handleNext}
+//           className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-6xl"
+//         >
+//           &gt;
+//         </button>
+//       </div>
+
+//       {/* Slider Dots */}
+//       <div className="flex justify-center mt-4">
+//         {sliderData.length > 0 && (
+//           Array.from({ length: sliderData.length }).map((_, idx) => (
+//             <span
+//               key={idx}
+//               onClick={() => handleDotClick(idx)}
+//               className={`mx-1 cursor-pointer ${activeIndex === idx ? "bg-white w-8 h-2 rounded-md" : "bg-gray-300 w-2 h-2 rounded-full"}`}
+//             ></span>
+//           ))
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default HighlightTabs;
+
+import React, { useState, useEffect } from "react";
 import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
 
 const HighlightTabs = () => {
   const [activeTab, setActiveTab] = useState("latest");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [videos, setVideos] = useState({
+    latestVideos: [],
+    matchHighlights: [],
+    playerHighlights: []
+  });
 
-  const latestVideos = [
-    { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 1" },
-    { id: 2, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 2" },
-    { id: 3, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 3" },
-    { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Video 4" },
-    { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Video 5" },
-    { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Video 6" },
-  ];
+  // Fetch videos from the API and sort them based on their title
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/videos");
+        const data = await response.json();
 
-  const matchHighlights = [
-    { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 1" },
-    { id: 2, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 2" },
-    { id: 3, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Video 3" },
-    { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Video 4" },
-    { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Video 5" },
-    { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Video 6" },
-  ];
+        const latestVideos = data.filter(video => video.title === "latestVideos");
+        const matchHighlights = data.filter(video => video.title === "matchHighlights");
+        const playerHighlights = data.filter(video => video.title === "playerHighlights");
 
-  const playerHighlights = [
-    { id: 1, url: "https://www.youtube.com/embed/yZtHxJmwa9k", title: "Player 1" },
-    { id: 2, url: "https://www.youtube.com/embed/RklFfjO5ynM", title: "Player 2" },
-    { id: 3, url: "https://www.youtube.com/embed/uKptso4JzjM", title: "Player 3" },
-    { id: 4, url: "https://www.youtube.com/embed/JpeF_ky3UzA", title: "Player 4" },
-    { id: 5, url: "https://www.youtube.com/embed/dvzqBBSQLL0", title: "Player 5" },
-    { id: 6, url: "https://www.youtube.com/embed/saPnnRR8jNs", title: "Player 6" },
-  ];
+        setVideos({
+          latestVideos,
+          matchHighlights,
+          playerHighlights
+        });
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   const getSliderData = () => {
     switch (activeTab) {
       case "latest":
-        return latestVideos;
+        return videos.latestVideos;
       case "match":
-        return matchHighlights;
+        return videos.matchHighlights;
       case "player":
-        return playerHighlights;
+        return videos.playerHighlights;
       default:
         return [];
     }
@@ -772,22 +951,19 @@ const HighlightTabs = () => {
 
   return (
     <div
-      className="bg-cover bg-center text-white py-10 "
+      className="bg-cover bg-center text-white py-10"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-
-       {/* Background and foreground text combined */}
-       <div className="relative w-fit ml-20">
-        {/* Background and foreground text combined */}
+      <div className="relative w-fit ml-20">
         <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
           RICHMOND HIGHLIGHTS
         </p>
       </div>
-      {/* Tabs Section */}
+
       <div className="flex flex-col md:flex-row ml-20 space-x-0 md:space-x-10 mt-6">
         <button
           className={`py-2 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
@@ -809,7 +985,6 @@ const HighlightTabs = () => {
         </button>
       </div>
 
-      {/* Long Line and More Videos Button */}
       <div className="relative flex justify-center items-center">
         <hr className="w-full border-gray-300 ml-20 mr-20" />
         <button className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-1 text-sm font-bold mr-16">
@@ -817,9 +992,7 @@ const HighlightTabs = () => {
         </button>
       </div>
 
-      {/* Slider Section */}
       <div className="relative mt-10">
-        {/* Slider Videos */}
         <div className="flex justify-center space-x-4">
           {sliderData.length > 0 && (
             Array.from({ length: 3 }).map((_, idx) => {
@@ -835,14 +1008,12 @@ const HighlightTabs = () => {
                     allowFullScreen
                     className="rounded-lg"
                   ></iframe>
-                 
                 </div>
               );
             })
           )}
         </div>
 
-        {/* Left Arrow */}
         <button
           onClick={handlePrev}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-6xl"
@@ -850,7 +1021,6 @@ const HighlightTabs = () => {
           &lt;
         </button>
 
-        {/* Right Arrow */}
         <button
           onClick={handleNext}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-6xl"
@@ -859,7 +1029,6 @@ const HighlightTabs = () => {
         </button>
       </div>
 
-      {/* Slider Dots */}
       <div className="flex justify-center mt-4">
         {sliderData.length > 0 && (
           Array.from({ length: sliderData.length }).map((_, idx) => (

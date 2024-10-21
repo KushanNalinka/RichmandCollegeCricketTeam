@@ -59,28 +59,28 @@ const ScorecardData = () => {
             <div className="bg-[#012D5E]/70 text-white rounded-3xl shadow-lg p-4 md:p-6 w-full max-w-5xl flex flex-col md:flex-row items-center justify-between">
               <div className="flex items-center justify-between w-full">
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img src={teams[0].logo} alt={teams[0].name} className="w-10 h-10 rounded-full text-xs" />
+                  <img src={teams[0].logo} alt={teams[0].name} className="w-10 h-10  text-xs" />
                   <div className="text-center">
-                    <h3 className="text-xxxs tracking-wide">{teams[0].name.toUpperCase()}</h3>
-                    <p className="text-xxxs md:text-xxs mt-2">{teams[0].score}</p>
-                    <p className="text-xxxs md:text-xxs mt-1">{teams[0].overs}</p>
+                    <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[0].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[0].score}</p>
+                    <p className="text-xxxs md:text-xs mt-1 font-semibold">{teams[0].overs}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center mx-4">
                   <div className="h-8 md:h-12 w-px bg-gradient-to-b from-transparent via-white to-transparent" />
-                  <span className="text-white text-xs md:text-xs my-2">VS</span>
+                  <span className="text-white text-xs md:text-sm my-2 font-semibold">VS</span>
                   <div className="h-8 md:h-12 w-px bg-gradient-to-t from-transparent via-white to-transparent" />
                 </div>
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 rounded-full" />
+                  <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 " />
                   <div className="text-center">
-                    <h3 className="text-xxxs md:text-xxs tracking-wide">{teams[1].name.toUpperCase()}</h3>
-                    <p className="text-xxxs md:text-xxs mt-2">{teams[1].score}</p>
-                    <p className="text-xxxs md:text-xxs mt-1">{teams[1].overs}</p>
+                    <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[1].name.toUpperCase()}</h3>
+                    <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[1].score}</p>
+                    <p className="text-xxxs md:text-xs mt-1 font-semibold">{teams[1].overs}</p>
                   </div>
                 </div>
               </div>
-              <div className="w-full md:w-1/2 p-4 md:p-6 text-left">
+              <div className="w-full md:w-1/2 p-4 md:p-6 text-left font-semibold">
                 <h4 className="text-xxxs md:text-base font-bold text-[#53A2F6]">{match.league}</h4>
                 <div className="flex justify-between mt-2">
                   <div className="flex flex-col">
@@ -97,46 +97,43 @@ const ScorecardData = () => {
             </div>
           </div>
         </div>
-        <div className="p-6 max-w-screen-xl mx-auto mt-6">
-  <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
-    <tbody>
-      <tr className="bg-gray-200">
-        <td colSpan="7" className="px-3 py-2">
-          <div className="flex justify-between items-center">
-            {matchType === 'Test' && (
-              <select
-                className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 w-64 text-xs"
-                value={selectedInning}
-                onChange={(e) => {
-                  setSelectedInning(e.target.value);
-                  console.log('Selected Inning:', e.target.value); // Logs the selected inning
-                }}
-              >
-                <option value="1st">1st Inning</option>
-                <option value="2nd">2nd Inning</option>
-              </select>
-            )}
-           <div className="text-gray-700 font-medium text-sm text-right">
-  {selectedInning === '1st' ? (
-    // Display first innings
-    <span>
-      Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[0] : teams[0].score} 
-      ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[0] : teams[0].overs} overs)
-    </span>
-  ) : (
-    // Display second innings if selected
-    <span>
-       Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[1] : 'N/A'} 
-      ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[1] : 'N/A'} overs)
-    </span>
-  )}
-</div>
+        <div className="p-4 sm:p-6 max-w-screen-xl mx-auto mt-4 sm:mt-6">
+  <div className="overflow-x-auto">
+    <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+      <tbody>
+        <tr className="bg-gray-200">
+          <td colSpan="7" className="px-2 py-2 sm:px-3">
+            <div className="flex justify-between items-center">
+              {matchType === 'Test' && (
+                <select
+                  className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-100 rounded-xl border border-gray-400 w-48 sm:w-64 text-xs"
+                  value={selectedInning}
+                  onChange={(e) => {
+                    setSelectedInning(e.target.value);
+                    console.log('Selected Inning:', e.target.value); // Logs the selected inning
+                  }}
+                >
+                  <option value="1st">1st Inning</option>
+                  <option value="2nd">2nd Inning</option>
+                </select>
+              )}
+              <div className="text-gray-700 font-medium text-xs sm:text-sm text-right">
+                {selectedInning === '1st' ? (
+                  <span>
+                    Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[0] : teams[0].score} 
+                    ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[0] : teams[0].overs} overs)
+                  </span>
+                ) : (
+                  <span>
+                    Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[1] : 'N/A'} 
+                    ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[1] : 'N/A'} overs)
+                  </span>
+                )}
+              </div>
+            </div>
+          </td>
+        </tr>
 
-
-                  </div>
-                </td>
-              </tr>
-               {/* Batting Table */}
              {/* Batting Table */}
 <tr>
   <td colSpan="7">
@@ -228,6 +225,7 @@ const ScorecardData = () => {
           </table>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -468,25 +468,295 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+// import Navbar from "../components/MemberNavbar";
+// import Footer from '../components/Footer';
+// import topImage from '../assets/images/BG3.png';
+
+// // Pagination settings
+// const itemsPerPage = 4;
+
+
+// // Utility function to calculate time difference
+// const timeAgo = (dateTime) => {
+//   const now = new Date();
+//   const timeDifference = Math.floor((now - new Date(dateTime)) / 1000); // Time difference in seconds
+
+//   // Define time intervals in seconds
+//   const intervals = {
+//     year: 365 * 24 * 60 * 60,
+//     month: 30 * 24 * 60 * 60,
+//     day: 24 * 60 * 60,
+//     hour: 60 * 60,
+//     minute: 60,
+//   };
+
+//   if (timeDifference >= intervals.year) {
+//     const years = Math.floor(timeDifference / intervals.year);
+//     return `${years} year${years > 1 ? 's' : ''} ago`;
+//   } else if (timeDifference >= intervals.month) {
+//     const months = Math.floor(timeDifference / intervals.month);
+//     return `${months} month${months > 1 ? 's' : ''} ago`;
+//   } else if (timeDifference >= intervals.day) {
+//     const days = Math.floor(timeDifference / intervals.day);
+//     return `${days} day${days > 1 ? 's' : ''} ago`;
+//   } else if (timeDifference >= intervals.hour) {
+//     const hours = Math.floor(timeDifference / intervals.hour);
+//     return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+//   } else if (timeDifference >= intervals.minute) {
+//     const minutes = Math.floor(timeDifference / intervals.minute);
+//     return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+//   } else {
+//     return 'just now';
+//   }
+// };
+
+// // Utility function to get the first two sentences of a text
+// const getFirstTwoSentences = (text) => {
+//   const sentences = text.match(/[^.!?]+[.!?]+/g); // Split by sentence ending punctuation
+//   return sentences ? sentences.slice(0, 2).join(' ') : text; // Join the first two sentences
+// };
+
+// const NewsPage = () => {
+//   const [newsData, setNewsData] = useState([]); // State to hold news data
+//   const [currentPage, setCurrentPage] = useState(1);  // State to hold current page number
+//   const [loading, setLoading] = useState(true); // State to show loading spinner
+//   const [error, setError] = useState(null);  // State to capture errors
+//   const navigate = useNavigate();  // For navigation
+
+//   // Fetch news data from the backend
+//   useEffect(() => {
+//     const fetchNews = async () => {
+//       try {
+//         const response = await axios.get('http://localhost:8080/api/news'); // Make sure your backend is running here
+//         setNewsData(response.data);  // Update the news data state
+//         setLoading(false);
+        
+//         console.log("Original news data: ", response.data);
+//         // Turn off loading spinner
+//       } catch (error) {
+//         console.error('Error fetching news:', error);  // Log the error
+//         setError('Failed to fetch news');  // Set the error state
+//         setLoading(false);  // Turn off loading spinner
+//       }
+//     };
+
+//     fetchNews();
+//   }, []);
+
+//   // Update the "time ago" display every minute
+//   useEffect(() => {
+//     const interval = setInterval(() => {
+//       setNewsData([...newsData]); // Trigger a state update every minute to refresh the time difference
+//     }, 60000); // 60000 milliseconds = 1 minute
+
+//     return () => clearInterval(interval); // Cleanup interval on component unmount
+//   }, [newsData]);
+
+//   // Calculate total pages
+//   const totalPages = Math.ceil(newsData.length / itemsPerPage);
+
+//   // Get the current news items based on the current page
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
+
+//   // Extract latest five news for the sidebar
+//   const latestFiveNews = newsData.slice(0, 5);  // Get the first 5 news items as sidebar news
+
+//   // Change page functions
+//   const goToNextPage = () => {
+//     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+//   };
+
+//   const goToPreviousPage = () => {
+//     if (currentPage > 1) setCurrentPage(currentPage - 1);
+//   };
+
+//   const goToFirstPage = () => setCurrentPage(1);
+//   const goToLastPage = () => setCurrentPage(totalPages);
+
+//   // Handle navigation to full news page
+//   const goToFullArticle = (id) => {
+//     navigate(`/news/${id}`); // Navigate to a detailed news page with the news id
+//   };
+
+//   return (
+//     <div>
+//       {/* Navbar */}
+//       <Navbar />
+
+//       <div
+//         style={{
+//           backgroundImage: `url(${topImage})`,
+//           backgroundSize: 'cover',
+//           backgroundPosition: 'center',
+//           backgroundAttachment: 'fixed',
+//           height: '180px',
+//           display: 'flex',
+//           alignItems: 'center',
+//           justifyContent: 'center',
+//         }}
+//       >
+//       </div>
+
+//       <div className="min-h-screen flex flex-col bg-gray-100">
+//         <div className="relative">
+//           <div className="container mx-auto p-4 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
+//             {/* Main News Section */}
+//             <div className="lg:w-3/4 w-full flex flex-col">
+//               <div className="border border-gray-300 p-6 sm:p-8 lg:p-10 rounded-lg bg-white shadow-xxs ">
+//                 <h1 className="text-2xl sm:text-3xl font-bold mb-6">Richmond Cricket News</h1>
+
+//                 {currentNews.map((news, index) => (
+//   <div key={news.id} className="mb-6">
+//     <div className="flex flex-col sm:flex-row mb-4">
+//       <div
+//         className="w-full sm:w-40 h-28 mb-4 sm:mb-0 sm:mr-4 cursor-pointer"
+//         onClick={() => goToFullArticle(news.id)}  // Navigate on image click
+//       >
+//         <img
+//           src={news.imageUrl}  // Assuming the image is coming from imageUrl
+//           alt={news.title}
+//           className="w-full h-full object-cover rounded-lg"
+//         />
+//       </div>
+//       <div className="flex-1">
+//         <h2
+//           className="text-sm sm:text-sm font-bold cursor-pointer"
+//           onClick={() => goToFullArticle(news.id)}  // Navigate to full article
+//         >
+//           {news.heading}
+//         </h2>
+//         <p className="text-gray-700 mt-2 text-xs">
+//           {getFirstTwoSentences(news.body)} {/* Show only the first two sentences */}
+//           <span
+//             className="text-black-500 cursor-pointer"
+//             onClick={() => goToFullArticle(news.id)}  // Navigate to full article
+//           >
+//             ...Read more
+//           </span>
+//         </p>
+//         <span className="text-xxs text-gray-500 mt-2 block">
+//           {new Date(news.dateTime).toLocaleDateString()} • {timeAgo(news.dateTime)} • {news.author}
+//         </span>
+//       </div>
+//     </div>
+//     {index < currentNews.length - 1 && <hr className="border-gray-300 my-4" />}
+//   </div>
+// ))}
+
+//                 {/* Pagination controls */}
+//                 <div className="flex justify-center items-center mt-4">
+//                   <button
+//                     onClick={goToFirstPage}
+//                     className="px-3 py-2 border rounded-lg mx-1 text-sm"
+//                     disabled={currentPage === 1}
+//                   >
+//                     «
+//                   </button>
+//                   <button
+//                     onClick={goToPreviousPage}
+//                     className="px-3 py-2 border rounded-lg mx-1 text-sm"
+//                     disabled={currentPage === 1}
+//                   >
+//                     ‹
+//                   </button>
+//                   {[...Array(totalPages)].map((_, i) => (
+//                     <button
+//                       key={i + 1}
+//                       onClick={() => setCurrentPage(i + 1)}
+//                       className={`px-3 py-2 border rounded-lg mx-1 text-sm ${
+//                         currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
+//                       }`}
+//                     >
+//                                            {i + 1}
+//                     </button>
+//                   ))}
+//                   <button
+//                     onClick={goToNextPage}
+//                     className="px-3 py-2 border rounded-lg mx-1 text-sm"
+//                     disabled={currentPage === totalPages}
+//                   >
+//                     ›
+//                   </button>
+//                   <button
+//                     onClick={goToLastPage}
+//                     className="px-3 py-2 border rounded-lg mx-1 text-sm"
+//                     disabled={currentPage === totalPages}
+//                   >
+//                     »
+//                   </button>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Sidebar Section */}
+//             <div className="lg:w-1/4 w-full">
+//               <div className="border-2 border-gray-200 p-4 rounded-lg bg-white shadow-sm">
+//                 <h2 className="text-lg font-semibold mb-6">Latest</h2>
+//                 {latestFiveNews.map((sidebarItem, index) => (
+//                   <div key={sidebarItem.id} className="mb-4">
+//                      <div className="flex cursor-pointer" onClick={() => goToFullArticle(sidebarItem.id)}>
+//                       <img
+//                         src={sidebarItem.imageUrl}  // Assuming the imageUrl property is used for the image
+//                         alt={sidebarItem.title}
+//                         className="w-16 h-16 object-cover rounded-lg mr-4"
+//                       />
+//                       <div>
+//                         <h3
+//                           className="text-sm font-semibold cursor-pointer"
+//                           onClick={() => goToFullArticle(sidebarItem.id)}  // Handle click to navigate to full article
+//                         >
+//                           {sidebarItem.heading}
+//                         </h3>
+//                         {/* Display the date and time ago */}
+//                         <span className="text-xxs text-gray-500 block">
+//                           {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
+//                         </span>
+//                       </div>
+//                     </div>
+//                     {index < latestFiveNews.length - 1 && <hr className="my-4 border-gray-300" />}
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+
+//           </div>
+//           </div>
+//             </div>
+       
+
+
+//       {/* Footer */}
+//       <Footer />
+
+//     </div>
+//   );
+// };
+
+// export default NewsPage;
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';  // Make sure this is only imported once
 
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { useNavigate } from 'react-router-dom';
 import Navbar from "../components/MemberNavbar";
 
 import topImage from '../assets/images/BG3.png';
 
-// Pagination settings
 const itemsPerPage = 4;
 
-
-// Utility function to calculate time difference
 const timeAgo = (dateTime) => {
   const now = new Date();
-  const timeDifference = Math.floor((now - new Date(dateTime)) / 1000); // Time difference in seconds
+  const timeDifference = Math.floor((now - new Date(dateTime)) / 1000);
 
-  // Define time intervals in seconds
   const intervals = {
     year: 365 * 24 * 60 * 60,
     month: 30 * 24 * 60 * 60,
@@ -515,60 +785,51 @@ const timeAgo = (dateTime) => {
   }
 };
 
-// Utility function to get the first two sentences of a text
 const getFirstTwoSentences = (text) => {
-  const sentences = text.match(/[^.!?]+[.!?]+/g); // Split by sentence ending punctuation
-  return sentences ? sentences.slice(0, 2).join(' ') : text; // Join the first two sentences
+  const sentences = text.match(/[^.!?]+[.!?]+/g);
+  return sentences ? sentences.slice(0, 2).join(' ') : text;
 };
 
 const NewsPage = () => {
-  const [newsData, setNewsData] = useState([]); // State to hold news data
-  const [currentPage, setCurrentPage] = useState(1);  // State to hold current page number
-  const [loading, setLoading] = useState(true); // State to show loading spinner
-  const [error, setError] = useState(null);  // State to capture errors
-  const navigate = useNavigate();  // For navigation
+  const [newsData, setNewsData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch news data from the backend
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/news'); // Make sure your backend is running here
-        setNewsData(response.data);  // Update the news data state
+        const response = await axios.get('http://localhost:8080/api/news');
+        setNewsData(response.data);
         setLoading(false);
-        
-        console.log("Original news data: ", response.data);
-        // Turn off loading spinner
       } catch (error) {
-        console.error('Error fetching news:', error);  // Log the error
-        setError('Failed to fetch news');  // Set the error state
-        setLoading(false);  // Turn off loading spinner
+        console.error('Error fetching news:', error);
+        setError('Failed to fetch news');
+        setLoading(false);
       }
     };
-
     fetchNews();
   }, []);
 
-  // Update the "time ago" display every minute
   useEffect(() => {
     const interval = setInterval(() => {
-      setNewsData([...newsData]); // Trigger a state update every minute to refresh the time difference
-    }, 60000); // 60000 milliseconds = 1 minute
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+      setNewsData([...newsData]);
+    }, 60000);
+    return () => clearInterval(interval);
   }, [newsData]);
 
-  // Calculate total pages
   const totalPages = Math.ceil(newsData.length / itemsPerPage);
 
-  // Get the current news items based on the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Extract latest five news for the sidebar
-  const latestFiveNews = newsData.slice(0, 5);  // Get the first 5 news items as sidebar news
+  const latestFiveNews = newsData
+    .slice()
+    .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+    .slice(0, 5);
 
-  // Change page functions
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -580,9 +841,8 @@ const NewsPage = () => {
   const goToFirstPage = () => setCurrentPage(1);
   const goToLastPage = () => setCurrentPage(totalPages);
 
-  // Handle navigation to full news page
   const goToFullArticle = (id) => {
-    navigate(`/news/${id}`); // Navigate to a detailed news page with the news id
+    navigate(`/news/${id}`);
   };
 
   return (
@@ -590,6 +850,7 @@ const NewsPage = () => {
       {/* Navbar */}
       <Navbar />
 
+      {/* Top Image Section */}
       <div
         style={{
           backgroundImage: `url(${topImage})`,
@@ -601,62 +862,72 @@ const NewsPage = () => {
           alignItems: 'center',
           justifyContent: 'center',
         }}
-      >
-      </div>
+      ></div>
 
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="relative">
-          <div className="container mx-auto p-4 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
+          <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {/* Main News Section */}
-            <div className="lg:w-3/4 w-full flex flex-col">
-              <div className="border border-gray-300 p-6 sm:p-8 lg:p-10 rounded-lg bg-white shadow-xxs ">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-6">Richmond Cricket News</h1>
+            <div className="lg:col-span-3 md:col-span-2 sm:col-span-1 col-span-1 flex flex-col">
+              <div className="border border-gray-300 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-xxs">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">Richmond Cricket News</h1>
 
-                {currentNews.map((news, index) => (
-                  <div key={news.id} className="mb-6">
-                    <div className="flex flex-col sm:flex-row mb-4">
-                      <img
-                        src={news.imageUrl}  // Assuming the image is coming from imageUrl
-                        alt={news.title}
-                        className="w-full sm:w-40 h-28 object-cover rounded-lg mb-4 sm:mb-0 sm:mr-4"
-                      />
-                      <div className="flex-1">
-                        <h2
-                          className="text-sm sm:text-sm font-bold cursor-pointer"
-                          onClick={() => goToFullArticle(news.id)}  // Handle click to navigate to full article
+                {loading ? (
+                  <p>Loading...</p>
+                ) : error ? (
+                  <p>{error}</p>
+                ) : (
+                  currentNews.map((news, index) => (
+                    <div key={news.id} className="mb-4 sm:mb-6">
+                      <div className="flex flex-col sm:flex-row mb-4">
+                        <div
+                          className="w-full sm:w-40 h-28 mb-4 sm:mb-0 sm:mr-4 cursor-pointer"
+                          onClick={() => goToFullArticle(news.id)}
                         >
-                          {news.heading}
-                        </h2>
-                        <p className="text-gray-700 mt-2 text-xs">
-                          {getFirstTwoSentences(news.body)} {/* Show only the first two sentences */}
-                          <span
-                            className="text-black-500 cursor-pointer"
-                            onClick={() => goToFullArticle(news.id)}  // Navigate to the full article
+                          <img
+                            src={news.imageUrl}
+                            alt={news.title}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h2
+                            className="text-sm sm:text-base md:text-lg font-bold cursor-pointer"
+                            onClick={() => goToFullArticle(news.id)}
                           >
-                            ...Read more
+                            {news.heading}
+                          </h2>
+                          <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
+                            {getFirstTwoSentences(news.body)}
+                            <span
+                              className="text-blue-500 cursor-pointer"
+                              onClick={() => goToFullArticle(news.id)}
+                            >
+                              ...Read more
+                            </span>
+                          </p>
+                          <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
+                            {new Date(news.dateTime).toLocaleDateString()} • {timeAgo(news.dateTime)} • {news.author}
                           </span>
-                        </p>
-                        <span className="text-xxs text-gray-500 mt-2 block">
-                          {new Date(news.dateTime).toLocaleDateString()} • {timeAgo(news.dateTime)} • {news.author}
-                        </span>
+                        </div>
                       </div>
+                      {index < currentNews.length - 1 && <hr className="border-gray-300 my-4" />}
                     </div>
-                    {index < currentNews.length - 1 && <hr className="border-gray-300 my-4" />}
-                  </div>
-                ))}
+                  ))
+                )}
 
-                {/* Pagination controls */}
+                {/* Pagination */}
                 <div className="flex justify-center items-center mt-4">
                   <button
                     onClick={goToFirstPage}
-                    className="px-3 py-2 border rounded-lg mx-1 text-sm"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
                     disabled={currentPage === 1}
                   >
                     «
                   </button>
                   <button
                     onClick={goToPreviousPage}
-                    className="px-3 py-2 border rounded-lg mx-1 text-sm"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
                     disabled={currentPage === 1}
                   >
                     ‹
@@ -665,23 +936,23 @@ const NewsPage = () => {
                     <button
                       key={i + 1}
                       onClick={() => setCurrentPage(i + 1)}
-                      className={`px-3 py-2 border rounded-lg mx-1 text-sm ${
+                      className={`px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm ${
                         currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
                       }`}
                     >
-                                           {i + 1}
+                      {i + 1}
                     </button>
                   ))}
                   <button
                     onClick={goToNextPage}
-                    className="px-3 py-2 border rounded-lg mx-1 text-sm"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
                     disabled={currentPage === totalPages}
                   >
                     ›
                   </button>
                   <button
                     onClick={goToLastPage}
-                    className="px-3 py-2 border rounded-lg mx-1 text-sm"
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
                     disabled={currentPage === totalPages}
                   >
                     »
@@ -691,26 +962,26 @@ const NewsPage = () => {
             </div>
 
             {/* Sidebar Section */}
-            <div className="lg:w-1/4 w-full">
-              <div className="border-2 border-gray-200 p-4 rounded-lg bg-white shadow-sm">
-                <h2 className="text-lg font-semibold mb-6">Latest</h2>
+            <div className="lg:col-span-1 md:col-span-1 sm:col-span-1 col-span-1">
+              <div className="border-2 border-gray-200 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6">Latest News</h2>
+
                 {latestFiveNews.map((sidebarItem, index) => (
                   <div key={sidebarItem.id} className="mb-4">
-                    <div className="flex">
+                    <div className="flex cursor-pointer" onClick={() => goToFullArticle(sidebarItem.id)}>
                       <img
-                        src={sidebarItem.imageUrl}  // Assuming the imageUrl property is used for the image
+                        src={sidebarItem.imageUrl}
                         alt={sidebarItem.title}
                         className="w-16 h-16 object-cover rounded-lg mr-4"
                       />
                       <div>
                         <h3
-                          className="text-sm font-semibold cursor-pointer"
-                          onClick={() => goToFullArticle(sidebarItem.id)}  // Handle click to navigate to full article
+                          className="text-sm sm:text-base font-semibold cursor-pointer"
+                          onClick={() => goToFullArticle(sidebarItem.id)}
                         >
                           {sidebarItem.heading}
                         </h3>
-                        {/* Display the date and time ago */}
-                        <span className="text-xxs text-gray-500 block">
+                        <span className="text-xxs sm:text-xs text-gray-500 block">
                           {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
                         </span>
                       </div>
@@ -720,19 +991,16 @@ const NewsPage = () => {
                 ))}
               </div>
             </div>
-
           </div>
         </div>
-        </div>
+
+      </div>
 
 
       {/* Footer */}
-      <Footer />
-
+    
     </div>
   );
 };
 
 export default NewsPage;
-
-

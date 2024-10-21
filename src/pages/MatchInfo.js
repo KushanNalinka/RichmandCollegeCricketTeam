@@ -3001,7 +3001,7 @@ export default function MatchInfo() {
               matchData.innings.map((inning, idx) => (
                 <div key={idx} className="mt-2">
                   <p className="text-sm sm:text-xs mt-2">{inning.runs}/{inning.wickets}</p>
-                  <p className="text-xxs sm:text-xxs">{inning.overs}</p>
+                  <p className="text-xxs sm:text-xxs text-xxs sm:text-xxs text-center">{inning.overs}</p>
                 </div>
               ))
             ) : (
@@ -3031,7 +3031,7 @@ export default function MatchInfo() {
               matchData.innings.map((inning, idx) => (
                 <div key={idx} className="mt-2">
                   <p className="text-sm sm:text-xs mt-2">{inning.oppositionRuns}/{inning.oppositionWickets}</p>
-                  <p className="text-xxs sm:text-xxs justify-center items-center">{inning.oppositionOvers}</p>
+                  <p className="text-xxs sm:text-xxs text-xxs sm:text-xxs text-center">{inning.oppositionOvers}</p>
                 </div>
               ))
             ) : (

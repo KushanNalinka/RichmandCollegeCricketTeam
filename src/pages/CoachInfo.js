@@ -23,7 +23,7 @@ const CoachTable = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentCoach, setCurrentCoach] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 5; // Number of rows per page
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [coachToDelete, setCoachToDelete] = useState(null);

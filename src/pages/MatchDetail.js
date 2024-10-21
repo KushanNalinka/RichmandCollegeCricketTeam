@@ -23,13 +23,14 @@ const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
+  const [matchType, setMatchType] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
   const navigate = useNavigate();
   const [currentMatchIndex, setCurrentMatchIndex] = useState(null);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 5; // Number of rows per page
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   const [isScorePopupAIOpen, setIsScorePopupAIOpen] = useState(false);
@@ -105,8 +106,9 @@ const MatchDetails = () => {
     setIsPopupOpen(true);
   };
 
-  const handleAddScoreCard = matchId => {
-    setMatchId(matchId);
+  const handleAddScoreCard = match => {
+    setMatchType(match.type);
+    setMatchId(match.matchId);
     // navigate(`/scorecard/${matchId}`);
     setChoiseModelOpen(true);
   };
@@ -295,7 +297,7 @@ const MatchDetails = () => {
                         </button>
                         <button
                           title="Add Score"
-                          onClick={() => handleAddScoreCard(match.matchId)}
+                          onClick={() => handleAddScoreCard(match)}
                           className=" text-blue-500 hover:text-blue-600"
                         >
                           <MdAssignmentAdd />
@@ -402,6 +404,7 @@ const MatchDetails = () => {
             <ScoreCardPopup
               onClose={handleScorePopupClose}
               matchId={matchId}
+              matchType={matchType}
             />}
            {isScorePopupAIOpen &&
             <ScoreCardAIModel

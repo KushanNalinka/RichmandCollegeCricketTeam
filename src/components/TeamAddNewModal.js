@@ -196,7 +196,7 @@ const AddNewModal = ({  onClose }) => {
                       checked={selectedPlayers.some(p => p.playerId === player.playerId)}
                       onChange={() => handlePlayerSelect(player)}
                     />
-                    <label htmlFor={`player-${player.playerId}`} className="text-gray-700">
+                    <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
                       {player.name}
                     </label>
                   </div>

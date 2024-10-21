@@ -35,7 +35,7 @@ const TableComponent = () => {
       .then(response => {
         const players = response.data;
         setPlayerData(players);
-        console.log("Player Data:", playerData);
+        console.log("Player Data:", response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);

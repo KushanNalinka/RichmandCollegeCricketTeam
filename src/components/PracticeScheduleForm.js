@@ -142,7 +142,7 @@ const PracticeScheduleForm = ({ onClose }) => {
         >
           <div>
             <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="venue"
             >
               Venue
@@ -153,13 +153,13 @@ const PracticeScheduleForm = ({ onClose }) => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
           <div>
             <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="venue"
             >
               Date
@@ -170,13 +170,13 @@ const PracticeScheduleForm = ({ onClose }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
           <div>
             <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="startTime"
             >
               Start Time
@@ -187,13 +187,13 @@ const PracticeScheduleForm = ({ onClose }) => {
               name="startTime"
               value={formData.startTime}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
           <div>
             <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="endTime"
             >
               End Time
@@ -204,13 +204,13 @@ const PracticeScheduleForm = ({ onClose }) => {
               name="endTime"
               value={formData.endTime}
               onChange={handleChange}
-              className="w-full border border-gray-300 p-2 rounded"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
           <div>
           <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="endTime"
             >
               Type
@@ -219,7 +219,7 @@ const PracticeScheduleForm = ({ onClose }) => {
               name="pracType"
               value={formData.pracType}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>
@@ -232,7 +232,7 @@ const PracticeScheduleForm = ({ onClose }) => {
           </div>
           <div>
             <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="team.teamId"
             >
               Team
@@ -241,7 +241,7 @@ const PracticeScheduleForm = ({ onClose }) => {
                 name="team.teamId"
                 value={formData.team.teamId}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                 >
                 <option value="">Select team</option>
                 {teams && teams.map(team =>
@@ -253,15 +253,15 @@ const PracticeScheduleForm = ({ onClose }) => {
           </div>
           <div className=" col-span-2">
           <label
-              className="block text-gray-700 font-semibold mb-2"
+              className="block text-black text-sm font-semibold"
               htmlFor="endTime"
             >
               Coaches
             </label>
-            <div className="flex border border-gray-300 rounded">
+            <div tabIndex={-1} className="flex text-gray-600 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="p-2 w-[90%] rounded"
+                className="border-0 py-1 px-3 w-[90%] rounded-md focus:outline-non pointer-events-none"
                 value={selectedCoaches && selectedCoaches
                     .map((coach) => coach && coach.name)
                     .join(", ")}
@@ -277,7 +277,7 @@ const PracticeScheduleForm = ({ onClose }) => {
               </button>
             </div>
             <div className="relative">
-              <div className="border overflow-auto h-40 border-gray-300 rounded p-2">
+              <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {coaches.map((coach) => (
                   <div key={coach.coachId} className="flex items-center mb-2">
                     <input
@@ -291,7 +291,7 @@ const PracticeScheduleForm = ({ onClose }) => {
                     />
                     <label
                       htmlFor={`coach-${coach.coachId}`}
-                      className="text-gray-700"
+                      className="block text-black text-sm font-semibold"
                     >
                       {coach.name}
                     </label>
@@ -305,7 +305,7 @@ const PracticeScheduleForm = ({ onClose }) => {
           <div className="col-span-2">
               <button
                 type="submit"
-                className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
+                className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
               >
                 Add schedule
               </button>

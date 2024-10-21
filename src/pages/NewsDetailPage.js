@@ -254,9 +254,8 @@ const NewsDetailPage = () => {
               {newsItem.heading}
             </h1>
             <p className="text-gray-500 text-sm mt-2">
-    Published on {new Date(newsItem.dateTime).toLocaleDateString()} • By {newsItem.author}
-  </p>
-
+              Published {new Date(newsItem.dateTime).toLocaleDateString()}
+            </p>
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
 
             <div className="relative w-full h-[500px] mt-6">  {/* Adjusted to 500px for standard laptop display height */}

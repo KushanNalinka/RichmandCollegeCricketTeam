@@ -109,10 +109,24 @@ const TableComponent = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleAddFormClose = () => {
+    setIsFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
+  const handleEditFormClose = () => {
+    setIsEditFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-      <div className=" flex relative items-center justify-center h-full w-full">
-        <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+      <div className=" flex relative justify-center items-stretch min-h-screen w-full">
+        <div className="lg:flex hidden justify-center items-center w-[12%] h-auto"
            style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -121,7 +135,7 @@ const TableComponent = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+        <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
              <MainNavbarToggle/>
              <img src={logo} className="h-12 w-12"/>
@@ -152,8 +166,8 @@ const TableComponent = () => {
             <div className="flex overflow-x-auto" >
               <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">
                 <thead className=" text-white">
-                  <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="px-4 py-3 rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+                  <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                    <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
@@ -178,7 +192,7 @@ const TableComponent = () => {
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
                     </th>
-                    <th className="px-2 py-3 rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -188,9 +202,9 @@ const TableComponent = () => {
                   {paginatedData.map((item, index) =>
                     <tr
                       key={index}
-                      className=" hover:bg-gray-50 rounded-lg h-full bg-white align-middle text-gray-900"
+                      className=" hover:bg-gray-50 lg:rounded-lg h-full bg-white align-middle text-gray-900"
                     >
-                      <td className={`px-4 py-2 rounded-l-lg h-14 whitespace-nowrap text-sm`}>
+                      <td className={`px-4 py-2 lg:rounded-l-lg h-14 whitespace-nowrap text-sm`}>
                         <div
                           className={`flex items-center justify-center h-6 w-6  ${item.status ==
                           "Active"
@@ -198,13 +212,18 @@ const TableComponent = () => {
                             : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
                         />
                       </td>
-                      <td className="flex gap-4 px-2  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-black">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className=" h-14 w-14 rounded-full object-cover border bg-white"
-                        />
-                        {item.name.split(" ").slice(-2).join(" ")}
+                      <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                        <div className="flex items-center justify-start gap-2 ">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="h-10 w-10 rounded-full object-cover border border-gray-300"
+                          />
+                          {/* Use truncate or text wrapping for small screens */}
+                          <span className="truncate whitespace-nowrap">
+                            {item.name.split(" ").slice(-2).join(" ")}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-2 py-4 h-14  whitespace-nowrap text-sm ">
                         {item.dateOfBirth}
@@ -224,7 +243,7 @@ const TableComponent = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.playerRole}
                       </td>
-                      <td className="px-2 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -293,11 +312,11 @@ const TableComponent = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <PlayerForm onClose={() => setIsFormOpen(false)} />}
+          {isFormOpen && <PlayerForm onClose={handleAddFormClose} />}
           {isEditFormOpen &&
             <EditPlayerForm
               player={currentPlayer}
-              onClose={() => setIsEditFormOpen(false)}
+              onClose={handleEditFormClose}
             />}
         </div>
       </div>

@@ -14,6 +14,7 @@ const EditPlayerForm = ({ player, onClose }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  console.log("player to be edited: ", player);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -81,9 +82,6 @@ const EditPlayerForm = ({ player, onClose }) => {
           contactNo: ""
         });
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");

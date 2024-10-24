@@ -254,7 +254,7 @@ const OfficialsTable = () => {
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-                  <p>Are you sure you want to delete this player?</p>
+                  <p>Are you sure you want to delete this official?</p>
                   <div className="flex justify-end mt-4 space-x-4">
                     <button
                       onClick={() => setShowDeleteModal(false)}

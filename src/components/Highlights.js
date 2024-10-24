@@ -879,7 +879,6 @@
 
 import React, { useState, useEffect } from "react";
 import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
-
 const HighlightTabs = () => {
   const [activeTab, setActiveTab] = useState("latest");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -888,18 +887,15 @@ const HighlightTabs = () => {
     matchHighlights: [],
     playerHighlights: []
   });
-
   // Fetch videos from the API and sort them based on their title
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/videos");
         const data = await response.json();
-
         const latestVideos = data.filter(video => video.title === "latestVideos");
         const matchHighlights = data.filter(video => video.title === "matchHighlights");
         const playerHighlights = data.filter(video => video.title === "playerHighlights");
-
         setVideos({
           latestVideos,
           matchHighlights,
@@ -909,10 +905,8 @@ const HighlightTabs = () => {
         console.error("Error fetching videos:", error);
       }
     };
-
     fetchVideos();
   }, []);
-
   const getSliderData = () => {
     switch (activeTab) {
       case "latest":
@@ -925,30 +919,24 @@ const HighlightTabs = () => {
         return [];
     }
   };
-
   const sliderData = getSliderData();
-
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
     setActiveIndex(0); // Reset slider to the first item
   };
-
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === 0 ? sliderData.length - 1 : prevIndex - 1
     );
   };
-
   const handleNext = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === sliderData.length - 1 ? 0 : prevIndex + 1
     );
   };
-
   const handleDotClick = (index) => {
     setActiveIndex(index);
   };
-
   return (
     <div
       className="bg-cover bg-center text-white py-10"
@@ -963,7 +951,6 @@ const HighlightTabs = () => {
           RICHMOND HIGHLIGHTS
         </p>
       </div>
-
       <div className="flex flex-col md:flex-row ml-20 space-x-0 md:space-x-10 mt-6">
         <button
           className={`py-2 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
@@ -984,14 +971,12 @@ const HighlightTabs = () => {
           PLAYER HIGHLIGHTS
         </button>
       </div>
-
       <div className="relative flex justify-center items-center">
         <hr className="w-full border-gray-300 ml-20 mr-20" />
         <button className="absolute right-0 transform -translate-y-1/4 bg-white text-black rounded-lg px-4 py-1 text-sm font-bold mr-16">
           MORE VIDEOS
         </button>
       </div>
-
       <div className="relative mt-10">
         <div className="flex justify-center space-x-4">
           {sliderData.length > 0 && (
@@ -1013,14 +998,12 @@ const HighlightTabs = () => {
             })
           )}
         </div>
-
         <button
           onClick={handlePrev}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-6xl"
         >
           &lt;
         </button>
-
         <button
           onClick={handleNext}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-6xl"
@@ -1028,7 +1011,6 @@ const HighlightTabs = () => {
           &gt;
         </button>
       </div>
-
       <div className="flex justify-center mt-4">
         {sliderData.length > 0 && (
           Array.from({ length: sliderData.length }).map((_, idx) => (
@@ -1043,5 +1025,13 @@ const HighlightTabs = () => {
     </div>
   );
 };
-
 export default HighlightTabs;
+
+
+
+
+
+
+
+
+

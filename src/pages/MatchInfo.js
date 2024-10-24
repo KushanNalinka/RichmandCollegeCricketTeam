@@ -2709,6 +2709,7 @@ import { useNavigate } from 'react-router-dom';
 import TopLayer from '../components/TopLayer';
 import topImage from '../assets/images/BG3.png';
 import Upcoming from '../components/Upcoming';
+import Footer from '../components/Footer';  // Make sure this is only imported once
 
 export default function MatchInfo() {
   const [matchDataList, setMatchDataList] = useState([]);
@@ -2739,7 +2740,7 @@ export default function MatchInfo() {
 
   useEffect(() => {
 
-    fetch("http://localhost:8080/api/matchSummary/all")
+    fetch("http://rcc.dockyardsoftware.com/api/matchSummary/all")
 
       .then(response => response.json())
       .then(data => {
@@ -2888,7 +2889,7 @@ export default function MatchInfo() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cover bg-center bg-gray-200">
+    <div className="min-h-screen flex flex-col bg-cover bg-center bg-gray-100">
       <div className="relative">
         <TopLayer />
         <div
@@ -3070,7 +3071,13 @@ export default function MatchInfo() {
       </div>
           ))
         )}
+
+
       </div>
+
+      
+             {/* Footer */}
+             <Footer/>
     </div>
   );
 }

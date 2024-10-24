@@ -188,7 +188,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
@@ -199,6 +199,9 @@ const NewsDetailPage = () => {
   const [newsItem, setNewsItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const { state } = location;  // Access state from navigation
+  const role = state?.role || 'default';  // Default role if not passed
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
@@ -235,15 +238,10 @@ const NewsDetailPage = () => {
           alignItems: 'center',
           justifyContent: 'center',
           position: 'relative',
-          zIndex: 0, // Ensures the image is behind
+          zIndex: 0,
         }}
       >
-        <Link 
-          to="/" 
-          className="absolute top-20 left-4 text-white font-semibold hover:text-gray-300"
-        >
-          &larr; Back
-        </Link>
+       
       </div>
 
       {/* News Detail Section */}
@@ -258,16 +256,14 @@ const NewsDetailPage = () => {
             </p>
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
 
-            <div className="relative w-full h-[500px] mt-6">  {/* Adjusted to 500px for standard laptop display height */}
-  <img 
-    src={newsItem.imageUrl} 
-    alt={newsItem.title} 
-    className="w-full h-full object-cover"
-    style={{ objectPosition: 'top center' }}  // Focuses on the top and center of the image
-  />
-</div>
-
-            
+            <div className="relative w-full h-[500px] mt-6">
+              <img 
+                src={newsItem.imageUrl} 
+                alt={newsItem.title} 
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'top center' }}
+              />
+            </div>
           </div>
 
           <div className="p-6 text-gray-700 leading-relaxed text-justify">

@@ -19,7 +19,7 @@ const EditCoachForm = ({ coach, onClose }) => {
     user:{
       email: coach.email,
       username: coach.username,
-      password: coach.password
+      password: coach.password,
     } });
   const [imagePreview, setImagePreview] = useState(coach.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
@@ -89,9 +89,6 @@ const EditCoachForm = ({ coach, onClose }) => {
             }
         });
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -186,11 +183,10 @@ const EditCoachForm = ({ coach, onClose }) => {
             />
           </div>
           <div>
-            <label className="block text-black text-sm font-semibold">Password</label>
+            <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
               name="user.password"
-              value={formData.user.password}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"

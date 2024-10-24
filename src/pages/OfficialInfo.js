@@ -104,10 +104,24 @@ const OfficialsTable = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleAddFormClose = () => {
+    setIsFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
+  const handleEditFormClose = () => {
+    setIsEditFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-      <div className=" flex relative items-center justify-center h-full w-full">
-        <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+      <div className=" flex relative justify-center items-stretch min-h-screen w-full">
+        <div className="lg:flex hidden justify-center items-center w-[12%] h-auto "
            style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -116,7 +130,7 @@ const OfficialsTable = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+        <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
              <MainNavbarToggle/>
              <img src={logo} className="h-12 w-12"/>
@@ -144,11 +158,11 @@ const OfficialsTable = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex overflow-x-auto" >
+            <div className="flex hover:overflow-x-auto overflow-x-hidden" >
               <table className="min-w-full bg-gray-200  rounded-t-3xl shadow-md">
                 <thead className=" text-white">
                   <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="px-4 py-3 rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Name
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
@@ -163,7 +177,7 @@ const OfficialsTable = () => {
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Position
                     </th>
-                    <th className="px-2 py-3 rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -171,11 +185,9 @@ const OfficialsTable = () => {
                 </thead>
                 <tbody className=" divide-y-2 divide-gray-300 ">
                   {paginatedData.map((item, index) =>
-                    <tr
-                      key={index}
-                      className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle text-gray-900"
-                    >
-                      <td className="px-4  py-4 h-14  rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
+                    <tr key={index}
+                      className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                      <td className="px-4  py-4 h-14  lg:rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
                         
                         {item.name.split(" ").slice(-2).join(" ")}
                       </td>
@@ -191,7 +203,7 @@ const OfficialsTable = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.position}
                       </td>
-                      <td className="px-2 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -260,11 +272,11 @@ const OfficialsTable = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <OfficialForm onClose={() => setIsFormOpen(false)} />}
+          {isFormOpen && <OfficialForm onClose={handleAddFormClose} />}
           {isEditFormOpen &&
             <EditOfficialForm
               official={currentOfficial}
-              onClose={() => setIsEditFormOpen(false)}
+              onClose={handleEditFormClose}
             />}
         </div>
       </div>

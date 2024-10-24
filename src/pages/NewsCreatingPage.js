@@ -29,6 +29,8 @@ const NewsCreator = () => {
   const [currentNews, setCurrentNews] = useState();
   const [isEditImage, setIsEditImage] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [newsToDelete, setNewsToDelete] = useState(null);
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
@@ -41,17 +43,25 @@ const NewsCreator = () => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    loadNews();
+  }, []);
+
+  const loadNews = async() => {
     axios
       .get(`${API_URL}news`)
       .then((response) => {
         const createdNews = response.data;
-        setCreatedNews(createdNews);
-        console.log("Created News:", createdNews);
+        const sortedNews = createdNews.sort(
+          (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
+        );
+        setCreatedNews(sortedNews);
+        console.log("Created News:", sortedNews);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
       });
-  }, []);
+      
+  }
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -99,9 +109,7 @@ const NewsCreator = () => {
         body: "",
       });
       setImagePreview("");
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
+      loadNews();
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
@@ -186,28 +194,31 @@ const NewsCreator = () => {
       setImagePreview("");
       setIsEditPressed(false);
       setCurrentNewsId(null);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      loadNews();
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = id => {
+    setNewsToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const confirmDelete = async () => {
     try {
       const deleteMatch = await axios.delete(
-        `${API_URL}news/${id}`
+        `${API_URL}news/${newsToDelete}`
       );
       message.success("Successfully Deleted!");
-      console.log("Delete row:", id);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setShowDeleteModal(false);
+      loadNews();
+      
     } catch (error) {
       console.error("Error deleting match:", error);
       message.error("Failed!");
+
     }
   };
 
@@ -236,13 +247,13 @@ const NewsCreator = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] py-5 flex flex-col items-center justify-center h-auto">
+        <div className="lg:w-[88%] w-full py-5 px-5 flex flex-col items-center justify-center h-auto">
           <div className="flex justify-between w-full lg:px-10 py-3">
             <MainNavbarToggle/>
             <img src={logo} className="h-12 w-12" />
           </div>
           <div
-            className=" lg:w-[95%] w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
+            className=" lg:w-[95%] w-full bg-gray-200 lg:p-5 p-3 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -255,11 +266,11 @@ const NewsCreator = () => {
                 News Creator
               </h2>
             </div>
-            <div className="grid grid-flow-col-1 lg:grid-cols-3 gap-5">
-              <div className=" lg:col-span-2 col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
+            <div className="grid grid-flow-col-1 w-full lg:grid-cols-3 gap-5">
+              <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
                 <form className="flex flex-col p-1 h-full w-full md:p-5 ">
-                  <div className="bg-white px-10 py-5  text-black text-base">
-                    <div className="flex p-1 gap-5 items-center">
+                  <div className="bg-white lg:px-10 px-5 py-5 w-full text-black text-base">
+                    <div className="md:flex p-1 gap-5 items-center">
                       <label htmlFor="author" className="block text-black text-sm font-semibold">Author</label>
                       <input
                         type="text"
@@ -269,7 +280,7 @@ const NewsCreator = () => {
                         onChange={handleChange}
                         required
                         placeholder="Enter Name"
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-[50%] px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block md:w-[50%] w-full px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
                       <label htmlFor="dateTime" className="block text-black text-sm font-semibold">Date</label>
                       <input
@@ -279,7 +290,7 @@ const NewsCreator = () => {
                         value={formData.dateTime}
                         onChange={handleChange}
                         placeholder="Date"
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-[50%] px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block md:w-[50%] w-full px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
                     </div>
                     <div className="p-1 md:p-1 ">
@@ -365,7 +376,7 @@ const NewsCreator = () => {
                     {createdNews &&
                       createdNews.map((news) => (
                         <React.Fragment key={news.id}>
-                          <div className="focus:bg-opacity-50 rounded mb-1 shadow-md hover:bg-gray-50 ">
+                          <div className="focus:bg-opacity-50 w-full rounded mb-1 shadow-md hover:bg-gray-50 ">
                             <div className="flex items-center justify-start p-2 gap-2 bg-grey-200">
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
@@ -377,10 +388,10 @@ const NewsCreator = () => {
                                 <h1 className="font-bold text-[black] text-base">
                                   {news.heading}
                                 </h1>
-                                <p className="text-black text-xs">
+                                <p className="text-black text-xs text-justify">
                                   {news.body.slice(0, 100)}...
                                 </p>
-                                <div className=" mt-3 flex text-xs">
+                                <div className=" mt-3 flex justify-between text-xxs">
                                   <p className="text-gray-600 ">
                                     {dayjs(news.dateTime).format("YYYY-MMM-DD")}
                                   </p>
@@ -423,6 +434,28 @@ const NewsCreator = () => {
           </div>
         </div>
       </div>
+      {showDeleteModal && (
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+              <p>Are you sure you want to delete this news?</p>
+              <div className="flex justify-end mt-4 space-x-4">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       {isViewPressed && (
         <NewsPreview onClose={handlePreviewClose} news={currentNews} />
       )}

@@ -6,13 +6,16 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthContexProvider } from './context/authContext';
+import { AuthProvider } from './hooks/UseAuth';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AuthContexProvider>
+    {/* <AuthContexProvider> */}
+    <AuthProvider>
     <App />
-    </AuthContexProvider>
+    </AuthProvider>
+    {/* </AuthContexProvider> */}
   </React.StrictMode>
 );
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import TopLayer from '../components/TopLayer';
 import topImage from '../assets/images/BG3.png';
+import Footer from '../components/Footer';
 
 const ScorecardData = () => {
   const location = useLocation();
@@ -226,6 +227,7 @@ const ScorecardData = () => {
         </div>
       </div>
     </div>
+    <Footer/>
     </div>
   );
 };

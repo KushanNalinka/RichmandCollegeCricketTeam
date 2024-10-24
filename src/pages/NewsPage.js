@@ -841,8 +841,15 @@ const NewsPage = () => {
   const goToFirstPage = () => setCurrentPage(1);
   const goToLastPage = () => setCurrentPage(totalPages);
 
-  const goToFullArticle = (id) => {
-    navigate(`/news/${id}`);
+ 
+  const goToFullArticle = (id, pageType) => {
+    if (pageType === 'admin') {
+      navigate(`/admin/news/${id}`);
+    } else if (pageType === 'member') {
+      navigate(`/member/news/${id}`);
+    } else {
+      navigate(`/news/${id}`);
+    }
   };
 
   return (
@@ -998,6 +1005,7 @@ const NewsPage = () => {
 
 
       {/* Footer */}
+      <Footer/>
     
     </div>
   );

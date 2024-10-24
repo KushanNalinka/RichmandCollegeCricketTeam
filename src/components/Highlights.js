@@ -1048,7 +1048,6 @@
 
 import React, { useState, useEffect } from "react";
 import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
-
 const HighlightTabs = () => {
   const [activeTab, setActiveTab] = useState("latest");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -1057,6 +1056,7 @@ const HighlightTabs = () => {
     matchHighlights: [],
     playerHighlights: []
   });
+
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -1073,17 +1073,16 @@ const HighlightTabs = () => {
     };
   }, []);
 
+
   // Fetch videos from the API and sort them based on their title
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         const response = await fetch("http://localhost:8080/api/videos");
         const data = await response.json();
-
         const latestVideos = data.filter(video => video.title === "latestVideos");
         const matchHighlights = data.filter(video => video.title === "matchHighlights");
         const playerHighlights = data.filter(video => video.title === "playerHighlights");
-
         setVideos({
           latestVideos,
           matchHighlights,
@@ -1093,10 +1092,8 @@ const HighlightTabs = () => {
         console.error("Error fetching videos:", error);
       }
     };
-
     fetchVideos();
   }, []);
-
   const getSliderData = () => {
     switch (activeTab) {
       case "latest":
@@ -1109,30 +1106,24 @@ const HighlightTabs = () => {
         return [];
     }
   };
-
   const sliderData = getSliderData();
-
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
     setActiveIndex(0); // Reset slider to the first item
   };
-
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === 0 ? sliderData.length - 1 : prevIndex - 1
     );
   };
-
   const handleNext = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === sliderData.length - 1 ? 0 : prevIndex + 1
     );
   };
-
   const handleDotClick = (index) => {
     setActiveIndex(index);
   };
-
   return (
     <div
       className="bg-cover bg-center text-white py-10"
@@ -1148,8 +1139,10 @@ const HighlightTabs = () => {
         </p>
       </div>
 
+
       {/* Button Tabs */}
       <div className="flex flex-col md:flex-row ml-20 space-y-4 md:space-y-0 md:space-x-10 mt-6">
+
         <button
           className={`py-1 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
           onClick={() => handleTabSwitch("latest")}
@@ -1169,6 +1162,7 @@ const HighlightTabs = () => {
           PLAYER HIGHLIGHTS
         </button>
 
+
         {/* MORE VIDEOS Button (Positioned below PLAYER HIGHLIGHTS on mobile) */}
         <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
           <button className="py-3 px-4 bg-white text-black font-bold rounded-lg mr-20">
@@ -1181,6 +1175,7 @@ const HighlightTabs = () => {
       <hr className="hidden md:block  border-gray-300 ml-20 mr-20 mt-0" />
 
       {/* Video Slider */}
+
       <div className="relative mt-10">
         <div className="flex justify-center space-x-4">
           {sliderData.length > 0 && (
@@ -1204,14 +1199,15 @@ const HighlightTabs = () => {
           )}
         </div>
 
+
         {/* Prev and Next Buttons */}
+
         <button
           onClick={handlePrev}
           className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-6xl"
         >
           &lt;
         </button>
-
         <button
           onClick={handleNext}
           className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-6xl"
@@ -1220,7 +1216,9 @@ const HighlightTabs = () => {
         </button>
       </div>
 
+
       {/* Dots for Slider */}
+
       <div className="flex justify-center mt-4">
         {sliderData.length > 0 && (
           Array.from({ length: sliderData.length }).map((_, idx) => (
@@ -1235,5 +1233,13 @@ const HighlightTabs = () => {
     </div>
   );
 };
-
 export default HighlightTabs;
+
+
+
+
+
+
+
+
+

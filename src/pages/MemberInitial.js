@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState }  from 'react';
 import Navbar from '../components/MemberNavbar';
 import CroppedImage from '../assets/images/Cropped.png';
 import ScoreCard from '../components/ScoreCard';
@@ -12,6 +12,13 @@ import videoSrc from '../assets/images/new.mp4'; // Corrected import for video
 import Highlights from '../components/Highlights';
 
 const HomePage = () => {
+  const [matchId, setMatchId] = useState(null); // State to manage matchId
+
+  // Callback function to handle matchId received from ScoreCard
+  const handleMatchId = (id) => {
+    console.log('Match ID:', id);
+    setMatchId(id);
+  };
   return (
     <>
       <Navbar />
@@ -34,8 +41,11 @@ const HomePage = () => {
 
       {/* Other Components */}
       <div className="w-full">
-        <ScoreCard />
-        <ResultsTable />
+         {/* Pass handleMatchId as a prop to ScoreCard */}
+         <ScoreCard onMatchId={handleMatchId} />
+        
+        {/* Conditionally render ResultsTable only when matchId is available */}
+        {matchId && <ResultsTable matchId={matchId} />}
         <Number />
         <LatestNews />
         <Highlights />

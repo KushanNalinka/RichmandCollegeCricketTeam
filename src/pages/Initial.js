@@ -351,7 +351,10 @@ const HomePage = () => {
 
 //   Callback function to handle matchId received from ScoreCard
   const handleMatchId = (id) => {
-   setMatchId(id);
+
+    console.log('Match ID:', id);
+    setMatchId(id);
+
   };
 
   return (

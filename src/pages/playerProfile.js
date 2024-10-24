@@ -10,14 +10,14 @@ const PlayerProfile = () => {
   const { user } = useAuth();
   const [playerProfile, setPlayerProfile] = useState(null);
   const [playerStat, setPlayerStat] = useState(null);
-  
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchData = async () => {
-    const playerData = await axios.get( `http://localhost:5000/api/admin/players/${user.userId}`);
+    const playerData = await axios.get( `${API_URL}admin/players/${user.userId}`);
     setPlayerProfile(playerData.data);
 
-    const playerStat = await axios.get( `http://localhost:5000/api/playerStats/all-stats/${user.userId}`);
+    const playerStat = await axios.get( `${API_URL}playerStats/all-stats/${user.userId}`);
     setPlayerStat(playerStat.data);
     console.log("player stack", playerStat);
   };

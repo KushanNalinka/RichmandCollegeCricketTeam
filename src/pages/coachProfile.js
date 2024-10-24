@@ -10,8 +10,10 @@ import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
+import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
+  const { user } = useAuth();
   const API_URL = process.env.REACT_APP_API_URL;
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -21,8 +23,9 @@ const CoachProfile = () => {
   const [practiceToDelete, setPracticeToDelete] = useState(null);
   const [coach, setCoach] = useState();
   useEffect(() => {
+    console.log("coachId: ", user.userId);
     axios
-      .get(`${API_URL}coaches/5`)
+      .get(`${API_URL}coaches/${user.userId}`)
       .then(response => {
         const coach = response.data;
         setCoach(coach);
@@ -31,7 +34,7 @@ const CoachProfile = () => {
       }).catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-      axios.get(`${API_URL}practiseSessions/coach/5`)
+      axios.get(`${API_URL}practiseSessions/coach/${user.userId}`)
       .then(response => {
         setPracticeSchedules(response.data);
         console.log("sessions Data:", response.data);
@@ -41,17 +44,6 @@ const CoachProfile = () => {
       });
       console.log("coach: ",coach);
   }, []);
-
-  // const handleSaveCoachProfile = e => {
-  //   console.log("get Profile:", e);
-  //   setCoachProfile([
-  //     ...coachProfile,
-  //     {
-  //       ...e,
-  //       id: coachProfile.id + 1
-  //     }
-  //   ]);
-  // };
 
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
@@ -72,9 +64,9 @@ const CoachProfile = () => {
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
       message.error("Failed!");
@@ -97,7 +89,7 @@ const CoachProfile = () => {
 
   return (
     <div
-      className={` text-white w-full`}
+      className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
       style={{
         backgroundImage: `url(${flag})`,
         backgroundSize: "cover",
@@ -105,12 +97,8 @@ const CoachProfile = () => {
       }}
     >
       <Navbar />
-
-      <div className=" pt-32  p-10">
-        <div>
-          <div className="flex gap-6 items-center lg:px-5 justify-center">
             <div
-              className="flex-grow flex-col flex bg p-8 items-center justify-center rounded-lg lg:px-20 bg-white shadow-md ml-18"
+              className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
               style={{
                 backdropFilter: "blur(10px)",
                 boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
@@ -129,24 +117,26 @@ const CoachProfile = () => {
                 }}
               >
                 <div className="relative  top-10 rounded-full w-full h-full flex items-center justify-center">
-                {coach && <img src={coach.image} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
-                  />}
-                </div>
-                <div className="top-24 absolute flex flex-col left-28">
-                  <h1 className="text-5xl font-bold py-2">
-                    {coach && coach.name}
-                  </h1>
-                  {coach?.dateOfBirth && (
-                  <p className="text-xl">{calculateAge(coach.dateOfBirth)} years old</p>
-                )}
+                  <div className="-top-5 -left-5 absolute flex flex-col">
+                    <h1 className="lg:text-4xl font-bold">
+                      {coach && coach.name}
+                    </h1>
+                    {coach?.dateOfBirth && (
+                    <p className="lg:text-xl text-sm">{calculateAge(coach.dateOfBirth)} years old</p>
+                  )}
+                  </div>
+                  {coach && <img src={coach.image} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
+                    />}
                 </div>
 
               </div>
-              <div className="bg-gray-100 p-6 w-2/3 self-center rounded-lg">
+              <div className="flex items-center pt-5 justify-center">
+              <div className="bg-gray-100 py-4 px-2 w-full lg:p-6 lg:w-2/3 self-center rounded-lg">
                 <h2 className="text-xl font-bold mb-4 text-black text-center">
                   Personal Information
                 </h2>
-                <table className="min-w-full bg-gray-100 text-gray-950 rounded-lg">
+                <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+                <table className="min-w-full bg-white text-gray-950 rounded-lg">
                   <tbody>
                     <tr className="bg-white rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold">Name:</td>
@@ -188,8 +178,10 @@ const CoachProfile = () => {
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
-              <div className="mt-6 bg-gray-200 bg-opacity-75 p-8 w-full rounded-lg">
+              </div>
+              <div className="mt-6 bg-gray-200 lg:p-8 p-5 w-full rounded-lg">
 
                   <div className="flex justify-between items-center mb-3">
                     <h2 className="md:text-2xl text-lg font-bold text-center text-[#480D35]">
@@ -204,57 +196,58 @@ const CoachProfile = () => {
                       <FaPlus />
                     </button>
                   </div>
-
-                <table className="min-w-full mt-4 bg-gray-50 rounded-lg shadow-md w-full">
-                  <thead className=" rounded-t-3xl border text-white bg-transparent">
-                    <tr className="rounded-t-3xl bg-[#480D35]">
-                      <th className="py-2 px-16 text-center font-semibold align-middle whitespace-nowrap">
+                <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+                <table className="min-w-full mt-4 bg-gray-200 lg:rounded-lg w-full">
+                  <thead className=" text-white">
+                    <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                      <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                         Team
                       </th>
-                      <th className="py-2 px-16 text-center  font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Venue
                       </th>
-                      <th className="py-2 px-16 text-center font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Date
                       </th>
-                      <th className="py-2 px-16 text-center font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Start Time
                       </th>
-                      <th className="py-2 px-16text-center font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         End Time
                       </th>
-                      <th className="py-2 px-16 text-center font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Type
                       </th>
-                      <th className="py-2 px-16 text-center font-semibold align-middle whitespace-nowrap">
+                      <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
+                    <tr className=" h-2"></tr>
                   </thead>
-                  <tbody>
+                  <tbody className=" divide-y-2 divide-gray-300 " >
                     {practiceSchedules &&
                       practiceSchedules.map(schedule =>
-                        <tr key={schedule.id} className="bg-white">
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                        <tr key={schedule.id} className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                          <td className="px-2 py-4 h-14 lg:rounded-l-lg  whitespace-nowrap text-sm">
                             {schedule.teamUnder}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                          <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.venue}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                          <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.date}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                          <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.startTime}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                          <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.endTime}
                           </td>
-                          <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
+                          <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.pracType}
                           </td>
-                          <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
-                            <div className="flex justify-center space-x-2">
+                          <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                        
                               <button className="text-blue-500 hover:text-blue-700"
                               onClick={() => handleEditSchedule(schedule)}>
                                 <FaEdit className="text-sm" />
@@ -264,16 +257,17 @@ const CoachProfile = () => {
                               >
                                 <FaTrash className="text-sm" />
                               </button>
-                            </div>
+                        
                           </td>
                         </tr>
                       )}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </div>
-          {showDeleteModal && (
+                </div>
+        </div>
+        
+      </div>
+      {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
                 <div className="bg-white text-[black] rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
@@ -297,8 +291,6 @@ const CoachProfile = () => {
             )}
           {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} />}
           {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule}/>}
-        </div>
-      </div>
     </div>
   );
 };

@@ -4,7 +4,7 @@ import CroppedImage from '../assets/images/Cropped.png';
 import ScoreCard from '../components/ScoreCard';
 import ResultsTable from '../components/ResultsTable';
 import Number from '../components/Number';
-import LatestNews from '../components/LatestNews';
+import LatestNews from '../components/MemberLatestNews';
 import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
 import Footer from '../components/Footer';

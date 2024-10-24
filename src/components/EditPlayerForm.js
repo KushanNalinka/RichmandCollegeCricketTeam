@@ -9,7 +9,25 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const EditPlayerForm = ({ player, onClose }) => {
-  const [formData, setFormData] = useState({ ...player });
+  const [formData, setFormData] = useState({ 
+    image: player.image,
+    name: player.name,
+    dateOfBirth: player.dateOfBirth,
+    roles: ["ROLE_PLAYER"], 
+    battingStyle: player.battingStyle,
+    bowlingStyle: player.bowlingStyle,
+    playerRole: player.playerRole,
+    user:{
+      username: player.username,
+      password: player.password,
+      email: player.email
+    },
+    membership: {
+      isMemberHolder:1,
+      startDate:player.membershipStartDate,
+      endDate:player.membershipEndDate,
+    },
+    contactNo: player.contactNo });
   const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -45,6 +63,7 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
+    console.log("editedPlayer: ", formData);
       try {
         let imageURL = formData.image;
 
@@ -68,14 +87,17 @@ const EditPlayerForm = ({ player, onClose }) => {
           name: "",
           dateOfBirth: "",
           age: "",
-          email: "",
           roles: ["ROLE_PLAYER"], 
           battingStyle: "",
           bowlingStyle: "",
           playerRole: "",
-          username: "",
-          password: "",
+          user:{
+            username: player.username,
+            password: player.password,
+            email: player.email
+          },
           membership: {
+            isMemberHolder:1,
             startDate:"",
             endDate:"",
           },
@@ -157,8 +179,8 @@ const EditPlayerForm = ({ player, onClose }) => {
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
-              name="username"
-              value={formData.username}
+              name="user.username"
+              value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="@username"
@@ -168,8 +190,8 @@ const EditPlayerForm = ({ player, onClose }) => {
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
+              name="user.email"
+              value={formData.user.email}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
@@ -179,7 +201,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
-              name="password"
+              name="user.password"
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
@@ -267,8 +289,8 @@ const EditPlayerForm = ({ player, onClose }) => {
             </label>
             <input
               type="date"
-              name="startDate"
-              value={formData.startDate}
+              name="membership.startDate"
+              value={formData.membership.startDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
         
@@ -280,8 +302,8 @@ const EditPlayerForm = ({ player, onClose }) => {
             </label>
             <input
               type="date"
-              name="endDate"
-              value={formData.endDate}
+              name="membership.endDate"
+              value={formData.membership.endDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             

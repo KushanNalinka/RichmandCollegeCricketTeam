@@ -13,6 +13,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
+import MainNavbarToggle from "../components/MainNavBarToggle";
 dayjs.extend(relativeTime);
 
 const NewsCreator = () => {
@@ -223,10 +224,10 @@ const NewsCreator = () => {
   };
 
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-      <div className=" flex relative items-center justify-center h-full w-full">
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+      <div className=" flex relative justify-center w-full items-stretch min-h-screen">
         <div
-          className="lg:flex hidden justify-center items-center w-[12%] h-full "
+          className="lg:flex hidden justify-center items-center w-[12%] h-auto"
           style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -235,12 +236,13 @@ const NewsCreator = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+        <div className="w-[88%] py-5 flex flex-col items-center justify-center h-auto">
           <div className="flex justify-between w-full lg:px-10 py-3">
+            <MainNavbarToggle/>
             <img src={logo} className="h-12 w-12" />
           </div>
           <div
-            className=" lg:w-[95%] w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg"
+            className=" lg:w-[95%] w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -254,11 +256,11 @@ const NewsCreator = () => {
               </h2>
             </div>
             <div className="grid grid-flow-col-1 lg:grid-cols-3 gap-5">
-              <div className=" lg:col-span-2 col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white ">
+              <div className=" lg:col-span-2 col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
                 <form className="flex flex-col p-1 h-full w-full md:p-5 ">
                   <div className="bg-white px-10 py-5  text-black text-base">
                     <div className="flex p-1 gap-5 items-center">
-                      <label htmlFor="author">Author</label>
+                      <label htmlFor="author" className="block text-black text-sm font-semibold">Author</label>
                       <input
                         type="text"
                         id="author"
@@ -267,9 +269,9 @@ const NewsCreator = () => {
                         onChange={handleChange}
                         required
                         placeholder="Enter Name"
-                        className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-[Gray] focus:border-[gray] block w-[50%] p-2.5 my-2"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-[50%] px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
-                      <label htmlFor="dateTime">Date</label>
+                      <label htmlFor="dateTime" className="block text-black text-sm font-semibold">Date</label>
                       <input
                         type="datetime-local"
                         id="dateTime"
@@ -277,11 +279,11 @@ const NewsCreator = () => {
                         value={formData.dateTime}
                         onChange={handleChange}
                         placeholder="Date"
-                        className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-[Gray] focus:border-[gray] block w-[50%] p-2.5 my-2"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-[50%] px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
                     </div>
                     <div className="p-1 md:p-1 ">
-                      <label htmlFor="heading">Heading</label>
+                      <label htmlFor="heading" className="block text-black text-sm font-semibold">Heading</label>
                       <input
                         type="text"
                         id="heading"
@@ -290,29 +292,29 @@ const NewsCreator = () => {
                         onChange={handleChange}
                         required
                         placeholder="Enter Subject"
-                        className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg  focus:ring-[Gray] focus:border-[gray] block w-full  p-2.5 mt-1 mb-3"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
-                      <label htmlFor="body">Content</label>
+                      <label htmlFor="body" className="block text-black text-sm font-semibold">Content</label>
                       <textarea
                         type="Form"
                         id="body"
                         name="body"
                         value={formData.body}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[Gray] focus:border-[gray] block w-full h-32 p-2.5 mt-1 mb-3"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         placeholder="......"
                         height="Auto"
                         required
                       />
                       <div className="col-span-2 ">
-                        <label htmlFor="imageUrl" className="block text-gray-700">Image</label>
+                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Image</label>
                         <input
                           id="imageUrl"
                           type="file"
                           name="imageUrl"
                           accept="image/*"
                           onChange={handleChange}
-                          className="w-full px-3 py-1 border border-gray-300 rounded-md"
+                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {imagePreview && (
                           <img
@@ -328,14 +330,14 @@ const NewsCreator = () => {
                           onClick={
                             isEditPressed ? handleNewsEdit : handleSubmit
                           }
-                          className="bg-[#480D35] hover:bg-[#480D35] py-2 px-3 rounded-lg focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
+                          className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-90 py-2 px-3 rounded-md focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
                         >
                           Save
                         </button>
                         {isEditPressed && (
                           <button
                             onClick={handleEditCancel}
-                            className="bg-gray-300 hover:bg-gray-400 py-2 px-3 rounded-lg focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
+                            className="bg-gray-300 hover:bg-gray-400 py-2 px-3 rounded-md focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
                           >
                             {" "}
                             Cancel
@@ -347,7 +349,7 @@ const NewsCreator = () => {
                 </form>
               </div>
 
-              <div className=" lg:col-span-1  border border-[#480D35] bg-white col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
+              <div className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-6 py-2 ">
                   <h1 className="text-[#00175f] font-bold font-mono md:text-2xl text-lg py-3">
                     Recent News
@@ -410,7 +412,7 @@ const NewsCreator = () => {
                     <button
                       type="button"
                       onClick={toggleShowmore}
-                      className="text-white w-full bg-[#00175f] hover:bg-ControllerHov focus:bg-slate-600 shadow-xl focus:ring-4 focus:ring-blue-300 font-bold rounded text-base py-1 focus:outline-none "
+                      className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
                     >
                       {!isShowmorePressed ? "Show More" : "Show Less"}
                     </button>

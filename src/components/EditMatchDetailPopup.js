@@ -173,94 +173,124 @@ const EditPopup = ({ onClose, match }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl font-bold mb-6 text-[#480D35]"> Edit Match Details</h2>
+        <h2 className="text-xl font-bold mb-4 text-[#480D35]"> Edit Match Details</h2>
         <form onSubmit={handleEdit} className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <div>
-            <label className="block mb-2 text-gray-700">Date</label>
+            <label className="block text-black text-sm font-semibold">Date</label>
             <input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Time</label>
+            <label className="block text-black text-sm font-semibold">Time</label>
             <input
               type="time"
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Venue</label>
+            <label className="block text-black text-sm font-semibold">Venue</label>
             <input
               type="text"
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Opponent</label>
+            <label className="block text-black text-sm font-semibold">Opponent</label>
             <input
               type="text"
               name="opposition"
               value={formData.opposition}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Tier</label>
+            <label className="block text-black text-sm font-semibold">Tier</label>
             <input
               type="text"
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Division</label>
+            <label className="block text-black text-sm font-semibold">Division</label>
             <input
               type="text"
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Umpires</label>
+            <label className="block text-black text-sm font-semibold">Umpires</label>
             <input
               type="text"
               name="umpires"
               value={formData.umpires}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Match Captain</label>
+            <label className="block text-black text-sm font-semibold">Match Captain</label>
             <input
               type="text"
               name="matchCaptain"
               value={formData.matchCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
-            <label className="block mb-2 text-gray-700">Coaches</label>
-            <div className="flex border border-gray-300 rounded-lg">
+            <label className="block text-black text-sm font-semibold">Team</label>
+            <select
+              name="team.teamId"
+              value={formData.team.teamId}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select team</option>
+              {teams.map(team =>
+                <option key={team.teamId} value={team.teamId}>
+                  {team.under}
+                </option>
+              )}
+            </select>
+          </div>
+          <div>
+            <label className="block text-black text-sm font-semibold">Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+               <option value="" disabled selected>Select type</option>
+              <option value="Test">Test</option>
+              <option value="ODI">ODI</option>
+              <option value="T20">T20</option>
+            </select>
+          </div>
+          <div className="col-span-2">
+            <label className="block text-black text-sm font-semibold">Coaches</label>
+            <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[80%] rounded-lg "
+                className="py-1 px-3 w-[80%] rounded-md outline-none "
                 value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
                 readOnly
               />
@@ -273,7 +303,7 @@ const EditPopup = ({ onClose, match }) => {
               </button>
             </div>
             <select
-              className="w-full px-3 py-1 border border-gray-200 rounded mb-2"
+              className="w-full px-3 py-1 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               onChange={e =>
                 handleCoachSelect(
                   coaches.find(
@@ -290,58 +320,28 @@ const EditPopup = ({ onClose, match }) => {
             </select>
            
           </div>
-          <div>
-            <label className="block mb-2 text-gray-700">Team</label>
-            <select
-              name="team.teamId"
-              value={formData.team.teamId}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select team</option>
-              {teams.map(team =>
-                <option key={team.teamId} value={team.teamId}>
-                  {team.under}
-                </option>
-              )}
-            </select>
-          </div>
-          <div>
-            <label className="block text-gray-700">Logo</label>
+          <div className="col-span-2">
+            <label className="block text-black text-sm font-semibold">Logo</label>
             <input
               id="logo"
               type="file" 
               name="logo" 
               accept="image/*" 
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="mt-4 w-20 h-20 rounded-full object-cover border border-gray-300"
+                className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
           </div>
-          <div>
-            <label className="block mb-2 text-gray-700">Type</label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-lg"
-            >
-               <option value="" disabled selected>Select type</option>
-              <option value="Test">Test</option>
-              <option value="ODI">ODI</option>
-              <option value="T20">T20</option>
-            </select>
-          </div>
 
-          <div className="col-span-2 mt-4">
+          <div className="col-span-2">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 w-full rounded-lg"
+              className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Save
             </button>

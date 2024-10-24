@@ -19,24 +19,27 @@ const CoachProfile = () => {
   const [practiceSchedules, setPracticeSchedules] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [practiceToDelete, setPracticeToDelete] = useState(null);
-  const [coach, setCoach] = useState(null);
+  const [coach, setCoach] = useState();
   useEffect(() => {
     axios
-      .get(`${API_URL}coaches/${1}`)
+      .get(`${API_URL}coaches/5`)
       .then(response => {
-        setCoach(response.data);
+        const coach = response.data;
+        setCoach(coach);
         console.log("coach Data:", response.data);
+        console.log("coach1:", coach);
       }).catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-      axios.get(`${API_URL}practiseSessions/coach/2`)
+      axios.get(`${API_URL}practiseSessions/coach/5`)
       .then(response => {
         setPracticeSchedules(response.data);
-        console.log("sessions Data:", practiceSchedules);
+        console.log("sessions Data:", response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+      console.log("coach: ",coach);
   }, []);
 
   // const handleSaveCoachProfile = e => {
@@ -51,18 +54,21 @@ const CoachProfile = () => {
   // };
 
   const handleEditSchedule = schedule => {
+    console.log("schedule: ", schedule);
     setEditSchedule(schedule);
     setIsEditFormOpen(true);
   };
   const handleDelete = id => {
-    setPracticeToDelete(id);
+    setPracticeToDelete(id)
+;
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
     try{
       const deletePayer = await axios.delete(
-        `${API_URL}admin/players/delete/${practiceToDelete}`
+        `${API_URL}practiseSessions/${practiceToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
@@ -73,6 +79,20 @@ const CoachProfile = () => {
       console.error("Error deleting match:", error);
       message.error("Failed!");
     }
+  };
+  
+  const calculateAge = (dob) => {
+    console.log("dob:", dob);
+    const birthDate = new Date(dob); // Parses the YYYY-MM-DD format
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+  
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1;
+    }
+    return age;
   };
 
   return (
@@ -109,34 +129,29 @@ const CoachProfile = () => {
                 }}
               >
                 <div className="relative  top-10 rounded-full w-full h-full flex items-center justify-center">
-                  <img
-                  
-                    
-                    className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
-                  />
+                {coach && <img src={coach.image} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
+                  />}
                 </div>
                 <div className="top-24 absolute flex flex-col left-28">
                   <h1 className="text-5xl font-bold py-2">
-                    {}
+                    {coach && coach.name}
                   </h1>
-                  <p className=" text-xl">
-                    {} {" Old"}
-                  </p>
+                  {coach?.dateOfBirth && (
+                  <p className="text-xl">{calculateAge(coach.dateOfBirth)} years old</p>
+                )}
                 </div>
 
-                {/* {/ <img src={profilePic} alt='' className='bg-cover w-24 h-24 rounded-full'/> /} */}
               </div>
               <div className="bg-gray-100 p-6 w-2/3 self-center rounded-lg">
                 <h2 className="text-xl font-bold mb-4 text-black text-center">
                   Personal Information
                 </h2>
-                {/* Personal Info Table */}
                 <table className="min-w-full bg-gray-100 text-gray-950 rounded-lg">
                   <tbody>
                     <tr className="bg-white rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold">Name:</td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.name}
                       </td>
                     </tr>
                     <tr className="bg-white  rounded-lg border-2">
@@ -144,31 +159,31 @@ const CoachProfile = () => {
                         Date of Birth:
                       </td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.dateOfBirth}
                       </td>
                     </tr>
                     <tr className="bg-white  rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold ">Email:</td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.email}
                       </td>
                     </tr>
                     <tr className="bg-white  rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold ">Contact No:</td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.contactNo}
                       </td>
                     </tr>
                     <tr className="bg-white  rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold ">Address:</td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.address}
                       </td>
                     </tr>
                     <tr className="bg-white  rounded-lg border-2">
                       <td className="py-2 px-5 font-semibold ">Description:</td>
                       <td className="py-2 px-5">
-                        {}
+                        {coach && coach.description}
                       </td>
                     </tr>
                   </tbody>
@@ -221,7 +236,7 @@ const CoachProfile = () => {
                       practiceSchedules.map(schedule =>
                         <tr key={schedule.id} className="bg-white">
                           <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
-                            {schedule.team}
+                            {schedule.teamUnder}
                           </td>
                           <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
                             {schedule.venue}
@@ -236,15 +251,17 @@ const CoachProfile = () => {
                             {schedule.endTime}
                           </td>
                           <td className="py-2 px-4 border-b text-gray-600 border-gray-200 text-center align-middle whitespace-nowrap">
-                            {schedule.type}
+                            {schedule.pracType}
                           </td>
                           <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
                             <div className="flex justify-center space-x-2">
-                              <button className="text-blue-500 hover:text-blue-700">
-                              //onClick={() => handleEditSchedule(schedule)}
+                              <button className="text-blue-500 hover:text-blue-700"
+                              onClick={() => handleEditSchedule(schedule)}>
                                 <FaEdit className="text-sm" />
                               </button>
-                              <button className="text-red-500 hover:text-red-700">
+                              <button className="text-red-500 hover:text-red-700"
+                               onClick={()=>handleDelete(schedule.pracId)}
+                              >
                                 <FaTrash className="text-sm" />
                               </button>
                             </div>
@@ -258,7 +275,7 @@ const CoachProfile = () => {
           </div>
           {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white rounded-lg shadow-lg p-6">
+                <div className="bg-white text-[black] rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this player?</p>
                   <div className="flex justify-end mt-4 space-x-4">
@@ -279,7 +296,7 @@ const CoachProfile = () => {
               </div>
             )}
           {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} />}
-          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsFormOpen(false)} />}
+          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule}/>}
         </div>
       </div>
     </div>

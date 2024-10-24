@@ -737,19 +737,18 @@
 // export default HomeNavbar;
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
-import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
-import { FaUser } from 'react-icons/fa'; // Import user icon from react-icons
+import { Link, useNavigate } from 'react-router-dom';
+import Logo from '../assets/images/rcclogo.png';
+import { FaUser, FaBars } from 'react-icons/fa'; // Import FaBars for hamburger menu
 
 const HomeNavbar = () => {
-  const navigate = useNavigate(); // Hook for navigation
-  const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Navbar visibility state
+  const navigate = useNavigate();
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop = window.pageYOffset;
-
-      // Navbar is visible only when the user is at the top of the page (scrollTop = 0)
       setIsNavbarVisible(currentScrollTop === 0);
     };
 
@@ -761,7 +760,11 @@ const HomeNavbar = () => {
   }, []);
 
   const handleLoginClick = () => {
-    navigate('/login'); // Redirect to login page
+    navigate('/login');
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen); // Toggle mobile menu visibility
   };
 
   return (
@@ -770,16 +773,16 @@ const HomeNavbar = () => {
         isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="flex items-center justify-between w-fit bg-transparent backdrop-blur-md rounded-full shadow-lg px-6 py-2">
+      <div className="flex items-center justify-between w-full lg:w-fit bg-transparent backdrop-blur-md rounded-full shadow-lg px-6 py-2">
         {/* Logo on the left */}
         <div className="flex items-center">
-        <Link to="/">
-          <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
-          </Link >
+          <Link to="/">
+            <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
+          </Link>
         </div>
 
         {/* Centered Navbar Items */}
-        <ul className="flex space-x-8 text-white font-semibold text-14px">
+        <ul className="hidden lg:flex space-x-8 text-white font-semibold text-14px">
           <li>
             <Link to="/" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Home
@@ -796,16 +799,15 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-           {/* Anchor link that scrolls to the Footer */}
-           <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+            {/* Anchor link that scrolls to the Footer */}
+            <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Contact Us
             </a>
           </li>
-          
         </ul>
 
-        {/* Right section with Sign In Button */}
-        <div className="ml-8">
+        {/* Right section with Login Button */}
+        <div className="hidden lg:flex items-center space-x-2 ml-6"> {/* Added margin-left for spacing */}
           <button
             className="flex items-center space-x-2 text-white font-semibold bg-transparent border-2 border-white rounded-full px-4 py-1 hover:bg-white hover:text-gray-900 transition-all duration-300 ease-in-out"
             onClick={handleLoginClick}
@@ -814,11 +816,55 @@ const HomeNavbar = () => {
             <span>Login</span>
           </button>
         </div>
+
+        {/* Hamburger Menu Icon for Mobile */}
+        <div className="lg:hidden flex items-center">
+          <button onClick={toggleMobileMenu} className="text-white">
+            <FaBars className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu (Visible when toggled) */}
+      <div
+        className={`lg:hidden bg-[#00175F] absolute top-full left-0 w-full transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'
+        } overflow-hidden`}
+      >
+        <ul className="flex flex-col items-center space-y-4 py-6 text-white">
+          <li>
+            <Link to="/" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/initial-about-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              About Us
+            </Link>
+          </li>
+          <li>
+            <Link to="/initial-news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              News
+            </Link>
+          </li>
+          <li>
+            <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Contact Us
+            </a>
+          </li>
+          <li>
+            <button
+              className="flex items-center space-x-2 text-white font-semibold bg-transparent border-2 border-white rounded-full px-4 py-1 hover:bg-white hover:text-gray-900 transition-all duration-300 ease-in-out"
+              onClick={handleLoginClick}
+            >
+              <FaUser />
+              <span>Login</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </nav>
   );
 };
 
 export default HomeNavbar;
-
-

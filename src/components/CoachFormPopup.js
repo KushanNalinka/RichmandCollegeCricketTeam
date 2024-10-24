@@ -122,103 +122,106 @@ const CoachForm = ({  onClose }) => {
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
           <div >
-            <label className="block text-gray-700">Name</label>
+            <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
               
             />
           </div>
           <div>
-            <label className="block text-gray-700">DOB</label>
+            <label className="block text-black text-sm font-semibold">DOB</label>
             <input
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Username</label>
+          <div>
+            <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
+              placeholder="@username"
             />
           </div>
           <div>
-            <label className="block text-gray-700">Email</label>
+            <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
+              placeholder="you@example.com"
             />
           </div>
-          <div className="mb-1">
-            <label className="block mb-1 text-gray-700">Password</label>
+          <div>
+            <label className="block text-black text-sm font-semibold">Password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-black border-gray-300 rounded-lg"
+              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
+              placeholder="********"
             />
           </div>
           <div>
-            <label className="block text-gray-700">Contact No</label>
+            <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
               name="contactNo"
               value={formData.contactNo}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-              
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="+1 (555) 123-4567"
             />
           </div>
           <div className="col-span-2">
-            <label className="block text-gray-700">Address</label>
+            <label className="block text-black text-sm font-semibold">Address</label>
             <input
             type="text"
               name="address"
               value={formData.address}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="123 Street Name, City, Country"
             />
           </div>
         
           <div className="col-span-2">
-            <label className="block text-gray-700">Description</label>
+            <label className="block text-black text-sm font-semibold">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
-
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="........."
             />
           </div>
           <div className="col-span-2">
-            <label className="block text-gray-700">Image</label>
+            <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
               type="file" 
               name="image" 
               accept="image/*" 
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
               <img
@@ -227,10 +230,10 @@ const CoachForm = ({  onClose }) => {
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end col-span-2 mt-4">
             <button
               type="submit"
-              className="bg-[#480D35] hover:bg-opacity-100 bg-opacity-95 text-white px-4 py-2 rounded-md w-full"
+              className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Save
             </button>

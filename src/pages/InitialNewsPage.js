@@ -1,94 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import InitialNavbar from "../components/InitialNavbar";
 
 import topImage from '../assets/images/BG3.png';
 import Footer from '../components/Footer';
 
-// Sample data for the news articles and sidebar
-const newsData = [
-  {
-    id: 1,
-    title: 'Richmond College Dominates the Big Match 2024',
-    description: 'Richmond College continued their dominance, securing an impressive victory in the 2024 big match against Mahinda College.',
-    date: '23-Sep-2024',
-    time: '11 hrs ago',
-    author: 'Sri Lanka School Cricket Staff',
-    image: 'https://fos.cmb.ac.lk/blog/wp-content/uploads/2018/03/collage-1.jpg',
-  },
-  {
-    id: 2,
-    title: 'Richmond Cricket Captain Wins Player of the Match in Thrilling Victory',
-    description: 'The Richmond College cricket captain led his team to victory with an outstanding all-round performance, securing the Player of the Match award.',
-    date: '23-Sep-2024',
-    time: '12 hrs ago',
-    author: 'Sri Lanka Cricket News',
-    image: 'https://assets.roar.media/assets/vIQdBIQUTIQgJr8Q_Article-Cover_Wall-Street-Journal.jpg?w=679',
-  },
-  {
-    id: 3,
-    title: 'Richmond College Cricket Team Celebrates Unbeaten Streak',
-    description: 'Richmond College continues their winning streak in the ongoing season, remaining unbeaten in all matches so far.',
-    date: '22-Sep-2024',
-    time: '15 hrs ago',
-    author: 'Cricket Journal',
-    image: 'https://fos.cmb.ac.lk/blog/wp-content/uploads/2018/03/collage-1.jpg',
-  },
-  {
-    id: 4,
-    title: 'Historic Win for Richmond College in Big Match 2024',
-    description: 'Richmond College secures a historic victory, showcasing an exceptional performance in all departments.',
-    date: '21-Sep-2024',
-    time: '10 hrs ago',
-    author: 'Daily Sports News',
-    image: 'https://assets.roar.media/assets/vIQdBIQUTIQgJr8Q_Article-Cover_Wall-Street-Journal.jpg?w=679',
-  },
-  {
-    id: 5,
-    title: 'Richmond College Eyes Another Championship',
-    description: 'After a dominant display in the Big Match 2024, Richmond College aims for another championship title this season.',
-    date: '20-Sep-2024',
-    time: '8 hrs ago',
-    author: 'Sri Lanka Cricket Staff',
-    image: 'https://fos.cmb.ac.lk/blog/wp-content/uploads/2018/03/collage-1.jpg',
-  },
-  // Add more news items here as needed
-];
-
-const sidebarData = [
-  {
-    id: 1,
-    title: 'Richmond College Big Match: A Look Back at the Memorable Wins',
-    date: '23-Sep-2024',
-    time: '21 hrs ago',
-    author: 'Andrew Fidel Fernando',
-    image: 'https://fos.cmb.ac.lk/blog/wp-content/uploads/2018/03/collage-1.jpg',
-  },
-  {
-    id: 2,
-    title: 'Stats - Richmond College Cricketers Shining in the 2024 Season',
-    date: '22-Sep-2024',
-    author: 'Sampath Bandarupalli',
-    image: 'https://assets.roar.media/assets/vIQdBIQUTIQgJr8Q_Article-Cover_Wall-Street-Journal.jpg?w=679',
-  },
-  
- 
-];
-
-// Pagination settings
 const itemsPerPage = 4;
 
-const InitialNewsPage = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+const timeAgo = (dateTime) => {
+  const now = new Date();
+  const timeDifference = Math.floor((now - new Date(dateTime)) / 1000);
 
-  // Calculate total pages
+  const intervals = {
+    year: 365 * 24 * 60 * 60,
+    month: 30 * 24 * 60 * 60,
+    day: 24 * 60 * 60,
+    hour: 60 * 60,
+    minute: 60,
+  };
+
+  if (timeDifference >= intervals.year) {
+    const years = Math.floor(timeDifference / intervals.year);
+    return `${years} year${years > 1 ? 's' : ''} ago`;
+  } else if (timeDifference >= intervals.month) {
+    const months = Math.floor(timeDifference / intervals.month);
+    return `${months} month${months > 1 ? 's' : ''} ago`;
+  } else if (timeDifference >= intervals.day) {
+    const days = Math.floor(timeDifference / intervals.day);
+    return `${days} day${days > 1 ? 's' : ''} ago`;
+  } else if (timeDifference >= intervals.hour) {
+    const hours = Math.floor(timeDifference / intervals.hour);
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+  } else if (timeDifference >= intervals.minute) {
+    const minutes = Math.floor(timeDifference / intervals.minute);
+    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+  } else {
+    return 'just now';
+  }
+};
+
+const getFirstTwoSentences = (text) => {
+  const sentences = text.match(/[^.!?]+[.!?]+/g);
+  return sentences ? sentences.slice(0, 2).join(' ') : text;
+};
+
+const InitialNewsPage = () => {
+  const [newsData, setNewsData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/news');
+        setNewsData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        setError('Failed to fetch news');
+        setLoading(false);
+      }
+    };
+    fetchNews();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNewsData([...newsData]);
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [newsData]);
+
   const totalPages = Math.ceil(newsData.length / itemsPerPage);
 
-  // Get the current news items based on the current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
+  const initialcurrentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Change page functions
+  const latestFiveNews = newsData
+    .slice()
+    .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+    .slice(0, 5);
+
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
@@ -100,131 +98,166 @@ const InitialNewsPage = () => {
   const goToFirstPage = () => setCurrentPage(1);
   const goToLastPage = () => setCurrentPage(totalPages);
 
+  const goToFullArticle = (id) => {
+    navigate(`/initial-news/${id}`);
+  };
+
   return (
-
     <div>
+      {/* Navbar */}
+      <InitialNavbar />
 
-       {/* Navbar */}
-       <InitialNavbar />
+      {/* Top Image Section */}
+      <div
+        style={{
+          backgroundImage: `url(${topImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          height: '180px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      ></div>
 
-       <div
-          style={{
-            backgroundImage: `url(${topImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            height: '180px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-     </div>
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      <div className="relative">
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        <div className="relative">
+          <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {/* Main News Section */}
+            <div className="lg:col-span-3 md:col-span-2 sm:col-span-1 col-span-1 flex flex-col">
+              <div className="border border-gray-300 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-xxs">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">Richmond Cricket News</h1>
 
-        <div className="container mx-auto p-4 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-8">
-          {/* Main News Section */}
-          <div className="lg:w-3/4 w-full flex flex-col">
-            <div className="border border-gray-300 p-6 sm:p-8 lg:p-10 rounded-lg bg-white shadow-xxs ">
-              <h1 className="text-2xl sm:text-3xl font-bold mb-6">Richmond Cricket News</h1>
-              {currentNews.map((news, index) => (
-                <div key={news.id} className="mb-6">
-                  <div className="flex flex-col sm:flex-row mb-4">
-                    <img
-                      src={news.image}
-                      alt={news.title}
-                      className="w-full sm:w-40 h-28 object-cover rounded-lg mb-4 sm:mb-0 sm:mr-4"
-                    />
-                    <div className="flex-1">
-                      <h2 className="text-sm sm:text-sm font-bold cursor-pointer">{news.title}</h2>
-                      <p className="text-gray-700 mt-2 text-xs">{news.description}</p>
-                      <span className="text-xxs text-gray-500 mt-2 block">
-                        {news.date} • {news.time} • {news.author}
-                      </span>
+                {loading ? (
+                  <p>Loading...</p>
+                ) : error ? (
+                  <p>{error}</p>
+                ) : (
+                  initialcurrentNews.map((initialnews, index) => (
+                    <div key={initialnews.id} className="mb-4 sm:mb-6">
+                      <div className="flex flex-col sm:flex-row mb-4">
+                        <div
+                          className="w-full sm:w-40 h-28 mb-4 sm:mb-0 sm:mr-4 cursor-pointer"
+                          onClick={() => goToFullArticle(initialnews.id)}
+                        >
+                          <img
+                            src={initialnews.imageUrl}
+                            alt={initialnews.title}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h2
+                            className="text-sm sm:text-base md:text-lg font-bold cursor-pointer"
+                            onClick={() => goToFullArticle(initialnews.id)}
+                          >
+                            {initialnews.heading}
+                          </h2>
+                          <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
+                            {getFirstTwoSentences(initialnews.body)}
+                            <span
+                              className="text-blue-500 cursor-pointer"
+                              onClick={() => goToFullArticle(initialnews.id)}
+                            >
+                              ...Read more
+                            </span>
+                          </p>
+                          <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
+                            {new Date(initialnews.dateTime).toLocaleDateString()} • {timeAgo(initialnews.dateTime)} • {initialnews.author}
+                          </span>
+                        </div>
+                      </div>
+                      {index < initialcurrentNews.length - 1 && <hr className="border-gray-300 my-4" />}
                     </div>
-                  </div>
-                  {/* Horizontal line between news items */}
-                  {index < currentNews.length - 1 && <hr className="border-gray-300 my-4" />}
-                </div>
-              ))}
+                  ))
+                )}
 
-              {/* Pagination controls */}
-              <div className="flex justify-center items-center mt-4">
-                <button
-                  onClick={goToFirstPage}
-                  className="px-3 py-2 border rounded-lg mx-1 text-sm"
-                  disabled={currentPage === 1}
-                >
-                  «
-                </button>
-                <button
-                  onClick={goToPreviousPage}
-                  className="px-3 py-2 border rounded-lg mx-1 text-sm"
-                  disabled={currentPage === 1}
-                >
-                  ‹
-                </button>
-                {[...Array(totalPages)].map((_, i) => (
+                {/* Pagination */}
+                <div className="flex justify-center items-center mt-4">
                   <button
-                    key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`px-3 py-2 border rounded-lg mx-1 text-sm ${
-                      currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
-                    }`}
+                    onClick={goToFirstPage}
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
+                    disabled={currentPage === 1}
                   >
-                    {i + 1}
+                    «
                   </button>
+                  <button
+                    onClick={goToPreviousPage}
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
+                    disabled={currentPage === 1}
+                  >
+                    ‹
+                  </button>
+                  {[...Array(totalPages)].map((_, i) => (
+                    <button
+                      key={i + 1}
+                      onClick={() => setCurrentPage(i + 1)}
+                      className={`px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm ${
+                        currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
+                      }`}
+                    >
+                      {i + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={goToNextPage}
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
+                    disabled={currentPage === totalPages}
+                  >
+                    ›
+                  </button>
+                  <button
+                    onClick={goToLastPage}
+                    className="px-2 sm:px-3 py-1 sm:py-2 border rounded-lg mx-1 text-xs sm:text-sm"
+                    disabled={currentPage === totalPages}
+                  >
+                    »
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Sidebar Section */}
+            <div className="lg:col-span-1 md:col-span-1 sm:col-span-1 col-span-1">
+              <div className="border-2 border-gray-200 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-sm">
+                <h2 className="text-base sm:text-lg font-semibold mb-4 sm:mb-6">Latest News</h2>
+
+                {latestFiveNews.map((sidebarItem, index) => (
+                  <div key={sidebarItem.id} className="mb-4">
+                    <div className="flex cursor-pointer" onClick={() => goToFullArticle(sidebarItem.id)}>
+                      <img
+                        src={sidebarItem.imageUrl}
+                        alt={sidebarItem.title}
+                        className="w-16 h-16 object-cover rounded-lg mr-4"
+                      />
+                      <div>
+                        <h3
+                          className="text-sm sm:text-base font-semibold cursor-pointer"
+                          onClick={() => goToFullArticle(sidebarItem.id)}
+                        >
+                          {sidebarItem.heading}
+                        </h3>
+                        <span className="text-xxs sm:text-xs text-gray-500 block">
+                          {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
+                        </span>
+                      </div>
+                    </div>
+                    {index < latestFiveNews.length - 1 && <hr className="my-4 border-gray-300" />}
+                  </div>
                 ))}
-                <button
-                  onClick={goToNextPage}
-                  className="px-3 py-2 border rounded-lg mx-1 text-sm"
-                  disabled={currentPage === totalPages}
-                >
-                  ›
-                </button>
-                <button
-                  onClick={goToLastPage}
-                  className="px-3 py-2 border rounded-lg mx-1 text-sm"
-                  disabled={currentPage === totalPages}
-                >
-                  »
-                </button>
               </div>
             </div>
           </div>
-
-          {/* Sidebar Section */}
-          <div className="lg:w-1/4 w-full">
-            <div className="border-2 border-gray-200 p-4 rounded-lg bg-white shadow-sm">
-              <h2 className="text-lg font-semibold mb-6">Latest</h2>
-              {sidebarData.map((sidebarItem, index) => (
-                <div key={sidebarItem.id} className="mb-4">
-                  <div className="flex">
-                    <img
-                      src={sidebarItem.image}
-                      alt={sidebarItem.title}
-                      className="w-16 h-16 object-cover rounded-lg mr-3"
-                    />
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium cursor-pointer">{sidebarItem.title}</h3>
-                      <span className="text-xs text-gray-500">
-                        {sidebarItem.date} • {sidebarItem.time} • {sidebarItem.author}
-                      </span>
-                    </div>
-                  </div>
-                  {index < sidebarData.length - 1 && <hr className="border-gray-200 my-3" />}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
+
       </div>
-      <Footer/>
+
+
+      {/* Footer */}
+    <Footer/>
     </div>
-    </div>
-   
   );
 };
 
-export default InitialNewsPage;
+export default  InitialNewsPage;

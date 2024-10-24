@@ -359,7 +359,11 @@ import mahiLogo from "../assets/images/MLogo.png"; // Adjust the path to your im
 
 const MatchTable = () => {
   const [matches, setMatches] = useState([]);
+
   const [showAll, setShowAll] = useState(false); // Toggle to show more rows
+
+
+  const API_URL = process.env.REACT_APP_API_URL;
 
   // Fetch data from API and filter upcoming matches
   useEffect(() => {
@@ -410,7 +414,9 @@ const MatchTable = () => {
       <div className="overflow-x-auto bg-white bg-opacity-80 p-4 rounded-lg shadow-lg mb-12">
         <table className="min-w-full border-collapse rounded-lg overflow-hidden">
           {/* Table Header */}
+
           <thead className="bg-gradient-to-r from-[#00175F] to-[#4A0D34] text-white hidden md:table-header-group">
+
             <tr>
               <th className="px-2 md:px-4 py-2 text-center rounded-tl-lg">Date</th>
               <th className="px-2 md:px-4 py-2 text-center">Time</th>

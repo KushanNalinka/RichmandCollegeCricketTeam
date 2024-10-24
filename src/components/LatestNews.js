@@ -720,17 +720,19 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for making the API request
+import { useNavigate } from 'react-router-dom';
 
 const LatestNews = () => {
   const [newsItems, setNewsItems] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const visibleNews = 2.5; // Display 3 news items at a time
-
+  const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     // Function to fetch news items from the API
     const fetchNews = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/news");
+        const response = await axios.get(`${API_URL}news`);
         const data = response.data;
         // Take the top 5 news items from the response
         const topFiveNews = data.slice(0, 5).map((newsItem) => ({
@@ -757,6 +759,9 @@ const LatestNews = () => {
       setCurrentSlide(currentSlide - 1);
     }
   };
+  const handleButtonClick = () => {
+    navigate('/initial-news'); // Replace '/your-target-page' with the path you want to navigate to
+  };
 
   return (
     <section className="bg-white py-12">
@@ -773,7 +778,9 @@ const LatestNews = () => {
             thrilling match victories to upcoming tournaments and player
             achievements, this is your go-to spot for all the action.
           </p>
-          <button className="mt-6 px-6 md:px-8 py-3 md:py-4 bg-[#00175F] text-white font-semibold rounded-full shadow-lg hover:bg-[#00175F] transition">
+          <button 
+          onClick={handleButtonClick}
+          className="mt-6 px-6 md:px-8 py-3 md:py-4 bg-[#00175F] text-white font-semibold rounded-full shadow-lg hover:bg-[#00175F] transition">
             MORE HERE &rarr;
           </button>
         </div>

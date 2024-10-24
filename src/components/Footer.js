@@ -276,26 +276,28 @@ const Footer = () => {
     <footer id="contact-us" className="bg-white mt-10">
       <div className="flex flex-col">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="flex-1 bg-[#4A0D34] text-white p-4 md:p-6 flex justify-center items-center">
-            <div className="flex items-center space-x-2">
-              <FiPhone size={24} />
-              <span>0914941717</span>
-            </div>
-          </div>
-          <div className="flex-1 bg-[#CBECFF] text-black p-4 md:p-6 flex justify-center items-center">
-            <div className="flex items-center space-x-2">
-              <FiMail size={24} />
-              <span>richmondcollege.lk</span>
-            </div>
-          </div>
-          <div className="flex-1 bg-[#00175F] text-white p-4 md:p-6 flex justify-center items-center">
-            <div className="flex items-center space-x-2">
-              <HiOutlineLocationMarker size={24} />
-              <span>3633+2W4, Richmond Hill Rd, Galle</span>
-            </div>
-          </div>
-        </div>
+        {/* Three Divs for Contact Info - Adjust for Mobile Responsiveness */}
+<div className="flex flex-col md:flex-row justify-between items-center">
+  <div className="w-full bg-[#4A0D34] text-white p-4 md:p-6 flex justify-center items-center">
+    <div className="flex items-center space-x-2">
+      <FiPhone size={24} />
+      <span>0914941717</span>
+    </div>
+  </div>
+  <div className="w-full bg-[#CBECFF] text-black p-4 md:p-6 flex justify-center items-center">
+    <div className="flex items-center space-x-2">
+      <FiMail size={24} />
+      <span>richmondcollege.lk</span>
+    </div>
+  </div>
+  <div className="w-full bg-[#00175F] text-white p-4 md:p-6 flex justify-center items-center">
+    <div className="flex items-center space-x-2">
+      <HiOutlineLocationMarker size={24} />
+      <span>3633+2W4, Richmond Hill Rd, Galle</span>
+    </div>
+  </div>
+</div>
+
 
         {/* Contact Form & Map */}
         <div className="flex flex-col md:flex-row justify-center items-center p-8 bg-gray-200 text-white space-y-8 md:space-y-0 md:space-x-8">

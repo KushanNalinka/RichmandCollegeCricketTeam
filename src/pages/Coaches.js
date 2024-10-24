@@ -726,16 +726,244 @@
 
 // caoch Informations with practice sesssions.
 
+// import React, { useState, useEffect } from "react";
+// import Navbar from "../components/MemberNavbar";
+// import backgroundFlag from "../assets/images/flag.png";
+// import Footer from '../components/Footer';
+
+
+// const CoachesProfile = () => {
+//   const [coachesData, setCoachesData] = useState([]);
+//   const [selectedCoach, setSelectedCoach] = useState(null);
+//   const [practiceSchedulesData, setPracticeSchedulesData] = useState([]);
+
+//   // Fetch data from the API when the component mounts
+//   useEffect(() => {
+//     const fetchCoachesData = async () => {
+//       try {
+//         const response = await fetch("http://localhost:8080/api/coaches/all");
+//         const data = await response.json();
+//         setCoachesData(data);
+//         setSelectedCoach(data[0]); // Set the first coach as default
+//       } catch (error) {
+//         console.error("Error fetching coaches:", error);
+//       }
+//     };
+
+//     fetchCoachesData();
+//   }, []);
+
+//   // Fetch practice sessions when selectedCoach changes
+//   useEffect(() => {
+//     if (selectedCoach) {
+//       const fetchPracticeSessions = async () => {
+//         try {
+//           const response = await fetch(
+//             `http://localhost:8080/api/practiseSessions/coach/${selectedCoach.coachId}`
+//           );
+//           const data = await response.json();
+//           setPracticeSchedulesData(data);
+//         } catch (error) {
+//           console.error("Error fetching practice sessions:", error);
+//         }
+//       };
+
+//       fetchPracticeSessions();
+//     }
+//   }, [selectedCoach]);
+
+//   if (!selectedCoach) {
+//     return <div>Loading...</div>;
+//   }
+
+//   return (
+//     <div className="bg-gray-300 min-h-screen text-white">
+//       <Navbar />
+//       <div className="max-w-screen-lg pt-24">
+//         <div className="flex gap-6">
+//           {/* Sidebar: Our Coaches Section */}
+//           <div
+//             className="bg-gray-800 rounded-lg shadow-md"
+//             style={{
+//               width: "350px",
+//               flexShrink: 0,
+//               marginTop: "0px",
+//               maxHeight: "500px",
+//               display: "flex",
+//               flexDirection: "column",
+//               marginLeft: "60px",
+//             }}
+//           >
+//             <div className="p-4 border-b border-gray-600">
+//               <h2 className="text-xl font-bold text-gray-200">Our Coaches</h2>
+//             </div>
+//             <div
+//               className="p-4 overflow-y-auto"
+//               style={{
+//                 flexGrow: 1,
+//                 maxHeight: "calc(500px - 64px)",
+//                 scrollbarWidth: "none",
+//                 msOverflowStyle: "none",
+//               }}
+//             >
+//               <ul className="space-y-3" style={{ paddingRight: "10px" }}>
+//                 {coachesData.map((coach) => (
+//                   <li
+//                     key={coach.coachId}
+//                     className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${
+//                       coach.coachId === selectedCoach.coachId
+//                         ? "bg-gray-700 font-bold"
+//                         : "bg-gray-800"
+//                     }`}
+//                     onClick={() => setSelectedCoach(coach)}
+//                   >
+//                     <div
+//                       style={{
+//                         width: "40px",
+//                         height: "40px",
+//                         overflow: "hidden",
+//                         borderRadius: "50%",
+//                         marginRight: "12px",
+//                       }}
+//                     >
+//                       <img
+//                         src={coach.image}
+//                         alt={coach.name}
+//                         className="w-full h-full object-cover"
+//                       />
+//                     </div>
+//                     {coach.name}
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           </div>
+
+//           {/* Coach Details */}
+//           <div className="flex-grow bg-cover bg-center bg-no-repeat p-6 rounded-lg shadow-md bg-gray-800 ">
+//             <div
+//               className="flex items-center space-x-6 bg-white bg-opacity-75 p-6 rounded-lg"
+//               style={{
+//                 backgroundImage: `url(${backgroundFlag})`,
+//                 backgroundSize: "cover",
+//                 backgroundPosition: "center",
+//                 backgroundRepeat: "no-repeat",
+//               }}
+//             >
+//               <div
+//                 style={{
+//                   width: "150px",
+//                   height: "150px",
+//                   overflow: "hidden",
+//                   borderRadius: "50%",
+//                   border: "4px solid #3B82F6",
+//                 }}
+//               >
+//                 <img
+//                   src={selectedCoach.image}
+//                   alt={selectedCoach.name}
+//                   className="w-full h-full object-cover"
+//                 />
+//               </div>
+//               <div className="flex-grow">
+//                 <h1 className="text-5xl font-bold text-white">
+//                   {selectedCoach.name}
+//                 </h1>
+//                 <p className="text-white">
+//                   Date of Birth:{" "}
+//                   {new Date(selectedCoach.dateOfBirth).toLocaleDateString()}
+//                 </p>
+//               </div>
+//             </div>
+
+//             <div className="mt-6 bg-gray-900 bg-opacity-75 p-8 rounded-lg">
+//               <h3 className="text-xl font-semibold text-white">
+//                 Coach Information
+//               </h3>
+//               <div className="grid grid-cols-2 gap-4 mt-4">
+//                 <div className="w-full">
+//                   <p>
+//                     <span className="font-semibold text-gray-400">Contact:</span>{" "}
+//                     {selectedCoach.contactNo}
+//                   </p>
+//                   <p>
+//                     <span className="font-semibold text-gray-400">Email:</span>{" "}
+//                     {selectedCoach.email}
+//                   </p>
+//                   <p>
+//                     <span className="font-semibold text-gray-400">Address:</span>{" "}
+//                     {selectedCoach.address}
+//                   </p>
+//                 </div>
+//                 <div className="w-full">
+//                   <p className="font-semibold text-gray-400">Description:</p>
+//                   <p>{selectedCoach.description}</p>
+//                 </div>
+//               </div>
+//             </div>
+
+//             {/* Practice Schedules Table */}
+//             <div className="mt-6 bg-gray-900 bg-opacity-75 p-8 rounded-lg">
+//               <h3 className="text-xl font-semibold text-white">
+//                 Practice Schedules
+//               </h3>
+//               <table className="min-w-full mt-4 bg-gray-900 rounded-lg shadow-md w-full">
+//                 <thead>
+//                   <tr>
+//                     <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
+//                       Venue
+//                     </th>
+//                     <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
+//                       Start Time
+//                     </th>
+//                     <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
+//                       End Time
+//                     </th>
+//                     <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
+//                       Type
+//                     </th>
+//                   </tr>
+//                 </thead>
+//                 <tbody>
+//                   {practiceSchedulesData.map((schedule) => (
+//                     <tr key={schedule.pracId}>
+//                       <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
+//                         {schedule.venue}
+//                       </td>
+//                       <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
+//                         {schedule.starTime}
+//                       </td>
+//                       <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
+//                         {schedule.endTime}
+//                       </td>
+//                       <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
+//                         {schedule.pracType}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//       <Footer />
+//     </div>
+//   );
+// };
+
+// export default CoachesProfile;
+
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavbar";
 import backgroundFlag from "../assets/images/flag.png";
-import Footer from '../components/Footer';
-
+import Footer from "../components/Footer";
 
 const CoachesProfile = () => {
   const [coachesData, setCoachesData] = useState([]);
   const [selectedCoach, setSelectedCoach] = useState(null);
   const [practiceSchedulesData, setPracticeSchedulesData] = useState([]);
+  const [showCoachList, setShowCoachList] = useState(false); // Mobile toggle for coaches list
 
   // Fetch data from the API when the component mounts
   useEffect(() => {
@@ -779,21 +1007,46 @@ const CoachesProfile = () => {
   return (
     <div className="bg-gray-300 min-h-screen text-white">
       <Navbar />
-      <div className="max-w-screen-lg pt-24">
-        <div className="flex gap-6">
-          {/* Sidebar: Our Coaches Section */}
-          <div
-            className="bg-gray-800 rounded-lg shadow-md"
-            style={{
-              width: "350px",
-              flexShrink: 0,
-              marginTop: "0px",
-              maxHeight: "500px",
-              display: "flex",
-              flexDirection: "column",
-              marginLeft: "60px",
-            }}
+      <div className="max-w-screen-lg pt-24 px-4 md:px-10">
+        {/* Mobile Coach List Toggle */}
+        <div className="md:hidden bg-gray-800 p-4 rounded-lg shadow-md">
+          <button
+            onClick={() => setShowCoachList(!showCoachList)}
+            className="text-white font-bold flex justify-between items-center w-full"
           >
+            Our Coaches
+            <span>{showCoachList ? "-" : "+"}</span>
+          </button>
+          {showCoachList && (
+            <ul className="mt-4 space-y-3">
+              {coachesData.map((coach) => (
+                <li
+                  key={coach.coachId}
+                  className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${
+                    coach.coachId === selectedCoach?.coachId
+                      ? "bg-gray-700 font-bold"
+                      : "bg-gray-800"
+                  }`}
+                  onClick={() => {
+                    setSelectedCoach(coach);
+                    setShowCoachList(false); // Close list when a coach is selected
+                  }}
+                >
+                  <img
+                    src={coach.image}
+                    alt={coach.name}
+                    className="h-10 w-10 rounded-full mr-3 object-cover"
+                  />
+                  {coach.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="flex gap-6 justify-center md:flex-row flex-col">
+          {/* Sidebar: Our Coaches Section for large screens */}
+          <div className="hidden md:flex bg-gray-800 rounded-lg shadow-md" style={{ width: "350px", flexShrink: 0, maxHeight: "500px", flexDirection: "column" }}>
             <div className="p-4 border-b border-gray-600">
               <h2 className="text-xl font-bold text-gray-200">Our Coaches</h2>
             </div>
@@ -817,21 +1070,11 @@ const CoachesProfile = () => {
                     }`}
                     onClick={() => setSelectedCoach(coach)}
                   >
-                    <div
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        overflow: "hidden",
-                        borderRadius: "50%",
-                        marginRight: "12px",
-                      }}
-                    >
-                      <img
-                        src={coach.image}
-                        alt={coach.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <img
+                      src={coach.image}
+                      alt={coach.name}
+                      className="h-10 w-10 rounded-full mr-3 object-cover"
+                    />
                     {coach.name}
                   </li>
                 ))}
@@ -880,7 +1123,7 @@ const CoachesProfile = () => {
               <h3 className="text-xl font-semibold text-white">
                 Coach Information
               </h3>
-              <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div className="w-full">
                   <p>
                     <span className="font-semibold text-gray-400">Contact:</span>{" "}
@@ -907,42 +1150,44 @@ const CoachesProfile = () => {
               <h3 className="text-xl font-semibold text-white">
                 Practice Schedules
               </h3>
-              <table className="min-w-full mt-4 bg-gray-900 rounded-lg shadow-md w-full">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
-                      Venue
-                    </th>
-                    <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
-                      Start Time
-                    </th>
-                    <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
-                      End Time
-                    </th>
-                    <th className="py-2 px-16 text-center text-gray-700 font-semibold align-middle whitespace-nowrap">
-                      Type
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {practiceSchedulesData.map((schedule) => (
-                    <tr key={schedule.pracId}>
-                      <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
-                        {schedule.venue}
-                      </td>
-                      <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
-                        {schedule.starTime}
-                      </td>
-                      <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
-                        {schedule.endTime}
-                      </td>
-                      <td className="py-2 px-4 border-b border-gray-200 text-center align-middle whitespace-nowrap">
-                        {schedule.pracType}
-                      </td>
+              <div className="hover:overflow-x-auto overflow-x-hidden">
+                <table className="min-w-full bg-gray-900 rounded-lg shadow-md">
+                  <thead>
+                    <tr>
+                      <th className="py-2 px-5 text-center text-gray-700 font-semibold align-middle">
+                        Venue
+                      </th>
+                      <th className="py-2 px-5 text-center text-gray-700 font-semibold align-middle">
+                        Start Time
+                      </th>
+                      <th className="py-2 px-5 text-center text-gray-700 font-semibold align-middle">
+                        End Time
+                      </th>
+                      <th className="py-2 px-5 text-center text-gray-700 font-semibold align-middle">
+                        Type
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {practiceSchedulesData.map((schedule) => (
+                      <tr key={schedule.pracId}>
+                        <td className="py-2 px-4 border-b border-gray-200 text-center align-middle">
+                          {schedule.venue}
+                        </td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-center align-middle">
+                          {schedule.starTime}
+                        </td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-center align-middle">
+                          {schedule.endTime}
+                        </td>
+                        <td className="py-2 px-4 border-b border-gray-200 text-center align-middle">
+                          {schedule.pracType}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>

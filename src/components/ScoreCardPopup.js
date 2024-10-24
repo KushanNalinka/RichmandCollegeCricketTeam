@@ -34,7 +34,7 @@ const playerStatsReducer = (state, action) => {
   }
 };
 
-const ScoreCardPopup = ({  onClose, matchId }) => {
+const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [currentPlayerStackId, setCurrentPlayerStackId] = useState();
   const [isEditButtonPressed, setIsEditButtonPressed] = useState(false);
@@ -43,6 +43,9 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   const [isNewScoreAdded, setIsNewScoreAdded] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [scoreToDelete, setScoreToDelete] = useState(null);
+  const [inningNumber, setInningNumber] = useState(); // Default to first inning
+  const [filteredStats, setFilteredStats] = useState([]);
+  const [playerStats, setPlayerStats] = useState([]);
 
   const [formData, setFormData] = useState({
     inning: 1,
@@ -69,6 +72,10 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     playerStats: [],
   });
 
+  const filterInningStats = (allInningsStats, inningNumber) => {
+    return allInningsStats.filter(stat => stat.inning === inningNumber);
+  };
+
   useEffect(() => {
     const fetchPlayerStat = async () => {
       try {
@@ -78,13 +85,34 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
         const statsResponse = await axios.get(
           `${API_URL}playerStats/match/player-stats?matchId=${matchId}`
         );
-        dispatch({ type: "SET_PLAYER_STATS", payload: statsResponse.data });
+        const allStats = statsResponse.data;
+
+        // Apply inning filter only for Test matches
+        if (matchType === "Test") {
+          const inningStats = filterInningStats(allStats, inningNumber);
+          setFilteredStats(inningStats);
+        } else {
+          // For ODI and T20, show all stats (no inning filter needed)
+          setFilteredStats(allStats);
+        }
+        console.log("Player stats: ", allStats);
+        dispatch({ type: "SET_PLAYER_STATS", payload: allStats });
+        
       } catch (error) {
         console.error("Error fetching players:", error);
       }
     };
     fetchPlayerStat();
-  }, [matchId]);
+  }, [matchId, inningNumber, matchType]);
+
+  useEffect(() => {
+    if (matchType === "Test") {
+      setFilteredStats(filterInningStats(state.playerStats, inningNumber));
+    } else {
+      setFilteredStats(state.playerStats); // No filter for ODI/T20
+    }
+  }, [state.playerStats, inningNumber, matchType]);
+
 
   const handleInputChange = e => {
     const { name, value } = e.target;
@@ -119,7 +147,8 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_URL}playerStats/add`, formData);
+      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:inningNumber});
+      console.log("submitted player stats: ", response.data);
       dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
 
       // Reset the form
@@ -143,6 +172,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
         },
       });
       message.success("Player stats added successfully!");
+      console.log("Player stats response :", response.data);
       setIsAdding(false);
       setIsNewScoreAdded(!isNewScoreAdded);
     } catch (error) {
@@ -155,6 +185,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     setCurrentPlayerStackId(player.id);
     setIsEditButtonPressed(true);
     setFormData({
+      inning: inningNumber,
       runs: player.runs,
       wickets: player.wickets,
       overs: player.overs,
@@ -174,12 +205,14 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
 
   const handleSaveEdit = async id => {
     try {
+      console.log("formData:", formData);
       const response = await axios.put(
         `${API_URL}playerStats/update/${id}`,
         formData
       );
       message.success("Player stats updated successfully!");
       dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
+      
       setIsEditButtonPressed(false);
     } catch (error) {
       message.error("Failed to update player stats. Please try again.");
@@ -211,6 +244,11 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
     setIsEditButtonPressed(false);
   };
 
+  const handleInningChange = (e) => {
+    setInningNumber(e.target.value);
+    setFilteredStats(filterInningStats(state.playerStats, inningNumber));
+  };
+
   return (
     <div
       className={`fixed inset-0 bg-gray-600 bg-opacity-75 flex p-20 justify-center`}
@@ -226,6 +264,21 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
         </div>
         <div>
       <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
+      {matchType === 'Test' && (
+        <div className={`flex pb-2 tracking-wider justify-end items-center gap-3`}>
+          <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
+          <select
+            className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            id="inning"
+            value={inningNumber}
+            onChange={handleInningChange}
+          > <option value={0} selected disabled className="text-sm text-gray-700 px-3 ">Select Inning</option>
+            <option value={1} className="text-sm text-gray-700 px-3 ">Inning 1</option>
+            <option value={2} className=" text-sm text-gray-700 px-3 ">Inning 2</option>
+          </select>
+        </div>
+        ) 
+      }
     </div>
         <div className=" overflow-auto">
           <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
@@ -246,7 +299,7 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
             </thead>
 
             <tbody className=" divide-y  divide-gray-300">
-              { state.playerStats
+              { filteredStats
                 .map((player) =>
                   <tr
                     key={player.id}
@@ -576,176 +629,3 @@ const ScoreCardPopup = ({  onClose, matchId }) => {
 export default ScoreCardPopup;
 
 
-
-  // const [formData, setFormData] = useState({
-  //   inning: 1,
-  //   runs: 0,
-  //   wickets: 0,
-  //   fours: 0,
-  //   sixers: 0,
-  //   fifties: 0,
-  //   centuries: 0,
-  //   balls: 0,
-  //   overs: 0,
-  //   runsConceded: 0,
-  //   player: {
-  //     playerId: 0,
-  //     name: "",
-  //   },
-  //   match: {
-  //     matchId: matchId, // Use the matchId passed as prop
-  //   },
-  // });
-  // useEffect(() => {
-  //       const fetchPlayerStat = async () => {
-  //         try {
-  //           const players = await axios.get(`${API_URL}admin/players/all`); // Replace with your players endpoint
-  //           setPlayers(players.data);
-  //           console.log("players in scores:", players.data);
-  //           console.log("matchId for player Stack:", matchId);
-  //           const stats = await axios.get(`${API_URL}playerStats/match/player-stats?matchId=${matchId}`); // Replace with your players endpoint
-  //           setPlayerStats(stats.data);
-  //           console.log("playerStats in scores:", stats.data);
-  //         } catch (error) {
-  //           console.error("Error fetching players:", error);
-  //         }
-  //       };
-    
-  //       fetchPlayerStat();
-  //     }, [matchId]);
-
-  // const handleInputChange = e => {
-  //   const { name, value } = e.target;
-  //   if (name === "player.playerId") {
-  //     const selectedPlayer = players.find((player) => player.playerId === parseInt(value));
-  //     if (selectedPlayer) {
-  //       setFormData({
-  //         ...formData,
-  //         player: {
-  //           playerId: value,
-  //           name: selectedPlayer.name, // Set both playerId and name
-  //         }
-  //       });
-  //     }
-  //   }else if (name.includes(".")) {
-  //     const [mainKey, subKey] = name.split(".");
-  //     setFormData({
-  //       ...formData,
-  //       [mainKey]: {
-  //         ...formData[mainKey],
-  //         [subKey]: value
-  //       }
-  //     });
-  //   } else {
-  //     setFormData({
-  //       ...formData,
-  //       [name]: value
-  //     });
-  //   }
-  // };
-
-  // //add player score
-  // const handleSubmit =async e => {
-  //   e.preventDefault();
-  //   console.log("submit Data:", formData);
-  //   try {
-  //     const response = await axios.post(`${API_URL}playerStats/add`, formData);
-  //     console.log("Player stats saved successfully:", response.data);
-  //     setPlayerStats([...playerStats, response.data]); 
-  //     setFormData({
-  //       inning: "",
-  //       runs: 0,
-  //       wickets: 0,
-  //       fours: 0,
-  //       sixers: 0,
-  //       fifties: 0,
-  //       centuries: 0,
-  //       balls: 0,
-  //       overs: 0,
-  //       runsConceded: 0,
-  //       player: {
-  //         playerId: 0,
-  //         name: "",
-  //       },
-  //       match: {
-  //         matchId: "", // Use the matchId passed as prop
-  //       },
-  //     });
-  //     setIsAdding(false);
-  //     setIsNewScoreAdded(!isNewScoreAdded);
-  //   } catch (error) {
-  //     console.error("Error saving player stats:", error);
-  //   }
-  // };
-
-    // const handleEditPlayerStack = player => {
-  //   setCurrentPlayerStackId(player.id);
-  //   setIsEditButtonPressed(true);
-  //   console.log("playerId stats: ", player.player.playerId);
-  //   setFormData({
-  //     runs: player.runs,
-  //     wickets: player.wickets,
-  //     overs: player.overs,
-  //     runsConceded: player.runsConceded,
-  //     fours: player.fours,
-  //     sixers: player.sixers,
-  //     fifties: player.fifties,
-  //     centuries: player.centuries,
-  //     balls: player.balls,
-  //     match:{
-  //       matchId: matchId,
-  //     },
-  //     player:{
-  //       playerId: player.player.playerId,
-  //       name: player.player.name || "",
-  //     }
-  //   });
-  // };
-
-  // const handleSaveEdit = async id => {
-  //    console.log("Stats id: ", id);
-  //    console.log("form stat data: ", formData);
-  //   try {
-  //     // Make a POST request to the backend APIonsole.log{"id "}
-  //     const response = await axios.put(
-  //       `${API_URL}playerStats/update/${id}`,
-  //       formData
-  //     );
-  //     if (response.status === 200) {
-  //       console.log("Form submitted succeeded: ", response.data);
-  //       message.success("Successfully Updated!");
-  
-  //       // Update playerStats state only on success
-  //       setPlayerStats((prevStats) =>
-  //         prevStats.map((stat) =>
-  //           stat.id === id ? { ...stat, ...response.data } : stat
-  //         )
-  //       );
-  //       setIsEditButtonPressed(false); // Close edit mode
-        
-  //     } else {
-  //       message.error("Update Failed!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting form:", error);
-  //     message.error("Failed!");
-  //   }
-  // };
-
-  // const handleDelete = async id => {
-  //   try{
-  //     const deleteMatch = await axios.delete(`${API_URL}playerStats/${id}`)
-  //     if (deleteMatch.status === 200) {
-  //       message.success("Successfully Deleted!");
-  //       console.log("Delete row:", id);
-  
-  //       // Update playerStats state to remove the deleted entry
-  //       setPlayerStats((prevStats) => prevStats.filter((stat) => stat.id !== id));
-  //     } else {
-  //       message.error("Deletion Failed!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error deleting match:", error);
-  //     message.error("Failed!");
-  //   }
-  // };

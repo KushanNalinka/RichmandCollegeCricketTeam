@@ -678,10 +678,10 @@ import rightBadge from '../assets/images/MLogo.png'; // Adjust the path accordin
 const ScoreCard = ({ onMatchId }) => {  // Receive onMatchId as a prop
   const [matchData, setMatchData] = useState(null);
   const [secondInningData, setSecondInningData] = useState(null);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   // Fetch data from API
   useEffect(() => {
-    fetch('http://localhost:8080/api/matchSummary/all')
+    fetch(`${API_URL}matchSummary/all`)
       .then((response) => response.json())
       .then((data) => {
         const firstMatch = data[0]; // Get the first match data (1st inning)

@@ -348,13 +348,13 @@ const PlayerProfile = () => {
     const [selectedPlayer, setSelectedPlayer] = useState(null); // Stores currently selected player
     const [playerStat, setPlayerStat] = useState([]); // Stores stats for the selected player
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
-
+    const API_URL = process.env.REACT_APP_API_URL;
     
     // Fetch all players from the API when the component mounts
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/admin/players/all");
+                const response = await fetch(`${API_URL}admin/players/all`);
                 const data = await response.json();
 
                 const under13Players = data.filter((player) =>

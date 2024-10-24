@@ -1059,7 +1059,7 @@ const HighlightTabs = () => {
 
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   // Detect window resizing for responsiveness
   useEffect(() => {
     const handleResize = () => {
@@ -1078,7 +1078,7 @@ const HighlightTabs = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/videos");
+        const response = await fetch(`${API_URL}videos`);
         const data = await response.json();
         const latestVideos = data.filter(video => video.title === "latestVideos");
         const matchHighlights = data.filter(video => video.title === "matchHighlights");

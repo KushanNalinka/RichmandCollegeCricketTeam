@@ -1191,12 +1191,12 @@ const ResultsTable = ({ matchId }) => {
   const [matchData, setMatchData] = useState([]);
   const [inning, setInning] = useState('1st INNING');
   const [matchType, setMatchType] = useState('');
-
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const fetchMatchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
+          `${API_URL}playerStats/match/player-stats?matchId=${matchId}`
         );
         const data = await response.json();
         setMatchData(data);

@@ -37,7 +37,7 @@ const OfficialForm = ({  onClose }) => {
     e.preventDefault();
       try {
         const response = await axios.post(
-          `http://localhost:5000/api/auth/signupOfficial`,
+          `${API_URL}auth/signupOfficial`,
           formData 
         );
         console.log("Form submitted succedded: ", response.data);
@@ -51,9 +51,9 @@ const OfficialForm = ({  onClose }) => {
           contactNo: "",
           position: ""
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");

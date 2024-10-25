@@ -31,7 +31,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
       .catch((error) => {
         console.error("There was an error fetching the player data!", error);
       });
-      console.log("practice schedule :", practiceSchedule)
+      console.log("practice schedule :", practiceSchedule);
+      console.log("coaches new :", practiceSchedule.coaches);
+      console.log("coaches new2 :", formData.coaches);
+      formData.coaches.map((coach) => (console.log("Coaches :",coach.coachId)) );
+      
   }, []);
 
 
@@ -59,9 +63,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
     e.preventDefault();
     console.log("FormData: ",formData);
     const updatedFormData = {
-        ...formData,
-        coaches: selectedCoaches.map((coach) => ({ coachId: coach.coachId })),
-      };
+      ...formData,
+      coaches: selectedCoaches.length > 0 
+        ? selectedCoaches.map((coach) => ({ coachId: coach.coachId }))
+        : formData.coaches.map((coach) => ({ coachId: coach.coachId })),
+    };
       try {
         const response = await axios.put(
         `${API_URL}practiseSessions/update/${practiceSchedule.pracId}`,
@@ -75,15 +81,12 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
             startTime: "",
             endTime: "",
             pracType: "",
-            coaches: [
-              {
-                coachId: 0,
-              },
-            ],
+            coaches: [],
             team: {
               teamId: 0,
             },
         });
+        setSelectedCoaches([]);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -214,22 +217,20 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
           <div >
             <label className="block text-black text-sm font-semibold">Type</label>
             <select
-              name="type"
+              name="pracType"
               value={formData.pracType}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-               <option value="" disabled selected>Select type</option>
-               <option value="Test">Batting Practice</option>
-               <option value="ODI">Bawling Practice</option>
-               <option value="T20">Fielding Practice</option>
+               <option value="" disabled >Select type</option>
+               <option value="Batting Practice">Batting Practice</option>
+               <option value="Bawling Practice">Bawling Practice</option>
+               <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
           <div>
-            <label
-              className="block text-black text-sm font-semibold"
-              htmlFor="teamUnder">
+            <label className="block text-black text-sm font-semibold">
               Team
             </label>
                 <select
@@ -238,7 +239,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
                 onChange={handleChange}
                 className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                 >
-                <option value="" disabled>{formData.teamUnder}</option>
+                <option value="" disabled>Select team</option>
                 {teams && teams.map(team =>
                     <option key={team.teamId} value={team.teamId}>
                     {team.under}
@@ -257,9 +258,9 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               <input
                 type="text"
                 className="border-0 py-1 px-3 w-[90%] rounded-md focus:outline-non pointer-events-none"
-                value={selectedCoaches && selectedCoaches
+                value={(selectedCoaches && selectedCoaches
                     .map((coach) => coach && coach.name)
-                    .join(", ")}
+                    .join(", ")) || (practiceSchedule.coaches.map((coach)=> coach.name))}
                    // Show selected coach names, joined by commas
                 readOnly
               />
@@ -301,7 +302,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
-              Add schedule
+              Save Changes
             </button>
           </div>
         </form>

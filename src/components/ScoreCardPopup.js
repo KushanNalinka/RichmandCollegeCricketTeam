@@ -251,10 +251,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-gray-600 bg-opacity-75 flex p-20 justify-center`}
+      className={`fixed inset-0 bg-gray-600 bg-opacity-75 flex p-10 justify-center`}
     >
-      <div className="bg-gray-100 p-8 rounded-lg shadow-lg w-full max-w-full max-h-full">
-        <div className="flex justify-end items-center">
+      <div className="bg-white p-8 relative rounded-lg shadow-lg w-full">
+        <div className="flex justify-end items-center pb-2">
           <button
             onClick={onClose}
             className="text-gray-600 hover:text-gray-800 text-xl"
@@ -262,7 +262,15 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
             <FaTimes />
           </button>
         </div>
+        <div className=" bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg max-h-full" 
+            style={{ 
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              
+            }}>
         <div>
+        
       <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
       {matchType === 'Test' && (
         <div className={`flex pb-2 tracking-wider justify-end items-center gap-3`}>
@@ -280,11 +288,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
         ) 
       }
     </div>
-        <div className=" overflow-auto">
-          <table className="min-w-full divide-y divide-gray-300 bg-white shadow-md">
-            <thead className=" bg-[#480D35] text-white rounded">
-              <tr>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Player Name</th>
+        <div  className="overflow-auto">
+          <table className="min-w-full divide-gray-300 bg-gray-00 shadow-md">
+            <thead className=" text-white lg:rounded">
+              <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider"> Player Name</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Runs </th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
@@ -294,20 +302,21 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
+                <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
+              <tr className=" h-2"></tr>
             </thead>
 
-            <tbody className=" divide-y  divide-gray-300">
+            <tbody className="divide-y-2 divide-gray-300 overflow-auto">
               { filteredStats
                 .map((player) =>
                   <tr
                     key={player.id}
-                    className=" hover:bg-gray-50 h-full align-middle"
+                    className=" hover:bg-gray-50 h-full bg-white lg:rounded-lg align-middle"
                   >
                     {isEditButtonPressed && player.id === currentPlayerStackId?
                        <>
-                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-4 h-10 lg:rounded-l-lg whitespace-nowrap text-sm text-gray-600">
                             <input
                               type="text"
                               value={formData.player.name}
@@ -406,7 +415,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                               className="border rounded p-1"
                             />
                           </td>
-                          <td className="flex px-4 whitespace-nowrap text-sm space-x-2 h-10">
+                          <td className=" px-4 lg:rounded-r-lg whitespace-nowrap text-sm space-x-2 h-10">
                             <button
                             title="Save Changes"
                               onClick={() => handleSaveEdit(player.id)}
@@ -599,6 +608,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
               </tr>
             </tbody>
           </table>
+        </div>
         </div>
         {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">

@@ -11,8 +11,9 @@ const NewsPreview = ({ news, onClose }) => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center  bg-black bg-opacity-70">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full relative">
+    <div className="fixed inset-0 flex p-20 items-center justify-center  bg-gray-600 bg-opacity-75">
+      
+      <div className="bg-white p-8 rounded-lg shadow-lg relative">
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -22,7 +23,7 @@ const NewsPreview = ({ news, onClose }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl text-[#480D35] font-bold mb-4">News Preview</h2>
+        <h2 className="text-xl text-[#480D35] px-8 font-bold mb-4">News Preview</h2>
         <div className="w-full bg-white ">
           
             <div className="px-8 py-5">
@@ -57,6 +58,7 @@ const NewsPreview = ({ news, onClose }) => {
          
         </div>
       </div>
+      
     </div>
   );
 };

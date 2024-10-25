@@ -22,7 +22,7 @@ const TableComponent = () => {
   const [isTeamMembersOpen, setIsTeamMembersOpen] = useState(false);
   const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
-  const [teamMembers, setTeamMembers] = useState(null);
+  const [teamId, setTeamId] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
@@ -31,7 +31,6 @@ const TableComponent = () => {
 
   useEffect(() => {
     const fetchTeams = async () => {
-      console.log("members:", teamMembers);
       try {
         const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
         setTeams(response.data);
@@ -71,10 +70,10 @@ const TableComponent = () => {
 
  
 
-  const handleViewMembers = members => {
-    console.log("selected team:" , members);
+  const handleViewMembers = teamId => {
+    console.log("selected team:" , teamId);
     setIsTeamMembersOpen(true);
-    setTeamMembers(members);
+    setTeamId(teamId);
   };
 
   const handleDelete = id => {
@@ -99,10 +98,24 @@ const TableComponent = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleAddFormClose = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
+  const handleEditFormClose = () => {
+    setIsEditModalOpen(false)
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-    <div className=" flex relative items-center justify-center h-full w-full">
-      <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+    <div className=" flex relative justify-center items-stretch min-h-screen w-full">
+      <div className="lg:flex hidden justify-center items-center w-[12%] h-auto "
          style={{
           backgroundImage: `url(${flag})`,
           backgroundSize: "cover",
@@ -111,7 +124,7 @@ const TableComponent = () => {
       >
         <Navbar />
       </div>
-      <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+      <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
@@ -139,8 +152,8 @@ const TableComponent = () => {
           <div className="flex overflow-x-auto">
             <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
               <thead className=" text-white">
-                <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="py-3 px-4 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                  <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Under
                   </th>
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -149,7 +162,7 @@ const TableComponent = () => {
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Captain
                   </th>
-                  <th className="py-3 px-4 rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -159,9 +172,9 @@ const TableComponent = () => {
                 {paginatedData.map((item,index) =>
                   <tr
                     key={item.teamId}
-                    className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle"
+                    className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
                   >
-                    <td className="py-4 px-4 rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
+                    <td className="py-4 px-4 lg:rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
                       {item.under}
                     </td>
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
@@ -170,7 +183,7 @@ const TableComponent = () => {
                     <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.captain}
                     </td>
-                    <td className="py-4 px-4 rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                    <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-500 hover:text-blue-600 transition-colors"
@@ -186,9 +199,7 @@ const TableComponent = () => {
                         <FaTrash />
                       </button>
                       <button
-                        onClick={() => handleViewMembers(item.players
-                          
-                        )}
+                        onClick={() => handleViewMembers(item.teamId)}
                         className="text-green-500 hover:text-green-600 transition-colors"
                         title="Members"
                       >
@@ -248,7 +259,7 @@ const TableComponent = () => {
         )}
         {isModalOpen &&
           <AddNewModal
-            onClose={() => setIsModalOpen(false)}
+            onClose={handleAddFormClose}
           />}
 
         {/* Edit Modal */}
@@ -256,13 +267,13 @@ const TableComponent = () => {
           editItem &&
           <EditModal
             team={editItem}
-            onClose={() => setIsEditModalOpen(false)}
+            onClose={handleEditFormClose}
            
           />}
           {isTeamMembersOpen &&
-          teamMembers &&
+          teamId &&
           <TeamMembers
-            members={teamMembers}
+            teamId={teamId}
             onClose={() => setIsTeamMembersOpen(false)}
            
           />}

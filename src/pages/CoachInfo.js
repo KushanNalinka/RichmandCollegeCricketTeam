@@ -29,7 +29,10 @@ const CoachTable = () => {
   const [coachToDelete, setCoachToDelete] = useState(null);
 
   useEffect(() => {
-    // Fetch player data for playerId 4
+    loadCoaches();
+  }, []);
+
+  const loadCoaches = async () => {
     axios
     .get(`${API_URL}coaches/all`)
       .then((response) => {
@@ -40,7 +43,7 @@ const CoachTable = () => {
       .catch((error) => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  };
 
   const handleEdit = coach => {
     setCurrentCoach(coach);
@@ -77,20 +80,32 @@ const CoachTable = () => {
     try{
       const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
       message.success("Successfully Deleted!");
-        setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setShowDeleteModal(false);
+      loadCoaches();
     } catch (error) {
       console.error("Error deleting match:", error);
       message.error("Failed!");
     }
   };
 
+  const handleAddFormClose = () => {
+    setIsFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
+  const handleEditFormClose = () => {
+    setIsEditFormOpen(false);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-    <div className=" flex relative items-center justify-center h-full w-full">
-      <div className="lg:flex hidden justify-center items-center w-[12%] h-full "
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+    <div className=" flex relative justify-center items-stretch min-h-screen w-full">
+      <div className="lg:flex hidden justify-center items-center w-[12%] h-auto "
          style={{
           backgroundImage: `url(${flag})`,
           backgroundSize: "cover",
@@ -99,7 +114,7 @@ const CoachTable = () => {
       >
         <Navbar />
       </div>
-      <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+      <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
            <MainNavbarToggle/>
            <img src={logo} className="h-12 w-12"/>
@@ -130,8 +145,8 @@ const CoachTable = () => {
           <div className="flex overflow-x-auto">
             <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
               <thead className=" text-white">
-                <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="px-6 py-3 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                  <th className="px-6 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -149,7 +164,7 @@ const CoachTable = () => {
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DESCRIPTION
                   </th>
-                  <th className="px-6 py-3 rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-6 py-3 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -159,18 +174,20 @@ const CoachTable = () => {
                 {paginatedData.map((item, index) =>
                   <tr
                     key={item.coachId}
-                    className=" hover:bg-gray-50 rounded-lg bg-white h-full align-middle"
+                    className=" hover:bg-gray-50 lg:rounded-lg bg-white h-full align-middle"
                   >
-                    
-                    <td className="gap-4 px-4 rounded-l-lg py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-gray-900">
-                      <div className="flex items-center justify-start gap-1 ">
+                    <td className="gap-4 px-4 lg:rounded-l-lg py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                      <div className="flex items-center justify-start gap-2 ">
                         <img
                           src={item.image}
                           alt={item.name}
-                          className=" h-14 w-14 rounded-full object-cover border border-gray-300"
+                          className="h-14 w-14 rounded-full object-cover border border-gray-300"
                         />
-                        {item.name.split(' ').slice(-2).join(' ')}
-                      </div>  
+                        {/* Use truncate or text wrapping for small screens */}
+                        <span className="truncate whitespace-nowrap">
+                          {item.name.split(' ').slice(-2).join(' ')}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
                       {item.dateOfBirth}
@@ -187,7 +204,7 @@ const CoachTable = () => {
                     <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.description}
                     </td>
-                    <td className="px-6 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
+                    <td className="px-6 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-green-500 hover:text-green-600 text-md"
@@ -238,7 +255,7 @@ const CoachTable = () => {
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-              <p>Are you sure you want to delete this player?</p>
+              <p>Are you sure you want to delete this coach?</p>
               <div className="flex justify-end mt-4 space-x-4">
                 <button
                   onClick={() => setShowDeleteModal(false)}
@@ -257,11 +274,11 @@ const CoachTable = () => {
           </div>
         )}
         {isFormOpen &&
-          <CoachForm onClose={() => setIsFormOpen(false)} />}
+          <CoachForm onClose={handleAddFormClose} />}
         {isEditFormOpen &&
           <EditCoachForm
             coach={currentCoach}
-            onClose={() => setIsEditFormOpen(false)}
+            onClose={handleEditFormClose}
           />}
       </div>
     </div>

@@ -225,9 +225,9 @@ const PracticeScheduleForm = ({ onClose }) => {
               <option value="" disabled selected>
                 Select type
               </option>
-              <option value="Test">Batting Practice</option>
-              <option value="ODI">Bawling Practice</option>
-              <option value="T20">Fielding Practice</option>
+              <option value="Batting Practice">Batting Practice</option>
+              <option value="Bawling Practice">Bawling Practice</option>
+              <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
           <div>

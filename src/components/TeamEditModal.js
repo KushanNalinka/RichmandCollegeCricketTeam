@@ -8,7 +8,7 @@ const EditModal = ({ team, onClose }) => {
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({...team});
   const [selectedPlayers, setSelectedPlayers] = useState([]);
-
+  console.log("teams:", team);
   useEffect(() => {
     axios
       .get(`${API_URL}admin/players/all`)
@@ -48,9 +48,6 @@ const EditModal = ({ team, onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");

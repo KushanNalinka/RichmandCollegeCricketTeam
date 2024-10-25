@@ -208,8 +208,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
 import { FaUser } from 'react-icons/fa'; // Import user icon from react-icons
+import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
 
 const HomeNavbar = () => {
+  const { userRole, logout, user } = useAuth();
   const navigate = useNavigate(); // Hook for navigation
   const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Navbar visibility state
 
@@ -235,6 +237,22 @@ const HomeNavbar = () => {
   const handleDropdownClick = (path) => {
     navigate(path); // Navigate to the selected page
   };
+  const handleProfileClick = () => {
+    switch (userRole) {
+      case 'coach':
+        navigate('/coachProfile');
+        break;
+      case 'player':
+        navigate('/playerProfile');
+        break;
+      case 'official':
+        navigate('/officialProfile');
+        break;
+      default:
+        navigate('/member');
+    }
+  };
+
 
   return (
     <nav

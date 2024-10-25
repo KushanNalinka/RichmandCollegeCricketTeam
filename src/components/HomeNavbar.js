@@ -695,7 +695,7 @@ const HomeNavbar = () => {
             <li>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                onClick={() => handleDropdownClick('/adminDashboard')}
+                onClick={() => handleDropdownClick('/coachProfile')}
               >
                 Profile
               </button>

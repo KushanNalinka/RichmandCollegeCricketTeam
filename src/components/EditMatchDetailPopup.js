@@ -108,9 +108,6 @@ const EditPopup = ({ onClose, match }) => {
       })
       setSelectedCoaches([]);
       setImagePreview();
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");

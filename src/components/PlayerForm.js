@@ -22,6 +22,7 @@ const PlayerForm = ({  onClose }) => {
     username: "",
     password: "",
     membership: {
+      isMemberHolder:1,
       startDate:"",
       endDate:"",
     },
@@ -59,6 +60,8 @@ const PlayerForm = ({  onClose }) => {
   };
 
   const handleSubmit = async e => {
+    console.log("Form data before submit: ", formData);
+
     e.preventDefault();
       try {
         let imageURL = formData.image;
@@ -89,15 +92,12 @@ const PlayerForm = ({  onClose }) => {
           username: "",
           password: "",
           membership: {
+            isMemberHolder:1,
             startDate:"",
             endDate:"",
           },
           contactNo: ""
         });
-        setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -297,8 +297,8 @@ const PlayerForm = ({  onClose }) => {
             </label>
             <input
               type="date"
-              name="startDate"
-              value={formData.startDate}
+              name="membership.startDate"
+              value={formData.membership.startDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
@@ -310,8 +310,8 @@ const PlayerForm = ({  onClose }) => {
             </label>
             <input
               type="date"
-              name="endDate"
-              value={formData.endDate}
+              name="membership.endDate"
+              value={formData.membership.endDate}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required

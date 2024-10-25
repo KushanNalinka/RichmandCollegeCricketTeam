@@ -7,7 +7,16 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const EditOfficialForm = ({ official, onClose }) => {
-  const [formData, setFormData] = useState({ ...official });
+  const [formData, setFormData] = useState({ 
+    user:{
+      username: official.username,
+      email: official.email,
+      password: official.password,
+    },
+    name: official.name,
+    contactNo: official.contactNo,
+    position: official.position
+   });
   const [imagePreview, setImagePreview] = useState(official.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -15,10 +24,21 @@ const EditOfficialForm = ({ official, onClose }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    if (name.includes(".")) {
+      const [mainKey, subKey] = name.split(".");
+      setFormData({
+        ...formData,
+        [mainKey]: {
+          ...formData[mainKey],
+          [subKey]: value
+        }
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleEdit = async e => {
@@ -31,9 +51,11 @@ const EditOfficialForm = ({ official, onClose }) => {
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
-          username: "",
-          email: "",
-          password: "",
+          user:{
+            username: official.username,
+            email: official.email,
+            password: official.password,
+          },
           roles: ["ROLE_OFFICIAL"],
           name: "",
           contactNo: "",
@@ -82,8 +104,8 @@ const EditOfficialForm = ({ official, onClose }) => {
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
-              name="username"
-              value={formData.username}
+              name="user.username"
+              value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="@username"
@@ -93,8 +115,8 @@ const EditOfficialForm = ({ official, onClose }) => {
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
+              name="user.email"
+              value={formData.user.email}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
@@ -104,8 +126,7 @@ const EditOfficialForm = ({ official, onClose }) => {
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
-              name="password"
-              value={formData.password}
+              name="user.password"
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"

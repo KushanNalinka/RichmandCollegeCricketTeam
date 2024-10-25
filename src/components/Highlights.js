@@ -1164,7 +1164,7 @@ const HighlightTabs = () => {
 
 
         {/* MORE VIDEOS Button (Positioned below PLAYER HIGHLIGHTS on mobile) */}
-        <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
+        <a href="https://www.youtube.com/@RichmondLive-RL" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
           <button className="py-3 px-4 bg-white text-black font-bold rounded-lg mr-20">
             MORE VIDEOS
           </button>

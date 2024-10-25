@@ -2740,7 +2740,7 @@ export default function MatchInfo() {
 
   useEffect(() => {
 
-    fetch("http://rcc.dockyardsoftware.com/api/matchSummary/all")
+    fetch(`${API_URL}matchSummary/all`)
 
       .then(response => response.json())
       .then(data => {

@@ -19,6 +19,8 @@ const OfficialsTable = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [officialToDelete, setOfficialToDelete] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -28,11 +30,11 @@ const OfficialsTable = () => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/officials/all`)
+      .get(`${API_URL}officials/all`)
       .then(response => {
         const officials = response.data;
         setOfficialData(officials);
-        console.log("Player Data:", officialData);
+        console.log("Officials Data:", response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
@@ -72,13 +74,18 @@ const OfficialsTable = () => {
     }
   };
 
-  const handleDelete = async id => {
-    console.log("Delete Official: ", id);
+  const handleDelete = id => {
+    setOfficialToDelete(id);
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const confirmDelete = async () => {
+    console.log("Delete Official: ", officialToDelete);
     const deleteOfficial = await axios.delete(
-      `${API_URL}admin/officials/delete/${id}`
+      `${API_URL}officials/delete/${officialToDelete}`
     );
 
-    console.log("Delete row:", id);
+    console.log("Delete row:", officialToDelete);
     setTimeout(() => {
       window.location.reload();
     }, 1500);
@@ -114,7 +121,7 @@ const OfficialsTable = () => {
              <MainNavbarToggle/>
              <img src={logo} className="h-12 w-12"/>
           </div>
-          <div className=" lg:w-[95%] h-full w-[100%] bg-gray-100 lg:px-5 p-5 rounded-lg shadow-lg" 
+          <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
@@ -138,14 +145,14 @@ const OfficialsTable = () => {
               </button>
             </div>
             <div className="flex overflow-x-auto" >
-              <table className="min-w-full divide-y rounded-t-3xl divide-transparent shadow-md">
-                <thead className=" rounded-t-3xl border text-white bg-transparent">
-                  <tr className="rounded-t-3xl bg-[#480D35]">
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
+              <table className="min-w-full bg-gray-200  rounded-t-3xl shadow-md">
+                <thead className=" text-white">
+                  <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                    <th className="px-4 py-3 rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Name
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      DOB
+                      Username
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Email
@@ -153,31 +160,27 @@ const OfficialsTable = () => {
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Contact No
                     </th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> */}
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Role
+                      Position
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-2 py-3 rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
+                  <tr className=" h-2"></tr>
                 </thead>
-                <tbody className=" divide-y divide-gray-300 bg-white">
+                <tbody className=" divide-y-2 divide-gray-300 ">
                   {paginatedData.map((item, index) =>
                     <tr
                       key={index}
-                      className=" hover:bg-gray-50 h-full align-middle text-gray-900"
+                      className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle text-gray-900"
                     >
-                      <td className="flex gap-4 px-4  py-2 items-center text-wrap justify-start whitespace-nowrap text-sm font-bold text-black">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className=" h-14 w-14 rounded-full object-cover border bg-white"
-                        />
+                      <td className="px-4  py-4 h-14  rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
+                        
                         {item.name.split(" ").slice(-2).join(" ")}
                       </td>
                       <td className="px-2 py-4 h-14  whitespace-nowrap text-sm ">
-                        {item.dateOfBirth}
+                        {item.username}
                       </td>
                       <td className="px-2 py-4 h-14 whitespace-nowrap text-sm " >
                         {item.email}
@@ -186,9 +189,9 @@ const OfficialsTable = () => {
                         {item.contactNo}
                       </td>
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
-                        {item.role}
+                        {item.position}
                       </td>
-                      <td className="px-2 py-4 whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -198,7 +201,7 @@ const OfficialsTable = () => {
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(item.playerId)}
+                          onClick={() => handleDelete(item.officialId)}
                           className="text-red-500 hover:text-red-600 text-md"
                           aria-label="Delete"
                           title="Delete"
@@ -235,6 +238,28 @@ const OfficialsTable = () => {
               </button>
             </div>
           </div>
+          {showDeleteModal && (
+              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+                  <p>Are you sure you want to delete this player?</p>
+                  <div className="flex justify-end mt-4 space-x-4">
+                    <button
+                      onClick={() => setShowDeleteModal(false)}
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={confirmDelete}
+                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           {isFormOpen && <OfficialForm onClose={() => setIsFormOpen(false)} />}
           {isEditFormOpen &&
             <EditOfficialForm

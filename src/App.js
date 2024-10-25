@@ -360,7 +360,7 @@ function App() {
             }
           /> */}
 
-         <Route path="/admin-match-info" element={<AdminMatchInfo />} />
+ 
          <Route path="/admin-newsdetail" element={<NewsCreator />} />
 
 

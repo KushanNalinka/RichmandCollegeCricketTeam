@@ -264,6 +264,7 @@ const AboutUs = () => {
   <div className="max-w-screen-lg w-full mx-auto text-center px-6 sm:px-4">
     <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-snug sm:leading-tight">
     A Legacy   <span className="italic">of Excellence</span><br />
+
       <span className="italic">The Proud History of Richmond College Cricket</span>
     </h1>
     <div className="flex justify-center mt-4 sm:mt-6">
@@ -293,7 +294,9 @@ const AboutUs = () => {
     Richmond College cricket began in 1888, with the first recorded match against All Saints’ College.
      By 1899, Richmond achieved its first victory, and the game quickly became integral to school life.
       Early match logs reveal memorable encounters, such as the celebrated win over Wesley College in 1901, when camaraderie and competitive spirit took root.
+
        This period also saw the establishment of the Richmond–Mahinda rivalry in 1905, a fixture now affectionately known as the “Lovers' Quarrel.”
+h
        These formative years were marked by Richmond’s passion for cricket and the development of match traditions that continue today.
     </p>
   </div>
@@ -301,8 +304,10 @@ const AboutUs = () => {
     <h3 className="text-xl sm:text-2xl font-bold mb-4">The Development of Tradition and Rivalries</h3>
     <p className="text-sm sm:text-base flex-grow">
     Over the decades, Richmond College cricket matches became cornerstone events.
+
      The annual Richmond–Mahinda match became Southern Sri Lanka’s biggest sporting event, evolving from one-day games to full-day fixtures, eventually transitioning to two-day games in 1930. Similarly, the Richmond–Wesley series, established in 1901, became formalized with the E.R. de Silva Trophy in 1973.
      These rivalries grew in popularity, drawing crowds and capturing the college spirit, and have endured to this day as essential annual highlights.
+
     </p>
   </div>
   <div className="bg-[#00175F] text-white p-6 sm:p-8 rounded-[30px] sm:rounded-[50px] shadow-lg min-h-[300px] sm:min-h-[400px] flex flex-col">
@@ -312,6 +317,7 @@ const AboutUs = () => {
      Pioneers like E.M. Karunaratne and P.S. Thuduwewatta, known for his record 100-wicket season, as well as R.M.M. De Silva, who played for All Ceylon, laid a foundation of excellence.
       Generations of Richmond alumni have gone on to represent regional and national teams, contributing to Sri Lanka’s cricket heritage.
        Today, Richmond College cricket remains a proud legacy, fostering talent and a deep love for the game among its students.
+
     </p>
   </div>
 </div>

@@ -288,7 +288,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
         ) 
       }
     </div>
-        <div  className="overflow-auto">
+        <div  className="overflow-auto max-h-[50vh]">
           <table className="min-w-full divide-gray-300 bg-gray-00 shadow-md">
             <thead className=" text-white lg:rounded">
               <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -307,7 +307,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
               <tr className=" h-2"></tr>
             </thead>
 
-            <tbody className="divide-y-2 divide-gray-300 overflow-auto">
+            <tbody className="divide-y-2 divide-gray-300 max-h-full overflow-auto">
               { filteredStats
                 .map((player) =>
                   <tr

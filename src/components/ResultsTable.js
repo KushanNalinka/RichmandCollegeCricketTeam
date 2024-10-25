@@ -824,26 +824,383 @@
 
 // export default ResultsTable;
 
+// import React, { useEffect, useState } from 'react';
+// import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
+
+// const ResultsTable = ({ matchId }) => {
+//   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
+//   const [matchData, setMatchData] = useState([]);
+//   const [inning, setInning] = useState('1st INNING');
+//   const [matchType, setMatchType] = useState('');
+
+//   useEffect(() => {
+//     // Fetch the data from the API
+//     const fetchMatchData = async () => {
+//       try {
+//         const response = await fetch(
+//           `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
+//         );
+//         const data = await response.json();
+//         setMatchData(data);
+
+//         // Set match type (assuming all records have the same match type)
+//         if (data.length > 0) {
+//           setMatchType(data[0].match.type);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching match data:', error);
+//       }
+//     };
+
+//     fetchMatchData();
+//   }, [matchId]);
+
+//   // Filter the data based on the current inning
+//   const filterInningData = (inningNumber) => {
+//     return matchData.filter((stat) => stat.inning === inningNumber);
+//   };
+
+//   // Function to handle table switch
+//   const toggleTable = () => {
+//     setCurrentTable(currentTable === 'batsmen' ? 'bowlers' : 'batsmen');
+//   };
+
+//   // Calculate strike rate for batsmen
+//   const calculateStrikeRate = (runs, balls) => {
+//     return balls > 0 ? ((runs / balls) * 100).toFixed(2) : '0.00';
+//   };
+
+//   // Calculate economy rate for bowlers
+//   const calculateEconomyRate = (runsConceded, overs) => {
+//     return overs > 0 ? (runsConceded / overs).toFixed(2) : '0.00';
+//   };
+
+//   // Constants for extras and total (for demonstration purposes)
+//   const EXTRAS = 12;
+//   const TOTAL = "192/6 (20 overs)";
+
+//   return (
+//     <div
+//       className="flex justify-end w-full h-auto md:h-[500px] py-4"
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         backgroundSize: 'cover',
+//         backgroundPosition: 'center',
+//       }}
+//     >
+//       {/* Scorecard Section (right-aligned with fixed height on large screens) */}
+//       <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
+//         {/* Additional Sections */}
+//         <div className="p-6 max-w-screen-xl mx-auto mt-5">
+//           {/* Top Bar */}
+//           <div className="flex items-center justify-between bg-gray-300 p-2 rounded-t-lg shadow-md">
+//             <div className="flex items-center">
+//               <select
+//                 className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-64 text-xs"
+//                 value={inning}
+//                 onChange={(e) => setInning(e.target.value)}
+//               >
+//                 {/* Handle innings based on match type */}
+//                 {matchType === 'Test' ? (
+//                   <>
+//                     <option value="1st INNING">1st Inning</option>
+//                     <option value="2nd INNING">2nd Inning</option>
+//                   </>
+//                 ) : (
+//                   <option value="1st INNING">1st Inning</option>
+//                 )}
+//               </select>
+//             </div>
+//             <div className="text-gray-700 font-medium text-sm">
+//               {/* Display total score */}
+//               RICHMOND COLLEGE GALLE
+//             </div>
+//           </div>
+
+//           {/* Batsmen or Bowlers Table */}
+//           <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-72">
+//             {currentTable === 'batsmen' ? (
+//               <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+//                 <thead className="bg-[#4A0D34] text-white">
+//                   <tr>
+//                     <th className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">R</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">B</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">4s</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">6s</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">50</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">100</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">SR</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody className="bg-white divide-y divide-gray-200">
+//                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((batsman, index) => (
+//                     <tr key={index}>
+//                       <td className="px-2 py-2 text-sm font-medium text-gray-900">{batsman.player.name}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.runs}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.balls}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fours}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.sixers}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fifties}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.centuries}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">
+//                         {calculateStrikeRate(batsman.runs, batsman.balls)}
+//                       </td>
+//                     </tr>
+//                   ))}
+                  
+//                   {/* EXTRAS row 
+
+//                   <tr>
+//                     <td className="px-2 py-1 text-sm font-medium text-gray-900">EXTRAS</td>
+//                     <td className="px-2 py-1 text-sm text-center text-gray-500" colSpan="7">
+//                       {EXTRAS}
+//                     </td>
+//                   </tr>
+//                   */}
+//                   {/* TOTAL row 
+//                   <tr>
+//                     <td className="px-2 py-1 text-sm font-bold text-gray-900">TOTAL</td>
+//                     <td className="px-2 py-1 text-sm text-center text-gray-500" colSpan="7">
+//                       {TOTAL}
+//                     </td>
+//                   </tr>
+//                   */}
+//                 </tbody>
+//               </table>
+//             ) : (
+//               <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+//                 <thead className="bg-[#4A0D34] text-white">
+//                   <tr>
+//                     <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BOWLING</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">O</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">W</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">ECO</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody className="bg-white divide-y divide-gray-200">
+//                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((bowler, index) => (
+//                     <tr key={index}>
+//                       <td className="px-2 py-1 text-sm font-medium text-gray-900">{bowler.player.name}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.overs}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.runsConceded}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">
+//                         {calculateEconomyRate(bowler.runsConceded, bowler.overs)}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             )}
+//           </div>
+
+//           {/* Toggle Button */}
+//           <div className="flex justify-center mb-8">
+//             <button
+//               className="bg-[#4A0D34] text-white text-sm font-medium px-4 py-2 rounded-lg"
+//               onClick={toggleTable}
+//             >
+//               {currentTable === 'batsmen' ? 'Show Bowlers' : 'Show Batsmen'}
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ResultsTable;
+
+// import React, { useEffect, useState } from 'react';
+// import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
+
+// const ResultsTable = ({ matchId }) => {
+//   const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
+//   const [matchData, setMatchData] = useState([]);
+//   const [inning, setInning] = useState('1st INNING');
+//   const [matchType, setMatchType] = useState('');
+
+//   useEffect(() => {
+//     // Fetch the data from the API
+//     const fetchMatchData = async () => {
+//       try {
+//         const response = await fetch(
+//           `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
+//         );
+//         const data = await response.json();
+//         setMatchData(data);
+
+//         // Set match type (assuming all records have the same match type)
+//         if (data.length > 0) {
+//           setMatchType(data[0].match.type);
+//         }
+//       } catch (error) {
+//         console.error('Error fetching match data:', error);
+//       }
+//     };
+
+//     fetchMatchData();
+//   }, [matchId]);
+
+//   // Filter the data based on the current inning
+//   const filterInningData = (inningNumber) => {
+//     return matchData.filter((stat) => stat.inning === inningNumber);
+//   };
+
+//   // Function to handle table switch
+//   const toggleTable = () => {
+//     setCurrentTable(currentTable === 'batsmen' ? 'bowlers' : 'batsmen');
+//   };
+
+//   // Calculate strike rate for batsmen
+//   const calculateStrikeRate = (runs, balls) => {
+//     return balls > 0 ? ((runs / balls) * 100).toFixed(2) : '0.00';
+//   };
+
+//   // Calculate economy rate for bowlers
+//   const calculateEconomyRate = (runsConceded, overs) => {
+//     return overs > 0 ? (runsConceded / overs).toFixed(2) : '0.00';
+//   };
+
+//   // Constants for extras and total (for demonstration purposes)
+//   const EXTRAS = 12;
+//   const TOTAL = "192/6 (20 overs)";
+
+//   return (
+//     <div
+//       className="flex justify-end w-full h-auto md:h-[500px] py-4"
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         backgroundSize: 'cover',
+//         backgroundPosition: 'center',
+//       }}
+//     >
+//       {/* Scorecard Section (right-aligned with fixed height on large screens) */}
+//       <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
+//         {/* Additional Sections */}
+//         <div className="p-6 max-w-screen-xl mx-auto mt-5">
+//           {/* Top Bar */}
+//           <div className="flex items-center justify-between bg-gray-300 p-2 rounded-t-lg shadow-md">
+//             <div className="flex items-center">
+//               {matchType === 'Test' && (
+//                 <select
+//                   className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-64 text-xs"
+//                   value={inning}
+//                   onChange={(e) => setInning(e.target.value)}
+//                 >
+//                   {/* Handle innings for Test match type */}
+//                   <option value="1st INNING">1st Inning</option>
+//                   <option value="2nd INNING">2nd Inning</option>
+//                 </select>
+//               )}
+//             </div>
+//             <div className="text-gray-700 font-medium text-sm">
+//               {/* Display total score */}
+//               RICHMOND COLLEGE GALLE
+//             </div>
+//           </div>
+
+//           {/* Batsmen or Bowlers Table */}
+//           <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-72">
+//             {currentTable === 'batsmen' ? (
+//               <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+//                 <thead className="bg-[#4A0D34] text-white">
+//                   <tr>
+//                     <th className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">R</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">B</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">4s</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">6s</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">50</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">100</th>
+//                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">SR</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody className="bg-white divide-y divide-gray-200">
+//                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((batsman, index) => (
+//                     <tr key={index}>
+//                       <td className="px-2 py-2 text-sm font-medium text-gray-900">{batsman.player.name}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.runs}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.balls}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fours}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.sixers}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fifties}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.centuries}</td>
+//                       <td className="px-2 py-2 text-sm text-center text-gray-500">
+//                         {calculateStrikeRate(batsman.runs, batsman.balls)}
+//                       </td>
+//                     </tr>
+//                   ))}
+
+//                 </tbody>
+//               </table>
+//             ) : (
+//               <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+//                 <thead className="bg-[#4A0D34] text-white">
+//                   <tr>
+//                     <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BOWLING</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">O</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">W</th>
+//                     <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">ECO</th>
+//                   </tr>
+//                 </thead>
+//                 <tbody className="bg-white divide-y divide-gray-200">
+//                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((bowler, index) => (
+//                     <tr key={index}>
+//                       <td className="px-2 py-1 text-sm font-medium text-gray-900">{bowler.player.name}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.overs}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.runsConceded}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+//                       <td className="px-2 py-1 text-sm text-center text-gray-500">
+//                         {calculateEconomyRate(bowler.runsConceded, bowler.overs)}
+//                       </td>
+//                     </tr>
+//                   ))}
+//                 </tbody>
+//               </table>
+//             )}
+//           </div>
+
+//           {/* Toggle Button */}
+//           <div className="flex justify-center mb-8">
+//             <button
+//               className="bg-[#4A0D34] text-white text-sm font-medium px-4 py-2 rounded-lg"
+//               onClick={toggleTable}
+//             >
+//               {currentTable === 'batsmen' ? 'Show Bowlers' : 'Show Batsmen'}
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default ResultsTable;
+
+
+// MAKE THIS COMPONENT RES[PONSIVE TO ANY SCREEN.
 import React, { useEffect, useState } from 'react';
 import backgroundImage from '../assets/images/Trophy.png'; // Update the path to your image
 
 const ResultsTable = ({ matchId }) => {
-  const [currentTable, setCurrentTable] = useState('batsmen'); // State to toggle between Batsmen and Bowlers tables
+  const [currentTable, setCurrentTable] = useState('batsmen');
   const [matchData, setMatchData] = useState([]);
   const [inning, setInning] = useState('1st INNING');
   const [matchType, setMatchType] = useState('');
-
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
-    // Fetch the data from the API
     const fetchMatchData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/playerStats/match/player-stats?matchId=${matchId}`
+          `${API_URL}playerStats/match/player-stats?matchId=${matchId}`
         );
         const data = await response.json();
         setMatchData(data);
 
-        // Set match type (assuming all records have the same match type)
         if (data.length > 0) {
           setMatchType(data[0].match.type);
         }
@@ -855,72 +1212,54 @@ const ResultsTable = ({ matchId }) => {
     fetchMatchData();
   }, [matchId]);
 
-  // Filter the data based on the current inning
   const filterInningData = (inningNumber) => {
     return matchData.filter((stat) => stat.inning === inningNumber);
   };
 
-  // Function to handle table switch
   const toggleTable = () => {
     setCurrentTable(currentTable === 'batsmen' ? 'bowlers' : 'batsmen');
   };
 
-  // Calculate strike rate for batsmen
   const calculateStrikeRate = (runs, balls) => {
     return balls > 0 ? ((runs / balls) * 100).toFixed(2) : '0.00';
   };
 
-  // Calculate economy rate for bowlers
   const calculateEconomyRate = (runsConceded, overs) => {
     return overs > 0 ? (runsConceded / overs).toFixed(2) : '0.00';
   };
 
-  // Constants for extras and total (for demonstration purposes)
-  const EXTRAS = 12;
-  const TOTAL = "192/6 (20 overs)";
-
   return (
     <div
-      className="flex justify-end w-full h-auto md:h-[500px] py-4"
+      className="flex justify-end w-full h-auto py-4"
       style={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      {/* Scorecard Section (right-aligned with fixed height on large screens) */}
-      <div className="w-full md:w-3/5 p-4 md:p-6 py-8 mr-0 md:mr-12">
-        {/* Additional Sections */}
-        <div className="p-6 max-w-screen-xl mx-auto mt-5">
-          {/* Top Bar */}
-          <div className="flex items-center justify-between bg-gray-300 p-2 rounded-t-lg shadow-md">
+      <div className="w-full md:w-3/5 p-4 md:p-6 py-8">
+        <div className="p-6 max-w-screen-xl mx-auto mt-5 bg-gray-900 bg-opacity-70 rounded-lg shadow-lg">
+          <div className="flex items-center justify-between bg-gray-800 p-2 rounded-lg">
             <div className="flex items-center">
-              <select
-                className="px-3 py-1 bg-gray-100 rounded-xl border border-gray-400 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-64 text-xs"
-                value={inning}
-                onChange={(e) => setInning(e.target.value)}
-              >
-                {/* Handle innings based on match type */}
-                {matchType === 'Test' ? (
-                  <>
-                    <option value="1st INNING">1st Inning</option>
-                    <option value="2nd INNING">2nd Inning</option>
-                  </>
-                ) : (
+              {matchType === 'Test' && (
+                <select
+                  className="px-3 py-1 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-full md:w-64 text-xs text-white"
+                  value={inning}
+                  onChange={(e) => setInning(e.target.value)}
+                >
                   <option value="1st INNING">1st Inning</option>
-                )}
-              </select>
+                  <option value="2nd INNING">2nd Inning</option>
+                </select>
+              )}
             </div>
-            <div className="text-gray-700 font-medium text-sm">
-              {/* Display total score */}
+            <div className="text-white font-medium text-xs md:text-sm">
               RICHMOND COLLEGE GALLE
             </div>
           </div>
 
-          {/* Batsmen or Bowlers Table */}
-          <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-72">
+          <div className="table-container overflow-x-auto overflow-y-auto mb-8 h-64 md:h-72">
             {currentTable === 'batsmen' ? (
-              <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+              <table className="w-full table-auto divide-y divide-gray-600">
                 <thead className="bg-[#4A0D34] text-white">
                   <tr>
                     <th className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
@@ -933,56 +1272,42 @@ const ResultsTable = ({ matchId }) => {
                     <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">SR</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-gray-800 divide-y divide-gray-600 text-white">
                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((batsman, index) => (
                     <tr key={index}>
-                      <td className="px-2 py-2 text-sm font-medium text-gray-900">{batsman.player.name}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.runs}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.balls}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fours}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.sixers}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.fifties}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">{batsman.centuries}</td>
-                      <td className="px-2 py-2 text-sm text-center text-gray-500">
+                      <td className="px-2 py-2 text-xs md:text-sm font-medium">{batsman.player.name}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.runs}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.balls}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.fours}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.sixers}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.fifties}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{batsman.centuries}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">
                         {calculateStrikeRate(batsman.runs, batsman.balls)}
                       </td>
                     </tr>
                   ))}
-                  {/* EXTRAS row */}
-                  <tr>
-                    <td className="px-2 py-1 text-sm font-medium text-gray-900">EXTRAS</td>
-                    <td className="px-2 py-1 text-sm text-center text-gray-500" colSpan="7">
-                      {EXTRAS}
-                    </td>
-                  </tr>
-                  {/* TOTAL row */}
-                  <tr>
-                    <td className="px-2 py-1 text-sm font-bold text-gray-900">TOTAL</td>
-                    <td className="px-2 py-1 text-sm text-center text-gray-500" colSpan="7">
-                      {TOTAL}
-                    </td>
-                  </tr>
                 </tbody>
               </table>
             ) : (
-              <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+              <table className="w-full table-auto divide-y divide-gray-600">
                 <thead className="bg-[#4A0D34] text-white">
                   <tr>
-                    <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BOWLING</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">O</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">W</th>
-                    <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">ECO</th>
+                    <th className="px-2 py-2 text-left text-xs font-medium uppercase tracking-wider">BOWLING</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">O</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">R</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">W</th>
+                    <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">ECO</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-gray-800 divide-y divide-gray-600 text-white">
                   {filterInningData(inning === '1st INNING' ? '1' : '2').map((bowler, index) => (
                     <tr key={index}>
-                      <td className="px-2 py-1 text-sm font-medium text-gray-900">{bowler.player.name}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.overs}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.runsConceded}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
-                      <td className="px-2 py-1 text-sm text-center text-gray-500">
+                      <td className="px-2 py-2 text-xs md:text-sm font-medium">{bowler.player.name}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{bowler.overs}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{bowler.runsConceded}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">{bowler.wickets}</td>
+                      <td className="px-2 py-2 text-xs md:text-sm text-center">
                         {calculateEconomyRate(bowler.runsConceded, bowler.overs)}
                       </td>
                     </tr>
@@ -992,10 +1317,9 @@ const ResultsTable = ({ matchId }) => {
             )}
           </div>
 
-          {/* Toggle Button */}
           <div className="flex justify-center mb-8">
             <button
-              className="bg-[#4A0D34] text-white text-sm font-medium px-4 py-2 rounded-lg"
+              className="bg-[#4A0D34] text-white text-xs md:text-sm font-medium px-4 py-2 rounded-lg transition duration-300 hover:bg-[#6A0D34] shadow-md"
               onClick={toggleTable}
             >
               {currentTable === 'batsmen' ? 'Show Bowlers' : 'Show Batsmen'}

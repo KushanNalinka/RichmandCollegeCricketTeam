@@ -1,4 +1,5 @@
 // src/hooks/UseAuth.js
+
 import { useState,useEffect, createContext, useContext } from 'react';
 
 const AuthContext = createContext(null);
@@ -37,11 +38,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
   
 
+
   const login = (role, userData) => {
     setIsAuthenticated(true);
     setUserRole(role); // Set user role on login
     setUser(userData); // Set user data on login
     console.log("UserData: ", role);
+
     localStorage.setItem("userData", JSON.stringify(userData)); // Adjust this as per your storage type
     console.log("User logged in, data saved to storage: ", userData);
   };
@@ -55,13 +58,17 @@ export const AuthProvider = ({ children }) => {
   }
 }, []);
 
+ 
+
   const logout = () => {
     setIsAuthenticated(false);
     setUserRole(null); // Clear the role on logout
     setUser(null); // Clear user data on logout
+
     localStorage.removeItem("userData");
     sessionStorage.removeItem("userData");
   };
+
 
 
   return (
@@ -71,5 +78,7 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+
 export const useAuth = () => useContext(AuthContext);
+
 

@@ -71,10 +71,12 @@
 // export default Login;
 
 
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../hooks/UseAuth';
+
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -83,6 +85,7 @@ const Login = () => {
   });
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
+
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -101,6 +104,7 @@ const Login = () => {
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     console.log("Input changed:", e.target.name, e.target.value);
+
   };
   const validateForm = () => {
     const errors = {};
@@ -117,17 +121,22 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
     console.log("Form submitted with values:", inputs);
+
     // Perform front-end validations
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
+
       console.log("Validation errors:", errors);
+
       return;
     } else {
       setValidationError({});
     }
     try {
+
       // API call to backend for sign-in
       const res = await axios.post("http://localhost:5000/api/auth/signin", inputs);
       console.log("Response from API:", res.data);
@@ -162,15 +171,18 @@ const Login = () => {
       } else if (roles.includes("ROLE_OFFICIAL")) {
         login("official", userData);
         navigate("/member");
+
       } else {
         setError("Unknown role, please contact support.");
         return;
       }
+
       
     } catch (err) {
       // Specific error handling for incorrect username or password
       if (err.response) {
         console.error("Error response from API:", err.response);
+
         if (err.response.status === 500) {
           setError("Invalid username or password. Please check your credentials and try again.");
         } else if (err.response.status === 404) {
@@ -180,11 +192,13 @@ const Login = () => {
         }
       } else {
         setError("Network error. Please check your connection and try again.");
+
         console.error("Network error:", err);
       }
     }
   };
   
+
   return (
     <div className="flex min-h-screen">
       {/* Left Section */}
@@ -238,6 +252,7 @@ const Login = () => {
             </div>
             <div className="flex justify-between items-center">
               <label className="inline-flex items-center">
+
                 <input
                   type="checkbox"
                   className="form-checkbox text-purple-500"
@@ -247,6 +262,7 @@ const Login = () => {
                     console.log("Remember Me changed:", e.target.checked);
                   }}
                 />
+
                 <span className="ml-2 text-sm text-gray-600">Remember Me</span>
               </label>
             </div>
@@ -265,6 +281,7 @@ const Login = () => {
   );
 };
 export default Login;
+
 
 
 // import axios from "axios";
@@ -367,21 +384,6 @@ export default Login;
 //   );
 // };
 // export default Login;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

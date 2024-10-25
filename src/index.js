@@ -13,8 +13,11 @@ root.render(
   <React.StrictMode>
     {/* <AuthContexProvider> */}
     <AuthProvider>
-    <App />
+
+      <App />
     </AuthProvider>
+    
+
     {/* </AuthContexProvider> */}
   </React.StrictMode>
 );

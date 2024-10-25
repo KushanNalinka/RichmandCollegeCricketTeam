@@ -369,7 +369,7 @@ const MatchTable = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/matches/all");
+        const response = await fetch(`${API_URL}matches/all`);
         const data = await response.json();
 
         // Filter matches that are after today

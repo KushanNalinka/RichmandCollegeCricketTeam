@@ -1059,7 +1059,7 @@ const HighlightTabs = () => {
 
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   // Detect window resizing for responsiveness
   useEffect(() => {
     const handleResize = () => {
@@ -1078,7 +1078,7 @@ const HighlightTabs = () => {
   useEffect(() => {
     const fetchVideos = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/videos");
+        const response = await fetch(`${API_URL}videos`);
         const data = await response.json();
         const latestVideos = data.filter(video => video.title === "latestVideos");
         const matchHighlights = data.filter(video => video.title === "matchHighlights");
@@ -1164,7 +1164,7 @@ const HighlightTabs = () => {
 
 
         {/* MORE VIDEOS Button (Positioned below PLAYER HIGHLIGHTS on mobile) */}
-        <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
+        <a href="https://www.youtube.com/@RichmondLive-RL" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
           <button className="py-3 px-4 bg-white text-black font-bold rounded-lg mr-20">
             MORE VIDEOS
           </button>

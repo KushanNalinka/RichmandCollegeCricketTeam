@@ -53,9 +53,6 @@ const AddNewModal = ({  onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");

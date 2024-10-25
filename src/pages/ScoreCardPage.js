@@ -17,6 +17,8 @@ const ScoreCardPage = () => {
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [playersStats, setPlayersStats] = useState([]);
+  const [inningNumber, setInningNumber] = useState(); 
+  const [matchType, setMatchType] = useState(); 
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState();
   const [isEditPopupOpen, setIsEditPopupOpen] = useState();
@@ -55,14 +57,21 @@ const ScoreCardPage = () => {
         .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`)
         .then(response => {
           const playersStats = response.data;
-          setPlayersStats(playersStats);
-          console.log("Player Stats Data:", playersStats);
+          // Apply inning filter only for Test matches
+          if (matchType === "Test") {
+            const inningStats = filterInningStats(playersStats, inningNumber);
+            setPlayersStats(inningStats);
+          } else {
+            // For ODI and T20, show all stats (no inning filter needed)
+            setPlayersStats(playersStats);
+          }
+          console.log("Player stats: ", playersStats);
         })
         .catch(error => {
           console.error("There was an error fetching the player stats data!", error);
         });
       }  
-  }, [currentMatchID]);
+  }, [currentMatchID, inningNumber, matchType]);
 
   // Slice data for current page
   const paginatedData = sortedMatches.slice(
@@ -82,30 +91,33 @@ const ScoreCardPage = () => {
     }
   };
 
+  const filterInningStats = (allInningsStats, inningNumber) => {
+    return allInningsStats.filter(stat => stat.inning === inningNumber);
+  };
+
   const toggleButton = () => {
     setIsMenuOpen(!isMenuOpen);
   };
   
   // Function to handle inning selection for a specific match
-  const handleInningChange = (matchId, event) => {
-    const newInning = event.target.value;
-    setSelectedInning((prev) => ({
-      ...prev,
-      [matchId]: newInning, // Track selected inning for the specific match
-    }));
+  const handleInningChange = ( e) => {
+    setInningNumber(e.target.value);
+    setPlayersStats(filterInningStats(playersStats, inningNumber));
   };
 
   // Function to toggle dropdown visibility for each match
-  const toggleDropDown = (matchId) => {
+  const toggleDropDown = (match) => {
   //   setPressedIndex((prev) => ({
   //     ...prev,
   //     [matchId]: !prev[matchId] // Toggle the dropdown state for each match
   // }));
   //   setCurrentMatchID(matchId);
-    if (currentMatchID === matchId) {
+    if (currentMatchID === match.matchId) {
       setCurrentMatchID(null); // Close the dropdown if the same match is pressed again
+      setMatchType(null);
     } else {
-      setCurrentMatchID(matchId); // Open the new dropdown and fetch its data
+      setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
+      setMatchType(match.type);
     }
   };
 
@@ -167,28 +179,29 @@ const ScoreCardPage = () => {
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
                     </div>
                   </div>
-                  <div className="w-[20%] justify-center flex ">
+                  <div className="w-[30%] lg:w-[20%] justify-center flex ">
                     <p className="lg:text-xl text-lg font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
                   </div>
-                  <div className="flex w-[40%] items-center justify-end lg:gap-5">
+                  <div className="flex lg:w-[40%] w-[30%] items-center justify-end lg:gap-5">
                     <div className="flex items-center gap-3 tracking-wider">
                       {match.type === 'Test' && (
                         <div className={`flex tracking-wider justify-end`}>
                           {/* <label htmlFor={`inning-select-${match.matchId}`} className="text-xs font-bold font-serif">Select Inning:</label> */}
                           <select
-                            className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm uppercase  p-1 rounded text-gray-700 px-2"
-                            id={`inning-select-${match.matchId}`}
-                            value={selectedInning[match.matchId] || 1}
-                            onChange={(e) => handleInningChange(match.matchId, e)}
+                            className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm rounded text-gray-700 px-2"
+                            id="inning"
+                            value={inningNumber}
+                            onChange={handleInningChange}
                           >
-                            <option value="1" className="text-xs text-gray-700 px-3 ">Inning 1</option>
-                            <option value="2" className=" text-xs text-gray-700 px-3 ">Inning 2</option>
+                            <option value={0} selected disabled className="text-xs text-gray-700 px-3 ">Select Inning</option>
+                            <option value={1} className="text-xs text-gray-700 px-3 ">Inning 1</option>
+                            <option value={2} className=" text-xs text-gray-700 px-3 ">Inning 2</option>
                           </select>
                         </div>
                         ) 
                       }
-                      <div className="w-36">
-                        <p className="lg:flex hidden justify-end text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
+                      <div className="w-36 lg:flex flex-col hidden ">
+                        <p className="justify-end flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
@@ -198,7 +211,7 @@ const ScoreCardPage = () => {
                     </div>
                     <button
                       className="flex text-2xl font-bold"
-                      onClick={() => toggleDropDown(match.matchId)}
+                      onClick={() => toggleDropDown(match)}
                     >
                       {currentMatchID === match.matchId 
                         ? <IoIosArrowDropup />

@@ -110,7 +110,8 @@ const MatchDetails = () => {
     setMatchType(match.type);
     setMatchId(match.matchId);
     // navigate(`/scorecard/${matchId}`);
-    setChoiseModelOpen(true);
+    setIsScorePopupOpen(true);
+    //setChoiseModelOpen(true);
   };
   const handleFormSubmit = playerData => {
     // Add matchId to player data and update the players state
@@ -381,7 +382,7 @@ const MatchDetails = () => {
                 </p>
 
                 <div className="flex flex-col space-y-4">
-                  <button
+                  {/* <button
                     onClick={handleScorePopupAIOpen}
                     className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
@@ -392,7 +393,7 @@ const MatchDetails = () => {
                     className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
-                  </button>
+                  </button> */}
                 </div>
 
                 <div className="flex justify-center mt-6">

@@ -126,22 +126,38 @@ const MatchDetails = () => {
     setCurrentMatchIndex(null);
   };
 
+  const handleAddPopupClose = () => {
+    setIsFormPopupOpen(false);
+    setCurrentMatchIndex(null);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  };
+
   const handlePopupClose = () => {
     setIsPopupOpen(false);
     setCurrentMatchIndex(null);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
   const handleScorePopupAIOpen = () => {
     setIsScorePopupAIOpen(true);
     setChoiseModelOpen(false);
+   
   };
   const handleScorePopupOpen = () => {
     setIsScorePopupOpen(true);
     setChoiseModelOpen(false);
+   
   };
 
   const handleEditPopupClose = () => {
     setIsEditPopupOpen(false);
     setCurrentMatch(null);
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
   };
 
   const handleScorePopupClose = () => {
@@ -163,10 +179,10 @@ const MatchDetails = () => {
   };
 
   return (
-    <div className=" flex flex-col relative h-screen justify-center items-center bg-white">
-      <div className=" flex relative items-center justify-center h-full w-full">
+    <div className=" flex flex-col relative justify-center items-center bg-white">
+      <div className=" flex relative justify-center items-stretch min-h-screen w-full">
         <div
-          className="lg:flex hidden justify-center items-center w-[12%] h-full "
+          className="lg:flex hidden justify-center items-center w-[12%] h-auto "
           style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -175,7 +191,7 @@ const MatchDetails = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-full py-5 flex flex-col items-center justify-center">
+        <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
             <MainNavbarToggle />
             <img src={logo} className="h-12 w-12" />
@@ -205,7 +221,7 @@ const MatchDetails = () => {
               <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
                 <thead className=" text-white ">
                   <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="py-3 px-4 rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                       Opponent
                     </th>
                     <th className="py-3  px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -229,7 +245,7 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Type
                     </th>
-                    <th className="py-3 rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -240,16 +256,19 @@ const MatchDetails = () => {
                   {paginatedData.map((match, index) =>
                     <tr
                       key={match.matchId}
-                      className=" hover:bg-gray-50 h-full rounded-lg bg-white align-middle"
+                      className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
                     >
-                      <td className="py-4 rounded-l-lg px-4 h-16 whitespace-nowrap text-sm text-gray-800 font-bold ">
-                        <div className="flex items-center justify-start gap-1 ">
+                      <td className="gap-4 px-4 lg:rounded-l-lg py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                        <div className="flex items-center justify-start gap-2 ">
                           <img
-                            className="h-10 w-10"
                             src={match.logo}
                             alt={match.matchId}
+                            className="h-14 w-14 rounded-full object-cover border border-gray-300"
                           />
-                          {match.opposition}
+                          {/* Use truncate or text wrapping for small screens */}
+                          <span className="truncate whitespace-nowrap">
+                            {match.opposition}
+                          </span>
                         </div>
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
@@ -273,7 +292,7 @@ const MatchDetails = () => {
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
-                      <td className="py-4 px-4 rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -389,7 +408,7 @@ const MatchDetails = () => {
 
           {/* Popup for Adding Form */}
           {isFormPopupOpen &&
-            <FormPopup onClose={() => setIsFormPopupOpen(false)} />}
+            <FormPopup onClose={handleAddPopupClose} />}
           <MatchStatPopup
             matchId={matchId}
             isOpen={isPopupOpen}

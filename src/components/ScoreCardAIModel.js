@@ -112,7 +112,7 @@ const ScoreCardAIModel = ({ onClose, matchId }) => {
     }));
 
     try {
-      const response = await axios.post(`http://localhost:5000/api/playerStats/addMultiple`, formattedData);
+      const response = await axios.post(`${API_URL}playerStats/addMultiple`, formattedData);
       console.log("Submitted data: ",response.data);
       message.success("Submitted all player stats successfully!");
 
@@ -141,11 +141,11 @@ const ScoreCardAIModel = ({ onClose, matchId }) => {
         </h2>
         <p className="mb-6">Upload detailed score images of teams</p>
 
-        <form onSubmit={handleSubmit} className="flex flex-col items-center h-[20%] space-y-4 justify-center ">
+        <form onSubmit={handleSubmit} className="flex flex-col items-center space-y-4 justify-center ">
           <div className="flex space-x-4 w-full items-center justify-center">
             <div
               {...getBatsmanRootProps()}
-              className="w-1/3 p-4 py-7 border-dashed border-2 border-gray-400 rounded-lg flex flex-col items-center justify-center cursor-pointer"
+              className="lg:w-1/3 p-4 py-7 border-dashed border-2 border-gray-400 rounded-lg flex flex-col items-center justify-center cursor-pointer"
             >
               <input {...getBatsmanInputProps()} />
               {batsmanFile ? (
@@ -156,7 +156,7 @@ const ScoreCardAIModel = ({ onClose, matchId }) => {
             </div>
             <div
               {...getBowlerRootProps()}
-              className="w-1/3 p-4 py-7 border-dashed border-2 border-gray-400 rounded-lg flex flex-col items-center justify-center cursor-pointer"
+              className="lg:w-1/3 p-4 py-7 border-dashed border-2 border-gray-400 rounded-lg flex flex-col items-center justify-center cursor-pointer"
             >
               <input {...getBowlerInputProps()} />
               {bowlerFile ? (
@@ -169,7 +169,7 @@ const ScoreCardAIModel = ({ onClose, matchId }) => {
           </div>
           <button
               type="submit" 
-              className="px-2 w-1/6 bg-gray-400 hover:bg-opacity-100 bg-opacity-70 text-white py-2 rounded-md transition"
+              className="px-2 lg:w-1/6 bg-gray-400 hover:bg-opacity-100 bg-opacity-70 text-white py-2 rounded-md transition"
               disabled={isLoading}
             >
               {isLoading ? 'Processing...' : 'Upload and Process'}
@@ -293,11 +293,12 @@ const ScoreCardAIModel = ({ onClose, matchId }) => {
                     ))}
                   </tbody>
                 </table>
+                <div className='flex w-full items-end justify-end p-3 py-5 h-[10%]'>
+                  <button className='px-5 py-1 bg-gray-200 rounded' onClick={handleAllSubmit}>Submit all player stats</button>
+                </div>
               </div>
             )}
-            <div className='flex w-full items-end justify-end p-3 h-[10%]'>
-              <button className='px-5 py-1 bg-gray-200 rounded' onClick={handleAllSubmit}>Submit all player stats</button>
-            </div>
+            
           </>
         )}
       </div>

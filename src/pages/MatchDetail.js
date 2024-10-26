@@ -100,9 +100,10 @@ const MatchDetails = () => {
     }
   };
 
-  const handleAddStat = id => {
-    setMatchId(id);
-    setCurrentMatchIndex(id);
+  const handleAddStat = match => {
+    setMatchId(match.matchId);
+    setCurrentMatchIndex(match.matchId);
+    setMatchType(match.type);
     setIsPopupOpen(true);
   };
 
@@ -130,17 +131,17 @@ const MatchDetails = () => {
   const handleAddPopupClose = () => {
     setIsFormPopupOpen(false);
     setCurrentMatchIndex(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handlePopupClose = () => {
     setIsPopupOpen(false);
     setCurrentMatchIndex(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
   const handleScorePopupAIOpen = () => {
     setIsScorePopupAIOpen(true);
@@ -156,9 +157,9 @@ const MatchDetails = () => {
   const handleEditPopupClose = () => {
     setIsEditPopupOpen(false);
     setCurrentMatch(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handleScorePopupClose = () => {
@@ -309,7 +310,7 @@ const MatchDetails = () => {
                           <FaTrash />
                         </button>
                         <button
-                          onClick={() => handleAddStat(match.matchId)}
+                          onClick={() => handleAddStat(match)}
                           title="Add match stats"
                           className="text-yellow-500 hover:text-yellow-600"
                         >
@@ -410,13 +411,14 @@ const MatchDetails = () => {
           {/* Popup for Adding Form */}
           {isFormPopupOpen &&
             <FormPopup onClose={handleAddPopupClose} />}
-          <MatchStatPopup
-            matchId={matchId}
-            isOpen={isPopupOpen}
-            onClose={handlePopupClose}
-            onSubmit={statData =>
-              console.log("Match Stat Submitted:", statData)}
-          />
+          {
+            isPopupOpen &&
+            <MatchStatPopup
+              matchType={matchType}
+              matchId={matchId}
+              onClose={handlePopupClose}
+            />
+          }
           {isEditPopupOpen &&
             <EditPopup onClose={handleEditPopupClose} match={currentMatch} />}
           {/* Player Form Popup */}

@@ -1048,6 +1048,7 @@
 
 import React, { useState, useEffect } from "react";
 import backgroundImage from '../assets/images/Highlightss.png'; // Background image path
+
 const HighlightTabs = () => {
   const [activeTab, setActiveTab] = useState("latest");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -1057,9 +1058,9 @@ const HighlightTabs = () => {
     playerHighlights: []
   });
 
-
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const API_URL = process.env.REACT_APP_API_URL;
+
   // Detect window resizing for responsiveness
   useEffect(() => {
     const handleResize = () => {
@@ -1067,12 +1068,10 @@ const HighlightTabs = () => {
     };
 
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
 
   // Fetch videos from the API and sort them based on their title
   useEffect(() => {
@@ -1093,7 +1092,8 @@ const HighlightTabs = () => {
       }
     };
     fetchVideos();
-  }, []);
+  }, [API_URL]);
+
   const getSliderData = () => {
     switch (activeTab) {
       case "latest":
@@ -1106,24 +1106,30 @@ const HighlightTabs = () => {
         return [];
     }
   };
+
   const sliderData = getSliderData();
+
   const handleTabSwitch = (tab) => {
     setActiveTab(tab);
     setActiveIndex(0); // Reset slider to the first item
   };
+
   const handlePrev = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === 0 ? sliderData.length - 1 : prevIndex - 1
     );
   };
+
   const handleNext = () => {
     setActiveIndex((prevIndex) =>
       prevIndex === sliderData.length - 1 ? 0 : prevIndex + 1
     );
   };
+
   const handleDotClick = (index) => {
     setActiveIndex(index);
   };
+
   return (
     <div
       className="bg-cover bg-center text-white py-10"
@@ -1133,16 +1139,14 @@ const HighlightTabs = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="relative w-fit ml-20">
-        <p className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
+      <div className="relative w-fit ml-4 md:ml-20 text-center md:text-left">
+        <p className="text-[2rem] md:text-[3rem] font-extrabold text-white">
           RICHMOND HIGHLIGHTS
         </p>
       </div>
 
-
       {/* Button Tabs */}
-      <div className="flex flex-col md:flex-row ml-20 space-y-4 md:space-y-0 md:space-x-10 mt-6">
-
+      <div className="flex flex-col md:flex-row ml-4 md:ml-20 space-y-2 md:space-y-0 md:space-x-10 mt-6">
         <button
           className={`py-1 px-4 font-bold ${activeTab === "latest" ? "text-white border-b-8 border-white" : ""}`}
           onClick={() => handleTabSwitch("latest")}
@@ -1162,28 +1166,30 @@ const HighlightTabs = () => {
           PLAYER HIGHLIGHTS
         </button>
 
-
-        {/* MORE VIDEOS Button (Positioned below PLAYER HIGHLIGHTS on mobile) */}
-        <a href="https://www.youtube.com/@RichmondLive-RL" target="_blank" rel="noopener noreferrer" className="text-center block md:absolute md:right-0 mx-auto md:mx-0">
-          <button className="py-3 px-4 bg-white text-black font-bold rounded-lg mr-20">
+        {/* MORE VIDEOS Button */}
+        <a
+          href="https://www.youtube.com/@RichmondLive-RL"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="md:absolute md:right-0 mt-2 md:mt-0 text-center"
+        >
+          <button className="py-3 px-4 bg-white text-black font-bold rounded-lg mx-auto md:mr-20">
             MORE VIDEOS
           </button>
         </a>
       </div>
 
-      {/* Horizontal Line: Hidden on mobile, visible on larger screens */}
-      <hr className="hidden md:block  border-gray-300 ml-20 mr-20 mt-0" />
+      {/* Horizontal Line: Visible only on larger screens */}
+      <hr className="hidden md:block border-gray-300 ml-20 mr-20 " />
 
       {/* Video Slider */}
-
-      <div className="relative mt-10">
+      <div className="relative mt-6">
         <div className="flex justify-center space-x-4">
           {sliderData.length > 0 && (
-            // Dynamically set the number of videos based on the screen size (3 for desktop, 1 for mobile)
             Array.from({ length: isMobile ? 1 : 3 }).map((_, idx) => {
               const index = (activeIndex + idx) % sliderData.length;
               return (
-                <div key={index} className="w-full md:w-[400px] h-[600px] md:h-[600px] bg-transparent text-black p-4 rounded-xl">
+                <div key={index} className="w-full md:w-[400px] h-[300px] md:h-[600px] p-4">
                   <iframe
                     width="100%"
                     height="100%"
@@ -1199,33 +1205,29 @@ const HighlightTabs = () => {
           )}
         </div>
 
-
         {/* Prev and Next Buttons */}
-
         <button
           onClick={handlePrev}
-          className="absolute left-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 ml-2 md:ml-12 text-6xl"
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 md:p-4 text-2xl md:text-4xl"
         >
           &lt;
         </button>
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 transform -translate-y-1/2 rounded-full p-4 mr-2 md:mr-12 text-6xl"
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 md:p-4 text-2xl md:text-4xl"
         >
           &gt;
         </button>
       </div>
 
-
       {/* Dots for Slider */}
-
       <div className="flex justify-center mt-4">
         {sliderData.length > 0 && (
           Array.from({ length: sliderData.length }).map((_, idx) => (
             <span
               key={idx}
               onClick={() => handleDotClick(idx)}
-              className={`mx-1 cursor-pointer ${activeIndex === idx ? "bg-white w-8 h-2 rounded-md" : "bg-gray-300 w-2 h-2 rounded-full"}`}
+              className={`mx-1 cursor-pointer ${activeIndex === idx ? "bg-white w-6 h-2" : "bg-gray-300 w-2 h-2"} rounded-full`}
             ></span>
           ))
         )}
@@ -1233,13 +1235,5 @@ const HighlightTabs = () => {
     </div>
   );
 };
+
 export default HighlightTabs;
-
-
-
-
-
-
-
-
-

@@ -405,13 +405,13 @@ const NewsCreator = () => {
                               </div>
                             </div>
                             <div className="flex justify-end gap-3 text-[#00175f] p-1">
-                              <button onClick={() => toggleView(news)}>
+                              <button onClick={() => toggleView(news)} className=" items-center justify-center text-blue-500 hover:text-blue-600 rounded-lg">
                                 {<FaEye />}
                               </button>
-                              <button onClick={() => EditNews(news)}>
+                              <button onClick={() => EditNews(news)} className="flex items-center justify-center text-green-500 hover:text-green-600 rounded-lg">
                                 <FaEdit />
                               </button>
-                              <button onClick={() => handleDelete(news.id)}>
+                              <button onClick={() => handleDelete(news.id)} className=" items-center justify-center text-red-500 hover:text-red-600 rounded-lg">
                                 <FaTrash />
                               </button>
                             </div>

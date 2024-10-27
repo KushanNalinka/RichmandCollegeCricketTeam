@@ -51,9 +51,9 @@ const OfficialForm = ({  onClose }) => {
           contactNo: "",
           position: ""
         });
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");

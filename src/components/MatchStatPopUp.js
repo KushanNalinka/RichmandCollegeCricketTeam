@@ -289,33 +289,33 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
             </div>
            
             {(matchType==="Test" && selectedIning==="1")?(
-                   <div>
-                   <label className="block text-black text-sm font-semibold">Result</label>
-                   <input
+              <div>
+                <label className="block text-black text-sm font-semibold">Result</label>
+                  <input
                      type="text"
                      name="result"
                      value={statData.result}
                      onChange={handleChange}
-                   
+                     readOnly
                      placeholder="This is restricted for inning 1."
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                    />
                  </div>
                 ):(
                   <div>
-                  <label className="block text-black text-sm font-semibold">Result</label>
-                  <input
-                    type="text"
-                    name="result"
-                    value={statData.result}
-                    onChange={handleChange}
-                    required
-                    placeholder="Victory for college A by X runs."
-                    className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-                  />
+                    <label className="block text-black text-sm font-semibold">Result</label>
+                      <input
+                        type="text"
+                        name="result"
+                        value={statData.result}
+                        onChange={handleChange}
+                        required
+                        placeholder="Victory for college A by X runs."
+                        className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                      />
+                    </div>
+                  )}
                 </div>
-                )}
-          </div>
           {isSummaryExists?(
               <div className="flex justify-end space-x-4 pt-4 col-span-2">
                 <button

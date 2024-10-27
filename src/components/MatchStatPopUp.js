@@ -174,7 +174,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-xl w-full">
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -297,7 +297,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                      value={statData.result}
                      onChange={handleChange}
                    
-                     placeholder='Fill this in the second inning'
+                     placeholder="This is restricted for inning 1."
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                    />
                  </div>
@@ -310,6 +310,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                     value={statData.result}
                     onChange={handleChange}
                     required
+                    placeholder="Victory for college A by X runs."
                     className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                   />
                 </div>

@@ -101,6 +101,13 @@ const MatchDetails = () => {
   };
 
   const handleAddStat = match => {
+    const currentDateTime = new Date();
+    const matchDateTime = new Date(`${match.date}T${match.time}`);
+
+    if(matchDateTime>currentDateTime){
+      message.error("This match is scheduled for a future date. Match summary cannot be added at this time.");
+      return;
+    }
     setMatchId(match.matchId);
     setCurrentMatchIndex(match.matchId);
     setMatchType(match.type);
@@ -303,13 +310,6 @@ const MatchDetails = () => {
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(match.matchId)}
-                          title="Delete"
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          <FaTrash />
-                        </button>
-                        <button
                           onClick={() => handleAddStat(match)}
                           title="Add match stats"
                           className="text-yellow-500 hover:text-yellow-600"
@@ -322,6 +322,13 @@ const MatchDetails = () => {
                           className=" text-blue-500 hover:text-blue-600"
                         >
                           <MdAssignmentAdd />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(match.matchId)}
+                          title="Delete"
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <FaTrash />
                         </button>
                       </td>
                     </tr>

@@ -14,6 +14,7 @@ const FormPopup = ({  onClose }) => {
   const [imagePreview, setImagePreview] = useState();
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
@@ -34,6 +35,16 @@ const FormPopup = ({  onClose }) => {
   });
   useEffect(() => {
     // Fetch player data for playerId 4
+    axios
+      .get(`${API_URL}admin/players/all`)
+      .then(response => {
+        const players = response.data;
+        setPlayers(players);
+        console.log("players Data:", players);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
@@ -199,7 +210,7 @@ const FormPopup = ({  onClose }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -210,7 +221,7 @@ const FormPopup = ({  onClose }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -221,7 +232,7 @@ const FormPopup = ({  onClose }) => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -232,7 +243,7 @@ const FormPopup = ({  onClose }) => {
               name="opposition"
               value={formData.opposition}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -243,7 +254,7 @@ const FormPopup = ({  onClose }) => {
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select tier</option>
@@ -258,7 +269,7 @@ const FormPopup = ({  onClose }) => {
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select division</option>
@@ -273,20 +284,26 @@ const FormPopup = ({  onClose }) => {
               name="umpires"
               value={formData.umpires}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Match Captain</label>
-            <input
+            <select
               type="text"
               name="matchCaptain"
               value={formData.matchCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            />
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
+            </select>
           </div>
           
           {/* <div>
@@ -318,7 +335,7 @@ const FormPopup = ({  onClose }) => {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
                <option value="" disabled selected>Select type</option>
@@ -334,7 +351,7 @@ const FormPopup = ({  onClose }) => {
               name="team.teamId"
               value={formData.team.teamId}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="">Select team</option>
@@ -350,7 +367,7 @@ const FormPopup = ({  onClose }) => {
             <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md outline-none "
+                className="py-1 px-3 w-[88%] rounded-md text-gray-600 outline-none "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 placeholder='Choose coaches from the list...'
@@ -381,13 +398,13 @@ const FormPopup = ({  onClose }) => {
                       <input
                         type="checkbox"
                         id={`coach-${coach.coachId}`}
-                        className="mr-2"
+                        className="mr-2 text-gray-600"
                         checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
                         onChange={() => handleCoachSelect(coach)}
                       />
                       <label
                         htmlFor={`coach-${coach.coachId}`}
-                        className="block text-black text-sm font-semibold"
+                        className="block text-gray-600 text-sm font-semibold"
                       >
                         {coach.name}
                       </label>

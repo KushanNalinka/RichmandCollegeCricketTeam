@@ -57,8 +57,11 @@ const AddNewModal = ({  onClose }) => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error submitting form:", error);
-      message.error("Failed!");
+      if (error.response && error.response.data) {
+        message.error(error.response.data || "Failed!");
+      } else {
+        message.error("An unexpected error occurred.");
+      }
     }
   };
 
@@ -126,10 +129,13 @@ const AddNewModal = ({  onClose }) => {
               <option  value="Under 15">Under 15</option>
               <option  value="Under 17">Under 17</option>
               <option  value="Under 19">Under 19</option>
+              <option  value="Academy Under 13">Academy Under 13</option>
+              <option  value="Academy Under 15">Academy Under 15</option>
+              <option  value="Academy Under 17">Academy Under 17</option>
+              <option  value="Academy Under 19">Academy Under 19</option>
               <option  value="Richmond Legend Over 50">Richmond Legend Over 50</option>
               <option  value="Richmond Legend Over 40">Richmond Legend Over 40</option>
               <option  value="Old Boys">Old Boys</option>
-              <option  value="Academy">Academy</option>
             </select>
           </div>
           <div className="mb-2">
@@ -151,19 +157,23 @@ const AddNewModal = ({  onClose }) => {
               ))}
             </select>
           </div>
-          <div className="mb-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="captain">
-              Captain
-            </label>
-            <input
+          <div>
+            <label className="block text-black text-sm font-semibold">Captain</label>
+            <select
               type="text"
               id="captain"
               name="captain"
               value={formData.captain}
               onChange={handleChange}
-              className="border border-gray-300 text-gray-600 rounded-md w-full py-1 px-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="Enter captain's name"
-            />
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
+            </select>
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold" htmlFor="year">

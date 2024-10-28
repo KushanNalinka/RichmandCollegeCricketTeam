@@ -16,6 +16,7 @@ const EditPopup = ({ onClose, match }) => {
   const [imagePreview, setImagePreview] = useState(match.logo);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("selected coaches: ", selectedCoaches);
@@ -39,6 +40,16 @@ const EditPopup = ({ onClose, match }) => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    axios
+      .get(`${API_URL}admin/players/all`)
+      .then(response => {
+        const players = response.data;
+        setPlayers(players);
+        console.log("players Data:", players);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
@@ -211,7 +222,7 @@ const EditPopup = ({ onClose, match }) => {
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
@@ -221,7 +232,7 @@ const EditPopup = ({ onClose, match }) => {
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
@@ -231,7 +242,7 @@ const EditPopup = ({ onClose, match }) => {
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
@@ -241,7 +252,7 @@ const EditPopup = ({ onClose, match }) => {
               name="opposition"
               value={formData.opposition}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
@@ -251,7 +262,7 @@ const EditPopup = ({ onClose, match }) => {
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select tier</option>
@@ -266,7 +277,7 @@ const EditPopup = ({ onClose, match }) => {
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select division</option>
@@ -281,18 +292,25 @@ const EditPopup = ({ onClose, match }) => {
               name="umpires"
               value={formData.umpires}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Match Captain</label>
-            <input
+            <select
               type="text"
               name="matchCaptain"
               value={formData.matchCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            />
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
+            </select>
           </div>
           <div>
             <label className="block text-black text-sm font-semibold" htmlFor="team.under">Team</label>
@@ -301,7 +319,7 @@ const EditPopup = ({ onClose, match }) => {
               name="team.under"
               value={formData.team.under}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select team</option>
               {teams.map(team =>
@@ -317,7 +335,7 @@ const EditPopup = ({ onClose, match }) => {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
                <option value="" disabled selected>Select type</option>
               <option value="Test">Test</option>
@@ -330,7 +348,7 @@ const EditPopup = ({ onClose, match }) => {
             <div className="flex border gap-1 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md outline-none "
+                className="py-1 px-3 w-[88%] rounded-md outline-none text-gray-600 "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 placeholder='Choose coaches from the list...'
@@ -361,13 +379,13 @@ const EditPopup = ({ onClose, match }) => {
                       <input
                         type="checkbox"
                         id={`coach-${coach.coachId}`}
-                        className="mr-2"
+                        className="mr-2 text-gray-600"
                         checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
                         onChange={() => handleCoachSelect(coach)}
                       />
                       <label
                         htmlFor={`coach-${coach.coachId}`}
-                        className="block text-black text-sm font-semibold"
+                        className="block text-gray-600 text-sm font-semibold"
                       >
                         {coach.name}
                       </label>

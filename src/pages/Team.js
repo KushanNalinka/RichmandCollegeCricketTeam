@@ -28,6 +28,7 @@ const TableComponent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [teamToDelete, setTeamToDelete] = useState(null);
+  
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -100,16 +101,16 @@ const TableComponent = () => {
 
   const handleAddFormClose = () => {
     setIsModalOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handleEditFormClose = () => {
     setIsEditModalOpen(false)
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   return (
@@ -191,13 +192,13 @@ const TableComponent = () => {
                       >
                         <FaEdit />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleDelete(item.teamId)}
                         className="text-red-500 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
                         <FaTrash />
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => handleViewMembers(item.teamId)}
                         className="text-green-500 hover:text-green-600 transition-colors"

@@ -1,29 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import { message } from "antd";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
+import { BsPeople } from 'react-icons/bs';
+import { MdPeople } from 'react-icons/md';
+import { message } from 'antd';
 
 const EditPopup = ({ onClose, match }) => {
+  console.log("initial matches: ", match);
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
-  const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [selectedCoaches, setSelectedCoaches] = useState(match.coaches || []);
   const [imagePreview, setImagePreview] = useState(match.logo);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  console.log("selected coaches: ", selectedCoaches);
+  const convertTimeTo24Hour = (time12h) => {
+    const [time, modifier] = time12h.split(' ');
+    let [hours, minutes] = time.split(':');
+    if (hours === '12') hours = '00';
+    if (modifier === 'PM') hours = parseInt(hours, 10) + 12;
+    return `${hours}:${minutes}`;
+  };
+
   const [formData, setFormData] = useState({
-    ...match, 
-    team: {
-      teamId: match.teamId || ""
-  },
-  coaches: []});
+    ...match,
+    team:{
+      teamId:match.teamId,
+      under:match.under,
+    },
+    time: convertTimeTo24Hour(match.time),
+    coaches: match.coaches || []
+  });
 
   useEffect(() => {
     // Fetch player data for playerId 4
-    
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
@@ -43,7 +58,20 @@ const EditPopup = ({ onClose, match }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name.includes(".")) {
+    if (name === "team.under") {
+      // Find the selected team based on the 'under' value
+      const selectedTeam = teams.find(team => team.under === value);
+      const selectedTeamId = selectedTeam ? selectedTeam.teamId : "";
+  
+      setFormData({
+        ...formData,
+        team: {
+          ...formData.team,
+          under: value,
+          teamId: selectedTeamId // Update teamId based on selected team
+        }
+      });
+    } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
         ...formData,
@@ -70,7 +98,7 @@ const EditPopup = ({ onClose, match }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
-    console.log("coachIds;", formData.coaches);
+    console.log("coachIds in edited foemdata;", formData.coaches);
     try {
       let imageURL = formData.logo;
 
@@ -83,13 +111,14 @@ const EditPopup = ({ onClose, match }) => {
         ...formData,
         logo: imageURL, // Assign the uploaded image URL to formData
       };
+      console.log("Match Data :", matchData);
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        matchData
+        {...matchData}
       );
+      message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);
-      message.success("Successfull!");
       setFormData({
         date: "",
         time: "",
@@ -101,21 +130,28 @@ const EditPopup = ({ onClose, match }) => {
         umpires: "",
         type: "",
         matchCaptain: "",
-        team: {
-          teamId: ""
+        team:{
+          under:"",
+          teamId:""
         },
         coaches: []
       })
       setSelectedCoaches([]);
       setImagePreview();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
     }
   };
   const handleCoachSelect = coach => {
-    if (!selectedCoaches.includes(coach)) {
-      setSelectedCoaches([...selectedCoaches, coach]);
+    const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
+    if (isSelected) {
+      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
+    } else {
+      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }]);
     }
   };
 
@@ -123,16 +159,12 @@ const EditPopup = ({ onClose, match }) => {
     setSelectedCoaches([]); // Clear all selected coaches
   };
 
-  useEffect(
-    () => {
-      // Update formData when selected coaches change
-      setFormData({
-        ...formData,
-        coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId }))
-      });
-    },
-    [selectedCoaches]
-  );
+  useEffect(() => {
+    setFormData(prevData => ({
+      ...prevData,
+      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId }))
+    }));
+  }, [selectedCoaches]);
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
@@ -171,7 +203,7 @@ const EditPopup = ({ onClose, match }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-4 text-[#480D35]"> Edit Match Details</h2>
-        <form onSubmit={handleEdit} className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+        <form className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <div>
             <label className="block text-black text-sm font-semibold">Date</label>
             <input
@@ -214,23 +246,33 @@ const EditPopup = ({ onClose, match }) => {
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Tier</label>
-            <input
+            <select
               type="text"
               name="tier"
               value={formData.tier}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            />
+              required
+            >
+              <option value="" disabled selected>Select tier</option>
+              <option value="Tier A">Tier A</option>
+              <option value="Tier B">Tier B</option>
+            </select>
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Division</label>
-            <input
+            <select
               type="text"
               name="division"
               value={formData.division}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            />
+              required
+            >
+              <option value="" disabled selected>Select division</option>
+              <option value="Division 1"> Division 1</option>
+              <option value="Division 2">Division 2</option>
+            </select>
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Umpires</label>
@@ -253,16 +295,17 @@ const EditPopup = ({ onClose, match }) => {
             />
           </div>
           <div>
-            <label className="block text-black text-sm font-semibold">Team</label>
+            <label className="block text-black text-sm font-semibold" htmlFor="team.under">Team</label>
             <select
-              name="team.teamId"
-              value={formData.team.teamId}
+              id="team.under"
+              name="team.under"
+              value={formData.team.under}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select team</option>
               {teams.map(team =>
-                <option key={team.teamId} value={team.teamId}>
+                <option key={team.teamId} value={team.under}>
                   {team.under}
                 </option>
               )}
@@ -284,37 +327,55 @@ const EditPopup = ({ onClose, match }) => {
           </div>
           <div className="col-span-2">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
+            <div className="flex border gap-1 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[80%] rounded-md outline-none "
-                value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
+                className="py-1 px-3 w-[88%] rounded-md outline-none "
+                value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
+                placeholder='Choose coaches from the list...'
               />
+               <button
+                  type='button'
+                  title='Select coaches'
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center w-[6%] justify-center text-2xl text-green-500 hover:text-green-600 rounded-lg"
+                >
+                  <MdPeople/>
+              </button>
               <button
                 type="button"
-                className="flex items-center w-[20%] justify-center text-red-600 hover:text-red-700 rounded-lg"
+                title='delete'
+                className=" items-center w-[6%] justify-center text-red-500 hover:text-red-600 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>
               </button>
             </div>
-            <select
-              className="w-full px-3 py-1 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              onChange={e =>
-                handleCoachSelect(
-                  coaches.find(
-                    coach => coach.coachId === parseInt(e.target.value)
-                  )
-                )}
-            >
-              <option value="" disabled selected>Select coaches</option>
-              {coaches.map(coach =>
-                <option key={coach.coachId} value={coach.coachId}>
-                  {coach.name}
-                </option>
+            <div className="relative col-span-1">
+              {/* Dropdown Content */}
+              {dropdownOpen && (
+                <div className="absolute w-full bg-white border border-gray-200 rounded-md shadow-md max-h-40 overflow-y-auto z-10">
+                  {coaches.map(coach => (
+                    <li key={coach.coachId} className="flex items-center px-3 py-2">
+                      <input
+                        type="checkbox"
+                        id={`coach-${coach.coachId}`}
+                        className="mr-2"
+                        checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
+                        onChange={() => handleCoachSelect(coach)}
+                      />
+                      <label
+                        htmlFor={`coach-${coach.coachId}`}
+                        className="block text-black text-sm font-semibold"
+                      >
+                        {coach.name}
+                      </label>
+                    </li>
+                  ))}
+                </div>
               )}
-            </select>
+            </div>
            
           </div>
           <div className="col-span-2">
@@ -337,6 +398,7 @@ const EditPopup = ({ onClose, match }) => {
 
           <div className="col-span-2">
             <button
+              onClick={handleEdit}
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >

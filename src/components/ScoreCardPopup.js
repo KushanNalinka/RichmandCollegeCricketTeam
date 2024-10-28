@@ -141,6 +141,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+    
   };
 
   // Add player stat
@@ -235,7 +236,19 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
     }
   };
 
+  // const handleAddRow = matchId => {
+  //   if(!inningNumber){
+  //       message.info("First select an inning");
+  //   }else{
+  //     setPressedPlus(matchId);
+  //     setIsAdding(!isAdding);
+  //   }
+  // };
   const handleAddRow = matchId => {
+    if (matchType=="Test" && !inningNumber) {
+      message.error("Please select an inning");
+      return; // Prevent further execution if inning is not selected
+    }
     setPressedPlus(matchId);
     setIsAdding(!isAdding);
   };
@@ -434,7 +447,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                           </td>
                         </>
                       : <>
-                          <td className=" px-4 h-10 whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <td className=" px-4 h-10 lg:rounded-l-lg whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
@@ -464,7 +477,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.balls}
                           </td>
-                          <td className="px-4 flex space-x-2 h-10 whitespace-nowrap text-sm text-gray-600">
+                          <td className="px-4 lg:rounded-r-lg space-x-2 h-10 whitespace-nowrap text-sm text-gray-600">
                             <button
                               title="Edit"
                               onClick={() => handleEditPlayerStack(player)}
@@ -594,7 +607,8 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                       <FaSave />
                     </button>
                   </td>
-                </tr>}
+                </tr>
+              }
               <tr>
                 <div className="flex w-full top-0 mx-4 mb-2 ">
                   <button
@@ -611,10 +625,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
         </div>
         </div>
         {showDeleteModal && (
-              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-                  <p>Are you sure you want to delete this player?</p>
+          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+                <p>Are you sure you want to delete this player?</p>
                   <div className="flex justify-end mt-4 space-x-4">
                     <button
                       onClick={() => setShowDeleteModal(false)}

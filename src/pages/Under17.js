@@ -406,64 +406,148 @@ const PlayerProfile = () => {
     }
 
     // Function to summarize player stats for display in the table
-    const summarizeStats = (type) => {
-        if (!playerStat || !playerStat.length) {
-            return {
-                matches: 0,
-                innings: 0,
-                runs: 0,
-                highestScore: 0,
-                avg: 0,
-                sr: 0,
-                "100s": 0,
-                "50s": 0,
-                "4s": 0,
-                "6s": 0,
-            };
-        }
+    // const summarizeStats = (type) => {
+    //     if (!playerStat || !playerStat.length) {
+    //         return {
+    //             matches: 0,
+    //             innings: 0,
+    //             runs: 0,
+    //             highestScore: 0,
+    //             avg: 0,
+    //             sr: 0,
+    //             "100s": 0,
+    //             "50s": 0,
+    //             "4s": 0,
+    //             "6s": 0,
+    //         };
+    //     }
 
-        const filteredStats = playerStat.filter(
-            (stat) => stat.match.type === type
-        );
+    //     const filteredStats = playerStat.filter(
+    //         (stat) => stat.match.type === type
+    //     );
 
-        const summary = filteredStats.reduce(
-            (acc, stat) => {
-                acc.matches += 1; // Since each stat is from a separate match
-                acc.innings += parseInt(stat.inning, 10) || 0;
-                acc.runs += stat.runs || 0;
-                acc.highestScore = Math.max(acc.highestScore, stat.runs);
-                acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
-                acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate calculation
-                acc["100s"] += stat.centuries || 0;
-                acc["50s"] += stat.fifties || 0;
-                acc["4s"] += stat.fours || 0;
-                acc["6s"] += stat.sixers || 0;
-                acc.overs += stat.overs || 0;
-                acc.wickets += stat.wickets || 0;
-                acc.runsConceded += stat.runsConceded || 0;
-                acc.bowlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
-                return acc;
-            },
-            {
-                matches: 0,
-                innings: 0,
-                runs: 0,
-                highestScore: 0,
-                avg: 0,
-                sr: 0,
-                overs: 0,
-                "100s": 0,
-                "50s": 0,
-                "4s": 0,
-                "6s": 0,
-                wickets: 0,
-                runsConceded: 0,
-                bowlingAvg: 0,
+    //     const summary = filteredStats.reduce(
+    //         (acc, stat) => {
+    //             acc.matches += 1; // Since each stat is from a separate match
+    //             acc.innings += parseInt(stat.inning, 10) || 0;
+    //             acc.runs += stat.runs || 0;
+    //             acc.highestScore = Math.max(acc.highestScore, stat.runs);
+    //             acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
+    //             acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate calculation
+    //             acc["100s"] += stat.centuries || 0;
+    //             acc["50s"] += stat.fifties || 0;
+    //             acc["4s"] += stat.fours || 0;
+    //             acc["6s"] += stat.sixers || 0;
+    //             acc.overs += stat.overs || 0;
+    //             acc.wickets += stat.wickets || 0;
+    //             acc.runsConceded += stat.runsConceded || 0;
+    //             acc.bowlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
+    //             return acc;
+    //         },
+    //         {
+    //             matches: 0,
+    //             innings: 0,
+    //             runs: 0,
+    //             highestScore: 0,
+    //             avg: 0,
+    //             sr: 0,
+    //             overs: 0,
+    //             "100s": 0,
+    //             "50s": 0,
+    //             "4s": 0,
+    //             "6s": 0,
+    //             wickets: 0,
+    //             runsConceded: 0,
+    //             bowlingAvg: 0,
+    //         }
+    //     );
+
+    //     return summary;
+    // };
+
+    // Function to summarize player stats for display in the table
+const summarizeStats = (type) => {
+    if (!playerStat || !playerStat.length) {
+        return {
+            matches: 0,
+            innings: 0,
+            runs: 0,
+            highestScore: 0,
+            avg: 0,
+            sr: 0,
+            "100s": 0,
+            "50s": 0,
+            "4s": 0,
+            "6s": 0,
+            overs: 0,
+            wickets: 0,
+            runsConceded: 0,
+            bowlingAvg: 0,
+            economyRate: 0,
+            best: "0/0",
+        };
+    }
+
+    const filteredStats = playerStat.filter(
+        (stat) => stat.match.type === type
+    );
+
+    const summary = filteredStats.reduce(
+        (acc, stat) => {
+            acc.matches += 1; // Each stat is from a separate match
+            acc.innings += parseInt(stat.inning, 10) || 0;
+            acc.runs += stat.runs || 0;
+            acc.highestScore = Math.max(acc.highestScore, stat.runs);
+            acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
+            acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate
+            acc["100s"] += stat.centuries || 0;
+            acc["50s"] += stat.fifties || 0;
+            acc["4s"] += stat.fours || 0;
+            acc["6s"] += stat.sixers || 0;
+            acc.overs += stat.overs || 0;
+            acc.wickets += stat.wickets || 0;
+            acc.runsConceded += stat.runsConceded || 0;
+
+            // Calculate best bowling performance
+            if (stat.wickets > acc.bestWickets || 
+                (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)) {
+                acc.bestWickets = stat.wickets;
+                acc.bestRunsConceded = stat.runsConceded;
             }
-        );
 
-        return summary;
-    };
+            return acc;
+        },
+        {
+            matches: 0,
+            innings: 0,
+            runs: 0,
+            highestScore: 0,
+            avg: 0,
+            sr: 0,
+            overs: 0,
+            "100s": 0,
+            "50s": 0,
+            "4s": 0,
+            "6s": 0,
+            wickets: 0,
+            runsConceded: 0,
+            bowlingAvg: 0,
+            bestWickets: 0,
+            bestRunsConceded: Infinity,
+            economyRate: 0,
+            best: "0/0",
+        }
+    );
+
+    // Calculate economy rate
+    summary.economyRate = summary.overs > 0 ? (summary.runsConceded / summary.overs).toFixed(2) : 0;
+    // Calculate bowling average
+    summary.bowlingAvg = summary.wickets > 0 ? (summary.runsConceded / summary.wickets).toFixed(2) : 0;
+    // Set the best bowling performance
+    summary.best = `${summary.bestWickets}/${summary.bestRunsConceded !== Infinity ? summary.bestRunsConceded : 0}`;
+    
+    return summary;
+};
 
     return (
         <div className="bg-gray-400 min-h-screen text-white">
@@ -515,10 +599,10 @@ const PlayerProfile = () => {
                                     className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
                                 />
                             </div>
-                            <div className="text-center md:text-left">
+                            <div className="text-center ml-8 md:text-left">
                                 <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
-                                <p className="text-gray-400 text-base md:text-xl">
-                                    {selectedPlayer?.startDate} - {selectedPlayer?.endDate === 'Present' || !selectedPlayer?.endDate ? 'Present' : selectedPlayer?.endDate}
+                                <p className="text-gray-400 text-base md:text-3xl">
+                                    Under 17
                                 </p>
                             </div>
                         </div>

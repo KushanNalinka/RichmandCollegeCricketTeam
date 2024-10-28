@@ -680,26 +680,51 @@ const ScoreCard = ({ onMatchId }) => {  // Receive onMatchId as a prop
   const [secondInningData, setSecondInningData] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   // Fetch data from API
+  // useEffect(() => {
+  //   fetch(`${API_URL}matchSummary/all`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       const firstMatch = data[0]; // Get the first match data (1st inning)
+  //       const secondMatch = data[1]; // Get the second match data (2nd inning, if available)
+
+  //       // Check if the first match is T20 or ODI
+  //       if (firstMatch.type === 'T20' || firstMatch.type === 'ODI') {
+  //         setMatchData(firstMatch); // Use only the first match data for T20 and ODI
+  //         onMatchId(firstMatch.matchId);  // Pass matchId back to HomePage.js
+  //       } else if (firstMatch.type === 'Test' && secondMatch && firstMatch.matchId === secondMatch.matchId) {
+  //         // For Test matches, check if the matchId is the same for both innings
+  //         setMatchData(firstMatch); // Set the first inning data
+  //         setSecondInningData(secondMatch); // Set the second inning data
+  //         onMatchId(firstMatch.matchId);  // Pass matchId back to HomePage.js
+  //       }
+  //     })
+  //     .catch((error) => console.error('Error fetching match data:', error));
+  // }, [onMatchId]);
+
   useEffect(() => {
     fetch(`${API_URL}matchSummary/all`)
       .then((response) => response.json())
       .then((data) => {
-        const firstMatch = data[0]; // Get the first match data (1st inning)
-        const secondMatch = data[1]; // Get the second match data (2nd inning, if available)
-
-        // Check if the first match is T20 or ODI
-        if (firstMatch.type === 'T20' || firstMatch.type === 'ODI') {
-          setMatchData(firstMatch); // Use only the first match data for T20 and ODI
-          onMatchId(firstMatch.matchId);  // Pass matchId back to HomePage.js
-        } else if (firstMatch.type === 'Test' && secondMatch && firstMatch.matchId === secondMatch.matchId) {
+        if (data.length === 0) return; // If there's no match data, exit
+  
+        const lastMatchIndex = data.length - 1;
+        const lastMatch = data[lastMatchIndex]; // Get the last match data (1st inning)
+        const secondMatch = data[lastMatchIndex - 1]; // Check if the previous item is the 2nd inning of the same match
+  
+        // Check if the last match is T20 or ODI
+        if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
+          setMatchData(lastMatch); // Use only the last match data for T20 and ODI
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
+        } else if (lastMatch.type === 'Test' && secondMatch && lastMatch.matchId === secondMatch.matchId) {
           // For Test matches, check if the matchId is the same for both innings
-          setMatchData(firstMatch); // Set the first inning data
+          setMatchData(lastMatch); // Set the first inning data
           setSecondInningData(secondMatch); // Set the second inning data
-          onMatchId(firstMatch.matchId);  // Pass matchId back to HomePage.js
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
         }
       })
       .catch((error) => console.error('Error fetching match data:', error));
   }, [onMatchId]);
+  
 
   if (!matchData) {
     return <p>Loading...</p>; // Loading state while fetching data

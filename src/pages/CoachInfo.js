@@ -82,6 +82,9 @@ const CoachTable = () => {
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       loadCoaches();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
       message.error("Failed!");
@@ -90,16 +93,16 @@ const CoachTable = () => {
 
   const handleAddFormClose = () => {
     setIsFormOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   return (

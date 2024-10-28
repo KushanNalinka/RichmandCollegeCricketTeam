@@ -4,6 +4,7 @@ import { message } from "antd";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
+import { MdPeople } from 'react-icons/md';
 
 const FormPopup = ({  onClose }) => {
   const [coaches, setCoaches] = useState([]);
@@ -13,6 +14,7 @@ const FormPopup = ({  onClose }) => {
   const [imagePreview, setImagePreview] = useState();
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     date: "",
@@ -32,7 +34,6 @@ const FormPopup = ({  onClose }) => {
   });
   useEffect(() => {
     // Fetch player data for playerId 4
-
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
@@ -117,15 +118,21 @@ const FormPopup = ({  onClose }) => {
       })
       setImagePreview();
       setSelectedCoaches([]);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
     }
   };
+
   const handleCoachSelect = coach => {
-    // Avoid adding duplicate coaches
-    if (!selectedCoaches.includes(coach)) {
-      setSelectedCoaches([...selectedCoaches, coach]);
+    const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
+    if (isSelected) {
+      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
+    } else {
+      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }]);
     }
   };
 
@@ -133,16 +140,12 @@ const FormPopup = ({  onClose }) => {
     setSelectedCoaches([]); // Clear all selected coaches
   };
 
-  useEffect(
-    () => {
-      // Update formData when selected coaches change
-      setFormData({
-        ...formData,
-        coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId }))
-      });
-    },
-    [selectedCoaches]
-  );
+  useEffect(() => {
+    setFormData(prevData => ({
+      ...prevData,
+      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId, coachName: coach.coachName }))
+    }));
+  }, [selectedCoaches]);
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
@@ -235,25 +238,33 @@ const FormPopup = ({  onClose }) => {
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Tier</label>
-            <input
+            <select
               type="text"
               name="tier"
               value={formData.tier}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
-            />
+            >
+              <option value="" disabled selected>Select tier</option>
+              <option value="Tier 1">Tier A</option>
+              <option value="Tier 2">Tier B</option>
+            </select>
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Division</label>
-            <input
+            <select
               type="text"
               name="division"
               value={formData.division}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
-            />
+            >
+              <option value="" disabled selected>Select division</option>
+              <option value="Division 1"> Division 1</option>
+              <option value="Division 2">Division 2</option>
+            </select>
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Umpires</label>
@@ -334,39 +345,57 @@ const FormPopup = ({  onClose }) => {
               )}
             </select>
           </div>
-          <div  className="col-span-2 ">
+          <div className="col-span-2">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border border-gray-300 rounded-md">
+            <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[80%] rounded-md outline-none  "
-                value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
+                className="py-1 px-3 w-[88%] rounded-md outline-none "
+                value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
+                placeholder='Choose coaches from the list...'
               />
+               <button
+                  type='button'
+                  title='Select coaches'
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center w-[6%] justify-center text-2xl text-green-500 hover:text-green-600 rounded-lg"
+                >
+                  <MdPeople/>
+              </button>
               <button
                 type="button"
-                className="flex items-center w-[20%] justify-center text-red-600 hover:text-red-700 rounded-lg"
+                title='delete'
+                className=" items-center w-[6%] justify-center text-red-500 hover:text-red-600 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>
               </button>
             </div>
-            <select
-              className="w-full px-3 py-1 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              onChange={e =>
-                handleCoachSelect(
-                  coaches.find(
-                    coach => coach.coachId === parseInt(e.target.value)
-                  )
-                )}
-            >
-              <option value="" disabled selected>Select coaches</option>
-              {coaches.map(coach =>
-                <option key={coach.coachId} value={coach.coachId}>
-                  {coach.name}
-                </option>
+            <div className="relative col-span-1">
+              {/* Dropdown Content */}
+              {dropdownOpen && (
+                <div className="absolute w-full bg-white border border-gray-200 rounded-md shadow-md max-h-40 overflow-y-auto z-10">
+                  {coaches.map(coach => (
+                    <li key={coach.coachId} className="flex items-center px-3 py-2">
+                      <input
+                        type="checkbox"
+                        id={`coach-${coach.coachId}`}
+                        className="mr-2"
+                        checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
+                        onChange={() => handleCoachSelect(coach)}
+                      />
+                      <label
+                        htmlFor={`coach-${coach.coachId}`}
+                        className="block text-black text-sm font-semibold"
+                      >
+                        {coach.name}
+                      </label>
+                    </li>
+                  ))}
+                </div>
               )}
-            </select>
+            </div>
            
           </div>
           <div  className="col-span-2 ">

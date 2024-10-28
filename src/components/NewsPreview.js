@@ -30,7 +30,7 @@ const NewsPreview = ({ news, onClose }) => {
               <h1 className="text-primary font-bold md:text-2xl text-lg">
                 {selectedNews.heading}
               </h1>
-              <p className="my-3 text-base">by {selectedNews.author}</p>
+              <p className="my-3 text-base">by <span className="font-semibold">{selectedNews.author}</span></p>
               <div className=" mt-3 flex text-sm">
                     <p className="text-gray-600 ">{dayjs(news.dateTime).format('YYYY-MMM-DD')}</p>
                     <p className="text-gray-600 before:content-['•'] before:mx-2">{dayjs(news.dateTime).fromNow()}</p>

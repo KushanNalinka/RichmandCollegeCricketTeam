@@ -50,7 +50,6 @@ const PlayerForm = ({  onClose }) => {
         ...formData,
         [name]: file
       });
-      setIsImageAdded(true);
     } else {
       setFormData({
         ...formData,
@@ -98,10 +97,17 @@ const PlayerForm = ({  onClose }) => {
           },
           contactNo: ""
         });
+        setImagePreview();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
-        console.error("Error submitting form:", error);
-        message.error("Failed!");
-      }
+        if (error.response && error.response.data) {
+          message.error(error.response.data.message || "Failed!");
+        } else {
+          message.error("An unexpected error occurred.");
+        }
+      };
     
   };
 
@@ -224,6 +230,7 @@ const PlayerForm = ({  onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
+              required
             />
           </div>
           <div>
@@ -282,7 +289,7 @@ const PlayerForm = ({  onClose }) => {
               value={formData.status}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-
+              required
             >
               <option value='' selected disabled>
                 Select

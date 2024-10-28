@@ -1130,8 +1130,9 @@
 
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/MemberNavbar";
-import backgroundFlag from "../assets/images/flag.png";
+import backgroundImage from '../assets/images/flag.png';
 import Footer from "../components/Footer";
+import coachPlaceholderImage from '../assets/images/dana.jpeg';
 
 const CoachesProfile = () => {
     const [coachesData, setCoachesData] = useState([]);
@@ -1139,6 +1140,7 @@ const CoachesProfile = () => {
     const [practiceSchedulesData, setPracticeSchedulesData] = useState([]);
     const [showCoachList, setShowCoachList] = useState(false); // For mobile responsiveness
     const API_URL = process.env.REACT_APP_API_URL;
+
     // Fetch data from the API when the component mounts
     useEffect(() => {
         const fetchCoachesData = async () => {
@@ -1180,124 +1182,165 @@ const CoachesProfile = () => {
 
     return (
         <div className="bg-gray-400 min-h-screen text-white">
+            {/* Navbar */}
             <Navbar />
-            <div className="max-w-screen-lg pt-24 mx-auto">
-               
 
-                <div className="flex flex-col md:flex-row gap-6">
-                    {/* Sidebar: Our Coaches Section - Only visible on desktop (md and larger) */}
-                    <div
-                        className="hidden md:block bg-white rounded-lg shadow-md"
-                        style={{
-                            width: "350px",
-                            flexShrink: 0,
-                            marginTop: "0px",
-                            maxHeight: "500px",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
+            {/* Main Content */}
+            <div className="max-w-screen pt-20">
+                {/* Mobile Player List Toggle */}
+                <div className="md:hidden top-20 left-0 right-0 bg-gray-200 p-4 rounded-lg shadow-md z-10">
+                    <button 
+                        onClick={() => setShowCoachList(!showCoachList)} 
+                        className="text-black font-bold flex justify-between items-center w-full"
                     >
-                        <div className="p-4 border-b border-gray-600">
-                            <h2 className="text-xl font-bold text-black">Our Coaches</h2>
-                        </div>
-                        <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: "calc(500px - 64px)" }}>
-                            <ul className="space-y-3">
+                        Our Coaches
+                        <span>{showCoachList ? '-' : '+'}</span>
+                    </button>
+                    {showCoachList && (
+                        <div className="mt-4">
+                            <ul className="space-y-3 text-black">
                                 {coachesData.map((coach) => (
-                                    <li
-                                        key={coach.coachId}
-                                        className={`cursor-pointer p-3 rounded-lg ${coach.coachId === selectedCoach.coachId ? 'bg-gray-200 font-bold' : 'bg-gray-800'}`}
-                                        onClick={() => setSelectedCoach(coach)}
+                                    <li 
+                                        key={coach.coachId} 
+                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
+                                        onClick={() => { setSelectedCoach(coach); setShowCoachList(false); }}
                                     >
-                                        <div className="flex items-center">
-                                            <img src={coach.image} alt={coach.name} className="w-10 h-10 rounded-full object-cover mr-3" />
-                                            {coach.name}
-                                        </div>
+                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        {coach.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+
+                <div className="justify-center w-full px-4 md:px-10">
+                    <div className="relative bg-[#000000] rounded-lg shadow-md overflow-hidden mt-4 mb-8">
+                        <img
+                            src={backgroundImage}
+                            alt="Background"
+                            className="w-full h-48 object-cover opacity-75"
+                        />
+                        <div className="absolute inset-0 flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-4 md:px-20 py-6 space-y-4 md:space-y-0">
+                            {/* Profile Image Container */}
+                            <div className="relative flex-shrink-0 mb-4 md:mb-0">
+                                <img
+                                    src={selectedCoach?.image || coachPlaceholderImage}
+                                    alt={selectedCoach?.name}
+                                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                                />
+                            </div>
+                            <div className="text-center md:text-left">
+                                <h1 className="text-2xl md:text-5xl font-bold">{selectedCoach?.name}</h1>
+                                <p className="text-gray-400 text-base md:text-xl">
+                                Date of Birth:{" "}
+                                {new Date(selectedCoach.dateOfBirth).toLocaleDateString()}  
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="flex gap-6 justify-center px-10 md:flex-row flex-col">
+                    {/* Player List for desktop */}
+                    <div className="md:flex hidden bg-gray-200 rounded-lg shadow-md" style={{ width: '350px', flexShrink: 0, maxHeight: '469px', flexDirection: 'column' }}>
+                        <div className="p-4 border-b text-black border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-900">Our Coaches</h2>
+                        </div>
+                        <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                            <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
+                                {coachesData.map((coach) => (
+                                    <li key={coach.coachId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedCoach(coach)}>
+                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        {coach.name}
                                     </li>
                                 ))}
                             </ul>
                         </div>
                     </div>
 
-                    
-
-                    {/* Coach Details */}
-                    <div className="flex-grow bg-gray-800 p-6 rounded-lg shadow-md" style={{ minHeight: '500px' }}>
-                        <div className="flex flex-col md:flex-row items-center md:items-start space-x-0 md:space-x-6">
-                            <div
-                                className="rounded-full overflow-hidden border-4 border-blue-500 mb-4 md:mb-0"
-                                style={{ width: "150px", height: "150px" }}
-                            >
-                                <img src={selectedCoach.image} alt={selectedCoach.name} className="w-full h-full object-cover" />
+                    {/* Player Details */}
+                    {selectedCoach && (
+                        <div className="flex-grow text-gray-700 bg-gray-200 p-6 rounded-lg shadow-md ml-18">
+                            <div className="bg-gray-100 p-6 rounded-lg">
+                                <h2 className="text-xl font-bold mb-4 text-center">Personal Information</h2>
+                                <div className="hover:overflow-x-auto overflow-x-hidden">
+                                    <table className="min-w-full bg-white border-gray-300 rounded-lg mb-6 table-auto">
+                                        <tbody>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Name:</td>
+                                                <td className="py-2 px-5">{selectedCoach.name}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Date of Birth:</td>
+                                                <td className="py-2 px-5">{selectedCoach.dateOfBirth}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Email:</td>
+                                                <td className="py-2 px-5">{selectedCoach.email}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Contact No:</td>
+                                                <td className="py-2 px-5">{selectedCoach.contactNo}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Description:</td>
+                                                <td className="py-2 px-5">{selectedCoach.description}</td>
+                                            </tr>
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div>
-                                <h1 className="text-3xl md:text-5xl font-bold">{selectedCoach.name}</h1>
-                                <p className="text-white">Date of Birth: {new Date(selectedCoach.dateOfBirth).toLocaleDateString()}</p>
-                            </div>
-                        </div>
 
-                        <div className="mt-6 bg-gray-900 p-6 rounded-lg shadow-md">
-                           
-
-                            <div className="mt-6 bg-gray-900 p-6 rounded-lg shadow-md">
-    <h3 className="text-xl font-semibold text-white">Coach Information</h3>
-    <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 rounded-lg text-left">
-            <tbody>
-                <tr>
-                    <td className="py-2 px-4 text-gray-400 font-semibold">Contact:</td>
-                    <td className="py-2 px-4">{selectedCoach.contactNo}</td>
-                </tr>
-                <tr>
-                    <td className="py-2 px-4 text-gray-400 font-semibold">Email:</td>
-                    <td className="py-2 px-4">{selectedCoach.email}</td>
-                </tr>
-                <tr>
-                    <td className="py-2 px-4 text-gray-400 font-semibold">Address:</td>
-                    <td className="py-2 px-4">{selectedCoach.address}</td>
-                </tr>
-                <tr>
-                    <td className="py-2 px-4 text-gray-400 font-semibold">Description:</td>
-                    <td className="py-2 px-4">{selectedCoach.description}</td>
-                </tr>
-                <tr>
-                    <td className="py-2 px-4 text-gray-400 font-semibold">Date of Birth:</td>
-                    <td className="py-2 px-4">{selectedCoach.dateOfBirth}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-                        </div>
-
-                        {/* Practice Schedules Table */}
-                        <div className="mt-6 bg-gray-900 p-6 rounded-lg shadow-md">
-                            <h3 className="text-xl font-semibold text-white">Practice Schedules</h3>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full bg-gray-900 rounded-lg">
+                            <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
+                                <h2 className="text-xl font-bold mb-4 text-center text-[black]">Practice Schedules</h2>
+                                {/* Batting Stats Table */}
+                                <div className="overflow-x-auto">
+                                <table className="min-w-full bg-white rounded-lg">
                                     <thead>
                                         <tr>
-                                            <th className="py-2 px-4 text-center text-gray-400">Venue</th>
-                                            <th className="py-2 px-4 text-center text-gray-400">Start Time</th>
-                                            <th className="py-2 px-4 text-center text-gray-400">End Time</th>
-                                            <th className="py-2 px-4 text-center text-gray-400">Type</th>
+                                            <th className="py-2 px-4 text-center text-gray-400">
+                                                Venue
+                                            </th>
+                                            <th className="py-2 px-4 text-center text-gray-400">
+                                                Start Time
+                                            </th>
+                                            <th className="py-2 px-4 text-center text-gray-400">
+                                                End Time
+                                            </th>
+                                            <th className="py-2 px-4 text-center text-gray-400">
+                                                Type
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {practiceSchedulesData.map((schedule) => (
                                             <tr key={schedule.pracId}>
-                                                <td className="py-2 px-4 text-center">{schedule.venue}</td>
-                                                <td className="py-2 px-4 text-center">{schedule.starTime}</td>
-                                                <td className="py-2 px-4 text-center">{schedule.endTime}</td>
-                                                <td className="py-2 px-4 text-center">{schedule.pracType}</td>
+                                                <td className="py-2 px-4 text-center">
+                                                    {schedule.venue}
+                                                </td>
+                                                <td className="py-2 px-4 text-center">
+                                                    {schedule.starTime}
+                                                </td>
+                                                <td className="py-2 px-4 text-center">
+                                                    {schedule.endTime}
+                                                </td>
+                                                <td className="py-2 px-4 text-center">
+                                                    {schedule.pracType}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+
+
+
+                              
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <Footer />

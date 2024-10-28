@@ -729,24 +729,60 @@ const LatestNews = () => {
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
 
+  // useEffect(() => {
+  //   // Function to fetch news items from the API
+  //   const fetchNews = async () => {
+  //     try {
+  //       const response = await axios.get(`${API_URL}news`);
+  //       const data = response.data;
+  //       // Take the top 5 news items from the response
+  //       const topFiveNews = data.slice(0, 5).map((newsItem) => ({
+  //         title: newsItem.heading, // Use heading as the title
+  //         image: newsItem.imageUrl, // Use imageUrl as the image
+  //       }));
+  //       setNewsItems(topFiveNews); // Update state with the top 5 news
+  //     } catch (error) {
+  //       console.error("Error fetching news:", error);
+  //     }
+  //   };
+
+  //   fetchNews(); // Call the function to fetch news on component mount
+  // }, []);
+
+
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(`${API_URL}news`);
         const data = response.data;
+
         const topFiveNews = data.slice(0, 5).map((newsItem) => ({
           title: newsItem.heading,
           image: newsItem.imageUrl,
         }));
         setNewsItems(topFiveNews);
+
+        
+        // Filter news items that are today or earlier, then sort and slice to get the latest 5
+        const today = new Date();
+        const filteredNews = data
+          .filter(newsItem => new Date(newsItem.dateTime) <= today)
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+          .slice(0, 5)
+          .map(newsItem => ({
+            title: newsItem.heading,
+            image: newsItem.imageUrl,
+          }));
+
+        setNewsItems(filteredNews);
+
       } catch (error) {
         console.error("Error fetching news:", error);
       }
     };
 
-    fetchNews(); // Call the function to fetch news on component mount
+    fetchNews();
   }, []);
-
   const nextSlide = () => {
     if (currentSlide < newsItems.length - 1) {
       setCurrentSlide(currentSlide + 1);

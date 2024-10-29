@@ -33,6 +33,7 @@ const Navbar = () => {
                     <h1 className=" h-20 py-5 pl-4 relative  text-white text-2xl font-bold">RCC Admin</h1>
                 </div>
                 <ul className="flex flex-col w-full h-full">
+
                     <Link onClick={() => setActiveLink("/player")}  to={"/player"} className={`${getLinkClass("/player")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
                         {" "}<FaPeopleGroup className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Players</span>
                     </Link >
@@ -52,6 +53,7 @@ const Navbar = () => {
                         {" "}<MdPeople className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">officials</span>
                     </Link>
                     <Link to={"/news-create"} className={`${getLinkClass("/news-create")} group flex flex-wrap pl-4 gap-3 py-4 text-2xl cursor-pointer items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
+
                         {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">News</span>
                     </Link>
                 </ul>

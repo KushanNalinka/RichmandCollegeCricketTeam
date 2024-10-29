@@ -288,7 +288,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
         
       <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the <span>&nbsp;{matchType} against {matchOpponent}&nbsp;</span></h>
       {matchType === 'Test' && (
-        <div className={`flex pb-2 tracking-wider justify-end items-center gap-3`}>
+        <div className={`flex pb-2 tracking-wider justify-start items-center gap-3`}>
           <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
           <select
             className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
@@ -653,5 +653,3 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   );
 };
 export default ScoreCardPopup;
-
-

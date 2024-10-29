@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/HomeNavbar";
+import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
@@ -96,7 +96,7 @@ const CoachProfile = () => {
         backgroundPosition: "center"
       }}
     >
-      <Navbar />
+      <MemberNavbar />
             <div
               className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
               style={{

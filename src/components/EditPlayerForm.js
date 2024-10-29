@@ -115,8 +115,11 @@ const EditPlayerForm = ({ player, onClose }) => {
           window.location.reload();
         }, 1500);
       } catch (error) {
-        console.error("Error submitting form:", error);
-        message.error("Failed!");
+        if (error.response && error.response.data) {
+          message.error(error.response.data || "Failed!");
+        } else {
+          message.error("An unexpected error occurred.");
+        }
       }
     
   };
@@ -188,7 +191,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             <input
               type="date"
               name="dateOfBirth"
-              value={formatDate(formData.dateOfBirth)}
+              value={formData.dateOfBirth}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               

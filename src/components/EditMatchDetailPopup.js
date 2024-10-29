@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { BsPeople } from 'react-icons/bs';
@@ -99,6 +100,7 @@ const EditPopup = ({ onClose, match }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds in edited foemdata;", formData.coaches);
+    setUploading(true);
     try {
       let imageURL = formData.logo;
 
@@ -138,6 +140,7 @@ const EditPopup = ({ onClose, match }) => {
       })
       setSelectedCoaches([]);
       setImagePreview();
+      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -193,7 +196,7 @@ const EditPopup = ({ onClose, match }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -407,6 +410,11 @@ const EditPopup = ({ onClose, match }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+      )}
     </div>
   );
 };

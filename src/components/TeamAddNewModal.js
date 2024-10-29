@@ -1,6 +1,7 @@
 // src/components/AddNewModal.js
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 import { FaTimes,  FaTrash } from 'react-icons/fa';
 
@@ -14,6 +15,7 @@ const AddNewModal = ({  onClose }) => {
     captain:'',
     players:[]
   });
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     axios
@@ -38,6 +40,7 @@ const AddNewModal = ({  onClose }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setUploading(true);
     try {
       // Make a POST request to the backend API
       const response = await axios.post(
@@ -53,6 +56,7 @@ const AddNewModal = ({  onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
+      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -96,7 +100,7 @@ const AddNewModal = ({  onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
         <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -215,6 +219,11 @@ const AddNewModal = ({  onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

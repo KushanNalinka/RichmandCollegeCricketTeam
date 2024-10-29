@@ -4,23 +4,30 @@ import backgroundImage from '../assets/images/flag.png';
 import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
 import Footer from '../components/Footer';
 
+
 const PlayerProfile = () => {
     const [players, setPlayers] = useState([]); // Stores list of players
     const [selectedPlayer, setSelectedPlayer] = useState(null); // Stores currently selected player
     const [playerStat, setPlayerStat] = useState([]); // Stores stats for the selected player
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
     const API_URL = process.env.REACT_APP_API_URL;
-    
-    // Fetch all players from the API when the component mounts
+  
+    // Fetch all players from the API when the component mounts or selectedYear changes
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
                 const response = await fetch(`${API_URL}admin/players/all`);
                 const data = await response.json();
 
+                // Filter players who are part of "Under 13" in the selected year
                 const under13Players = data.filter((player) =>
-                    player.teamsUnder.includes("Old Boys")
+                    player.teamDetails &&
+                    player.teamDetails.some(
+                        (team) => team.under === "Old Boys" && parseInt(team.year, 10) === selectedYear
+                    )
                 );
+
                 setPlayers(under13Players);
 
                 // Set default selected player if data exists
@@ -33,8 +40,11 @@ const PlayerProfile = () => {
         };
 
         fetchPlayers();
-    }, []);
+    }, [selectedYear]);
 
+    
+   
+    
     // Fetch player stats based on the selected player
     useEffect(() => {
         const fetchPlayerStats = async () => {
@@ -55,6 +65,18 @@ const PlayerProfile = () => {
         }
     }, [selectedPlayer]);
 
+    // Function to handle year selection change
+    const handleYearChange = (event) => {
+        setSelectedYear(parseInt(event.target.value, 10));
+    };
+
+    // Function to generate year options for the dropdown (e.g., last 10 years)
+    const getYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        return Array.from({ length: 10 }, (_, i) => currentYear - i);
+    };
+
+
     if (!players.length) {
         return (
             <div className="bg-gray-400 min-h-screen text-white">
@@ -66,7 +88,8 @@ const PlayerProfile = () => {
         );
     }
 
-    
+   
+    // Function to summarize player stats for display in the table
 const summarizeStats = (type) => {
     if (!playerStat || !playerStat.length) {
         return {
@@ -208,9 +231,23 @@ const summarizeStats = (type) => {
             <div className="text-center ml-8 md:text-left">
                 <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
                 <p className="text-gray-400 text-base md:text-3xl">
-                                   Old Boys
+                                    Richmond Old Boys
                                 </p>
             </div>
+               {/* Year Dropdown */}
+               <div className="absolute top-4 right-4 md:top-8 md:right-10">
+                            <select
+                                value={selectedYear}
+                                onChange={handleYearChange}
+                                className="bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            >
+                                {getYearOptions().map((year) => (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
         </div>
     </div>
 </div>
@@ -371,3 +408,4 @@ const summarizeStats = (type) => {
 };
 
 export default PlayerProfile;
+

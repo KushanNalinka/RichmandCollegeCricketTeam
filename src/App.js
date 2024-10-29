@@ -212,7 +212,7 @@ function App() {
          <Route path="/academy13" element={<Academy13 />} />
          <Route path="/academy15" element={<Academy15 />} />
          <Route path="/academy17" element={<Academy17 />} />
-         <Route path="/academy19" element={<Academy19 />} />
+         <Route path="/academy11" element={<Academy19 />} />
          <Route path="/over40" element={<Over40 />} />
          <Route path="/over50" element={<Over50 />} />
 

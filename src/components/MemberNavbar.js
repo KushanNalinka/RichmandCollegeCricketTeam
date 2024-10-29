@@ -825,6 +825,14 @@ const HomeNavbar = () => {
               Academy
             </div>
             <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+            <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy11')}
+                >
+                  Academy 11
+                </button>
+              </li>
               <li>
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
@@ -849,14 +857,7 @@ const HomeNavbar = () => {
                   Academy 17
                 </button>
               </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/academy19')}
-                >
-                  Academy 19
-                </button>
-              </li>
+             
             </ul>
           </li>
           <li className="relative group">

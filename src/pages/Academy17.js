@@ -4,23 +4,30 @@ import backgroundImage from '../assets/images/flag.png';
 import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
 import Footer from '../components/Footer';
 
+
 const PlayerProfile = () => {
     const [players, setPlayers] = useState([]); // Stores list of players
     const [selectedPlayer, setSelectedPlayer] = useState(null); // Stores currently selected player
     const [playerStat, setPlayerStat] = useState([]); // Stores stats for the selected player
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
     const API_URL = process.env.REACT_APP_API_URL;
-    
-    // Fetch all players from the API when the component mounts
+  
+    // Fetch all players from the API when the component mounts or selectedYear changes
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
                 const response = await fetch(`${API_URL}admin/players/all`);
                 const data = await response.json();
 
+                // Filter players who are part of "Under 13" in the selected year
                 const under13Players = data.filter((player) =>
-                    player.teamsUnder.includes("Under 17")
+                    player.teamDetails &&
+                    player.teamDetails.some(
+                        (team) => team.under === "Academy Under 17" && parseInt(team.year, 10) === selectedYear
+                    )
                 );
+
                 setPlayers(under13Players);
 
                 // Set default selected player if data exists
@@ -33,39 +40,11 @@ const PlayerProfile = () => {
         };
 
         fetchPlayers();
-    }, []);
-    // Fetch all players from the API when the component mounts
-// useEffect(() => {
-//     const fetchPlayers = async () => {
-//         try {
-//             const response = await fetch(`${API_URL}admin/players/all`);
-//             const data = await response.json();
+    }, [selectedYear]);
 
-//             // Get the current year
-//             const currentYear = new Date().getFullYear();
-
-//             // Filter players who are part of "Under 13" in the current year
-//             const under13Players = data.filter((player) =>
-//                 player.teamDetails.some(
-//                     (team) => team.under === "Under 13" && parseInt(team.year, 10) === currentYear
-//                 )
-//             );
-
-//             setPlayers(under13Players);
-
-//             // Set default selected player if data exists
-//             if (under13Players.length > 0) {
-//                 setSelectedPlayer(under13Players[0]); // Select first player by default
-//             }
-//         } catch (error) {
-//             console.error('Error fetching player data:', error);
-//         }
-//     };
-
-//     fetchPlayers();
-// }, []);
-
-
+    
+   
+    
     // Fetch player stats based on the selected player
     useEffect(() => {
         const fetchPlayerStats = async () => {
@@ -86,6 +65,18 @@ const PlayerProfile = () => {
         }
     }, [selectedPlayer]);
 
+    // Function to handle year selection change
+    const handleYearChange = (event) => {
+        setSelectedYear(parseInt(event.target.value, 10));
+    };
+
+    // Function to generate year options for the dropdown (e.g., last 10 years)
+    const getYearOptions = () => {
+        const currentYear = new Date().getFullYear();
+        return Array.from({ length: 10 }, (_, i) => currentYear - i);
+    };
+
+
     if (!players.length) {
         return (
             <div className="bg-gray-400 min-h-screen text-white">
@@ -97,66 +88,7 @@ const PlayerProfile = () => {
         );
     }
 
-    // Function to summarize player stats for display in the table
-    // const summarizeStats = (type) => {
-    //     if (!playerStat || !playerStat.length) {
-    //         return {
-    //             matches: 0,
-    //             innings: 0,
-    //             runs: 0,
-    //             highestScore: 0,
-    //             avg: 0,
-    //             sr: 0,
-    //             "100s": 0,
-    //             "50s": 0,
-    //             "4s": 0,
-    //             "6s": 0,
-    //         };
-    //     }
-
-    //     const filteredStats = playerStat.filter(
-    //         (stat) => stat.match.type === type
-    //     );
-
-    //     const summary = filteredStats.reduce(
-    //         (acc, stat) => {
-    //             acc.matches += 1; // Since each stat is from a separate match
-    //             acc.innings += parseInt(stat.inning, 10) || 0;
-    //             acc.runs += stat.runs || 0;
-    //             acc.highestScore = Math.max(acc.highestScore, stat.runs);
-    //             acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
-    //             acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate calculation
-    //             acc["100s"] += stat.centuries || 0;
-    //             acc["50s"] += stat.fifties || 0;
-    //             acc["4s"] += stat.fours || 0;
-    //             acc["6s"] += stat.sixers || 0;
-    //             acc.overs += stat.overs || 0;
-    //             acc.wickets += stat.wickets || 0;
-    //             acc.runsConceded += stat.runsConceded || 0;
-    //             acc.bowlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
-    //             acc.economyRate = acc.runsConceded / acc.balls;
-    //             return acc;
-    //         },
-    //         {
-    //             matches: 0,
-    //             innings: 0,
-    //             runs: 0,
-    //             highestScore: 0,
-    //             avg: 0,
-    //             sr: 0,
-    //             overs: 0,
-    //             "100s": 0,
-    //             "50s": 0,
-    //             "4s": 0,
-    //             "6s": 0,
-    //             wickets: 0,
-    //             runsConceded: 0,
-    //             bowlingAvg: 0,
-    //         }
-    //     );
-
-    //     return summary;
-    // };
+   
     // Function to summarize player stats for display in the table
 const summarizeStats = (type) => {
     if (!playerStat || !playerStat.length) {
@@ -299,9 +231,23 @@ const summarizeStats = (type) => {
             <div className="text-center ml-8 md:text-left">
                 <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
                 <p className="text-gray-400 text-base md:text-3xl">
-                                    Academy 17
+                Academy Under 17
                                 </p>
             </div>
+               {/* Year Dropdown */}
+               <div className="absolute top-4 right-4 md:top-8 md:right-10">
+                            <select
+                                value={selectedYear}
+                                onChange={handleYearChange}
+                                className="bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                            >
+                                {getYearOptions().map((year) => (
+                                    <option key={year} value={year}>
+                                        {year}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
         </div>
     </div>
 </div>
@@ -462,3 +408,4 @@ const summarizeStats = (type) => {
 };
 
 export default PlayerProfile;
+

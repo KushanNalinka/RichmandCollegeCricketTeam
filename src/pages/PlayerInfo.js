@@ -57,12 +57,19 @@ const TableComponent = () => {
   // Calculate total pages
   const totalPages = Math.ceil(playerData.length / rowsPerPage);
 
-  // Slice data for current page
-  const paginatedData = playerData.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+ // Sort players by status before slicing for pagination
+const sortedPlayerData = [...playerData].sort((a, b) => {
+  // Move "Active" players to the top
+  if (a.status === "Active" && b.status !== "Active") return -1;
+  if (a.status !== "Active" && b.status === "Active") return 1;
+  return 0;
+});
 
+// Slice data for the current page after sorting
+const paginatedData = sortedPlayerData.slice(
+  (currentPage - 1) * rowsPerPage,
+  currentPage * rowsPerPage
+);
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);

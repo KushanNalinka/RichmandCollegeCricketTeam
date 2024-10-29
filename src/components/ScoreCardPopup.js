@@ -156,7 +156,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
     console.log("formdata submit: ", formData);
     try {
       const {fifties, centuries} = calculateMilestones(formData.runs);
-      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning),inning:inningNumber, fifties:fifties, centuries:centuries});
+      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
       console.log("submitted player stats: ", response.data);
       dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
 
@@ -219,8 +219,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       console.log("formData edit:", formData);
       const response = await axios.put(
         `${API_URL}playerStats/update/${id}`,
-        {...formData, inning:inningNumber, fifties:fifties, centuries:centuries}
+        {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries}
       );
+      console.log("Edit response: ", response.data);
       message.success("Player stats updated successfully!");
       dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
       

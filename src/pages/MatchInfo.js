@@ -2740,7 +2740,9 @@ export default function MatchInfo() {
 
   useEffect(() => {
 
+
     fetch(`${API_URL}matchSummary/all`)
+
 
       .then(response => response.json())
       .then(data => {

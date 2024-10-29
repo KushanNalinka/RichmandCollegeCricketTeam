@@ -23,6 +23,8 @@ const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
+  const [teamId, setTeamId] = useState(null);
+  const [matchOpponent, setMatchOpponent] = useState(null);
   const [matchType, setMatchType] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
   const navigate = useNavigate();
@@ -43,7 +45,9 @@ const MatchDetails = () => {
     const fetchMatches = async () => {
       try {
         const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
-        setMatches(response.data);
+          // Sort matches by date in descending order so future dates come first
+        const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setMatches(sortedMatches);
         console.log(response);
       } catch (error) {
         console.error("Error fetching matches:", error);
@@ -117,6 +121,9 @@ const MatchDetails = () => {
   const handleAddScoreCard = match => {
     setMatchType(match.type);
     setMatchId(match.matchId);
+    setTeamId(match.teamId);
+    setMatchOpponent(match.opposition);
+    setMatchType(match.type);
     // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
     //setChoiseModelOpen(true);
@@ -390,7 +397,7 @@ const MatchDetails = () => {
                 </p>
 
                 <div className="flex flex-col space-y-4">
-                  {/* <button
+                  <button
                     onClick={handleScorePopupAIOpen}
                     className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
@@ -401,7 +408,7 @@ const MatchDetails = () => {
                     className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
-                  </button> */}
+                  </button>
                 </div>
 
                 <div className="flex justify-center mt-6">
@@ -434,6 +441,8 @@ const MatchDetails = () => {
               onClose={handleScorePopupClose}
               matchId={matchId}
               matchType={matchType}
+              matchOpponent={matchOpponent}
+              teamId={teamId}
             />}
            {isScorePopupAIOpen &&
             <ScoreCardAIModel

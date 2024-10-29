@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { message } from 'antd';
 import axios from 'axios';
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
 const EditModal = ({ team, onClose }) => {
@@ -9,6 +10,7 @@ const EditModal = ({ team, onClose }) => {
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
+  const [uploading, setUploading] = useState(false);
   console.log("teams:", team);
   useEffect(() => {
     axios
@@ -45,6 +47,7 @@ const EditModal = ({ team, onClose }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
+    setUploading(true);
     try {
       // Make a POST request to the backend API
       const response = await axios.put(
@@ -60,6 +63,7 @@ const EditModal = ({ team, onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
+      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -105,7 +109,7 @@ const EditModal = ({ team, onClose }) => {
 
   return (
     <div className="fixed inset-0  flex items-center justify-center z-50 bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
           <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -230,6 +234,11 @@ const EditModal = ({ team, onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

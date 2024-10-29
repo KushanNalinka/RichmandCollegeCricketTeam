@@ -3,13 +3,16 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { setUserId } from "firebase/analytics";
 
 const CoachForm = ({  onClose }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
+    status:"",
     image: "",
     name: "",
     dateOfBirth: "",
@@ -22,6 +25,7 @@ const CoachForm = ({  onClose }) => {
   });
 
   const [imagePreview, setImagePreview] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -42,6 +46,7 @@ const CoachForm = ({  onClose }) => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    setUploading(true);
       try {
       let imageURL = formData.image;
       
@@ -61,6 +66,7 @@ const CoachForm = ({  onClose }) => {
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
+            status:"",
             image: "",
             name: "",
             dateOfBirth: "",
@@ -72,6 +78,7 @@ const CoachForm = ({  onClose }) => {
             description: ""
         });
         setImagePreview();
+        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -106,7 +113,7 @@ const CoachForm = ({  onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -192,7 +199,7 @@ const CoachForm = ({  onClose }) => {
               required
             />
           </div>
-          <div className="col-span-2">
+          <div>
             <label className="block text-black text-sm font-semibold">Address</label>
             <input
             type="text"
@@ -203,6 +210,22 @@ const CoachForm = ({  onClose }) => {
               placeholder="123 Street Name, City, Country"
               required
             />
+          </div>
+          <div>
+            <label className="block text-black text-sm  font-semibold">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value='' selected disabled>
+                Select
+              </option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
           </div>
         
           <div className="col-span-2">
@@ -244,6 +267,11 @@ const CoachForm = ({  onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
@@ -67,6 +68,7 @@ const EditPlayerForm = ({ player, onClose }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("editedPlayer: ", formData);
+    setUploading(true);
       try {
         let imageURL = formData.image;
 
@@ -108,6 +110,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           contactNo: ""
         });
         setImagePreview();
+        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -146,9 +149,18 @@ const EditPlayerForm = ({ player, onClose }) => {
     });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -179,7 +191,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             <input
               type="date"
               name="dateOfBirth"
-              value={formData.dateOfBirth}
+              value={formatDate(formData.dateOfBirth)}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               
@@ -346,6 +358,11 @@ const EditPlayerForm = ({ player, onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

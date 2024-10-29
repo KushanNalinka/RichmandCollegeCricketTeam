@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 
 const MatchStatPopup = ({ matchId, matchType, onClose }) => {
@@ -19,6 +20,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
       matchId: matchId, 
     }
   };
+  const [uploading, setUploading] = useState(false);
   const [statData, setStatData] = useState(initialStatData);
   const [selectedIning, setSelectedIning] = useState(statData.inning);
   console.log("selected inning normal: ", statData.inning);
@@ -98,6 +100,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUploading(true);
     if (matchType === "Test" && !statData.inning) {
       message.error("Please select an inning before submitting.");
       return;
@@ -123,6 +126,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
+      setUploading(false);
       setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -134,6 +138,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setUploading(true);
     if (matchType === "Test" && !statData.inning) {
       message.error("Please select an inning before submitting.");
       return;
@@ -158,6 +163,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
+      setUploading(false);
       setTimeout(() => {
           window.location.reload();
         }, 1000);
@@ -174,7 +180,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-xl w-full">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -340,6 +346,11 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
           }
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+      )}
     </div>
   );
 };

@@ -150,6 +150,9 @@ const CoachTable = () => {
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
                   <th className="px-6 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                    STATUS
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -179,7 +182,15 @@ const CoachTable = () => {
                     key={item.coachId}
                     className=" hover:bg-gray-50 lg:rounded-lg bg-white h-full align-middle"
                   >
-                    <td className="gap-4 px-4 lg:rounded-l-lg py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                    <td className={`px-4 py-2 lg:rounded-l-lg h-14 whitespace-nowrap text-sm`}>
+                      <div
+                        className={`flex items-center justify-center h-6 w-6  ${item.status ==
+                        "Active"
+                          ? "bg-green-500 p-3 rounded-full font-bold text-green-500"
+                          : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
+                      />
+                    </td>
+                    <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                       <div className="flex items-center justify-start gap-2 ">
                         <img
                           src={item.image}

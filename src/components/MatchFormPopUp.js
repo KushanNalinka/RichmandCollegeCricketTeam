@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
@@ -33,6 +34,15 @@ const FormPopup = ({  onClose }) => {
     },
     coaches: []
   });
+
+  const formatDate = (date) => {
+    // Format using plain JavaScript
+    const newDate = new Date(date);
+    return newDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+  };
+
+
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
@@ -64,7 +74,12 @@ const FormPopup = ({  onClose }) => {
 
   const handleChange = e => {
     const { name, value,files } = e.target;
-    if (name.includes(".")) {
+    if (name === "date") {
+      setFormData({
+        ...formData,
+        [name]: formatDate(value) // Format date before setting it
+      });
+    } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
         ...formData,
@@ -92,6 +107,7 @@ const FormPopup = ({  onClose }) => {
   const handleSubmit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
+    setUploading(true);
     try {
       let imageURL = formData.logo;
 
@@ -99,10 +115,12 @@ const FormPopup = ({  onClose }) => {
       if (formData.logo instanceof File) {
         imageURL = await handleImageUpload(formData.logo);
       }
+      const formattedDate = formatDate(formData.date); // Ensure date is formatted before submitting
 
       const matchData = {
         ...formData,
         logo: imageURL, // Assign the uploaded image URL to formData
+        date: formattedDate 
       };
       // Make a POST request to the backend API
       const response = await axios.post(
@@ -129,6 +147,7 @@ const FormPopup = ({  onClose }) => {
       })
       setImagePreview();
       setSelectedCoaches([]);
+      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -187,7 +206,7 @@ const FormPopup = ({  onClose }) => {
     <div
       className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -305,30 +324,7 @@ const FormPopup = ({  onClose }) => {
               )}
             </select>
           </div>
-          
-          {/* <div>
-            <label className="block mb-2 text-gray-700">Coaches</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg bg-gray-100"
-              value={selectedCoachNames.join(", ")}  // Show coach names, joined by commas
-              readOnly
-            />
-            <select
-              name="coaches"
-              value={formData.coaches.map(coach => coach.coachId)}
-              onChange={handleCoachesChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              required
-              multiple
-            >
-              <option value="">Select status</option>
-              {coaches.map ((coach) =>
-                  <option key={coach.coachId} value={coach.coachId}>{coach.name}</option>
-              )}
-              
-            </select>
-          </div> */}
+        
           <div>
             <label className="block text-black text-sm font-semibold">Type</label>
             <select
@@ -443,6 +439,11 @@ const FormPopup = ({  onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

@@ -34,7 +34,7 @@ const playerStatsReducer = (state, action) => {
   }
 };
 
-const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
+const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [currentPlayerStackId, setCurrentPlayerStackId] = useState();
   const [isEditButtonPressed, setIsEditButtonPressed] = useState(false);
@@ -48,7 +48,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
   const [playerStats, setPlayerStats] = useState([]);
 
   const [formData, setFormData] = useState({
-    inning: 1,
+    inning: "1",
     runs: 0,
     wickets: 0,
     fours: 0,
@@ -76,10 +76,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
     return allInningsStats.filter(stat => stat.inning === inningNumber);
   };
 
+  const calculateMilestones = (runs) => {
+    const fifties = Math.floor((runs / 50) >= 1) ? 1 : 0; // 1 if runs >= 50 and less than 100
+    const centuries = Math.floor((runs / 100)>=1)? 1 : 0; // 1 if runs >= 100
+    return { fifties, centuries };
+  };
+
   useEffect(() => {
     const fetchPlayerStat = async () => {
       try {
-        const playersResponse = await axios.get(`${API_URL}admin/players/all`);
+        const playersResponse = await axios.get(`${API_URL}teams/${teamId}/players`);
         dispatch({ type: "SET_PLAYERS", payload: playersResponse.data });
 
         const statsResponse = await axios.get(
@@ -147,14 +153,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
   // Add player stat
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log("formdata submit: ", formData);
     try {
-      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:inningNumber});
+      const {fifties, centuries} = calculateMilestones(formData.runs);
+      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning),inning:inningNumber, fifties:fifties, centuries:centuries});
       console.log("submitted player stats: ", response.data);
       dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
 
       // Reset the form
       setFormData({
-        inning: 1,
+        inning: "1",
         runs: 0,
         wickets: 0,
         fours: 0,
@@ -186,7 +194,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
     setCurrentPlayerStackId(player.id);
     setIsEditButtonPressed(true);
     setFormData({
-      inning: inningNumber,
+      inning: inningNumber || formData.inning,
       runs: player.runs,
       wickets: player.wickets,
       overs: player.overs,
@@ -202,14 +210,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
         name: player.player.name,
       },
     });
+    console.log("formData runs :", formData.runs);
   };
 
   const handleSaveEdit = async id => {
     try {
-      console.log("formData:", formData);
+      const {fifties, centuries} = calculateMilestones(formData.runs);
+      console.log("formData edit:", formData);
       const response = await axios.put(
         `${API_URL}playerStats/update/${id}`,
-        formData
+        {...formData, inning:inningNumber, fifties:fifties, centuries:centuries}
       );
       message.success("Player stats updated successfully!");
       dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
@@ -235,15 +245,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
       console.error("Error deleting player stat:", error);
     }
   };
-
-  // const handleAddRow = matchId => {
-  //   if(!inningNumber){
-  //       message.info("First select an inning");
-  //   }else{
-  //     setPressedPlus(matchId);
-  //     setIsAdding(!isAdding);
-  //   }
-  // };
+  
   const handleAddRow = matchId => {
     if (matchType=="Test" && !inningNumber) {
       message.error("Please select an inning");
@@ -284,7 +286,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
             }}>
         <div>
         
-      <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the Match</h>
+      <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the <span>&nbsp;{matchType} against {matchOpponent}&nbsp;</span></h>
       {matchType === 'Test' && (
         <div className={`flex pb-2 tracking-wider justify-start items-center gap-3`}>
           <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
@@ -310,6 +312,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
+
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
@@ -317,6 +320,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
 
                 
+
                 <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
               <tr className=" h-2"></tr>
@@ -400,7 +404,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                               className="border rounded p-1"
                             />
                           </td>
-                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                          {/* <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             <input
                               type="number"
                               name="fifties"
@@ -419,7 +423,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                               placeholder="Enter hundreds"
                               className="border rounded p-1"
                             />
-                          </td>
+                          </td> */}
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             <input
                               type="number"
@@ -470,12 +474,12 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.sixers}
                           </td>
-                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                          {/* <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.fifties}
-                          </td>
-                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                          </td> */}
+                          {/* <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.centuries}
-                          </td>
+                          </td> */}
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.balls}
                           </td>
@@ -573,7 +577,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                       className="border rounded p-1"
                     />
                   </td>
-                  <td className="border px-4 py-2">
+                  {/* <td className="border px-4 py-2">
                     <input
                       type="number"
                       name="fifties"
@@ -590,7 +594,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType }) => {
                       placeholder="Enter hundreds"
                       className="border rounded p-1"
                     />
-                  </td>
+                  </td> */}
                   <td className="border px-4 py-2">
                     <input
                       type="number"

@@ -4,12 +4,14 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 const EditCoachForm = ({ coach, onClose }) => {
   const [formData, setFormData] = useState({ 
+    status: coach.status,
     image: coach.image,
     name: coach.name,
     dateOfBirth: coach.dateOfBirth,
@@ -56,6 +58,7 @@ const EditCoachForm = ({ coach, onClose }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("edited1 coaches: ", formData);
+    setUploading(true);
       try {
         let imageURL = formData.image;
       
@@ -76,6 +79,7 @@ const EditCoachForm = ({ coach, onClose }) => {
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
+            status:"",
             image: "",
             name: "",
             dateOfBirth: "",
@@ -89,6 +93,7 @@ const EditCoachForm = ({ coach, onClose }) => {
             }
         });
         setImagePreview();
+        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
@@ -126,7 +131,7 @@ const EditCoachForm = ({ coach, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -206,7 +211,7 @@ const EditCoachForm = ({ coach, onClose }) => {
               placeholder="+1 (555) 123-4567"
             />
           </div>
-          <div className="col-span-2">
+          <div>
             <label className="block text-black text-sm font-semibold">Address</label>
             <input
             type="text"
@@ -216,6 +221,22 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="123 Street Name, City, Country"
             />
+          </div>
+          <div>
+            <label className="block text-black text-sm font-semibold">Status</label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+          
+            >
+              <option value='' disabled >
+                Select
+              </option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
           </div>
           <div className="col-span-2">
             <label className="block text-black text-sm font-semibold">Description</label>
@@ -254,6 +275,11 @@ const EditCoachForm = ({ coach, onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

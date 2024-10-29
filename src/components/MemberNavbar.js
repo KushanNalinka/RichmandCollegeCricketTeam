@@ -204,193 +204,193 @@
 
 // export default HomeNavbar;
 
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
-import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
-import { FaUser } from 'react-icons/fa'; // Import user icon from react-icons
-import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
+// import React, { useState, useEffect } from 'react';
+// import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
+// import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
+// import { FaUser } from 'react-icons/fa'; // Import user icon from react-icons
+// import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
 
-const HomeNavbar = () => {
-  const { userRole, logout, user } = useAuth();
-  const navigate = useNavigate(); // Hook for navigation
-  const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Navbar visibility state
+// const HomeNavbar = () => {
+//   const { userRole, logout, user } = useAuth();
+//   const navigate = useNavigate(); // Hook for navigation
+//   const [isNavbarVisible, setIsNavbarVisible] = useState(true); // Navbar visibility state
 
-  // Handle navbar visibility based on scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollTop = window.pageYOffset;
-      // Navbar is visible only when the user is at the top of the page (scrollTop = 0)
-      setIsNavbarVisible(currentScrollTop === 0);
-    };
+//   // Handle navbar visibility based on scroll position
+//   useEffect(() => {
+//     const handleScroll = () => {
+//       const currentScrollTop = window.pageYOffset;
+//       // Navbar is visible only when the user is at the top of the page (scrollTop = 0)
+//       setIsNavbarVisible(currentScrollTop === 0);
+//     };
 
-    window.addEventListener('scroll', handleScroll);
+//     window.addEventListener('scroll', handleScroll);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+//     return () => {
+//       window.removeEventListener('scroll', handleScroll);
+//     };
+//   }, []);
 
-  const handleLoginClick = () => {
-    navigate('/'); // Redirect to home page after logout
-  };
+//   const handleLoginClick = () => {
+//     navigate('/'); // Redirect to home page after logout
+//   };
 
-  const handleDropdownClick = (path) => {
-    navigate(path); // Navigate to the selected page
-  };
-  const handleProfileClick = () => {
-    switch (userRole) {
-      case 'coach':
-        navigate('/coachProfile');
-        break;
-      case 'player':
-        navigate('/playerProfile');
-        break;
-      case 'official':
-        navigate('/officialProfile');
-        break;
-      default:
-        navigate('/member');
-    }
-  };
+//   const handleDropdownClick = (path) => {
+//     navigate(path); // Navigate to the selected page
+//   };
+//   const handleProfileClick = () => {
+//     switch (userRole) {
+//       case 'coach':
+//         navigate('/coachProfile');
+//         break;
+//       case 'player':
+//         navigate('/playerProfile');
+//         break;
+//       case 'official':
+//         navigate('/officialProfile');
+//         break;
+//       default:
+//         navigate('/member');
+//     }
+//   };
 
 
-  return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex justify-center p-3 transition-transform duration-300 ease-in-out ${
-        isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
-      }`}
-    >
-      <div className="flex items-center justify-between w-fit bg-transparent backdrop-blur-md shadow-lg px-6 py-2">
-        {/* Logo on the left */}
-        <div className="flex items-center">
-          <Link to="/member">
-            <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
-          </Link>
-        </div>
+//   return (
+//     <nav
+//       className={`fixed top-0 left-0 right-0 z-50 flex justify-center p-3 transition-transform duration-300 ease-in-out ${
+//         isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+//       }`}
+//     >
+//       <div className="flex items-center justify-between w-fit bg-transparent backdrop-blur-md shadow-lg px-6 py-2">
+//         {/* Logo on the left */}
+//         <div className="flex items-center">
+//           <Link to="/member">
+//             <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
+//           </Link>
+//         </div>
 
-        {/* Centered Navbar Items */}
-        <ul className="flex space-x-8 text-white font-semibold text-14px">
-          <li className="relative group">
-            <Link to="/member" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Home
-            </Link>
-          </li>
+//         {/* Centered Navbar Items */}
+//         <ul className="flex space-x-8 text-white font-semibold text-14px">
+//           <li className="relative group">
+//             <Link to="/member" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               Home
+//             </Link>
+//           </li>
 
-          {/* Dropdown for About Us */}
-          <li className="relative group">
-            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Overview
-            </div>
-            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/coach')}
-                >
-                  Coaches
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/about-us')}
-                >
-                  About Us
-                </button>
-              </li>
-            </ul>
-          </li>
+//           {/* Dropdown for About Us */}
+//           <li className="relative group">
+//             <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               Overview
+//             </div>
+//             <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/coach')}
+//                 >
+//                   Coaches
+//                 </button>
+//               </li>
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/about-us')}
+//                 >
+//                   About Us
+//                 </button>
+//               </li>
+//             </ul>
+//           </li>
 
-          {/* Dropdown for Teams */}
-          <li className="relative group">
-            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Teams
-            </div>
-            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/under13')}
-                >
-                  Under 13
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/under15')}
-                >
-                  Under 15
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/under17')}
-                >
-                  Under 17
-                </button>
-              </li>
-              <li>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
-                  onClick={() => handleDropdownClick('/under19')}
-                >
-                  Under 19
-                </button>
-              </li>
-            </ul>
-          </li>
+//           {/* Dropdown for Teams */}
+//           <li className="relative group">
+//             <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               Teams
+//             </div>
+//             <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/under13')}
+//                 >
+//                   Under 13
+//                 </button>
+//               </li>
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/under15')}
+//                 >
+//                   Under 15
+//                 </button>
+//               </li>
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/under17')}
+//                 >
+//                   Under 17
+//                 </button>
+//               </li>
+//               <li>
+//                 <button
+//                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+//                   onClick={() => handleDropdownClick('/under19')}
+//                 >
+//                   Under 19
+//                 </button>
+//               </li>
+//             </ul>
+//           </li>
 
-          <li>
-            <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Matches
-            </Link>
-          </li>
-          <li>
-            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              News
-            </Link>
-          </li>
-          <li>
-           <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-              Contact Us
-            </a>
-          </li>
-        </ul>
+//           <li>
+//             <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               Matches
+//             </Link>
+//           </li>
+//           <li>
+//             <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               News
+//             </Link>
+//           </li>
+//           <li>
+//            <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+//               Contact Us
+//             </a>
+//           </li>
+//         </ul>
 
-        {/* Right section with User Icon and Dropdown */}
-        <div className="relative group ml-8">
-          <div className="flex items-center space-x-2 text-white cursor-pointer">
-            <FaUser className="text-2xl" /> {/* User Icon */}
-          </div>
+//         {/* Right section with User Icon and Dropdown */}
+//         <div className="relative group ml-8">
+//           <div className="flex items-center space-x-2 text-white cursor-pointer">
+//             <FaUser className="text-2xl" /> {/* User Icon */}
+//           </div>
 
-          {/* Dropdown for User */}
-          <ul className="absolute left-0 top-full mt-2 bg-gray-800 text-white shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
-            <li>
-              <button
-                className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                onClick={() => handleDropdownClick('/member')}
-              >
-                Profile
-              </button>
-            </li>
-            <li>
-              <button
-                className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                onClick={handleLoginClick}
-              >
-                Logout
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  );
-};
+//           {/* Dropdown for User */}
+//           <ul className="absolute left-0 top-full mt-2 bg-gray-800 text-white shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+//             <li>
+//               <button
+//                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
+//                 onClick={handleProfileClick}
+//               >
+//                 Profile
+//               </button>
+//             </li>
+//             <li>
+//               <button
+//                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
+//                 onClick={handleLoginClick}
+//               >
+//                 Logout
+//               </button>
+//             </li>
+//           </ul>
+//         </div>
+//       </div>
+//     </nav>
+//   );
+// };
 
-export default HomeNavbar;
+// export default HomeNavbar;
 
 // import React, { useState, useEffect } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
@@ -666,3 +666,331 @@ export default HomeNavbar;
 // };
 
 // export default HomeNavbar;
+
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
+import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
+import { FaUser, FaBars } from 'react-icons/fa'; // Import FaUser and FaBars for user and hamburger icons
+import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
+
+const HomeNavbar = () => {
+  const { userRole, logout, user } = useAuth();
+  const navigate = useNavigate();
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollTop = window.pageYOffset;
+      setIsNavbarVisible(currentScrollTop === 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const handleLoginClick = () => {
+    navigate('/'); // Redirect to home page after logout
+  };
+
+  const handleDropdownClick = (path) => {
+    navigate(path); // Navigate to the selected page
+  };
+  const handleProfileClick = () => {
+    switch (userRole) {
+      case 'coach':
+        navigate('/coachProfile');
+        break;
+      case 'player':
+        navigate('/playerProfile');
+        break;
+      case 'official':
+        navigate('/officialProfile');
+        break;
+      default:
+        navigate('/member');
+    }
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  return (
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 flex justify-center p-3 transition-transform duration-300 ease-in-out ${
+        isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
+      <div className="flex items-center justify-between w-full lg:w-fit bg-transparent backdrop-blur-md shadow-lg px-6 py-2">
+        {/* Logo on the left */}
+        <div className="flex items-center">
+          <Link to="/member">
+            <img src={Logo} alt="Logo" className="h-10 w-10 mr-4" /> {/* Add logo with appropriate height/width */}
+          </Link>
+        </div>
+
+        {/* Centered Navbar Items */}
+        <ul className="hidden lg:flex space-x-8 text-white font-semibold text-14px">
+          <li className="relative group">
+            <Link to="/member" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Home
+            </Link>
+          </li>
+          <li className="relative group">
+            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Overview
+            </div>
+            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/coach')}
+                >
+                  Coaches
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/allplayers')}
+                >
+                  All Players
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/oldboys')}
+                >
+                  Old Boys
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/about-us')}
+                >
+                  About Us
+                </button>
+              </li>
+            </ul>
+          </li>
+
+          <li className="relative group">
+            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Teams
+            </div>
+            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/under13')}
+                >
+                  Under 13
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/under15')}
+                >
+                  Under 15
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/under17')}
+                >
+                  Under 17
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/under19')}
+                >
+                  Under 19
+                </button>
+              </li>
+            </ul>
+          </li>
+        
+          <li className="relative group">
+            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Academy
+            </div>
+            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+            <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy11')}
+                >
+                  Academy 11
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy13')}
+                >
+                  Academy 13
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy15')}
+                >
+                  Academy 15
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy17')}
+                >
+                  Academy 17
+                </button>
+              </li>
+             
+            </ul>
+          </li>
+          <li className="relative group">
+            <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Legends
+            </div>
+            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/over40')}
+                >
+                  Over 40s
+                </button>
+              </li>
+              <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/over50')}
+                >
+                 Over 50s
+                </button>
+              </li>
+             
+            </ul>
+          </li>
+
+          <li>
+            <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Matches
+            </Link>
+          </li>
+          <li>
+            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              News
+            </Link>
+          </li>
+          <li>
+            <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Contact Us
+            </a>
+          </li>
+        </ul>
+
+        {/* Right section with User Icon and Dropdown */}
+        <div className="relative group hidden lg:flex ml-8">
+          <div className="flex items-center space-x-2 text-white cursor-pointer">
+            <FaUser className="text-2xl" /> {/* User Icon */}
+          </div>
+          <ul className="absolute left-0 top-full mt-2 bg-gray-800 text-white shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
+                onClick={handleProfileClick}
+              >
+                Profile
+              </button>
+            </li>
+            <li>
+              <button
+                className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
+                onClick={handleLoginClick}
+              >
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {/* Hamburger Menu Icon for Mobile */}
+        <div className="lg:hidden flex items-center">
+          <button onClick={toggleMobileMenu} className="text-white">
+            <FaBars className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu (Visible when toggled) */}
+      <div
+        className={`lg:hidden bg-[#00175F] absolute top-full left-0 w-full transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'max-h-screen' : 'max-h-0'
+        } overflow-hidden`}
+      >
+        <ul className="flex flex-col items-center space-y-4 py-6 text-white">
+          <li>
+            <Link to="/member" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Home
+            </Link>
+          </li>
+          <li>
+            <button
+              className="hover:text-yellow-300 transition-all duration-300 ease-in-out"
+              onClick={() => handleDropdownClick('/about-us')}
+            >
+              About Us
+            </button>
+          </li>
+          <li>
+            <button
+              className="hover:text-yellow-300 transition-all duration-300 ease-in-out"
+              onClick={() => handleDropdownClick('/coach')}
+            >
+              Coaches
+            </button>
+          </li>
+          <li>
+            <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Matches
+            </Link>
+          </li>
+          <li>
+            <Link to="/news" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              News
+            </Link>
+          </li>
+          <li>
+            <a href="#contact-us" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Contact Us
+            </a>
+          </li>
+          <li>
+            <button
+              className="flex items-center space-x-2 text-white font-semibold bg-transparent border-2 border-white rounded-full px-4 py-1 hover:bg-white hover:text-gray-900 transition-all duration-300 ease-in-out"
+              onClick={handleLoginClick}
+            >
+              <FaUser />
+              <span>Login</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+};
+
+export default HomeNavbar;

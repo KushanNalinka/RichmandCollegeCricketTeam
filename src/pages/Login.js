@@ -89,7 +89,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
-
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
     if (savedUserData) {
@@ -138,7 +138,7 @@ const Login = () => {
     try {
 
       // API call to backend for sign-in
-      const res = await axios.post("http://localhost:5000/api/auth/signin", inputs);
+      const res = await axios.post(`${API_URL}auth/signin`, inputs);
       console.log("Response from API:", res.data);
       const userData = {
         username: res.data.username,

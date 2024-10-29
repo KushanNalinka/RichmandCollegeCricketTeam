@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../components/HomeNavbar";
+import MemberNavbar from '../components/MemberNavbar';
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/kusal.png";
@@ -108,7 +108,7 @@ const PlayerProfile = () => {
         backgroundPosition: "center",
       }}
     >
-      <Navbar />
+      <MemberNavbar />
             {/* Player Details */}
             <div
               className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"

@@ -288,7 +288,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
         
       <h className="flex text-xl py-3 font-bold text-[#480D35]">Add Player Score Details of the <span>&nbsp;{matchType} against {matchOpponent}&nbsp;</span></h>
       {matchType === 'Test' && (
-        <div className={`flex pb-2 tracking-wider justify-end items-center gap-3`}>
+        <div className={`flex pb-2 tracking-wider justify-start items-center gap-3`}>
           <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
           <select
             className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
@@ -309,14 +309,18 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
               <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                 <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider"> Player Name</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Runs </th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
+
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
-                {/* <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th> */}
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
+
+                
+
                 <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
               <tr className=" h-2"></tr>

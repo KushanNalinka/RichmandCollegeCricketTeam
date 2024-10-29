@@ -196,6 +196,7 @@ const CoachForm = ({  onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
+              required
             />
           </div>
           <div>
@@ -207,6 +208,7 @@ const CoachForm = ({  onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="123 Street Name, City, Country"
+              required
             />
           </div>
           <div>
@@ -234,6 +236,7 @@ const CoachForm = ({  onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="........."
+              required
             />
           </div>
           <div className="col-span-2">
@@ -245,6 +248,7 @@ const CoachForm = ({  onClose }) => {
               accept="image/*" 
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              
             />
             {imagePreview &&
               <img

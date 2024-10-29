@@ -224,28 +224,32 @@ const OfficialForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
 
-    try {
-      const response = await axios.post(
-        `${API_URL}auth/signupOfficial`,
-        formData
-      );
-      console.log("Form submitted successfully:", response.data);
-      message.success("Successfully submitted!");
-      setFormData({
-        username: "",
-        email: "",
-        password: "",
-        roles: ["ROLE_OFFICIAL"],
-        name: "",
-        contactNo: "",
-        position: ""
-      });
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      message.error("Submission failed!");
-    }
+      try {
+        const response = await axios.post(
+          `${API_URL}auth/signupOfficial`,
+          formData 
+        );
+        console.log("Form submitted succedded: ", response.data);
+        message.success("Successfull!");
+        setFormData({
+          username: "",
+          email: "",
+          password: "",
+          roles: ["ROLE_OFFICIAL"],
+          name: "",
+          contactNo: "",
+          position: ""
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        message.error("Failed!");
+      }
+    
+
   };
 
   return (

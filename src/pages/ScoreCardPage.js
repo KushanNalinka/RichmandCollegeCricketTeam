@@ -17,6 +17,8 @@ const ScoreCardPage = () => {
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [playersStats, setPlayersStats] = useState([]);
+  const [battingPlayerStats, setBattingPlayerStats] = useState([]);
+  const [bawllingPlayerStats, setBawllingPlayerStats] = useState([]);
   const [inningNumber, setInningNumber] = useState(); 
   const [matchType, setMatchType] = useState(); 
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
@@ -60,12 +62,18 @@ const ScoreCardPage = () => {
           // Apply inning filter only for Test matches
           if (matchType === "Test") {
             const inningStats = filterInningStats(playersStats, inningNumber);
-            setPlayersStats(inningStats);
+            const battingStats = inningStats.filter(stat => stat.balls > 0);
+            const bawlingStats = inningStats.filter(stat => stat.overs > 0);
+            setBattingPlayerStats(battingStats);
+            setBawllingPlayerStats(bawlingStats);
           } else {
             // For ODI and T20, show all stats (no inning filter needed)
-            setPlayersStats(playersStats);
+            const battingStats = playersStats.filter(stat => stat.balls > 0);
+            const bawlingStats = playersStats.filter(stat => stat.overs > 0);
+            setBattingPlayerStats(battingStats);
+            setBawllingPlayerStats(bawlingStats);
           }
-          console.log("Player stats: ", playersStats);
+          console.log("Player stats: ", battingPlayerStats[0]);
         })
         .catch(error => {
           console.error("There was an error fetching the player stats data!", error);
@@ -163,8 +171,8 @@ const ScoreCardPage = () => {
             {paginatedData.map((match) =>
   
               <div key={match.matchId} className="relative flex-grow ">
-                <div className=" flex-grow flex min-w-[750px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
-                  <div className="flex gap-5 items-center w-[40%]">
+                <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
+                  <div className="flex gap-5 items-center w-44%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
@@ -179,16 +187,16 @@ const ScoreCardPage = () => {
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
                     </div>
                   </div>
-                  <div className="w-[30%] lg:w-[20%] justify-center flex ">
-                    <p className="lg:text-xl text-lg font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
+                  <div className="w-[30%] lg:w-[26%] justify-center flex ">
+                    <p className="lg:text-sm text-lg text-center font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
                   </div>
-                  <div className="flex lg:w-[40%] w-[30%] items-center justify-end lg:gap-5">
+                  <div className="flex lg:w-[30%] w-[30%] items-center justify-end lg:gap-5">
                     <div className="flex items-center gap-3 tracking-wider">
                       {match.type === 'Test' && (
                         <div className={`flex tracking-wider justify-end`}>
                           {/* <label htmlFor={`inning-select-${match.matchId}`} className="text-xs font-bold font-serif">Select Inning:</label> */}
                           <select
-                            className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm rounded text-gray-700 px-2"
+                            className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm rounded text-gray-700 px-5 py-1 uppercase"
                             id="inning"
                             value={inningNumber}
                             onChange={handleInningChange}
@@ -222,7 +230,7 @@ const ScoreCardPage = () => {
                 </div>
                   {currentMatchID === match.matchId &&
                    <>
-                    <table className="min-w-[750px] md:min-w-full divide-y divide-gray-300 bg-white shadow-md">
+                    <table className="min-w-[1010px] items-stretch lg:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -253,13 +261,13 @@ const ScoreCardPage = () => {
                             <p>strikeRate</p>
                           </th>
                           <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
-                            <p>150/7 (20 overs)</p>
+                            <p>{match.runs}/{match.wickets}<span>({match.overs})</span></p>
                           </th>
                         </tr>
                       </thead>
 
                       <tbody className=" divide-y  divide-gray-300">
-                        {playersStats.map((player, index2) =>
+                        {battingPlayerStats && battingPlayerStats.map((player, index2) =>
                           <tr
                             key={index2}
                             className=" hover:bg-gray-50 h-full align-middle"
@@ -295,7 +303,7 @@ const ScoreCardPage = () => {
                         )}
                       </tbody>
                     </table>
-                    <table className="min-w-[750px] md:min-w-full divide-y divide-gray-300 bg-white shadow-md">
+                    <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -323,13 +331,13 @@ const ScoreCardPage = () => {
                           <p>Economy Rate</p>
                         </th>
                         <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
-                          <p>190/7 (15.4 overs)</p>
+                          <p>{match.oppositionRuns}/{match.oppositionWickets}<span>({match.oppositionOvers})</span></p>
                         </th>
                       </tr>
                     </thead>
 
                     <tbody className=" divide-y  divide-gray-300">
-                      {playersStats.map((player, index3) =>
+                      {battingPlayerStats && bawllingPlayerStats.map((player, index3) =>
                         <tr
                           key={index3}
                           className=" hover:bg-gray-50 h-full align-middle"

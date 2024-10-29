@@ -106,9 +106,17 @@ const MatchDetails = () => {
     }
   };
 
-  const handleAddStat = id => {
-    setMatchId(id);
-    setCurrentMatchIndex(id);
+  const handleAddStat = match => {
+    const currentDateTime = new Date();
+    const matchDateTime = new Date(`${match.date}T${match.time}`);
+
+    if(matchDateTime>currentDateTime){
+      message.error("This match is scheduled for a future date. Match summary cannot be added at this time.");
+      return;
+    }
+    setMatchId(match.matchId);
+    setCurrentMatchIndex(match.matchId);
+    setMatchType(match.type);
     setIsPopupOpen(true);
   };
 
@@ -136,17 +144,17 @@ const MatchDetails = () => {
   const handleAddPopupClose = () => {
     setIsFormPopupOpen(false);
     setCurrentMatchIndex(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handlePopupClose = () => {
     setIsPopupOpen(false);
     setCurrentMatchIndex(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
   const handleScorePopupAIOpen = () => {
     setIsScorePopupAIOpen(true);
@@ -162,9 +170,9 @@ const MatchDetails = () => {
   const handleEditPopupClose = () => {
     setIsEditPopupOpen(false);
     setCurrentMatch(null);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+    // setTimeout(() => {
+    //   window.location.reload();
+    // }, 1500);
   };
 
   const handleScorePopupClose = () => {
@@ -308,14 +316,7 @@ const MatchDetails = () => {
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(match.matchId)}
-                          title="Delete"
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          <FaTrash />
-                        </button>
-                        <button
-                          onClick={() => handleAddStat(match.matchId)}
+                          onClick={() => handleAddStat(match)}
                           title="Add match stats"
                           className="text-yellow-500 hover:text-yellow-600"
                         >
@@ -327,6 +328,13 @@ const MatchDetails = () => {
                           className=" text-blue-500 hover:text-blue-600"
                         >
                           <MdAssignmentAdd />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(match.matchId)}
+                          title="Delete"
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <FaTrash />
                         </button>
                       </td>
                     </tr>
@@ -416,13 +424,14 @@ const MatchDetails = () => {
           {/* Popup for Adding Form */}
           {isFormPopupOpen &&
             <FormPopup onClose={handleAddPopupClose} />}
-          <MatchStatPopup
-            matchId={matchId}
-            isOpen={isPopupOpen}
-            onClose={handlePopupClose}
-            onSubmit={statData =>
-              console.log("Match Stat Submitted:", statData)}
-          />
+          {
+            isPopupOpen &&
+            <MatchStatPopup
+              matchType={matchType}
+              matchId={matchId}
+              onClose={handlePopupClose}
+            />
+          }
           {isEditPopupOpen &&
             <EditPopup onClose={handleEditPopupClose} match={currentMatch} />}
           {/* Player Form Popup */}

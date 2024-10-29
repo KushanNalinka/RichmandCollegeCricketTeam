@@ -4,10 +4,11 @@ import axios from 'axios';
 import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
 const EditModal = ({ team, onClose }) => {
+  const [formData, setFormData] = useState({...team});
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
-  const [formData, setFormData] = useState({...team});
   const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
   console.log("teams:", team);
   useEffect(() => {
     axios
@@ -20,7 +21,18 @@ const EditModal = ({ team, onClose }) => {
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+      axios
+        .get(`${API_URL}teams/${team.teamId}/players`)
+        .then(response => {
+          const members = response.data;
+          setSelectedPlayers(members);
+          console.log("players Data:", members);
+        })
+        .catch(error => {
+          console.error("There was an error fetching the player data!", error);
+        });
   }, []);
+  
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -48,6 +60,9 @@ const EditModal = ({ team, onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");

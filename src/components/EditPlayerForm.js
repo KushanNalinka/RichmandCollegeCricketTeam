@@ -8,7 +8,9 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
+
 const EditPlayerForm = ({ player, onClose }) => {
+  console.log("player data: ",player);
   const [formData, setFormData] = useState({ 
     image: player.image,
     name: player.name,
@@ -17,6 +19,7 @@ const EditPlayerForm = ({ player, onClose }) => {
     battingStyle: player.battingStyle,
     bowlingStyle: player.bowlingStyle,
     playerRole: player.playerRole,
+    status:player.status,
     user:{
       username: player.username,
       password: player.password,
@@ -91,6 +94,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           battingStyle: "",
           bowlingStyle: "",
           playerRole: "",
+          status:player.status,
           user:{
             username: player.username,
             password: player.password,
@@ -104,6 +108,9 @@ const EditPlayerForm = ({ player, onClose }) => {
           contactNo: ""
         });
         setImagePreview();
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
         message.error("Failed!");
@@ -276,7 +283,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
           
             >
-              <option value='' disabled>
+              <option value='' disabled >
                 Select
               </option>
               <option value="Active">Active</option>

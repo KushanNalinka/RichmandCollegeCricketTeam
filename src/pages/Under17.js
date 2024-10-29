@@ -472,72 +472,65 @@ const PlayerProfile = () => {
 
             {/* Main Content */}
             <div className="max-w-screen pt-20">
-                {/* Mobile Player List Toggle - comes before Header Section */}
-                {/* Mobile Player List Toggle - only visible on mobile screens */}
-<div className="md:hidden top-20 left-0 right-0 bg-gray-200 p-4 rounded-lg shadow-md z-10"> {/* Use md:hidden to hide on larger screens */}
-    <button 
-        onClick={() => setShowPlayerList(!showPlayerList)} 
-        className="text-black font-bold flex justify-between items-center w-full"
-    >
-        Our Players
-        <span>{showPlayerList ? '-' : '+'}</span>
-    </button>
-    {showPlayerList && (
-        <div className="mt-4">
-            <ul className="space-y-3 text-black">
-                {players.map((player) => (
-                    <li 
-                        key={player.playerId} 
-                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
-                        onClick={() => { setSelectedPlayer(player); setShowPlayerList(false); }} // Close list when a player is selected
+                {/* Mobile Player List Toggle */}
+                <div className="md:hidden top-20 left-0 right-0 bg-gray-200 p-4 rounded-lg shadow-md z-10">
+                    <button 
+                        onClick={() => setShowPlayerList(!showPlayerList)} 
+                        className="text-black font-bold flex justify-between items-center w-full"
                     >
-                        <img src={player.image || playerPlaceholderImage} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
-                        {player.name}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )}
-</div>
-
-                
+                        Our Players
+                        <span>{showPlayerList ? '-' : '+'}</span>
+                    </button>
+                    {showPlayerList && (
+                        <div className="mt-4">
+                            <ul className="space-y-3 text-black">
+                                {players.map((player) => (
+                                    <li 
+                                        key={player.playerId} 
+                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
+                                        onClick={() => { setSelectedPlayer(player); setShowPlayerList(false); }}
+                                    >
+                                        <img src={player.image || playerPlaceholderImage} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        {player.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
 
                 <div className="justify-center w-full px-4 md:px-10">
-    <div className="relative bg-[#000000] rounded-lg shadow-md overflow-hidden mt-4 mb-8">
-        <img
-            src={backgroundImage}
-            alt="Background"
-            className="w-full h-48 object-cover opacity-75"
-        />
-        <div className="absolute inset-0 flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-4 md:px-20 py-6 space-y-4 md:space-y-0">
-            {/* Profile Image Container */}
-            <div className="relative flex-shrink-0 mb-4 md:mb-0">
-                <img
-                    src={selectedPlayer?.image || playerPlaceholderImage}
-                    alt={selectedPlayer?.name}
-                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
-                />
-            </div>
-            <div className="text-center md:text-left">
-                <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
-                <p className="text-gray-400 text-base md:text-xl">
-                    {selectedPlayer?.startDate} - {selectedPlayer?.endDate === 'Present' || !selectedPlayer?.endDate ? 'Present' : selectedPlayer?.endDate}
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
+                    <div className="relative bg-[#000000] rounded-lg shadow-md overflow-hidden mt-4 mb-8">
+                        <img
+                            src={backgroundImage}
+                            alt="Background"
+                            className="w-full h-48 object-cover opacity-75"
+                        />
+                        <div className="absolute inset-0 flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-4 md:px-20 py-6 space-y-4 md:space-y-0">
+                            {/* Profile Image Container */}
+                            <div className="relative flex-shrink-0 mb-4 md:mb-0">
+                                <img
+                                    src={selectedPlayer?.image || playerPlaceholderImage}
+                                    alt={selectedPlayer?.name}
+                                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                                />
+                            </div>
+                            <div className="text-center md:text-left">
+                                <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
+                                <p className="text-gray-400 text-base md:text-xl">
+                                    {selectedPlayer?.startDate} - {selectedPlayer?.endDate === 'Present' || !selectedPlayer?.endDate ? 'Present' : selectedPlayer?.endDate}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-
-            
                 <div className="flex gap-6 justify-center px-10 md:flex-row flex-col">
                     {/* Player List for desktop */}
                     <div className="md:flex hidden bg-gray-200 rounded-lg shadow-md" style={{ width: '350px', flexShrink: 0, maxHeight: '469px', flexDirection: 'column' }}>
-                        {/* Fixed Heading */}
                         <div className="p-4 border-b text-black border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900">Our Players</h2>
                         </div>
-                        {/* Scrollable Player List */}
                         <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {players.map((player) => (
@@ -555,7 +548,6 @@ const PlayerProfile = () => {
                         <div className="flex-grow text-gray-700 bg-gray-200 p-6 rounded-lg shadow-md ml-18">
                             <div className="bg-gray-100 p-6 rounded-lg">
                                 <h2 className="text-xl font-bold mb-4 text-center">Personal Information</h2>
-                                {/* Personal Info Table (responsive for mobile) */}
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border-gray-300 rounded-lg mb-6 table-auto">
                                         <tbody>
@@ -594,7 +586,7 @@ const PlayerProfile = () => {
 
                             <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
-                                {/* Batting Stats Table (responsive and elegant for mobile) */}
+                                {/* Batting Stats Table */}
                                 <h3 className="text-lg font-bold mb-4">Batting and Fielding Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
@@ -636,7 +628,7 @@ const PlayerProfile = () => {
                                     </table>
                                 </div>
 
-                                {/* Bowling Stats Table (responsive and elegant for mobile) */}
+                                {/* Bowling Stats Table */}
                                 <h3 className="text-lg font-bold mb-4">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">

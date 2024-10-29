@@ -107,6 +107,14 @@ import Under13 from './pages/Under13.js';
 import Under15 from './pages/Under15.js';
 import Under17 from './pages/Under17.js';
 import Under19 from './pages/Under19.js';
+import OldBoys from './pages/OldBoys.js';
+import Academy from './pages/Academy.js';
+import Academy13 from './pages/Academy13.js';
+import Academy15 from './pages/Academy15.js';
+import Academy17 from './pages/Academy17.js';
+import Academy19 from './pages/Academy19.js';
+import Over40 from './pages/Over40.js';
+import Over50 from './pages/Over50.js';
 import Coaches from './pages/Coaches.js';
 import PlayerInfo from './pages/PlayerInfo.js';
 import MatchDetail from './pages/MatchDetail.js';
@@ -125,7 +133,7 @@ import AddOfficialForm from './components/AddOfficialForm.js';
 import ScoreCardPopup from './components/ScoreCardPopup.js';
 import InitialNewsPage from './pages/InitialNewsPage.js';
 import NewsPage from './pages/NewsPage.js'; 
-
+import AllPlayers from './pages/AllPlayers.js'; 
 import NewsDetailPage from './pages/NewsDetailPage';
 import InitialNewsDetail from './pages/InitialNewsDetail';
 
@@ -199,11 +207,21 @@ function App() {
          <Route path="/under15" element={<Under15 />} />
          <Route path="/under17" element={<Under17 />} />
          <Route path="/under19" element={<Under19 />} />
+         <Route path="/oldboys" element={<OldBoys />} />
+         <Route path="/academy" element={<Academy />} />
+         <Route path="/academy13" element={<Academy13 />} />
+         <Route path="/academy15" element={<Academy15 />} />
+         <Route path="/academy17" element={<Academy17 />} />
+         <Route path="/academy11" element={<Academy19 />} />
+         <Route path="/over40" element={<Over40 />} />
+         <Route path="/over50" element={<Over50 />} />
+
 
          <Route path="/coach" element={<CoachesProfile/>} />
          <Route path="/coachInfo" element={<CoachTable/>} />
       
          <Route path="/coach" element={<Coaches />} />
+         <Route path="/allplayers" element={<AllPlayers />} />
          <Route path='/official' element={<OfficialsTable/>} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
@@ -360,7 +378,7 @@ function App() {
             }
           /> */}
 
-         <Route path="/admin-match-info" element={<AdminMatchInfo />} />
+ 
          <Route path="/admin-newsdetail" element={<NewsCreator />} />
 
 

@@ -115,8 +115,11 @@ const EditPlayerForm = ({ player, onClose }) => {
           window.location.reload();
         }, 1500);
       } catch (error) {
-        console.error("Error submitting form:", error);
-        message.error("Failed!");
+        if (error.response && error.response.data) {
+          message.error(error.response.data || "Failed!");
+        } else {
+          message.error("An unexpected error occurred.");
+        }
       }
     
   };

@@ -486,25 +486,26 @@ const MatchTable = () => {
         </table>
       </div>
 
-      {/* Toggle Button */}
-      {matches.length > 1 && (
-        <div className="flex justify-center mt-4">
-          <button
-            className="flex items-center text-[#00175F] font-semibold hover:underline"
-            onClick={toggleShowAll}
-          >
-            {showAll ? (
-              <>
-                Show Less <FiChevronUp className="ml-2" />
-              </>
-            ) : (
-              <>
-                Show More <FiChevronDown className="ml-2" />
-              </>
-            )}
-          </button>
-        </div>
+     {/* Toggle Button */}
+{matches.length > 1 && (
+  <div className="flex justify-center mt-4 md:hidden"> {/* Hide on medium and larger screens */}
+    <button
+      className="flex items-center text-[#00175F] font-semibold hover:underline"
+      onClick={toggleShowAll}
+    >
+      {showAll ? (
+        <>
+          Show Less <FiChevronUp className="ml-2" />
+        </>
+      ) : (
+        <>
+          Show More <FiChevronDown className="ml-2" />
+        </>
       )}
+    </button>
+  </div>
+)}
+
     </div>
   );
 };

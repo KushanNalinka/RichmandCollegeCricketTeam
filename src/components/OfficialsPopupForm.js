@@ -21,6 +21,7 @@ const OfficialForm = ({ onClose }) => {
   });
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

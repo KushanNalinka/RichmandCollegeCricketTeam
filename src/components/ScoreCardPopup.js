@@ -309,18 +309,14 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
               <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                 <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider"> Player Name</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Runs </th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
-
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
-                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
-
-                
-
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
+                {/* <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 50s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 100s</th> */}
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
                 <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
               <tr className=" h-2"></tr>
@@ -657,5 +653,3 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   );
 };
 export default ScoreCardPopup;
-
-

@@ -110,6 +110,9 @@ const NewsCreator = () => {
       });
       setImagePreview("");
       loadNews();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");
@@ -195,6 +198,9 @@ const NewsCreator = () => {
       setIsEditPressed(false);
       setCurrentNewsId(null);
       loadNews();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed!");

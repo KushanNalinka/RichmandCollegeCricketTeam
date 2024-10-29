@@ -128,7 +128,7 @@ const AddNewModal = ({  onClose }) => {
               className="border border-gray-300 rounded-md w-full py-1 px-3 text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Enter team name"
             >
-              <option value="" disabled>Select year</option>
+              <option value="" disabled>Select team</option>
               <option  value="Under 13">Under 13</option>
               <option  value="Under 15">Under 15</option>
               <option  value="Under 17">Under 17</option>

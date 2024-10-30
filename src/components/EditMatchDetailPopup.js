@@ -19,6 +19,7 @@ const EditPopup = ({ onClose, match }) => {
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("selected coaches: ", selectedCoaches);
   const convertTimeTo24Hour = (time12h) => {
@@ -108,9 +109,26 @@ const EditPopup = ({ onClose, match }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (isImageAdded && formData.logo && !/^image\//.test(formData.logo.type)) {
+      newErrors.logo = "Only image files are allowed.";
+    };
+      // Validate selected coaches
+    if (selectedCoaches.length === 0) {
+      newErrors.coaches = "Please select at least one coach.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds in edited foemdata;", formData.coaches);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       let imageURL = formData.logo;
@@ -151,15 +169,22 @@ const EditPopup = ({ onClose, match }) => {
       })
       setSelectedCoaches([]);
       setImagePreview();
-      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
+  
   const handleCoachSelect = coach => {
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
@@ -207,7 +232,7 @@ const EditPopup = ({ onClose, match }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -266,7 +291,7 @@ const EditPopup = ({ onClose, match }) => {
               value={formData.tier}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
+         
             >
               <option value="" disabled selected>Select tier</option>
               <option value="Tier A">Tier A</option>
@@ -281,7 +306,6 @@ const EditPopup = ({ onClose, match }) => {
               value={formData.division}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
             >
               <option value="" disabled selected>Select division</option>
               <option value="Division 1"> Division 1</option>
@@ -373,6 +397,7 @@ const EditPopup = ({ onClose, match }) => {
                 <FaTrash/>
               </button>
             </div>
+            {errors.coaches && <p className="text-red-500 text-xs mt-1">{errors.coaches}</p>}
             <div className="relative col-span-1">
               {/* Dropdown Content */}
               {dropdownOpen && (
@@ -415,6 +440,7 @@ const EditPopup = ({ onClose, match }) => {
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+              {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
           </div>
 
           <div className="col-span-2">

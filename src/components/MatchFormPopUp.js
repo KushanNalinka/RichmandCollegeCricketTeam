@@ -17,6 +17,7 @@ const FormPopup = ({  onClose }) => {
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     date: "",
@@ -41,7 +42,6 @@ const FormPopup = ({  onClose }) => {
     return newDate.toISOString().split("T")[0]; // YYYY-MM-DD
 
   };
-
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -104,9 +104,26 @@ const FormPopup = ({  onClose }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    if (!/^image\//.test(formData.logo.type)) {
+      newErrors.logo = "Only image files are allowed.";
+    };
+      // Validate selected coaches
+    if (selectedCoaches.length === 0) {
+      newErrors.coaches = "Please select at least one coach.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       let imageURL = formData.logo;
@@ -147,13 +164,19 @@ const FormPopup = ({  onClose }) => {
       })
       setImagePreview();
       setSelectedCoaches([]);
-      setUploading(false);
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -203,10 +226,8 @@ const FormPopup = ({  onClose }) => {
   };
 
   return (
-    <div
-      className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}
-    >
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+    <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -315,6 +336,7 @@ const FormPopup = ({  onClose }) => {
               value={formData.matchCaptain}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
             >
               <option value="">Select Captain</option>
               {players.map(player =>
@@ -366,6 +388,7 @@ const FormPopup = ({  onClose }) => {
                 className="py-1 px-3 w-[88%] rounded-md text-gray-600 outline-none "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
+                required
                 placeholder='Choose coaches from the list...'
               />
                <button
@@ -385,6 +408,7 @@ const FormPopup = ({  onClose }) => {
                 <FaTrash/>
               </button>
             </div>
+            {errors.coaches && <p className="text-red-500 text-xs mt-1">{errors.coaches}</p>}
             <div className="relative col-span-1">
               {/* Dropdown Content */}
               {dropdownOpen && (
@@ -397,6 +421,7 @@ const FormPopup = ({  onClose }) => {
                         className="mr-2 text-gray-600"
                         checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
                         onChange={() => handleCoachSelect(coach)}
+                    
                       />
                       <label
                         htmlFor={`coach-${coach.coachId}`}
@@ -419,6 +444,7 @@ const FormPopup = ({  onClose }) => {
               name="logo" 
               accept="image/*" 
               onChange={handleChange}
+              required
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
@@ -427,6 +453,7 @@ const FormPopup = ({  onClose }) => {
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+              {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
           </div>
 
           <div className="col-span-2 ">

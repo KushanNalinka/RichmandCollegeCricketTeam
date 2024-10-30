@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
 import { message } from "antd";
+import { Link } from "react-router-dom";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
@@ -32,7 +33,7 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   const [isScorePopupAIOpen, setIsScorePopupAIOpen] = useState(false);
@@ -209,8 +210,10 @@ const MatchDetails = () => {
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
-            <MainNavbarToggle />
-            <img src={logo} className="h-12 w-12" />
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div
             className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
@@ -279,7 +282,7 @@ const MatchDetails = () => {
                           <img
                             src={match.logo}
                             alt={match.matchId}
-                            className="h-14 w-14 rounded-full object-cover border border-gray-300"
+                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
                           {/* Use truncate or text wrapping for small screens */}
                           <span className="truncate whitespace-nowrap">
@@ -287,28 +290,28 @@ const MatchDetails = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
+                      <td className="py-2 px-2 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.time}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.tier}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.division}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.umpires}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
-                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}

@@ -26,6 +26,7 @@ const CoachForm = ({  onClose }) => {
 
   const [imagePreview, setImagePreview] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -44,48 +45,101 @@ const CoachForm = ({  onClose }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    //username validation
+    if (formData.username.length < 4 || formData.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    };
+
+    // Password validation
+    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      newErrors.password = "Password must be at least 8 characters long and include a special character";
+    };
+
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (!sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+    };
+
+    const today = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (selectedDate >= today) {
+      newErrors.dateOfBirth = "Date of birth must be in the past.";
+    };
+
+    if (formData.description.length > 100) {
+      newErrors.description = "Description should be under 100 characters.";
+    };
+
+    if (!/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    };
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
-      try {
-      let imageURL = formData.image;
-      
-      // Upload image if an image file is added
-      if (formData.image instanceof File) {
-        imageURL = await handleImageUpload(formData.image);
-      }
+    try {
+    let imageURL = formData.image;
+    
+    // Upload image if an image file is added
+    if (formData.image instanceof File) {
+      imageURL = await handleImageUpload(formData.image);
+    }
 
-      const coachData = {
-        ...formData,
-        image: imageURL, // Assign the uploaded image URL to formData
-      };
-        const response = await axios.post(
-          `${API_URL}auth/signupCoach`,
-          coachData 
-        );
-        console.log("Form submitted succedded: ", response.data);
-        message.success("Successfull!");
-        setFormData({
-            status:"",
-            image: "",
-            name: "",
-            dateOfBirth: "",
-            username:"",
-            password:"",
-            email: "",
-            address: "",
-            contactNo: "",
-            description: ""
-        });
-        setImagePreview();
-        setUploading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } catch (error) {
-        console.error("Error submitting form:", error);
-        message.error("Failed!");
+    const coachData = {
+      ...formData,
+      image: imageURL, // Assign the uploaded image URL to formData
+    };
+      const response = await axios.post(
+        `${API_URL}auth/signupCoach`,
+        coachData 
+      );
+      console.log("Form submitted succedded: ", response.data);
+      message.success("Successfull!");
+      setFormData({
+          status:"",
+          image: "",
+          name: "",
+          dateOfBirth: "",
+          username:"",
+          password:"",
+          email: "",
+          address: "",
+          contactNo: "",
+          description: ""
+      });
+      setImagePreview();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
       }
+    } finally {
+      setUploading(false);
+    }
     
   };
 
@@ -113,7 +167,7 @@ const CoachForm = ({  onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -128,7 +182,7 @@ const CoachForm = ({  onClose }) => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
-          <div >
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
@@ -140,7 +194,7 @@ const CoachForm = ({  onClose }) => {
               
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
             <input
               type="date"
@@ -150,8 +204,9 @@ const CoachForm = ({  onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+             {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
@@ -162,8 +217,9 @@ const CoachForm = ({  onClose }) => {
               required
               placeholder="@username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
@@ -174,8 +230,9 @@ const CoachForm = ({  onClose }) => {
               required
               placeholder="you@example.com"
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Password</label>
             <input
               type="password"
@@ -186,8 +243,9 @@ const CoachForm = ({  onClose }) => {
               required
               placeholder="********"
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
@@ -198,8 +256,9 @@ const CoachForm = ({  onClose }) => {
               placeholder="+1 (555) 123-4567"
               required
             />
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Address</label>
             <input
             type="text"
@@ -211,7 +270,7 @@ const CoachForm = ({  onClose }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Status</label>
             <select
               name="status"
@@ -228,7 +287,7 @@ const CoachForm = ({  onClose }) => {
             </select>
           </div>
         
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-1">
             <label className="block text-black text-sm font-semibold">Description</label>
             <textarea
               name="description"
@@ -238,8 +297,9 @@ const CoachForm = ({  onClose }) => {
               placeholder="........."
               required
             />
+            {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-1">
             <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
@@ -248,7 +308,7 @@ const CoachForm = ({  onClose }) => {
               accept="image/*" 
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              required
             />
             {imagePreview &&
               <img
@@ -256,8 +316,9 @@ const CoachForm = ({  onClose }) => {
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+              {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           </div>
-          <div className="flex justify-end col-span-2 mt-4">
+          <div className="flex justify-end col-span-1 md:col-span-2 mt-4">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"

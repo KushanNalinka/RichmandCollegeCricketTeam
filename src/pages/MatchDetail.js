@@ -103,7 +103,7 @@ const MatchDetails = () => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error deleting player:", error);
+      console.error("Error deleting match:", error);
 
       if (error.response && error.response.data && error.response.data.message) {
         message.error(`Failed to delete: ${error.response.data.message}`);
@@ -378,11 +378,6 @@ const MatchDetails = () => {
               </button>
             </div>
           </div>
-          {uploading && (
-            <div className="absolute items-center justify-center my-4">
-              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
-            </div>
-            )}
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
               <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
@@ -467,8 +462,12 @@ const MatchDetails = () => {
               onClose={handleScorePopupAIClose}
               matchId={matchId}
             />} 
-            
         </div>
+        {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+            )}
       </div>
     </div>
   );

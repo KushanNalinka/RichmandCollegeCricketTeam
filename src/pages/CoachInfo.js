@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
+import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
@@ -8,6 +9,7 @@ import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
 // import flag from "../assets/images/flagbg.png";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import flag from "../assets/images/backDrop3.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
@@ -23,10 +25,11 @@ const CoachTable = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentCoach, setCurrentCoach] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [coachToDelete, setCoachToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     loadCoaches();
@@ -77,6 +80,7 @@ const CoachTable = () => {
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
       message.success("Successfully Deleted!");
@@ -86,8 +90,15 @@ const CoachTable = () => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting coach:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -119,8 +130,10 @@ const CoachTable = () => {
       </div>
       <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
-           <MainNavbarToggle/>
-           <img src={logo} className="h-12 w-12"/>
+          <Link to={"/member"}>
+            <img src={logo} className="h-12 w-12" />
+          </Link >
+          <MainNavbarToggle/>
         </div>
         <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
@@ -149,28 +162,28 @@ const CoachTable = () => {
             <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="px-6 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     STATUS
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DOB
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     EMAIL
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     Contact No
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     ADDRESS
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DESCRIPTION
                   </th>
-                  <th className="px-6 py-3 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -195,7 +208,7 @@ const CoachTable = () => {
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="h-14 w-14 rounded-full object-cover border border-gray-300"
+                          className="h-12 w-12 rounded-full object-cover border border-gray-300"
                         />
                         {/* Use truncate or text wrapping for small screens */}
                         <span className="truncate whitespace-nowrap">
@@ -203,22 +216,22 @@ const CoachTable = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-2 h-14  whitespace-nowrap text-sm text-gray-600">
                       {item.dateOfBirth}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.contactNo}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.address}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.description}
                     </td>
-                    <td className="px-6 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
+                    <td className="px-4 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-green-500 hover:text-green-600 text-md"
@@ -295,6 +308,11 @@ const CoachTable = () => {
             onClose={handleEditFormClose}
           />}
       </div>
+      {uploading && (
+          <div className="absolute items-center justify-center my-4">
+            <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+          </div>
+        )}
     </div>
   </div>  
   );

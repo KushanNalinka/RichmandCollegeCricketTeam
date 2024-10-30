@@ -339,12 +339,12 @@ const paginatedData = sortedPlayerData.slice(
               onClose={handleEditFormClose}
             />
           }
-          {uploading && (
+        </div>
+        {uploading && (
             <div className="absolute items-center justify-center my-4">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
           )}
-        </div>
       </div>
     </div>
   );

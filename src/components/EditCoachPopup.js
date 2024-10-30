@@ -26,6 +26,7 @@ const EditCoachForm = ({ coach, onClose }) => {
   const [imagePreview, setImagePreview] = useState(coach.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = e => {
@@ -55,9 +56,58 @@ const EditCoachForm = ({ coach, onClose }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    //username validation
+    if (formData.user.username !== coach.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.user.email !== coach.email && !emailPattern.test(formData.user.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+  
+    // Password validation
+    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (formData.user.password && formData.user.password !== coach.password && !passwordPattern.test(formData.user.password)) {
+      newErrors.password = "Password must be at least 8 characters long and include a special character";
+    }
+  
+    // Contact number validation
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (formData.contactNo !== coach.contactNo && !sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+    }
+  
+    // Date of birth validation
+    const today = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (formData.dateOfBirth !== coach.dateOfBirth && selectedDate >= today) {
+      newErrors.dateOfBirth = "Date of birth must be in the past.";
+    };
+    //description validation
+    if (formData.description && formData.description !== coach.description && formData.description.length > 100) {
+      newErrors.description = "Description should be under 100 characters.";
+    };
+    // Image type validation
+    if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }; 
+
   const handleEdit = async e => {
     e.preventDefault();
     console.log("edited1 coaches: ", formData);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
       try {
         let imageURL = formData.image;
@@ -77,7 +127,7 @@ const EditCoachForm = ({ coach, onClose }) => {
             coachData 
         );
         console.log("Form submitted succedded: ", response.data);
-        message.success("Successfull!");
+        message.success("Successfully updated!");
         setFormData({
             status:"",
             image: "",
@@ -93,15 +143,20 @@ const EditCoachForm = ({ coach, onClose }) => {
             }
         });
         setImagePreview();
-        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
-        message.error("Failed!");
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
       }
-    
   };
 
   const handleImageUpload = (file) => {
@@ -131,7 +186,7 @@ const EditCoachForm = ({ coach, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -146,7 +201,7 @@ const EditCoachForm = ({ coach, onClose }) => {
           onSubmit={handleEdit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
-          <div >
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
@@ -154,10 +209,10 @@ const EditCoachForm = ({ coach, onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
             <input
               type="date"
@@ -167,8 +222,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               
             />
+            {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
@@ -178,8 +234,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="@username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
@@ -189,8 +246,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
@@ -199,8 +257,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
@@ -210,8 +269,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
             />
+             {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Address</label>
             <input
             type="text"
@@ -222,7 +282,7 @@ const EditCoachForm = ({ coach, onClose }) => {
               placeholder="123 Street Name, City, Country"
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Status</label>
             <select
               name="status"
@@ -238,7 +298,7 @@ const EditCoachForm = ({ coach, onClose }) => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Description</label>
             <textarea
               name="description"
@@ -247,8 +307,9 @@ const EditCoachForm = ({ coach, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="........."
             />
+            {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
@@ -264,8 +325,9 @@ const EditCoachForm = ({ coach, onClose }) => {
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+               {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"

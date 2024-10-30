@@ -127,7 +127,7 @@ const EditModal = ({ team, onClose }) => {
 
   return (
     <div className="fixed inset-0  flex items-center justify-center z-50 bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
           <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -188,7 +188,7 @@ const EditModal = ({ team, onClose }) => {
               ))}
             </select>
           </div>
-          <div>
+          <div className="mb-2">
             <label className="block text-black text-sm font-semibold">Captain</label>
             <select
               type="text"

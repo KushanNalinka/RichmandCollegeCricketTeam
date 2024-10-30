@@ -8,6 +8,7 @@ import flag from "../assets/images/backDrop3.png";
 import HomeNavbar from "../components/HomeNavbar";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
+import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import TeamMembers from "../components/TeamMembers";
@@ -24,7 +25,7 @@ const TableComponent = () => {
   const [editItem, setEditItem] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [teamToDelete, setTeamToDelete] = useState(null);
@@ -34,13 +35,21 @@ const TableComponent = () => {
     const fetchTeams = async () => {
       try {
         const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
-        setTeams(response.data);
-        console.log(response.data)
+  
+        const sortedTeams = response.data.sort((a, b) => {
+          if (b.year === a.year) {
+            return a.under.localeCompare(b.under); 
+          }
+          return b.year - a.year; 
+        });
+  
+        setTeams(sortedTeams);
+        console.log(sortedTeams);
       } catch (error) {
         console.error("Error fetching matches:", error);
       }
     };
-
+  
     fetchTeams();
   }, []);
 
@@ -127,8 +136,10 @@ const TableComponent = () => {
       </div>
       <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
         <div className="flex justify-between w-full lg:px-10 py-3">
-           <MainNavbarToggle/>
-           <img src={logo} className="h-12 w-12"/>
+          <Link to={"/member"}>
+            <img src={logo} className="h-12 w-12" />
+          </Link >
+          <MainNavbarToggle/>
         </div>
         <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
@@ -175,16 +186,16 @@ const TableComponent = () => {
                     key={item.teamId}
                     className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
                   >
-                    <td className="py-4 px-4 lg:rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
+                    <td className="py-2 px-4 lg:rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
                       {item.under}
                     </td>
-                    <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.year}
                     </td>
-                    <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.captain}
                     </td>
-                    <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                    <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-500 hover:text-blue-600 transition-colors"

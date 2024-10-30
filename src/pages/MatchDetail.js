@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import HomeNavbar from "../components/HomeNavbar.js";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
@@ -40,6 +41,7 @@ const MatchDetails = () => {
   const [choiseModelOpen, setChoiseModelOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -90,6 +92,7 @@ const MatchDetails = () => {
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try {
       const deleteMatch = await axios.delete(
         `${API_URL}matches/delete/${matchToDelete}`
@@ -100,8 +103,15 @@ const MatchDetails = () => {
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting player:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -368,9 +378,14 @@ const MatchDetails = () => {
               </button>
             </div>
           </div>
+          {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+            )}
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-              <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-4">
@@ -452,6 +467,7 @@ const MatchDetails = () => {
               onClose={handleScorePopupAIClose}
               matchId={matchId}
             />} 
+            
         </div>
       </div>
     </div>

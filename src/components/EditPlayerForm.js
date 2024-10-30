@@ -232,7 +232,7 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -247,7 +247,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           onSubmit={handleEdit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
-          <div >
+          <div className="col-span-1" >
             <label className="block text-black text-sm font-semibold ">Name</label>
             <input
               type="text"
@@ -258,7 +258,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
             <input
               type="date"
@@ -269,7 +269,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
              {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
@@ -281,7 +281,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
@@ -293,7 +293,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
@@ -304,7 +304,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
@@ -316,7 +316,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
             {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Batting Style</label>
             <select
               name="battingStyle"
@@ -332,7 +332,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Right-hand batting">Right-hand batting</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Bowling Style</label>
             <select
               name="bowlingStyle"
@@ -348,7 +348,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Right-arm spin">Right-arm spin</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Role</label>
             <select
               name="playerRole"
@@ -365,7 +365,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="All-rounder">All-rounder</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Status</label>
             <select
               name="status"
@@ -381,7 +381,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Membership Starting Date
             </label>
@@ -394,7 +394,7 @@ const EditPlayerForm = ({ player, onClose }) => {
         
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Membership Ending Date
             </label>
@@ -408,7 +408,7 @@ const EditPlayerForm = ({ player, onClose }) => {
             />
             {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>
-          <div className="col-span-2 ">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
@@ -426,7 +426,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               />}
               {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>} 
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"

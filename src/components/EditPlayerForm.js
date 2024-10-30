@@ -80,6 +80,13 @@ const EditPlayerForm = ({ player, onClose }) => {
     if (!isDataModified) {
       return true; // No validation needed as no changes detected
     }
+
+     //username validation
+     if (formData.user.username !== player.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
   
     // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -248,7 +255,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              required
             />
           </div>
           <div>
@@ -272,6 +279,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="@username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
           <div>
             <label className="block text-black text-sm font-semibold">Email</label>

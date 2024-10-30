@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
@@ -20,9 +21,10 @@ const TableComponent = () => {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -89,6 +91,7 @@ const paginatedData = sortedPlayerData.slice(
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(
         `${API_URL}admin/players/delete/${playerToDelete}`
@@ -99,8 +102,15 @@ const paginatedData = sortedPlayerData.slice(
         window.location.reload();
       }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting player:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -222,12 +232,12 @@ const paginatedData = sortedPlayerData.slice(
                             : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
                         />
                       </td>
-                      <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                      <td className="gap-4 px-2 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                         <div className="flex items-center justify-start gap-2 ">
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="h-10 w-10 rounded-full object-cover border border-gray-300"
+                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
                           {/* Use truncate or text wrapping for small screens */}
                           <span className="truncate whitespace-nowrap">
@@ -301,8 +311,8 @@ const paginatedData = sortedPlayerData.slice(
             </div>
           </div>
           {showDeleteModal && (
-              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className={`fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75`}>
+                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this player?</p>
                   <div className="flex justify-end mt-4 space-x-4">
@@ -327,7 +337,13 @@ const paginatedData = sortedPlayerData.slice(
             <EditPlayerForm
               player={currentPlayer}
               onClose={handleEditFormClose}
-            />}
+            />
+          }
+          {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
         </div>
       </div>
     </div>

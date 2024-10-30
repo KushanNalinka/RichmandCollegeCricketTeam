@@ -30,6 +30,7 @@ const PlayerForm = ({  onClose }) => {
     contactNo: ""
   });
 
+  const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
 
@@ -51,7 +52,7 @@ const PlayerForm = ({  onClose }) => {
         ...formData,
         [name]: file
       });
-    } else {
+    }else {
       setFormData({
         ...formData,
         [name]: value
@@ -61,9 +62,12 @@ const PlayerForm = ({  onClose }) => {
 
   const handleSubmit = async e => {
     console.log("Form data before submit: ", formData);
-    setUploading(true);
-
     e.preventDefault();
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    }
+    setUploading(true);
       try {
         let imageURL = formData.image;
       
@@ -100,18 +104,58 @@ const PlayerForm = ({  onClose }) => {
           contactNo: ""
         });
         setImagePreview();
-        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } catch (error) {
-        if (error.response && error.response.data) {
-          message.error(error.response.data.message || "Failed!");
+        console.error("Error submitting form:", error);
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
         } else {
-          message.error("An unexpected error occurred.");
+          message.error("An unexpected error occurred. Please try again later.");
         }
-      };
+      } finally {
+        setUploading(false);
+      }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    };
+
+    // Password validation
+    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      newErrors.password = "Password must be at least 8 characters long and include a special character";
+    };
+
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (!sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX' and exactly 10 or 12 digits";
+    };
     
+    const today = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (selectedDate >= today) {
+      newErrors.dateOfBirth = "Date of birth must be in the past.";
+    };
+
+    if (formData.membership.startDate && new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
+      newErrors.membershipEndDate = "End date must be after start date.";
+    }
+
+    if (!/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    };
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleEditImageClick = () => {
@@ -147,11 +191,10 @@ const PlayerForm = ({  onClose }) => {
       );
     });
   };
-  
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -188,6 +231,7 @@ const PlayerForm = ({  onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
           <div>
             <label className="block text-black text-sm  font-semibold">Username</label>
@@ -212,6 +256,7 @@ const PlayerForm = ({  onClose }) => {
               placeholder="you@example.com"
               required
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
           <div>
             <label className="block text-black text-sm  font-semibold">Password</label>
@@ -224,6 +269,7 @@ const PlayerForm = ({  onClose }) => {
               placeholder="********"
               required
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div>
             <label className="block text-black text-sm  font-semibold">Contact No</label>
@@ -236,6 +282,7 @@ const PlayerForm = ({  onClose }) => {
               placeholder="+1 (555) 123-4567"
               required
             />
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
           <div>
             <label className="block text-black text-sm  font-semibold">Batting Style</label>
@@ -327,6 +374,7 @@ const PlayerForm = ({  onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>
           <div className="col-span-2 ">
             <label className="block text-black text-sm font-semibold">Image</label>
@@ -336,6 +384,7 @@ const PlayerForm = ({  onClose }) => {
               name="image" 
               accept="image/*" 
               onChange={handleChange}
+              required
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
@@ -344,6 +393,7 @@ const PlayerForm = ({  onClose }) => {
                 alt="Preview"
                 className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+             {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}  
           </div>
           <div className="flex justify-end col-span-2">
             <button

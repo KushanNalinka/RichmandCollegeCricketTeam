@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { Link } from "react-router-dom";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus,FaChevronDown, FaChevronUp } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
 import { GrLinkNext } from "react-icons/gr";
@@ -30,10 +30,16 @@ const CoachTable = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [coachToDelete, setCoachToDelete] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [filteredCoaches, setFilteredCoaches] = useState([]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [filters, setFilters] = useState({ status: ''});
 
   useEffect(() => {
     loadCoaches();
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   const loadCoaches = async () => {
     axios
@@ -48,16 +54,33 @@ const CoachTable = () => {
       });
   };
 
-  const handleEdit = coach => {
-    setCurrentCoach(coach);
-    setIsEditFormOpen(true);
-  };
+  useEffect(() => {
+    const filtered = coachData.filter(coach => {
+      return (
+        (filters.status ? coach.status === filters.status : true)  
+      );
+    });
+    setFilteredCoaches(filtered);
+  }, [filters, coachData]); 
+
+    // Sort players by status before slicing for pagination
+  // const sortedPlayerData = [...coachData].sort((a, b) => {
+  //   // Move "Active" players to the top
+  //   if (a.status === "Active" && b.status !== "Active") return -1;
+  //   if (a.status !== "Active" && b.status === "Active") return 1;
+  //   return 0;
+  // });
+
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setShowStatusDropdown(false);
+  }; 
 
   // Calculate total pages
-  const totalPages = Math.ceil(coachData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredCoaches.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = coachData.slice(
+  const paginatedData = filteredCoaches.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -74,6 +97,11 @@ const CoachTable = () => {
     }
   };
 
+  const handleEdit = coach => {
+    setCurrentCoach(coach);
+    setIsEditFormOpen(true);
+  };
+
   const handleDelete = id => {
     setCoachToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
@@ -85,10 +113,10 @@ const CoachTable = () => {
       const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      loadCoaches();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error deleting coach:", error);
 
@@ -162,8 +190,18 @@ const CoachTable = () => {
             <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="pl-4 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     STATUS
+                    <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
+                    {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
+                    </button>
+                    {showStatusDropdown && (
+                      <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                        <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">All</button>
+                        <button onClick={() => handleFilterChange("status", "Active")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Active</button>
+                        <button onClick={() => handleFilterChange("status", "Inactive")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Inactive</button>
+                      </div>
+                    )}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
@@ -301,11 +339,12 @@ const CoachTable = () => {
           </div>
         )}
         {isFormOpen &&
-          <CoachForm onClose={handleAddFormClose} />}
+          <CoachForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
         {isEditFormOpen &&
           <EditCoachForm
             coach={currentCoach}
             onClose={handleEditFormClose}
+            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
       </div>
       {uploading && (

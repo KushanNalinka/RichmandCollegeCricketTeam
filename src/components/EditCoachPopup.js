@@ -9,7 +9,7 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const EditCoachForm = ({ coach, onClose }) => {
+const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
     status: coach.status,
     image: coach.image,
@@ -80,18 +80,20 @@ const EditCoachForm = ({ coach, onClose }) => {
     const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
     if (formData.contactNo !== coach.contactNo && !sriLankaPattern.test(formData.contactNo)) {
       newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-    }
-  
+    };
+
     // Date of birth validation
     const today = new Date();
     const selectedDate = new Date(formData.dateOfBirth);
     if (formData.dateOfBirth !== coach.dateOfBirth && selectedDate >= today) {
       newErrors.dateOfBirth = "Date of birth must be in the past.";
     };
+
     //description validation
     if (formData.description && formData.description !== coach.description && formData.description.length > 100) {
       newErrors.description = "Description should be under 100 characters.";
     };
+    
     // Image type validation
     if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
       newErrors.image = "Only image files are allowed.";
@@ -143,9 +145,10 @@ const EditCoachForm = ({ coach, onClose }) => {
             }
         });
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        isSubmitted();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 

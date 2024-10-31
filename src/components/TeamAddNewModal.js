@@ -5,7 +5,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 import { FaTimes,  FaTrash } from 'react-icons/fa';
 
-const AddNewModal = ({  onClose }) => {
+const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
@@ -71,9 +71,10 @@ const AddNewModal = ({  onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      isSubmitted();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -115,7 +116,7 @@ const AddNewModal = ({  onClose }) => {
 
   const years = [];
   const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1900; i--) {
+  for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
   }
 

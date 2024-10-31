@@ -4,7 +4,7 @@ import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
-const EditModal = ({ team, onClose }) => {
+const EditModal = ({ team, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({...team});
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
@@ -78,9 +78,10 @@ const EditModal = ({ team, onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      isSubmitted();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
 

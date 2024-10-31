@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios"; 
 import { message } from "antd";
-import { FaTrash, FaEdit, FaUsers, FaPlus } from "react-icons/fa";
+import { FaTrash, FaEdit, FaUsers, FaPlus, FaChevronDown, FaChevronUp  } from "react-icons/fa";
 import EditModal from "../components/TeamEditModal"; // Import the EditModal component
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
 import flag from "../assets/images/backDrop3.png";
@@ -29,7 +29,14 @@ const TableComponent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [teamToDelete, setTeamToDelete] = useState(null);
-  
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [filters, setFilters] = useState({ year: "", under: "" });
+  const [showUnderDropdown, setShowUnderDropdown] = useState(false);
+  const [showYearDropdown, setShowYearDropdown] = useState(false);
+  const [yearOptions, setYearOptions] = useState([]);
+  const [underOptions, setUnderOptions] = useState([]);
+  const [filteredTeams, setFilteredTeams] = useState([]);
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -42,21 +49,38 @@ const TableComponent = () => {
           }
           return b.year - a.year; 
         });
-  
         setTeams(sortedTeams);
+        setFilteredTeams(sortedTeams);
         console.log(sortedTeams);
+
+        // Extract unique year and under options
+        const uniqueYears = [...new Set(response.data.map(team => team.year))];
+        const uniqueUnders = [...new Set(response.data.map(team => team.under))];
+        setYearOptions(uniqueYears);
+        setUnderOptions(uniqueUnders);
+
       } catch (error) {
         console.error("Error fetching matches:", error);
       }
     };
   
     fetchTeams();
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
-  const totalPages = Math.ceil(teams.length / rowsPerPage);
+  useEffect(() => {
+    const filtered = teams.filter(team => {
+      return (
+        (filters.year ? team.year === parseInt(filters.year) : true) &&
+        (filters.under ? team.under === filters.under : true)
+      );
+    });
+    setFilteredTeams(filtered);
+  }, [filters, teams]);
+
+  const totalPages = Math.ceil(filteredTeams.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = teams.slice(
+  const paginatedData = filteredTeams.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -71,6 +95,12 @@ const TableComponent = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
+  };
+
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setShowUnderDropdown(false);
+    setShowYearDropdown(false);
   };
 
   const handleEdit = item => {
@@ -122,6 +152,12 @@ const TableComponent = () => {
     // }, 1500);
   };
 
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let i = currentYear; i >= 1990; i--) {
+    years.push(i);
+  }
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
     <div className=" flex relative justify-center items-stretch min-h-screen w-full">
@@ -167,9 +203,60 @@ const TableComponent = () => {
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
                   <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Under
+                    <button
+                        onClick={() => setShowUnderDropdown(!showUnderDropdown)}
+                        className="ml-2 text-white"
+                      >
+                        {showUnderDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showUnderDropdown && (
+                        <div className="absolute mt-1 bg-white h-96 hover:overflow-y-auto overflow-y-hidden border rounded shadow-lg">
+                           <button
+                            onClick={() => handleFilterChange("under", "")}
+                            className="block px-4 py-2 text-sm text-start text-gray-700 w-full hover:bg-gray-200"
+                          >
+                            All
+                          </button>
+                          {underOptions.map(under => (
+                            <button
+                              key={under}
+                              onClick={() => handleFilterChange("under", under)}
+                              className="block px-4 py-2 text-sm text-start text-gray-700 w-full hover:bg-gray-200"
+                            >
+                              {under}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                   </th>
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Year
+                    <button
+                        onClick={() => setShowYearDropdown(!showYearDropdown)}
+                        className="ml-2 text-white"
+                      >
+                        {showYearDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showYearDropdown && (
+                        <div className="absolute mt-1 bg-white border h-96 hover:overflow-y-auto overflow-y-hidden rounded shadow-lg">
+                          <button
+                            onClick={() => handleFilterChange("year", "")}
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
+                            All
+                          </button>
+                          {years.map(year => (
+                            <button
+                              key={year}
+                              onClick={() => handleFilterChange("year", year)}
+                              className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {year}
+                            </button>
+                          ))}
+                          
+                        </div>
+                      )}
                   </th>
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Captain
@@ -272,6 +359,7 @@ const TableComponent = () => {
         {isModalOpen &&
           <AddNewModal
             onClose={handleAddFormClose}
+            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
 
         {/* Edit Modal */}
@@ -280,7 +368,7 @@ const TableComponent = () => {
           <EditModal
             team={editItem}
             onClose={handleEditFormClose}
-           
+            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
           {isTeamMembersOpen &&
           teamId &&

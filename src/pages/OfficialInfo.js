@@ -4,6 +4,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
@@ -18,7 +19,7 @@ const OfficialsTable = () => {
   const [currentOfficial, setCurrentOfficial] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [officialToDelete, setOfficialToDelete] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
@@ -132,8 +133,10 @@ const OfficialsTable = () => {
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
-             <MainNavbarToggle/>
-             <img src={logo} className="h-12 w-12"/>
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{

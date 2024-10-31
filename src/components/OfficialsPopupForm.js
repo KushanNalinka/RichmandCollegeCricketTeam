@@ -25,37 +25,38 @@ const OfficialForm = ({ onClose }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "contactNo") {
-      // Ensure only numbers or "+" are entered in contactNo
-      if (/^\+?\d*$/.test(value)) {
-        setFormData({
-          ...formData,
-          [name]: value
-        });
-      }
-    } else {
       setFormData({
         ...formData,
         [name]: value
       });
-    }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
+    //username validation
+    if (formData.username.length < 4 || formData.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+
     // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
-    }
+    };
 
     // Password validation
     const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
       newErrors.password = "Password must be at least 8 characters long and include a special character";
-    }
+    };
+
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (!sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX' and exactly 10 or 12 digits";
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -63,7 +64,10 @@ const OfficialForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
 
       try {
@@ -82,22 +86,26 @@ const OfficialForm = ({ onClose }) => {
           contactNo: "",
           position: ""
         });
-        setUploading(false);
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
-        message.error("Failed!");
-      }
-    
 
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+      }
   };
 
   return (
 
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
         <div className="flex justify-end ">
 
           <button
@@ -118,6 +126,7 @@ const OfficialForm = ({ onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="Jhon Doe"
               required
             />
           </div>
@@ -132,6 +141,7 @@ const OfficialForm = ({ onClose }) => {
               required
               placeholder="@username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Email</label>
@@ -144,7 +154,7 @@ const OfficialForm = ({ onClose }) => {
               required
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Password</label>
@@ -156,20 +166,18 @@ const OfficialForm = ({ onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
               placeholder="********"
-              onBlur={() => {
-                if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(formData.password)) {
-                  setErrors({
-                    ...errors,
-                    password: "Password must be at least 8 characters long and include a special character",
-                  });
-                } else {
-                  setErrors({ ...errors, password: "" });
-                }
-              }}
+              // onBlur={() => {
+              //   if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(formData.password)) {
+              //     setErrors({
+              //       ...errors,
+              //       password: "Password must be at least 8 characters long and include a special character",
+              //     });
+              //   } else {
+              //     setErrors({ ...errors, password: "" });
+              //   }
+              // }}
             />
-            <p className="text-gray-500 text-sm mt-1">
-            </p>
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Contact No</label>
@@ -179,10 +187,10 @@ const OfficialForm = ({ onClose }) => {
               value={formData.contactNo}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="+1 (555) 123-4567"
+              placeholder="+947XXXXXXXX"
               required
             />
-            {errors.contactNo && <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>}
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Position</label>
@@ -210,7 +218,7 @@ const OfficialForm = ({ onClose }) => {
         <div className="absolute items-center justify-center my-4">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
-        )}
+      )}
     </div>
   );
 };

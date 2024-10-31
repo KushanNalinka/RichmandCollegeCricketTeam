@@ -10,7 +10,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 
-const EditPlayerForm = ({ player, onClose }) => {
+const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
   const [formData, setFormData] = useState({ 
     image: player.image,
@@ -177,11 +177,12 @@ const EditPlayerForm = ({ player, onClose }) => {
           },
           contactNo: ""
         });
+        isSubmitted();
         setImagePreview();
         setUploading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 

@@ -7,7 +7,8 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const PlayerForm = ({  onClose }) => {
+
+const PlayerForm = ({  onClose, isSubmitted }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
@@ -103,10 +104,11 @@ const PlayerForm = ({  onClose }) => {
           },
           contactNo: ""
         });
+        isSubmitted();
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 
@@ -157,9 +159,9 @@ const PlayerForm = ({  onClose }) => {
       newErrors.membershipEndDate = "End date must be after start date.";
     }
 
-    if (!/^image\//.test(formData.image.type)) {
-      newErrors.image = "Only image files are allowed.";
-    };
+    // if (!/^image\//.test(formData.image.type)) {
+    //   newErrors.image = "Only image files are allowed.";
+    // };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -411,7 +413,7 @@ const PlayerForm = ({  onClose }) => {
               name="image" 
               accept="image/*" 
               onChange={handleChange}
-              required
+              // required
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&

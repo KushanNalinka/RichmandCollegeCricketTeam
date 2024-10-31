@@ -26,6 +26,8 @@ const TableComponent = () => {
   const [playerToDelete, setPlayerToDelete] = useState(null);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const divRef = useRef(null);
 
   // State to store the height
@@ -39,11 +41,12 @@ const TableComponent = () => {
         const players = response.data;
         setPlayerData(players);
         console.log("Player Data:", response.data);
+        isSubmitted(false);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   useEffect(() => {
 
@@ -57,9 +60,6 @@ const TableComponent = () => {
     setIsEditFormOpen(true);
   };
 
-  // Calculate total pages
-  const totalPages = Math.ceil(playerData.length / rowsPerPage);
-
  // Sort players by status before slicing for pagination
 const sortedPlayerData = [...playerData].sort((a, b) => {
   // Move "Active" players to the top
@@ -67,6 +67,9 @@ const sortedPlayerData = [...playerData].sort((a, b) => {
   if (a.status !== "Active" && b.status === "Active") return 1;
   return 0;
 });
+
+  // Calculate total pages
+  const totalPages = Math.ceil(playerData.length / rowsPerPage);
 
 // Slice data for the current page after sorting
 const paginatedData = sortedPlayerData.slice(
@@ -98,9 +101,7 @@ const paginatedData = sortedPlayerData.slice(
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
     } catch (error) {
       console.error("Error deleting player:", error);
 
@@ -332,11 +333,12 @@ const paginatedData = sortedPlayerData.slice(
                 </div>
               </div>
             )}
-          {isFormOpen && <PlayerForm onClose={handleAddFormClose} />}
+          {isFormOpen && <PlayerForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
           {isEditFormOpen &&
             <EditPlayerForm
               player={currentPlayer}
               onClose={handleEditFormClose}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />
           }
         </div>

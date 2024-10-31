@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { message } from "antd";
 
@@ -9,6 +10,8 @@ const PracticeScheduleForm = ({ onClose }) => {
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     venue: "",
     date: "",
@@ -69,8 +72,39 @@ const PracticeScheduleForm = ({ onClose }) => {
     }
   };
 
+  
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (formData.startTime && formData.endTime) {
+      const startDateTime = new Date(`1970-01-01T${formData.startTime}:00`);
+      const endDateTime = new Date(`1970-01-01T${formData.endTime}:00`);
+    if (startDateTime >= endDateTime) {
+      newErrors.timeRange = "End time must be after start time.";
+    }
+  }
+
+    // Validate selected coaches
+    if (selectedCoaches.length === 0) {
+      newErrors.coaches = "Please select coaches.";
+    }
+    const today = new Date();
+    const selectedDate = new Date(formData.date);
+    if (selectedDate <= today) {
+      newErrors.date = "The date must be in the present.";
+    };
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
+    setUploading(true);
     console.log("FormData: ", formData);
     const updatedFormData = {
         ...formData,
@@ -100,7 +134,14 @@ const PracticeScheduleForm = ({ onClose }) => {
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -123,7 +164,7 @@ const PracticeScheduleForm = ({ onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={` bg-white  ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -140,7 +181,7 @@ const PracticeScheduleForm = ({ onClose }) => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 text-[black] gap-3"
         >
-          <div>
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="venue"
@@ -157,7 +198,7 @@ const PracticeScheduleForm = ({ onClose }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="venue"
@@ -173,8 +214,9 @@ const PracticeScheduleForm = ({ onClose }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="startTime"
@@ -191,7 +233,7 @@ const PracticeScheduleForm = ({ onClose }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="endTime"
@@ -207,8 +249,9 @@ const PracticeScheduleForm = ({ onClose }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.timeRange && <p className="text-red-500 text-xs mt-1">{errors.timeRange}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
           <label
               className="block text-black text-sm font-semibold"
               htmlFor="endTime"
@@ -230,7 +273,7 @@ const PracticeScheduleForm = ({ onClose }) => {
               <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="team.teamId"
@@ -242,6 +285,7 @@ const PracticeScheduleForm = ({ onClose }) => {
                 value={formData.team.teamId}
                 onChange={handleChange}
                 className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                required
                 >
                 <option value="">Select team</option>
                 {teams && teams.map(team =>
@@ -251,7 +295,7 @@ const PracticeScheduleForm = ({ onClose }) => {
                 )}
                 </select>
           </div>
-          <div className=" col-span-2">
+          <div className="md:col-span-2 col-span-1">
           <label
               className="block text-black text-sm font-semibold"
               htmlFor="endTime"
@@ -276,6 +320,7 @@ const PracticeScheduleForm = ({ onClose }) => {
                 <FaTrash />
               </button>
             </div>
+            {errors.coaches && <p className="text-red-500 text-xs mt-1">{errors.coaches}</p>}
             <div className="relative">
               <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {coaches.map((coach) => (
@@ -302,7 +347,7 @@ const PracticeScheduleForm = ({ onClose }) => {
 
           </div>
          
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-1">
               <button
                 type="submit"
                 className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
@@ -312,6 +357,11 @@ const PracticeScheduleForm = ({ onClose }) => {
         </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

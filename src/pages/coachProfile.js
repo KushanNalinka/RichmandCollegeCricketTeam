@@ -8,6 +8,7 @@ import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
 import { useAuth } from "../hooks/UseAuth";
@@ -21,7 +22,11 @@ const CoachProfile = () => {
   const [practiceSchedules, setPracticeSchedules] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [practiceToDelete, setPracticeToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
+
   useEffect(() => {
     console.log("coachId: ", user.userId);
     axios
@@ -34,6 +39,10 @@ const CoachProfile = () => {
       }).catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+      console.log("coach: ",coach);
+  }, []);
+
+  useEffect(() => {
       axios.get(`${API_URL}practiseSessions/coach/${user.userId}`)
       .then(response => {
         setPracticeSchedules(response.data);
@@ -43,7 +52,7 @@ const CoachProfile = () => {
         console.error("There was an error fetching the player data!", error);
       });
       console.log("coach: ",coach);
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
@@ -51,25 +60,31 @@ const CoachProfile = () => {
     setIsEditFormOpen(true);
   };
   const handleDelete = id => {
-    setPracticeToDelete(id)
-;
-;
+    setPracticeToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(
         `${API_URL}practiseSessions/${practiceToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
+      setIsDeleted(!isDeleted);
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting player:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
   
@@ -289,8 +304,13 @@ const CoachProfile = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} />}
-          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule}/>}
+          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+          {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
     </div>
   );
 };

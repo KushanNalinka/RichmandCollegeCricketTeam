@@ -4,7 +4,7 @@ import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 
-const MatchStatPopup = ({ matchId, matchType, onClose }) => {
+const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
@@ -127,9 +127,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         }
       })
       setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed submit!");
@@ -164,9 +165,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         }
       })
       setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed Edit!");

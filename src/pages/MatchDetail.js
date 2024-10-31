@@ -42,6 +42,8 @@ const MatchDetails = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
@@ -51,14 +53,14 @@ const MatchDetails = () => {
           // Sort matches by date in descending order so future dates come first
         const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setMatches(sortedMatches);
-        console.log(response);
+        console.log(response.data);
       } catch (error) {
         console.error("Error fetching matches:", error);
       }
     };
 
     fetchMatches();
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   const totalPages = Math.ceil(matches.length / rowsPerPage);
 
@@ -99,9 +101,10 @@ const MatchDetails = () => {
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
 
@@ -437,17 +440,18 @@ const MatchDetails = () => {
 
           {/* Popup for Adding Form */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} />}
+            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
           {
             isPopupOpen &&
             <MatchStatPopup
               matchType={matchType}
               matchId={matchId}
               onClose={handlePopupClose}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />
           }
           {isEditPopupOpen &&
-            <EditPopup onClose={handleEditPopupClose} match={currentMatch} />}
+            <EditPopup onClose={handleEditPopupClose} match={currentMatch} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
           {/* Player Form Popup */}
           {isScorePopupOpen &&
             <ScoreCardPopup

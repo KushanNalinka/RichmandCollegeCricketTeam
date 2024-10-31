@@ -8,7 +8,7 @@ import { BsPeople } from 'react-icons/bs';
 import { MdPeople } from 'react-icons/md';
 import { message } from 'antd';
 
-const EditPopup = ({ onClose, match }) => {
+const EditPopup = ({ onClose, match, isSubmitted }) => {
   console.log("initial matches: ", match);
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -167,11 +167,12 @@ const EditPopup = ({ onClose, match }) => {
         },
         coaches: []
       })
+      isSubmitted();
       setSelectedCoaches([]);
       setImagePreview();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
 

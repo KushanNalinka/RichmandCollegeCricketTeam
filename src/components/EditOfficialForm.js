@@ -7,7 +7,7 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const EditOfficialForm = ({ official, onClose }) => {
+const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
     user:{
       username: official.username,
@@ -70,9 +70,10 @@ const EditOfficialForm = ({ official, onClose }) => {
         });
         setImagePreview();
         setUploading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        isSubmitted();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 

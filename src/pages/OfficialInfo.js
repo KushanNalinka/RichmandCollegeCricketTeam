@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
@@ -7,6 +8,7 @@ import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import OfficialForm from "../components/OfficialsPopupForm";
@@ -22,6 +24,9 @@ const OfficialsTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [officialToDelete, setOfficialToDelete] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -40,7 +45,7 @@ const OfficialsTable = () => {
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   useEffect(() => {
 
@@ -81,15 +86,26 @@ const OfficialsTable = () => {
   };
 
   const confirmDelete = async () => {
-    console.log("Delete Official: ", officialToDelete);
-    const deleteOfficial = await axios.delete(
-      `${API_URL}officials/delete/${officialToDelete}`
-    );
+    setUploading(true);
+    try{
+      console.log("Delete Official: ", officialToDelete);
+      const deleteOfficial = await axios.delete(
+        `${API_URL}officials/delete/${officialToDelete}`
+      );
+      message.success("Successfully Deleted!");
+      setShowDeleteModal(false);
+      setIsDeleted(!isDeleted);
+    } catch (error) {
+      console.error("Error deleting official:", error);
 
-    console.log("Delete row:", officialToDelete);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
+    }
   };
 
   const toggleForm = () => {
@@ -275,13 +291,19 @@ const OfficialsTable = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <OfficialForm onClose={handleAddFormClose} />}
+          {isFormOpen && <OfficialForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
           {isEditFormOpen &&
             <EditOfficialForm
               official={currentOfficial}
               onClose={handleEditFormClose}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />}
         </div>
+        {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
       </div>
     </div>
   );

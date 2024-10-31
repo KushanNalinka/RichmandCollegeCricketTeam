@@ -9,7 +9,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 
-const OfficialForm = ({ onClose }) => {
+const OfficialForm = ({ onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -86,9 +86,10 @@ const OfficialForm = ({ onClose }) => {
           contactNo: "",
           position: ""
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        isSubmitted();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 

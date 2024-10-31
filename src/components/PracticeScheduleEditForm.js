@@ -5,7 +5,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { message } from "antd";
 
-const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
+const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
@@ -113,7 +113,8 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
             },
         });
         setSelectedCoaches([]);
-      } catch (error) {
+        isSubmitted();
+    } catch (error) {
         console.error("Error submitting form:", error);
 
       if (error.response && error.response.data && error.response.data.message) {

@@ -5,7 +5,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { message } from "antd";
 
-const PracticeScheduleForm = ({ onClose }) => {
+const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
@@ -41,7 +41,7 @@ const PracticeScheduleForm = ({ onClose }) => {
         console.log("coaches1:", coaches);})
         .catch((error) => {
             console.error("There was an error fetching the player data!", error);
-          });
+        });
     axios.get(`${API_URL}teams/all`)
       .then((response) => {
         const team = response.data;
@@ -132,6 +132,8 @@ const PracticeScheduleForm = ({ onClose }) => {
           teamId: 0,
         },
       });
+      setSelectedCoaches([]);
+      isSubmitted();
     } catch (error) {
       console.error("Error submitting form:", error);
 

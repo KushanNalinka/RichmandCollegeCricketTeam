@@ -7,7 +7,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { MdPeople } from 'react-icons/md';
 
-const FormPopup = ({  onClose }) => {
+const FormPopup = ({  onClose, isSumitted }) => {
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
@@ -106,9 +106,9 @@ const FormPopup = ({  onClose }) => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!/^image\//.test(formData.logo.type)) {
-      newErrors.logo = "Only image files are allowed.";
-    };
+    // if (!/^image\//.test(formData.logo.type)) {
+    //   newErrors.logo = "Only image files are allowed.";
+    // };
       // Validate selected coaches
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select at least one coach.";
@@ -162,11 +162,12 @@ const FormPopup = ({  onClose }) => {
         },
         coaches: []
       })
+      isSumitted();
       setImagePreview();
       setSelectedCoaches([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -227,7 +228,7 @@ const FormPopup = ({  onClose }) => {
 
   return (
     <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full h-auto hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -444,7 +445,7 @@ const FormPopup = ({  onClose }) => {
               name="logo" 
               accept="image/*" 
               onChange={handleChange}
-              required
+              // required
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&

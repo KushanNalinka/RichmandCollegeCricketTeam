@@ -413,14 +413,7 @@ const sortedPlayerData = [...playerData].sort((a, b) => {
   return 0;
 });
 
-  // Calculate total pages
-  const totalPages = Math.ceil(playerData.length / rowsPerPage);
-
-// Slice data for the current page after sorting
-const paginatedData = sortedPlayerData.slice(
-  (currentPage - 1) * rowsPerPage,
-  currentPage * rowsPerPage
-);
+ 
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);

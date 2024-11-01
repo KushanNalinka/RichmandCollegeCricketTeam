@@ -66,6 +66,7 @@ const MatchDetails = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
+
         const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
           // Sort matches by date in descending order so future dates come first
         const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -79,13 +80,16 @@ const MatchDetails = () => {
         });
         setTeamOptions(uniqueTeams);
         console.log(response.data);
+
       } catch (error) {
         console.error("Error fetching matches:", error);
       }
     };
-
+  
     fetchMatches();
+
   }, [isSubmitted, isDeleted]);
+
 
   useEffect(() => {
     const filtered = matches.filter(match => {
@@ -104,6 +108,7 @@ const MatchDetails = () => {
   };
 
   const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+
 
   // Slice data for current page
   const paginatedData = filteredMatches.slice(

@@ -771,7 +771,8 @@ const LatestNews = () => {
           .slice(0, 5)
           .map(newsItem => ({
             title: newsItem.heading,
-            image: newsItem.imageUrl,
+            //image: newsItem.imageUrl,
+            image: newsItem.images && newsItem.images.length > 0 ? newsItem.images[0].imageUrl : '',
           }));
 
         setNewsItems(filteredNews);

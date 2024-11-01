@@ -9,6 +9,7 @@ import { Link, useLocation } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
 import { FaPersonWalkingWithCane } from "react-icons/fa6";
 import { MdOutlineNewspaper } from "react-icons/md";
+import { FaHome } from "react-icons/fa";
 
 const Navbar = () => {
     const [activeLink, setActiveLink] = useState("");
@@ -33,7 +34,9 @@ const Navbar = () => {
                     <h1 className=" h-20 py-5 pl-4 relative  text-white text-2xl font-bold">RCC Admin</h1>
                 </div>
                 <ul className="flex flex-col w-full h-full">
-
+                    <Link onClick={() => setActiveLink("/member")}  to={"/member"} className={`${getLinkClass("/member")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
+                        {" "}<FaHome className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Home</span>
+                    </Link >
                     <Link onClick={() => setActiveLink("/player")}  to={"/player"} className={`${getLinkClass("/player")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
                         {" "}<FaPeopleGroup className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Players</span>
                     </Link >

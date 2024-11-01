@@ -352,7 +352,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.under}>
-                  {team.under}
+                  {team.under}-{team.year}
                 </option>
               )}
             </select>

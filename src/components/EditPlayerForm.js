@@ -329,8 +329,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Left-hand batting">Left-hand batting</option>
-              <option value="Right-hand batting">Right-hand batting</option>
+              <option value="LHB">Left-hand batting</option>
+              <option value="RHB">Right-hand batting</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -345,8 +345,27 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Left-arm spin">Left-arm spin</option>
-              <option value="Right-arm spin">Right-arm spin</option>
+              <option value="RAF">Right-arm fast</option>
+              <option value="RAFM">Right-arm fast-medium
+              </option>
+              <option value="RAMF">Right-arm medium-fast
+              </option>
+              <option value="RAM">Right-arm medium</option>
+              <option value="RAMS">Right-arm medium-slow</option>
+              <option value="RASM">Right-arm slow-medium </option>
+              <option value="RAS">Right-arm slow</option>
+              <option value="LAF">Left-arm fast</option>
+              <option value="LAFM">Left-arm fast-medium</option>
+              <option value="LAMF">Left-arm medium-fast</option>
+              <option value="LAM">Left-arm medium</option>
+              <option value="LAMS">Left-arm medium-slow</option>
+              
+              <option value="LASM">Left-arm slow-medium</option>
+              <option value="OB">Off break</option>
+              <option value="LB">Leg break</option>
+              <option value="LBG">Leg break googly</option>
+              <option value="SLAO">Slow left-arm orthodox</option>
+              <option value="SLAWS">Slow left-arm wrist spin</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -361,9 +380,13 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Batsman">Batsman</option>
               <option value="Bowler">Bowler</option>
-              <option value="All-rounder">All-rounder</option>
+              <option value="Batter">Batter</option>
+              <option value="Top Order Batter">Top Order Batter</option>
+              <option value="Wicketkeeper Batter">Wicketkeeper Batter</option>
+              <option value="Allrounder">Allrounder</option>
+              <option value="Bawlling Allrounder">Bawlling Allrounder</option>
+              <option value="Batting Allrounder">Batting Allrounder</option>
             </select>
           </div>
           <div className="col-span-1">

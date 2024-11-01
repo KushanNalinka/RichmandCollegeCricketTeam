@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
 import { message } from "antd";
-import { FaChevronDown } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
@@ -15,6 +15,7 @@ import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import HomeNavbar from "../components/HomeNavbar.js";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
@@ -24,6 +25,8 @@ const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
+  const [teamId, setTeamId] = useState(null);
+  const [matchOpponent, setMatchOpponent] = useState(null);
   const [matchType, setMatchType] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
   const navigate = useNavigate();
@@ -31,13 +34,16 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   const [isScorePopupAIOpen, setIsScorePopupAIOpen] = useState(false);
   const [choiseModelOpen, setChoiseModelOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
@@ -47,29 +53,26 @@ const [teamOptions, setTeamOptions] = useState([]);
 const [filters, setFilters] = useState({ type: '', team: '' });
 
 
-useEffect(() => {
-  const fetchMatches = async () => {
-    try {
-      const response = await axios.get(`${API_URL}matches/all`);
-      const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      setMatches(sortedMatches);
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
 
-      setTypeOptions([...new Set(sortedMatches.map(match => match.type))]);
+        const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
+          // Sort matches by date in descending order so future dates come first
+        const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setMatches(sortedMatches);
+        console.log(response.data);
 
-      // Create unique 'under - teamYear' combinations
-      const uniqueTeams = [
-        ...new Set(sortedMatches.map(match => `${match.under} - ${match.teamYear}`)),
-      ];
-      setTeamOptions(uniqueTeams);
-
-    } catch (error) {
-      console.error("Error fetching matches:", error);
-    }
-  };
-
-  fetchMatches();
-}, []);
+      } catch (error) {
+        console.error("Error fetching matches:", error);
+      }
+    };
   
+    fetchMatches();
+
+  }, [isSubmitted, isDeleted]);
+
+
   const totalPages = Math.ceil(matches.length / rowsPerPage);
 
 
@@ -121,18 +124,27 @@ useEffect(() => {
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try {
       const deleteMatch = await axios.delete(
         `${API_URL}matches/delete/${matchToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
-      message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -153,6 +165,9 @@ useEffect(() => {
   const handleAddScoreCard = match => {
     setMatchType(match.type);
     setMatchId(match.matchId);
+    setTeamId(match.teamId);
+    setMatchOpponent(match.opposition);
+    setMatchType(match.type);
     // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
     //setChoiseModelOpen(true);
@@ -238,8 +253,10 @@ useEffect(() => {
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
-            <MainNavbarToggle />
-            <img src={logo} className="h-12 w-12" />
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div
             className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
@@ -355,7 +372,7 @@ useEffect(() => {
                           <img
                             src={match.logo}
                             alt={match.matchId}
-                            className="h-14 w-14 rounded-full object-cover border border-gray-300"
+                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
                           {/* Use truncate or text wrapping for small screens */}
                           <span className="truncate whitespace-nowrap">
@@ -363,31 +380,28 @@ useEffect(() => {
                           </span>
                         </div>
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
+                      <td className="py-2 px-2 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.time}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.tier}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.division}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.umpires}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.under} - {match.teamYear}
-                      </td>
-                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-2 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -446,7 +460,7 @@ useEffect(() => {
           </div>
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-              <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-4">
@@ -476,7 +490,7 @@ useEffect(() => {
                 </p>
 
                 <div className="flex flex-col space-y-4">
-                  {/* <button
+                  <button
                     onClick={handleScorePopupAIOpen}
                     className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
@@ -487,7 +501,7 @@ useEffect(() => {
                     className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
-                  </button> */}
+                  </button>
                 </div>
 
                 <div className="flex justify-center mt-6">
@@ -503,23 +517,26 @@ useEffect(() => {
 
           {/* Popup for Adding Form */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} />}
+            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
           {
             isPopupOpen &&
             <MatchStatPopup
               matchType={matchType}
               matchId={matchId}
               onClose={handlePopupClose}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />
           }
           {isEditPopupOpen &&
-            <EditPopup onClose={handleEditPopupClose} match={currentMatch} />}
+            <EditPopup onClose={handleEditPopupClose} match={currentMatch} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
           {/* Player Form Popup */}
           {isScorePopupOpen &&
             <ScoreCardPopup
               onClose={handleScorePopupClose}
               matchId={matchId}
               matchType={matchType}
+              matchOpponent={matchOpponent}
+              teamId={teamId}
             />}
            {isScorePopupAIOpen &&
             <ScoreCardAIModel
@@ -527,6 +544,11 @@ useEffect(() => {
               matchId={matchId}
             />} 
         </div>
+        {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+            )}
       </div>
     </div>
   );

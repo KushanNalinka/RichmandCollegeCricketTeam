@@ -1245,7 +1245,7 @@ const CoachesProfile = () => {
                     {/* Player List for desktop */}
                     <div className="md:flex hidden bg-gray-200 rounded-lg shadow-md" style={{ width: '350px', flexShrink: 0, maxHeight: '469px', flexDirection: 'column' }}>
                         <div className="p-4 border-b text-black border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900">Our Coaches</h2>
+                            <h2 className="text-xl font-bold text-gray-900 text-center">Our Coaches</h2>
                         </div>
                         <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
@@ -1282,6 +1282,10 @@ const CoachesProfile = () => {
                                             <tr className="border-b border-gray-300">
                                                 <td className="py-2 px-5 font-semibold text-gray-900">Contact No:</td>
                                                 <td className="py-2 px-5">{selectedCoach.contactNo}</td>
+                                            </tr>
+                                            <tr className="border-b border-gray-300">
+                                                <td className="py-2 px-5 font-semibold text-gray-900">Coach Status:</td>
+                                                <td className="py-2 px-5">{selectedCoach.status}</td>
                                             </tr>
                                             <tr className="border-b border-gray-300">
                                                 <td className="py-2 px-5 font-semibold text-gray-900">Description:</td>
@@ -1321,7 +1325,7 @@ const CoachesProfile = () => {
                                                     {schedule.venue}
                                                 </td>
                                                 <td className="py-2 px-4 text-center">
-                                                    {schedule.starTime}
+                                                    {schedule.startTime}
                                                 </td>
                                                 <td className="py-2 px-4 text-center">
                                                     {schedule.endTime}

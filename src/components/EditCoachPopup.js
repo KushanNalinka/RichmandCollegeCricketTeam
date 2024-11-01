@@ -270,7 +270,7 @@ import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const EditCoachForm = ({ coach, onClose }) => {
+const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
     status: coach.status,
     image: coach.image,
@@ -408,9 +408,10 @@ const EditCoachForm = ({ coach, onClose }) => {
             }
         });
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        isSubmitted();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 

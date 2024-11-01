@@ -795,24 +795,33 @@ const ScoreCard = ({ onMatchId }) => {
   const [secondInningData, setSecondInningData] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
 
+
   useEffect(() => {
     fetch(`${API_URL}matchSummary/all`)
       .then((response) => response.json())
       .then((data) => {
-        const firstMatch = data[0]; 
-        const secondMatch = data[1]; 
 
-        if (firstMatch.type === 'T20' || firstMatch.type === 'ODI') {
-          setMatchData(firstMatch); 
-          onMatchId(firstMatch.matchId);  
-        } else if (firstMatch.type === 'Test' && secondMatch && firstMatch.matchId === secondMatch.matchId) {
-          setMatchData(firstMatch); 
-          setSecondInningData(secondMatch); 
-          onMatchId(firstMatch.matchId);  
+        if (data.length === 0) return; // If there's no match data, exit
+  
+        const lastMatchIndex = data.length - 1;
+        const lastMatch = data[lastMatchIndex]; // Get the last match data (1st inning)
+        const secondMatch = data[lastMatchIndex - 1]; // Check if the previous item is the 2nd inning of the same match
+  
+        // Check if the last match is T20 or ODI
+        if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
+          setMatchData(lastMatch); // Use only the last match data for T20 and ODI
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
+        } else if (lastMatch.type === 'Test' && secondMatch && lastMatch.matchId === secondMatch.matchId) {
+          // For Test matches, check if the matchId is the same for both innings
+          setMatchData(lastMatch); // Set the first inning data
+          setSecondInningData(secondMatch); // Set the second inning data
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
+
         }
       })
       .catch((error) => console.error('Error fetching match data:', error));
   }, [onMatchId]);
+  
 
   if (!matchData) {
     return <p>Loading...</p>; 

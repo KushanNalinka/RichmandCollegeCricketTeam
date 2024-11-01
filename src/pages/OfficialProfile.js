@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../components/HomeNavbar";
+import MemberNavbar from '../components/MemberNavbar';
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
 import { FaUserCircle } from "react-icons/fa";
-import { useAuth } from "../hooks/UseAuth";
+import Footer from '../components/Footer';
+
 
 const OfficialProfile = () => {
-  const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem("user"));
   const [officialProfile, setOfficialProfile] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     console.log("userId O:", user.userId);
     const fetchData = async () => {
-    const officialData = await axios.get( `${API_URL}officials/${user.userId}`);
+    const officialData = await axios.get( `${API_URL}officials/${user.officialId}`);
     setOfficialProfile(officialData.data);
     console.log("Official Data:", officialData.data);
   };
@@ -26,6 +27,7 @@ const OfficialProfile = () => {
   }, []);
 
   return (
+    <>
     <div
       className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
       style={{
@@ -34,7 +36,7 @@ const OfficialProfile = () => {
         backgroundPosition: "center"
       }}
     >
-      <Navbar />
+      <MemberNavbar />
       {/* Player Details */}
       <div
         className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
@@ -109,6 +111,8 @@ const OfficialProfile = () => {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

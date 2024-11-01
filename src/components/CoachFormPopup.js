@@ -507,7 +507,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 import { setUserId } from "firebase/analytics";
 
-const CoachForm = ({  onClose }) => {
+const CoachForm = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     status:"",
@@ -592,7 +592,6 @@ const CoachForm = ({  onClose }) => {
       message.error("Please fix validation errors before submitting");
       return;
     };
-    console.log ('before submitting : ' ,formData);
     setUploading(true);
     try {
     let imageURL = formData.image;
@@ -610,7 +609,7 @@ const CoachForm = ({  onClose }) => {
         `${API_URL}auth/signupCoach`,
         coachData 
       );
-      console.log("Form submitted succedded: ", response);
+      console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
           status:"",
@@ -625,6 +624,7 @@ const CoachForm = ({  onClose }) => {
           description: ""
       });
       setImagePreview();
+      isSubmitted();
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1500);
@@ -807,7 +807,7 @@ const CoachForm = ({  onClose }) => {
               accept="image/*" 
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-         
+              // required
             />
             {imagePreview &&
               <img

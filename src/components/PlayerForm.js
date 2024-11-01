@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { message } from "antd";
+import { message, Spin } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
-const PlayerForm = ({  onClose }) => {
+
+const PlayerForm = ({  onClose, isSubmitted }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+
+
   const [formData, setFormData] = useState({
     image: "",
     name: "",
@@ -29,6 +34,7 @@ const PlayerForm = ({  onClose }) => {
     contactNo: ""
   });
 
+  const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState("");
 
@@ -50,7 +56,7 @@ const PlayerForm = ({  onClose }) => {
         ...formData,
         [name]: file
       });
-    } else {
+    }else {
       setFormData({
         ...formData,
         [name]: value
@@ -60,8 +66,12 @@ const PlayerForm = ({  onClose }) => {
 
   const handleSubmit = async e => {
     console.log("Form data before submit: ", formData);
-
     e.preventDefault();
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
+    setUploading(true);
       try {
         let imageURL = formData.image;
       
@@ -76,9 +86,12 @@ const PlayerForm = ({  onClose }) => {
       };
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          playerData 
+          playerData , { headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
         );
         console.log("Form submitted succedded: ", response.data);
+        console.log(accessToken);
         message.success("Successfull!");
         setFormData({
           image: "",
@@ -97,18 +110,67 @@ const PlayerForm = ({  onClose }) => {
           },
           contactNo: ""
         });
+        isSubmitted();
         setImagePreview();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
-        if (error.response && error.response.data) {
-          message.error(error.response.data.message || "Failed!");
+        console.error("Error submitting form:", error);
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
         } else {
-          message.error("An unexpected error occurred.");
+          message.error("An unexpected error occurred. Please try again later.");
         }
-      };
+      } finally {
+        setUploading(false);
+      }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    //username validation
+    if (formData.username.length < 4 || formData.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    };
+
+    // Password validation
+    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (!passwordPattern.test(formData.password)) {
+      newErrors.password = "Password must be at least 8 characters long and include a special character";
+    };
+
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (!sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+    };
     
+    const today = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (selectedDate >= today) {
+      newErrors.dateOfBirth = "Date of birth must be in the past.";
+    };
+
+    if (formData.membership.startDate && new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
+      newErrors.membershipEndDate = "End date must be after start date.";
+    }
+
+    // if (!/^image\//.test(formData.image.type)) {
+    //   newErrors.image = "Only image files are allowed.";
+    // };
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleEditImageClick = () => {
@@ -147,7 +209,7 @@ const PlayerForm = ({  onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={`bg-white  ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -160,9 +222,9 @@ const PlayerForm = ({  onClose }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Player Details</h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3"
         >
-          <div >
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
@@ -174,7 +236,7 @@ const PlayerForm = ({  onClose }) => {
               
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">DOB</label>
             <input
               type="date"
@@ -184,8 +246,9 @@ const PlayerForm = ({  onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Username</label>
             <input
               type="text"
@@ -196,8 +259,9 @@ const PlayerForm = ({  onClose }) => {
               placeholder="@username"
               required
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Email</label>
             <input
               type="email"
@@ -208,8 +272,9 @@ const PlayerForm = ({  onClose }) => {
               placeholder="you@example.com"
               required
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Password</label>
             <input
               type="password"
@@ -220,8 +285,9 @@ const PlayerForm = ({  onClose }) => {
               placeholder="********"
               required
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Contact No</label>
             <input
               type="text"
@@ -232,8 +298,9 @@ const PlayerForm = ({  onClose }) => {
               placeholder="+1 (555) 123-4567"
               required
             />
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Batting Style</label>
             <select
               name="battingStyle"
@@ -249,7 +316,7 @@ const PlayerForm = ({  onClose }) => {
               <option value="Right-hand batting">Right-hand batting</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Bowling Style</label>
             <select
               name="bowlingStyle"
@@ -261,11 +328,30 @@ const PlayerForm = ({  onClose }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Left-arm spin">Left-arm spin</option>
-              <option value="Right-arm spin">Right-arm spin</option>
+              <option value="RAF">Right-arm fast</option>
+              <option value="RAFM">Right-arm fast-medium
+              </option>
+              <option value="RAMF">Right-arm medium-fast
+              </option>
+              <option value="RAM">Right-arm medium</option>
+              <option value="RAMS">Right-arm medium-slow</option>
+              <option value="RASM">Right-arm slow-medium </option>
+              <option value="RAS">Right-arm slow</option>
+              <option value="LAF">Left-arm fast</option>
+              <option value="LAFM">Left-arm fast-medium</option>
+              <option value="LAMF">Left-arm medium-fast</option>
+              <option value="LAM">Left-arm medium</option>
+              <option value="LAMS">Left-arm medium-slow</option>
+              
+              <option value="LASM">Left-arm slow-medium</option>
+              <option value="OB">Off break</option>
+              <option value="LB">Leg break</option>
+              <option value="LBG">Leg break googly</option>
+              <option value="SLAO">Slow left-arm orthodox</option>
+              <option value="SLAWS">Slow left-arm wrist spin</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Role</label>
             <select
               name="playerRole"
@@ -282,7 +368,7 @@ const PlayerForm = ({  onClose }) => {
               <option value="All-rounder">All-rounder</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Status</label>
             <select
               name="status"
@@ -298,7 +384,7 @@ const PlayerForm = ({  onClose }) => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">
               Membership Starting Date
             </label>
@@ -311,7 +397,7 @@ const PlayerForm = ({  onClose }) => {
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block  text-black text-sm  font-semibold">
               Membership Ending Date
             </label>
@@ -323,8 +409,9 @@ const PlayerForm = ({  onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>
-          <div className="col-span-2 ">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
@@ -332,6 +419,7 @@ const PlayerForm = ({  onClose }) => {
               name="image" 
               accept="image/*" 
               onChange={handleChange}
+              // required
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
@@ -340,8 +428,9 @@ const PlayerForm = ({  onClose }) => {
                 alt="Preview"
                 className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+             {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}  
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
@@ -351,12 +440,14 @@ const PlayerForm = ({  onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
+    
   );
 };
 
 export default PlayerForm;
-
-
-
-

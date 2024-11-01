@@ -498,6 +498,8 @@ const NewsCreator = () => {
   const [currentNews, setCurrentNews] = useState();
   const [isEditImage, setIsEditImage] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [newsToDelete, setNewsToDelete] = useState(null);
@@ -530,7 +532,6 @@ const NewsCreator = () => {
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
       });
-      
   }
 
   const handleChange = (e) => {
@@ -587,9 +588,9 @@ const NewsCreator = () => {
     };  
 
     // Image URL validation
-    if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
-      newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
-    };
+    // if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
+    //   newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
+    // };
 
     // Body validation
     if (formData.body.length < 50) {
@@ -639,9 +640,10 @@ const NewsCreator = () => {
       });
       setImagePreview("");
       loadNews();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setIsSubmitted(!isSubmitted);      
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -738,9 +740,9 @@ const NewsCreator = () => {
       setIsEditPressed(false);
       setCurrentNewsId(null);
       loadNews();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -768,9 +770,9 @@ const NewsCreator = () => {
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       loadNews();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
       
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -834,7 +836,7 @@ const NewsCreator = () => {
               <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
                 <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 h-full w-full md:p-8 ">
                  
-                      <div className=" w-full col-span-1">
+                      <div className=" col-span-1">
                         <label htmlFor="author" className="block text-black  text-sm font-semibold">Author</label>
                         <input
                           type="text"
@@ -844,7 +846,7 @@ const NewsCreator = () => {
                           onChange={handleChange}
                           required
                           placeholder="Enter Name"
-                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block md:w-[50%] w-full px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {errors.author && <p className="text-red-500 text-xs mt-1">{errors.author}</p>}
                       </div>
@@ -857,7 +859,7 @@ const NewsCreator = () => {
                           value={formData.dateTime}
                           onChange={handleChange}
                           placeholder="Date"
-                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block md:w-[50%] w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {errors.dateTime && <p className="text-red-500 text-xs mt-1">{errors.dateTime}</p>}
                       </div>
@@ -871,7 +873,7 @@ const NewsCreator = () => {
                         onChange={handleChange}
                         required
                         placeholder="Enter Subject"
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
                       {errors.heading && <p className="text-red-500 text-xs mt-1">{errors.heading}</p>}
                       </div>
@@ -883,7 +885,7 @@ const NewsCreator = () => {
                         name="body"
                         value={formData.body}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         placeholder="......"
                         height="Auto"
                         required
@@ -898,8 +900,8 @@ const NewsCreator = () => {
                           name="imageUrl"
                           accept="image/*"
                           onChange={handleChange}
-                          required
-                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                          // required
+                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {imagePreview && (
                           <img
@@ -929,8 +931,6 @@ const NewsCreator = () => {
                       </div>
                 </form>
               </div>
-
- //this is the right side
               <div className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-5 md:px-6 py-2 ">
                   <h1 className="text-[#00175f] font-bold font-mono md:text-2xl text-lg py-3">

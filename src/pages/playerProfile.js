@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../components/HomeNavbar";
+import MemberNavbar from '../components/MemberNavbar';
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/kusal.png";
-import { useAuth } from "../hooks/UseAuth";
+import Footer from '../components/Footer';
+//import { useAuth } from "../hooks/UseAuth";
 
 const PlayerProfile = () => {
-  const { user } = useAuth();
+ // const { user } = useAuth();
   const [playerProfile, setPlayerProfile] = useState(null);
   const [playerStat, setPlayerStat] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchData = async () => {
-    const playerData = await axios.get( `${API_URL}admin/players/${user.userId}`);
+    const playerData = await axios.get( `${API_URL}admin/players/${user.playerId}`);
     setPlayerProfile(playerData.data);
 
-    const playerStat = await axios.get( `${API_URL}playerStats/all-stats/${user.userId}`);
+    const playerStat = await axios.get( `${API_URL}playerStats/all-stats/${user.playerId}`);
     setPlayerStat(playerStat.data);
     console.log("player stack", playerStat);
   };
@@ -99,6 +101,7 @@ const PlayerProfile = () => {
 
 
   return (
+    <>
     
     <div
       className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
@@ -108,7 +111,7 @@ const PlayerProfile = () => {
         backgroundPosition: "center",
       }}
     >
-      <Navbar />
+      <MemberNavbar />
             {/* Player Details */}
             <div
               className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
@@ -362,8 +365,12 @@ const PlayerProfile = () => {
                 </table>
                 </div>
               </div>
+             
             </div>
+           
       </div>
+       <Footer />
+       </>
   );
 };
 

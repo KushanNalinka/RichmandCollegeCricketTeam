@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { message } from "antd";
 
-const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
+const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
-  const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
   const [formData, setFormData] = useState({...practiceSchedule});
+  const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     axios
@@ -34,7 +37,6 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
       console.log("practice schedule :", practiceSchedule);
       console.log("coaches new :", practiceSchedule.coaches);
       console.log("coaches new2 :", formData.coaches);
-      formData.coaches.map((coach) => (console.log("Coaches :",coach.coachId)) );
       
   }, []);
 
@@ -58,20 +60,44 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (formData.startTime !== practiceSchedule.startTime && formData.endTime !== practiceSchedule.endTime && formData.startTime && formData.endTime) {
+      const startDateTime = new Date(`1970-01-01T${formData.startTime}:00`);
+      const endDateTime = new Date(`1970-01-01T${formData.endTime}:00`);
+    if (startDateTime >= endDateTime) {
+      newErrors.timeRange = "End time must be after start time.";
+    }
+  }
+
+    // Validate selected coaches
+    if (selectedCoaches.length === 0) {
+      newErrors.coaches = "Please select coaches.";
+    }
+    const today = new Date();
+    const selectedDate = new Date(formData.date);
+    if (selectedDate <= today) {
+      newErrors.date = "The date must be in the present.";
+    };
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   const handleEdit = async e => {
     e.preventDefault();
     console.log("FormData: ",formData);
-    const updatedFormData = {
-      ...formData,
-      coaches: selectedCoaches.length > 0 
-        ? selectedCoaches.map((coach) => ({ coachId: coach.coachId }))
-        : formData.coaches.map((coach) => ({ coachId: coach.coachId })),
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
     };
+    setUploading(true);
       try {
         const response = await axios.put(
         `${API_URL}practiseSessions/update/${practiceSchedule.pracId}`,
-            updatedFormData
+            formData
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
@@ -87,24 +113,36 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
             },
         });
         setSelectedCoaches([]);
-      } catch (error) {
+        isSubmitted();
+    } catch (error) {
         console.error("Error submitting form:", error);
-        message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
       }
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleCoachSelect = (coach) => {
-    if (selectedCoaches.includes(coach)) {
-      // If player is already selected, remove them
-      setSelectedCoaches(
-        selectedCoaches.filter((p) => p.coachId !== coach.coachId)
-      );
+    const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
+    if (isSelected) {
+      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
     } else {
-      // Otherwise, add the player to the list
-      setSelectedCoaches([...selectedCoaches, coach]);
+      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, name: coach.name }]);
     }
     console.log("selected coaches: ", selectedCoaches.name);
   };
+
+  useEffect(() => {
+    setFormData(prevData => ({
+      ...prevData,
+      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId }))
+    }));
+  }, [selectedCoaches]);
 
   const clearSelectedCoaches = () => {
     setSelectedCoaches([]); // Clear all selected players
@@ -129,7 +167,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -140,13 +178,13 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
           </button>
         </div>
         <h2 className="text-xl text-[#480D35] font-bold mb-4">
-          Add Practice Schedule Details
+          Update Practice Schedule Details
         </h2>
         <form
           onSubmit={handleEdit}
           className="grid grid-cols-1 text-[black] md:grid-cols-1 gap-3"
         >
-          <div >
+          <div className="col-span-1" >
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="venue"
@@ -163,7 +201,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               required
             />
           </div>
-          <div >
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="venue"
@@ -177,10 +215,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               value={formData.date}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
+              
             />
+            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
           </div>
-          <div >
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="startTime"
@@ -194,10 +233,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               value={ convertTo24HourFormat(formData.startTime)}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
+             
             />
           </div>
-          <div >
+          <div className="col-span-1">
             <label
               className="block text-black text-sm font-semibold"
               htmlFor="endTime"
@@ -211,10 +250,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               value={ convertTo24HourFormat(formData.endTime)}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
+           
             />
+             {errors.timeRange && <p className="text-red-500 text-xs mt-1">{errors.timeRange}</p>}
           </div>
-          <div >
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Type</label>
             <select
               name="pracType"
@@ -229,7 +269,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
                <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Team
             </label>
@@ -247,7 +287,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
                 )}
                 </select>
           </div>
-          <div className="  col-span-2">
+          <div className="md:col-span-2 col-span-1">
           <label
               className="block text-black text-sm font-semibold"
               htmlFor="endTime"
@@ -258,20 +298,21 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
               <input
                 type="text"
                 className="border-0 py-1 px-3 w-[90%] rounded-md focus:outline-non pointer-events-none"
-                value={(selectedCoaches && selectedCoaches
-                    .map((coach) => coach && coach.name)
-                    .join(", ")) || (practiceSchedule.coaches.map((coach)=> coach.name))}
+                value={selectedCoaches.map(coach => coach.name).join(", ")}
                    // Show selected coach names, joined by commas
+                placeholder='Choose coaches from the list...'
                 readOnly
               />
               <button
                 type="button"
+                title="delete"
                 className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash />
               </button>
             </div>
+            {errors.coaches && <p className="text-red-500 text-xs mt-1">{errors.coaches}</p>}
             <div className="relative ">
               <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {coaches.map((coach) => (
@@ -280,9 +321,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
                       type="checkbox"
                       id={`coach-${coach.coachId}`}
                       className="mr-2"
-                      checked={selectedCoaches.some(
-                        (p) => p.coachId === coach.coachId
-                      )}
+                      checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
                       onChange={() => handleCoachSelect(coach)}
                     />
                     <label
@@ -297,7 +336,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
             </div>
 
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-1">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
@@ -307,6 +346,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+      )}
     </div>
   );
 };

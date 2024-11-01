@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
+import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { MdPeople } from 'react-icons/md';
 
-const FormPopup = ({  onClose }) => {
+const FormPopup = ({  onClose, isSumitted }) => {
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
@@ -14,7 +15,9 @@ const FormPopup = ({  onClose }) => {
   const [imagePreview, setImagePreview] = useState();
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     date: "",
@@ -34,8 +37,26 @@ const FormPopup = ({  onClose }) => {
     },
     coaches: []
   });
+
+  const formatDate = (date) => {
+    // Format using plain JavaScript
+    const newDate = new Date(date);
+    return newDate.toISOString().split("T")[0]; // YYYY-MM-DD
+
+  };
+
   useEffect(() => {
     // Fetch player data for playerId 4
+    axios
+      .get(`${API_URL}admin/players/all`)
+      .then(response => {
+        const players = response.data;
+        setPlayers(players);
+        console.log("players Data:", players);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
       setCoaches(coaches);
@@ -55,7 +76,12 @@ const FormPopup = ({  onClose }) => {
 
   const handleChange = e => {
     const { name, value,files } = e.target;
-    if (name.includes(".")) {
+    if (name === "date") {
+      setFormData({
+        ...formData,
+        [name]: formatDate(value) // Format date before setting it
+      });
+    } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
         ...formData,
@@ -80,9 +106,27 @@ const FormPopup = ({  onClose }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    // if (!/^image\//.test(formData.logo.type)) {
+    //   newErrors.logo = "Only image files are allowed.";
+    // };
+      // Validate selected coaches
+    if (selectedCoaches.length === 0) {
+      newErrors.coaches = "Please select at least one coach.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
+    setUploading(true);
     try {
       let imageURL = formData.logo;
 
@@ -90,10 +134,12 @@ const FormPopup = ({  onClose }) => {
       if (formData.logo instanceof File) {
         imageURL = await handleImageUpload(formData.logo);
       }
+      const formattedDate = formatDate(formData.date); // Ensure date is formatted before submitting
 
       const matchData = {
         ...formData,
         logo: imageURL, // Assign the uploaded image URL to formData
+        date: formattedDate 
       };
       // Make a POST request to the backend API
       const response = await axios.post(
@@ -118,14 +164,22 @@ const FormPopup = ({  onClose }) => {
         },
         coaches: []
       })
+      isSumitted();
       setImagePreview();
       setSelectedCoaches([]);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed!");
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -175,10 +229,8 @@ const FormPopup = ({  onClose }) => {
   };
 
   return (
-    <div
-      className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}
-    >
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+    <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full h-auto hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -194,58 +246,58 @@ const FormPopup = ({  onClose }) => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-2"
         >
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
             <input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Time</label>
             <input
               type="time"
               name="time"
               value={formData.time}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Venue</label>
             <input
               type="text"
               name="venue"
               value={formData.venue}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Opponent</label>
             <input
               type="text"
               name="opposition"
               value={formData.opposition}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Tier</label>
             <select
               type="text"
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select tier</option>
@@ -253,14 +305,14 @@ const FormPopup = ({  onClose }) => {
               <option value="Tier 2">Tier B</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Division</label>
             <select
               type="text"
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="" disabled selected>Select division</option>
@@ -268,59 +320,43 @@ const FormPopup = ({  onClose }) => {
               <option value="Division 2">Division 2</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Umpires</label>
             <input
               type="text"
               name="umpires"
               value={formData.umpires}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
-            <input
+            <select
               type="text"
               name="matchCaptain"
               value={formData.matchCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
-            />
-          </div>
-          
-          {/* <div>
-            <label className="block mb-2 text-gray-700">Coaches</label>
-            <input
-              type="text"
-              className="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg bg-gray-100"
-              value={selectedCoachNames.join(", ")}  // Show coach names, joined by commas
-              readOnly
-            />
-            <select
-              name="coaches"
-              value={formData.coaches.map(coach => coach.coachId)}
-              onChange={handleCoachesChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              required
-              multiple
             >
-              <option value="">Select status</option>
-              {coaches.map ((coach) =>
-                  <option key={coach.coachId} value={coach.coachId}>{coach.name}</option>
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
               )}
-              
             </select>
-          </div> */}
-          <div>
+          </div>
+        
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Type</label>
             <select
               name="type"
               value={formData.type}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
                <option value="" disabled selected>Select type</option>
@@ -330,13 +366,13 @@ const FormPopup = ({  onClose }) => {
             </select>
           </div>
 
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Team</label>
             <select
               name="team.teamId"
               value={formData.team.teamId}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
               <option value="">Select team</option>
@@ -347,14 +383,15 @@ const FormPopup = ({  onClose }) => {
               )}
             </select>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Coaches</label>
             <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md outline-none "
+                className="py-1 px-3 w-[88%] rounded-md text-gray-600 outline-none "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
+                required
                 placeholder='Choose coaches from the list...'
               />
                <button
@@ -374,6 +411,7 @@ const FormPopup = ({  onClose }) => {
                 <FaTrash/>
               </button>
             </div>
+            {errors.coaches && <p className="text-red-500 text-xs mt-1">{errors.coaches}</p>}
             <div className="relative col-span-1">
               {/* Dropdown Content */}
               {dropdownOpen && (
@@ -383,13 +421,14 @@ const FormPopup = ({  onClose }) => {
                       <input
                         type="checkbox"
                         id={`coach-${coach.coachId}`}
-                        className="mr-2"
+                        className="mr-2 text-gray-600"
                         checked={selectedCoaches.some(p => p.coachId === coach.coachId)}
                         onChange={() => handleCoachSelect(coach)}
+                    
                       />
                       <label
                         htmlFor={`coach-${coach.coachId}`}
-                        className="block text-black text-sm font-semibold"
+                        className="block text-gray-600 text-sm font-semibold"
                       >
                         {coach.name}
                       </label>
@@ -400,7 +439,7 @@ const FormPopup = ({  onClose }) => {
             </div>
            
           </div>
-          <div  className="col-span-2 ">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Logo</label>
             <input
               id="logo"
@@ -408,6 +447,7 @@ const FormPopup = ({  onClose }) => {
               name="logo" 
               accept="image/*" 
               onChange={handleChange}
+              // required
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
@@ -416,9 +456,10 @@ const FormPopup = ({  onClose }) => {
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+              {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
           </div>
 
-          <div className="col-span-2 ">
+          <div className="col-span-1 md:col-span-2 ">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
@@ -428,6 +469,11 @@ const FormPopup = ({  onClose }) => {
           </div>
         </form>
       </div>
+      {uploading && (
+        <div className="absolute items-center justify-center my-4">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+        )}
     </div>
   );
 };

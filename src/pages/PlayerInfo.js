@@ -337,9 +337,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { message } from "antd";
-import { FaTrash, FaEdit, FaUsers, FaPlus, FaChevronDown } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
@@ -355,10 +357,13 @@ const TableComponent = () => {
   const [currentPlayer, setCurrentPlayer] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [playerToDelete, setPlayerToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const divRef = useRef(null);
   const [filteredPlayers, setFilteredPlayers] = useState([]);
 const [showStatusDropdown, setShowStatusDropdown] = useState(false);
@@ -380,16 +385,13 @@ const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingSt
       .then(response => {
         const players = response.data;
         setPlayerData(players);
-        setStatusOptions([...new Set(players.map(player => player.status))]);
-        setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
-        setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
-        setRoleOptions([...new Set(players.map(player => player.playerRole))]);
+        console.log("Player Data:", response.data);
+        isSubmitted(false);
       })
       .catch(error => {
         console.error("Error fetching player data!", error);
       });
-  }, []);
-  
+  }, [isSubmitted, isDeleted]);
 
   useEffect(() => {
 
@@ -403,9 +405,7 @@ const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingSt
     setIsEditFormOpen(true);
   };
 
-  // Calculate total pages
- 
-  // Sort players by status before slicing for pagination
+ // Sort players by status before slicing for pagination
 const sortedPlayerData = [...playerData].sort((a, b) => {
   // Move "Active" players to the top
   if (a.status === "Active" && b.status !== "Active") return -1;
@@ -413,8 +413,14 @@ const sortedPlayerData = [...playerData].sort((a, b) => {
   return 0;
 });
 
+  // Calculate total pages
+  const totalPages = Math.ceil(playerData.length / rowsPerPage);
 
-
+// Slice data for the current page after sorting
+const paginatedData = sortedPlayerData.slice(
+  (currentPage - 1) * rowsPerPage,
+  currentPage * rowsPerPage
+);
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -433,18 +439,24 @@ const sortedPlayerData = [...playerData].sort((a, b) => {
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(
         `${API_URL}admin/players/delete/${playerToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting player:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -528,8 +540,10 @@ const paginatedData = sortedFilteredData.slice(
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
-             <MainNavbarToggle/>
-             <img src={logo} className="h-12 w-12"/>
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
@@ -671,12 +685,12 @@ const paginatedData = sortedFilteredData.slice(
                             : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
                         />
                       </td>
-                      <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                      <td className="gap-4 px-2 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                         <div className="flex items-center justify-start gap-2 ">
                           <img
                             src={item.image}
                             alt={item.name}
-                            className="h-10 w-10 rounded-full object-cover border border-gray-300"
+                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
                           {/* Use truncate or text wrapping for small screens */}
                           <span className="truncate whitespace-nowrap">
@@ -750,8 +764,8 @@ const paginatedData = sortedFilteredData.slice(
             </div>
           </div>
           {showDeleteModal && (
-              <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className={`fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75`}>
+                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this player?</p>
                   <div className="flex justify-end mt-4 space-x-4">
@@ -771,13 +785,20 @@ const paginatedData = sortedFilteredData.slice(
                 </div>
               </div>
             )}
-          {isFormOpen && <PlayerForm onClose={handleAddFormClose} />}
+          {isFormOpen && <PlayerForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
           {isEditFormOpen &&
             <EditPlayerForm
               player={currentPlayer}
               onClose={handleEditFormClose}
-            />}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
+            />
+          }
         </div>
+        {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
       </div>
     </div>
   );

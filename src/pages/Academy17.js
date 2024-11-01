@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import backgroundImage from '../assets/images/flag.png';
-import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
+import playerPlaceholderImage from '../assets/images/defaultPlayer.jpg'; // Placeholder image
 import Footer from '../components/Footer';
 
 
@@ -77,16 +77,17 @@ const PlayerProfile = () => {
     };
 
 
-    if (!players.length) {
-        return (
-            <div className="bg-gray-400 min-h-screen text-white">
-                <Navbar />
-                <div className="max-w-screen pt-20 text-center">
-                    <h1 className="text-4xl">Loading players...</h1>
-                </div>
-            </div>
-        );
-    }
+    // if (!players.length) {
+    //     return (
+    //         <div className="bg-gray-400 min-h-screen text-white">
+    //             <Navbar />
+                
+    //             <div className="max-w-screen pt-20 text-center">
+    //                 <h1 className="text-4xl">Loading players...</h1>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
    
     // Function to summarize player stats for display in the table

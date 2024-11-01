@@ -11,10 +11,11 @@ import image from "../assets/images/coach.jpg";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
-import { useAuth } from "../hooks/UseAuth";
+import Footer from '../components/Footer';
+//import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
-  const { user } = useAuth();
+ // const { user } = useAuth();
   const API_URL = process.env.REACT_APP_API_URL;
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -27,10 +28,13 @@ const CoachProfile = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
 
+  const user = JSON.parse(localStorage.getItem("user"));
+
+
   useEffect(() => {
-    console.log("coachId: ", user.userId);
+    console.log("coachId: ", user.coachId);
     axios
-      .get(`${API_URL}coaches/${user.userId}`)
+      .get(`${API_URL}coaches/${user.coachId}`)
       .then(response => {
         const coach = response.data;
         setCoach(coach);
@@ -39,6 +43,7 @@ const CoachProfile = () => {
       }).catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+
       console.log("coach: ",coach);
   }, []);
 
@@ -103,6 +108,7 @@ const CoachProfile = () => {
   };
 
   return (
+    <>
     <div
       className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
       style={{
@@ -312,6 +318,8 @@ const CoachProfile = () => {
             </div>
           )}
     </div>
+    <Footer />
+    </>
   );
 };
 

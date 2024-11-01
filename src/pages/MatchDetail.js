@@ -45,6 +45,16 @@ const MatchDetails = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const [filteredMatches, setFilteredsortedMatches] = useState([]);
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [typeOptions, setTypeOptions] = useState([]);
+  const [teamOptions, setTeamOptions] = useState([]);
+  const [filters, setFilters] = useState({ type: '', team: '' });
+
+  const roleOptions = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
+    "Under 19","Academy Under 9","Academy Under 11", "Academy Under 13",
+    "Academy Under 15","Academy Under 17","Academy Under 19","Richmond Legend Over 50","Richmond Legend Over 40", "Old Boys"  ];
 
   useEffect(() => {
     const fetchMatches = async () => {

@@ -159,9 +159,9 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       newErrors.membershipEndDate = "End date must be after start date.";
     }
 
-    // if (!/^image\//.test(formData.image.type)) {
-    //   newErrors.image = "Only image files are allowed.";
-    // };
+    if (!/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -306,8 +306,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Left-hand batting">Left-hand batting</option>
-              <option value="Right-hand batting">Right-hand batting</option>
+              <option value="LHB">Left-hand batting</option>
+              <option value="RHB">Right-hand batting</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -336,7 +336,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               <option value="LAMF">Left-arm medium-fast</option>
               <option value="LAM">Left-arm medium</option>
               <option value="LAMS">Left-arm medium-slow</option>
-              
               <option value="LASM">Left-arm slow-medium</option>
               <option value="OB">Off break</option>
               <option value="LB">Leg break</option>
@@ -357,10 +356,15 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Batsman">Batsman</option>
               <option value="Bowler">Bowler</option>
-              <option value="All-rounder">All-rounder</option>
+              <option value="Batter">Batter</option>
+              <option value="Top Order Batter">Top Order Batter</option>
+              <option value="Wicketkeeper Batter">Wicketkeeper Batter</option>
+              <option value="Allrounder">Allrounder</option>
+              <option value="Bawlling Allrounder">Bawlling Allrounder</option>
+              <option value="Batting Allrounder">Batting Allrounder</option>
             </select>
+            
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">Status</label>
@@ -413,7 +417,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               name="image" 
               accept="image/*" 
               onChange={handleChange}
-              // required
+              required
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&

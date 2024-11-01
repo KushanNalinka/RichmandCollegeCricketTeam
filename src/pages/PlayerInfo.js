@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { message } from "antd";
 import { Link } from "react-router-dom";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
 import ball from "../assets/images/CricketBall-unscreen.gif";
@@ -29,9 +29,23 @@ const TableComponent = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const divRef = useRef(null);
+  const [filteredPlayers, setFilteredPlayers] = useState([]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [showBowlingDropdown, setShowBowlingDropdown] = useState(false);
+  const [showBattingDropdown, setShowBattingDropdown] = useState(false);
+  const [showRoleDropdown, setShowRoleDropdown] = useState(false);
+  // const [statusOptions, setStatusOptions] = useState([]);
+  // const [bowlingOptions, setBowlingOptions] = useState([]);
+  // const [battingOptions, setBattingOptions] = useState([]);
+  // const [roleOptions, setRoleOptions] = useState([]);
+  const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingStyle: '', playerRole: '' });
 
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
+  const statusOptions = ["Active", "Inactive"];
+  const roleOptions = ["Bowler","Batter", "Top Order Batter", "Wicketkeeper Batter", "Allrounder", "Bawlling Allrounder", "Batting Allrounder"];
+  const bowlingOptions = ["RAF","RAFM","RAMF","RAM","RASM","RAS","LAF", "LAFM", "LAMF", "LAM","LAMS", "LASM", "OB", "LB", "LBG", "SLAO", "SLAWS"];
+  const battingOptions = ["LHB","RHB"]
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -40,8 +54,11 @@ const TableComponent = () => {
       .then(response => {
         const players = response.data;
         setPlayerData(players);
+        // setStatusOptions([...new Set(players.map(player => player.status))]);
+        // setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
+        // setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
+        // setRoleOptions([...new Set(players.map(player => player.playerRole))]);
         console.log("Player Data:", response.data);
-        isSubmitted(false);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
@@ -49,33 +66,33 @@ const TableComponent = () => {
   }, [isSubmitted, isDeleted]);
 
   useEffect(() => {
+    const filtered = playerData.filter(player => {
+      return (
+        (filters.status ? player.status === filters.status : true) &&
+        (filters.bowlingStyle ? player.bowlingStyle === filters.bowlingStyle : true) &&
+        (filters.battingStyle ? player.battingStyle === filters.battingStyle : true) &&
+        (filters.playerRole ? player.playerRole === filters.playerRole : true)
+      );
+    });
+    setFilteredPlayers(filtered);
+  }, [filters, playerData]);
 
-    if (divRef.current) {
-      setDivHeight(divRef.current.offsetHeight);
-    }
-  }, []);
-
-  const handleEdit = player => {
-    setCurrentPlayer(player);
-    setIsEditFormOpen(true);
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setShowStatusDropdown(false);
+    setShowBowlingDropdown(false);
+    setShowBattingDropdown(false);
+    setShowRoleDropdown(false);
   };
 
- // Sort players by status before slicing for pagination
-const sortedPlayerData = [...playerData].sort((a, b) => {
-  // Move "Active" players to the top
-  if (a.status === "Active" && b.status !== "Active") return -1;
-  if (a.status !== "Active" && b.status === "Active") return 1;
-  return 0;
-});
-
   // Calculate total pages
-  const totalPages = Math.ceil(playerData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredPlayers.length / rowsPerPage);
 
-// Slice data for the current page after sorting
-const paginatedData = sortedPlayerData.slice(
-  (currentPage - 1) * rowsPerPage,
-  currentPage * rowsPerPage
-);
+  // Slice data for the current page after sorting
+  const paginatedData = filteredPlayers.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -87,6 +104,19 @@ const paginatedData = sortedPlayerData.slice(
       setCurrentPage(currentPage + 1);
     }
   };
+
+  const handleEdit = player => {
+    setCurrentPlayer(player);
+    setIsEditFormOpen(true);
+  };
+
+ // Sort players by status before slicing for pagination
+// const sortedPlayerData = [...playerData].sort((a, b) => {
+//   // Move "Active" players to the top
+//   if (a.status === "Active" && b.status !== "Active") return -1;
+//   if (a.status !== "Active" && b.status === "Active") return 1;
+//   return 0;
+// });
 
   const handleDelete = id => {
     setPlayerToDelete(id);
@@ -190,6 +220,23 @@ const paginatedData = sortedPlayerData.slice(
                   <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
                     <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
+                      <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
+                        {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showStatusDropdown && (
+                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                          <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
+                          {statusOptions.map(status => (
+                            <button
+                              key={status}
+                              onClick={() => handleFilterChange("status", status)}
+                              className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {status}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Name
@@ -205,13 +252,64 @@ const paginatedData = sortedPlayerData.slice(
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Batting Style
+                      <button onClick={() => setShowBattingDropdown(!showBattingDropdown)} className="ml-2">
+                      {showBattingDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showBattingDropdown && (
+                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                          <button onClick={() => handleFilterChange("battingStyle", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
+                          {battingOptions.map(style => (
+                            <button
+                              key={style}
+                              onClick={() => handleFilterChange("battingStyle", style)}
+                              className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {style}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Bowling Style
+                      <button onClick={() => setShowBowlingDropdown(!showBowlingDropdown)} className="ml-2">
+                        {showBowlingDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showBowlingDropdown && (
+                        <div className="absolute mt-1 bg-white h-96 hover:overflow-auto overflow-hidden border rounded shadow-lg">
+                          <button onClick={() => handleFilterChange("bowlingStyle", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
+                          {bowlingOptions.map(style => (
+                            <button
+                              key={style}
+                              onClick={() => handleFilterChange("bowlingStyle", style)}
+                              className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {style}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </th>
                     {/* <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> */}
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
+                      <button onClick={() => setShowRoleDropdown(!showRoleDropdown)} className="ml-2">
+                        {showRoleDropdown? <FaChevronUp /> : <FaChevronDown />}
+                      </button>
+                      {showRoleDropdown && (
+                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                          <button onClick={() => handleFilterChange("playerRole", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
+                          {roleOptions.map(role => (
+                            <button
+                              key={role}
+                              onClick={() => handleFilterChange("playerRole", role)}
+                              className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {role}
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </th>
                     <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions

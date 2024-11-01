@@ -10,7 +10,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 
-const EditPlayerForm = ({ player, onClose }) => {
+const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
   const [formData, setFormData] = useState({ 
     image: player.image,
@@ -23,7 +23,7 @@ const EditPlayerForm = ({ player, onClose }) => {
     status:player.status,
     user:{
       username: player.username,
-      password: player.password,
+      password: "",
       email: player.email
     },
     membership: {
@@ -35,6 +35,7 @@ const EditPlayerForm = ({ player, onClose }) => {
   const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("player to be edited: ", player);
 
@@ -65,9 +66,76 @@ const EditPlayerForm = ({ player, onClose }) => {
     }
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Compare `formData` with `player` data for validation triggers
+    const isDataModified = Object.keys(formData).some(key => {
+      if (key === "user" || key === "membership") {
+        return Object.keys(formData[key]).some(subKey => formData[key][subKey] !== player[key + subKey]);
+      }
+      return formData[key] !== player[key];
+    });
+  
+    if (!isDataModified) {
+      return true; // No validation needed as no changes detected
+    }
+
+     //username validation
+     if (formData.user.username !== player.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+  
+    // Email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.user.email !== player.email && !emailPattern.test(formData.user.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+  
+    // Password validation
+    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (formData.user.password && formData.user.password !== player.password && !passwordPattern.test(formData.user.password)) {
+      newErrors.password = "Password must be at least 8 characters long and include a special character";
+    }
+  
+    // Contact number validation
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (formData.contactNo !== player.contactNo && !sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+    }
+  
+    // Date of birth validation
+    const today = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (formData.dateOfBirth !== player.dateOfBirth && selectedDate >= today) {
+      newErrors.dateOfBirth = "Date of birth must be in the past.";
+    }
+  
+    // Membership dates validation
+    if (formData.membership.startDate !== player.membershipStartDate || formData.membership.endDate !== player.membershipEndDate) {
+      if (new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
+        newErrors.membershipEndDate = "End date must be after start date.";
+      }
+    }
+  
+    // Image type validation
+    if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };  
+
   const handleEdit = async e => {
     e.preventDefault();
     console.log("editedPlayer: ", formData);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    }
     setUploading(true);
       try {
         let imageURL = formData.image;
@@ -109,17 +177,22 @@ const EditPlayerForm = ({ player, onClose }) => {
           },
           contactNo: ""
         });
+        isSubmitted();
         setImagePreview();
         setUploading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
-        if (error.response && error.response.data) {
-          message.error(error.response.data || "Failed!");
+        console.error("Error submitting form:", error);
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
         } else {
-          message.error("An unexpected error occurred.");
+          message.error("An unexpected error occurred. Please try again later.");
         }
+      } finally {
+        setUploading(false);
       }
     
   };
@@ -160,7 +233,7 @@ const EditPlayerForm = ({ player, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-lg w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -175,7 +248,7 @@ const EditPlayerForm = ({ player, onClose }) => {
           onSubmit={handleEdit}
           className="grid grid-cols-1 md:grid-cols-2 gap-3"
         >
-          <div >
+          <div className="col-span-1" >
             <label className="block text-black text-sm font-semibold ">Name</label>
             <input
               type="text"
@@ -183,10 +256,10 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              required
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
             <input
               type="date"
@@ -194,10 +267,10 @@ const EditPlayerForm = ({ player, onClose }) => {
               value={formData.dateOfBirth}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
             />
+             {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
               type="text"
@@ -207,8 +280,9 @@ const EditPlayerForm = ({ player, onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="@username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
             <input
               type="email"
@@ -218,8 +292,9 @@ const EditPlayerForm = ({ player, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
             />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
               type="password"
@@ -228,8 +303,9 @@ const EditPlayerForm = ({ player, onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
             <input
               type="text"
@@ -239,8 +315,9 @@ const EditPlayerForm = ({ player, onClose }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
             />
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Batting Style</label>
             <select
               name="battingStyle"
@@ -256,7 +333,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Right-hand batting">Right-hand batting</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Bowling Style</label>
             <select
               name="bowlingStyle"
@@ -272,7 +349,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Right-arm spin">Right-arm spin</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Role</label>
             <select
               name="playerRole"
@@ -289,7 +366,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="All-rounder">All-rounder</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Status</label>
             <select
               name="status"
@@ -305,7 +382,7 @@ const EditPlayerForm = ({ player, onClose }) => {
               <option value="Inactive">Inactive</option>
             </select>
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Membership Starting Date
             </label>
@@ -318,7 +395,7 @@ const EditPlayerForm = ({ player, onClose }) => {
         
             />
           </div>
-          <div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Membership Ending Date
             </label>
@@ -330,8 +407,9 @@ const EditPlayerForm = ({ player, onClose }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             
             />
+            {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>
-          <div className="col-span-2 ">
+          <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Image</label>
             <input
               id="image"
@@ -347,8 +425,9 @@ const EditPlayerForm = ({ player, onClose }) => {
                 alt="Preview"
                 className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
+              {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>} 
           </div>
-          <div className="flex justify-end col-span-2">
+          <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"

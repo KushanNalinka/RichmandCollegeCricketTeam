@@ -5,7 +5,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 import { FaTimes,  FaTrash } from 'react-icons/fa';
 
-const AddNewModal = ({  onClose }) => {
+const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
@@ -16,6 +16,7 @@ const AddNewModal = ({  onClose }) => {
     players:[]
   });
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     axios
@@ -38,8 +39,22 @@ const AddNewModal = ({  onClose }) => {
     });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+      // Validate selected coaches
+    if (selectedPlayers.length === 0) {
+      newErrors.player = "Please select players.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       // Make a POST request to the backend API
@@ -56,16 +71,20 @@ const AddNewModal = ({  onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setUploading(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      isSubmitted();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
-      if (error.response && error.response.data) {
-        message.error(error.response.data || "Failed!");
+      console.error("Error submitting form:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
       } else {
-        message.error("An unexpected error occurred.");
+        message.error("An unexpected error occurred. Please try again later.");
       }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -97,13 +116,13 @@ const AddNewModal = ({  onClose }) => {
 
   const years = [];
   const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1900; i--) {
+  for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
   }
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
         <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -114,25 +133,29 @@ const AddNewModal = ({  onClose }) => {
             </button>
           </div>
         <h3 className="text-xl text-[#480D35] font-bold mb-4">Add New Team</h3>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handleSubmit}>
           
           <div className="mb-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="under">
+            <label className="block text-black text-sm font-semibold" >
               Under
             </label>
             <select
-              id="under"
               name="under"
               value={formData.under}
               onChange={handleChange}
               className="border border-gray-300 rounded-md w-full py-1 px-3 text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Enter team name"
+              required
             >
               <option value="" disabled>Select team</option>
+              <option  value="Under 9">Under 9</option>
+              <option  value="Under 11">Under 11</option>
               <option  value="Under 13">Under 13</option>
               <option  value="Under 15">Under 15</option>
               <option  value="Under 17">Under 17</option>
               <option  value="Under 19">Under 19</option>
+              <option  value="Academy Under 9">Academy Under 9</option>
+              <option  value="Academy Under 11">Academy Under 11</option>
               <option  value="Academy Under 13">Academy Under 13</option>
               <option  value="Academy Under 15">Academy Under 15</option>
               <option  value="Academy Under 17">Academy Under 17</option>
@@ -143,15 +166,15 @@ const AddNewModal = ({  onClose }) => {
             </select>
           </div>
           <div className="mb-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="year">
+            <label className="block text-black text-sm font-semibold" >
               Year
             </label>
             <select
-              id="year"
               name="year"
               value={formData.year}
               onChange={handleChange}
               className="border border-gray-300 rounded-md w-full py-1 px-3 text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
             >
               <option value="" disabled>Select year</option>
               {years.map((year) => (
@@ -165,11 +188,11 @@ const AddNewModal = ({  onClose }) => {
             <label className="block text-black text-sm font-semibold">Captain</label>
             <select
               type="text"
-              id="captain"
               name="captain"
               value={formData.captain}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
             >
               <option value="">Select Captain</option>
               {players.map(player =>
@@ -199,6 +222,7 @@ const AddNewModal = ({  onClose }) => {
                 <FaTrash/>
               </button>
             </div>
+            {errors.player && <p className="text-red-500 text-xs mt-1">{errors.player}</p>}
             <div className="relative">
               <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (
@@ -220,8 +244,7 @@ const AddNewModal = ({  onClose }) => {
           </div>
           <div className="flex justify-end space-x-2 ">
             <button
-              type="button"
-              onClick={handleSubmit}
+               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >
               Add

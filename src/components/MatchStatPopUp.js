@@ -4,7 +4,7 @@ import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
 
-const MatchStatPopup = ({ matchId, matchType, onClose }) => {
+const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
@@ -127,9 +127,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         }
       })
       setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed submit!");
@@ -164,9 +165,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         }
       })
       setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed Edit!");
@@ -180,7 +182,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -192,10 +194,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         </div>
         <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
         <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-4">
+         
             {
               matchType==="Test"?(
-                <div>
+                <div className="col-span-1">
                   <label className="block text-black text-sm font-semibold">Inning</label>
                   <select
                     type="text"
@@ -211,7 +213,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                   </select>
                 </div>
               ):(
-                <div>
+                <div className="col-span-1">
                   <label className="block text-black text-sm font-semibold">Inning</label>
                   <input
                      type="text"
@@ -225,7 +227,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
               )
             }
             
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Overs</label>
               <input
                 type="number"
@@ -236,7 +238,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Runs</label>
               <input
                 type="number"
@@ -247,7 +249,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Wickets</label>
               <input
                 type="number"
@@ -258,10 +260,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
             </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-black text-sm font-semibold">opposition Overs</label>
+            <p className="col-span-1 md:col-span-2 text-md text-[black] font-semibold">Opposition match stats details</p>
+            <div className="col-span-1">
+              <label className="block text-black text-sm font-semibold">Opposition Overs</label>
               <input
                 type="number"
                 name="oppositionOvers"
@@ -271,7 +272,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Runs</label>
               <input
                 type="number"
@@ -282,7 +283,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Wickets</label>
               <input
                 type="number"
@@ -295,7 +296,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
             </div>
            
             {(matchType==="Test" && selectedIning==="1")?(
-              <div>
+              <div className="col-span-1">
                 <label className="block text-black text-sm font-semibold">Result</label>
                   <input
                      type="text"
@@ -308,7 +309,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                    />
                  </div>
                 ):(
-                  <div>
+                  <div className="col-span-1 md:col-span-2">
                     <label className="block text-black text-sm font-semibold">Result</label>
                       <input
                         type="text"
@@ -321,9 +322,8 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                       />
                     </div>
                   )}
-                </div>
           {isSummaryExists?(
-              <div className="flex justify-end space-x-4 pt-4 col-span-2">
+              <div className="flex justify-end col-span-1 pt-4 md:col-span-2">
                 <button
                   onClick={handleUpdate}
                   type="submit"
@@ -333,7 +333,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 </button>
               </div>
             ):(
-              <div className="flex justify-end space-x-4 pt-4 col-span-2">
+              <div className="flex justify-end col-span-1 pt-4 md:col-span-2">
                 <button
                   onClick={handleSubmit}
                   type="submit"

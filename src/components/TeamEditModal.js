@@ -4,13 +4,14 @@ import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
-const EditModal = ({ team, onClose }) => {
+const EditModal = ({ team, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({...team});
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [teamMembers, setTeamMembers] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [errors, setErrors] = useState({});
   console.log("teams:", team);
   useEffect(() => {
     axios
@@ -44,9 +45,23 @@ const EditModal = ({ team, onClose }) => {
     });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+      // Validate selected coaches
+    if (selectedPlayers.length === 0) {
+      newErrors.player = "Please select players.";
+    };
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       // Make a POST request to the backend API
@@ -63,16 +78,20 @@ const EditModal = ({ team, onClose }) => {
         players:[]
       });
       setSelectedPlayers([]);
-      setUploading(false);
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      isSubmitted();
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
-      if (error.response && error.response.data) {
-        message.error(error.response.data || "Failed!");
+      console.error("Error submitting form:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
       } else {
-        message.error("An unexpected error occurred.");
+        message.error("An unexpected error occurred. Please try again later.");
       }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -109,7 +128,7 @@ const EditModal = ({ team, onClose }) => {
 
   return (
     <div className="fixed inset-0  flex items-center justify-center z-50 bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
           <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -120,7 +139,7 @@ const EditModal = ({ team, onClose }) => {
             </button>
           </div>  
         <h3 className="text-xl text-[#480D35] font-bold mb-4">Edit Team</h3>
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form>
           <div className="mb-2">
             <label className="block text-black text-sm font-semibold" htmlFor="under">
               Under
@@ -134,10 +153,14 @@ const EditModal = ({ team, onClose }) => {
               placeholder="Enter team name"
             >
               <option value="" disabled>Select team</option>
+              <option  value="Under 9">Under 9</option>
+              <option  value="Under 11">Under 11</option>
               <option  value="Under 13">Under 13</option>
               <option  value="Under 15">Under 15</option>
               <option  value="Under 17">Under 17</option>
               <option  value="Under 19">Under 19</option>
+              <option  value="Academy Under 9">Academy Under 9</option>
+              <option  value="Academy Under 11">Academy Under 11</option>
               <option  value="Academy Under 13">Academy Under 13</option>
               <option  value="Academy Under 15">Academy Under 15</option>
               <option  value="Academy Under 17">Academy Under 17</option>
@@ -166,7 +189,7 @@ const EditModal = ({ team, onClose }) => {
               ))}
             </select>
           </div>
-          <div>
+          <div className="mb-2">
             <label className="block text-black text-sm font-semibold">Captain</label>
             <select
               type="text"
@@ -204,6 +227,7 @@ const EditModal = ({ team, onClose }) => {
                 <FaTrash/>
               </button>
             </div>
+            {errors.player && <p className="text-red-500 text-xs mt-1">{errors.player}</p>}
             <div className="relative">
               <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (
@@ -225,7 +249,7 @@ const EditModal = ({ team, onClose }) => {
           </div>
           <div className="flex justify-end space-x-2">
             <button
-              type="button"
+              type="submit"
               onClick={handleEdit}
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
             >

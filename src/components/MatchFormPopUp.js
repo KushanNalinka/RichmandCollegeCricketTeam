@@ -376,7 +376,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.teamId}>
-                  {team.under}
+                  {team.under}-{team.year}
                 </option>
               )}
             </select>

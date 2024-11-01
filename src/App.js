@@ -109,6 +109,7 @@ import Under17 from './pages/Under17.js';
 import Under19 from './pages/Under19.js';
 import OldBoys from './pages/OldBoys.js';
 import Academy from './pages/Academy.js';
+import Academy9 from './pages/Academy9.js';
 import Academy13 from './pages/Academy13.js';
 import Academy15 from './pages/Academy15.js';
 import Academy17 from './pages/Academy17.js';
@@ -145,9 +146,9 @@ import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 
-import PrivateRoute from './components/PrivateRoute.js';
+//import PrivateRoute from './components/PrivateRoute.js';
 
-import { useAuth } from './hooks/UseAuth.js';
+//import { useAuth } from './hooks/UseAuth.js';
 
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 
@@ -164,8 +165,34 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
+           {/* Protected Routes */}
+           <Route path="/member"element={<MemberInitial />} />
+           <Route
+            path="/playerProfile"
+            element={
+              
+                <PlayerProfile />
+              
+            }
+          />
+          <Route
+            path="/coachProfile"
+            element={
+             
+                <CoachProfile />
+             
+            }
+          />
+          <Route
+            path="/officialProfile"
+            element={
+           
+                <OfficialProfile />
+              
+            }
+          />
 
-          {/* Protected Routes */}
+          {/* Protected Routes 
           <Route
             path="/member"
             element={
@@ -174,8 +201,8 @@ function App() {
               </PrivateRoute>
             }
           />
-
-          {/* Profile Routes */}
+*/}
+          {/* Profile Routes 
           <Route
             path="/playerProfile"
             element={
@@ -199,7 +226,7 @@ function App() {
                 <OfficialProfile />
               </PrivateRoute>
             }
-          />
+          />*/}
 
           {/* Other Protected Routes */}
           <Route path="/profile" element={<Profile />} />
@@ -209,6 +236,7 @@ function App() {
          <Route path="/under19" element={<Under19 />} />
          <Route path="/oldboys" element={<OldBoys />} />
          <Route path="/academy" element={<Academy />} />
+         <Route path="/academy9" element={<Academy9 />} />
          <Route path="/academy13" element={<Academy13 />} />
          <Route path="/academy15" element={<Academy15 />} />
          <Route path="/academy17" element={<Academy17 />} />

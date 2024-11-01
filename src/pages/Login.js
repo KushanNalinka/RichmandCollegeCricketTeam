@@ -287,9 +287,10 @@
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
+import { useContext} from "react";
+import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from '../hooks/UseAuth';
+
 
 
 const Login = () => {
@@ -297,12 +298,15 @@ const Login = () => {
     username: "",
     password: "",
   });
+
+  const { loading, error, dispatch } = useContext(AuthContext);
+
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
 
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
@@ -335,7 +339,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+    dispatch({ type: "LOGIN_START" });
     console.log("Form submitted with values:", inputs);
 
     // Perform front-end validations
@@ -353,6 +357,7 @@ const Login = () => {
 
       // API call to backend for sign-in
       const res = await axios.post(`${API_URL}auth/signin`, inputs);
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
       console.log("Response from API:", res.data);
       const userData = {
         username: res.data.username,
@@ -374,16 +379,16 @@ const Login = () => {
       console.log("userData In login: ", userData);
 
       if (roles.includes("ROLE_ADMIN")) {
-        login("admin", userData);
+        //login("admin", userData);
         navigate("/player");
       } else if (roles.includes("ROLE_COACH")) {
-        login("coach", userData);
+        //login("coach", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_PLAYER")) {
-        login("player", userData);
+        //login("player", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_OFFICIAL")) {
-        login("official", userData);
+       // login("official", userData);
         navigate("/member");
 
       } else {
@@ -393,6 +398,7 @@ const Login = () => {
 
       
     } catch (err) {
+      dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
       // Specific error handling for incorrect username or password
       if (err.response) {
         console.error("Error response from API:", err.response);

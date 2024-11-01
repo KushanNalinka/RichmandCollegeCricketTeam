@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import backgroundImage from '../assets/images/flag.png';
-import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
+import playerPlaceholderImage from '../assets/images/defaultPlayer.jpg'; // Placeholder image
 import Footer from '../components/Footer';
 
 const PlayerProfile = () => {
@@ -11,31 +11,7 @@ const PlayerProfile = () => {
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
     const API_URL = process.env.REACT_APP_API_URL;
     
-    // // Fetch all players from the API when the component mounts
-    // useEffect(() => {
-    //     const fetchPlayers = async () => {
-    //         try {
-    //             const response = await fetch(`${API_URL}admin/players/all`);
-    //             const data = await response.json();
-
-    //             const under13Players = data.filter((player) =>
-    //                 player.teamsUnder.includes("Under 13")
-    //             );
-    //             setPlayers(under13Players);
-
-    //             // Set default selected player if data exists
-    //             if (under13Players.length > 0) {
-    //                 setSelectedPlayer(under13Players[0]); // Select first player by default
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching player data:', error);
-    //         }
-    //     };
-
-    //     fetchPlayers();
-    // }, []);
-
-    // Fetch all players from the API when the component mounts
+   
 useEffect(() => {
     const fetchPlayers = async () => {
         try {
@@ -78,78 +54,18 @@ useEffect(() => {
         }
     }, [selectedPlayer]);
 
-    if (!players.length) {
-        return (
-            <div className="bg-gray-400 min-h-screen text-white">
-                <Navbar />
-                <div className="max-w-screen pt-20 text-center">
-                    <h1 className="text-4xl">Loading players...</h1>
-                </div>
-            </div>
-        );
-    }
-
-    // Function to summarize player stats for display in the table
-    // const summarizeStats = (type) => {
-    //     if (!playerStat || !playerStat.length) {
-    //         return {
-    //             matches: 0,
-    //             innings: 0,
-    //             runs: 0,
-    //             highestScore: 0,
-    //             avg: 0,
-    //             sr: 0,
-    //             "100s": 0,
-    //             "50s": 0,
-    //             "4s": 0,
-    //             "6s": 0,
-    //         };
-    //     }
-
-    //     const filteredStats = playerStat.filter(
-    //         (stat) => stat.match.type === type
+    // if (!players.length) {
+    //     return (
+    //         <div className="bg-gray-400 min-h-screen text-white">
+    //             <Navbar />
+    //             <div className="max-w-screen pt-20 text-center">
+    //                 <h1 className="text-4xl">Loading players...</h1>
+    //             </div>
+    //         </div>
     //     );
+    // }
 
-    //     const summary = filteredStats.reduce(
-    //         (acc, stat) => {
-    //             acc.matches += 1; // Since each stat is from a separate match
-    //             acc.innings += parseInt(stat.inning, 10) || 0;
-    //             acc.runs += stat.runs || 0;
-    //             acc.highestScore = Math.max(acc.highestScore, stat.runs);
-    //             acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
-    //             acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate calculation
-    //             acc["100s"] += stat.centuries || 0;
-    //             acc["50s"] += stat.fifties || 0;
-    //             acc["4s"] += stat.fours || 0;
-    //             acc["6s"] += stat.sixers || 0;
-    //             acc.overs += stat.overs || 0;
-    //             acc.wickets += stat.wickets || 0;
-    //             acc.runsConceded += stat.runsConceded || 0;
-    //             acc.bowlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
-    //             return acc;
-    //         },
-    //         {
-    //             matches: 0,
-    //             innings: 0,
-    //             runs: 0,
-    //             highestScore: 0,
-    //             avg: 0,
-    //             sr: 0,
-    //             overs: 0,
-    //             "100s": 0,
-    //             "50s": 0,
-    //             "4s": 0,
-    //             "6s": 0,
-    //             wickets: 0,
-    //             runsConceded: 0,
-    //             bowlingAvg: 0,
-    //         }
-    //     );
-
-    //     return summary;
-    // };
-
-    // Function to summarize player stats for display in the table
+   
 const summarizeStats = (type) => {
     if (!playerStat || !playerStat.length) {
         return {

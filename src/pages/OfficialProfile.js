@@ -7,16 +7,17 @@ import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
 import { FaUserCircle } from "react-icons/fa";
-import { useAuth } from "../hooks/UseAuth";
+import Footer from '../components/Footer';
+
 
 const OfficialProfile = () => {
-  const { user } = useAuth();
+  const user = JSON.parse(localStorage.getItem("user"));
   const [officialProfile, setOfficialProfile] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     console.log("userId O:", user.userId);
     const fetchData = async () => {
-    const officialData = await axios.get( `${API_URL}officials/${user.userId}`);
+    const officialData = await axios.get( `${API_URL}officials/${user.officialId}`);
     setOfficialProfile(officialData.data);
     console.log("Official Data:", officialData.data);
   };
@@ -26,6 +27,7 @@ const OfficialProfile = () => {
   }, []);
 
   return (
+    <>
     <div
       className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
       style={{
@@ -109,6 +111,8 @@ const OfficialProfile = () => {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

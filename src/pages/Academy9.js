@@ -24,7 +24,7 @@ const PlayerProfile = () => {
                 const under13Players = data.filter((player) =>
                     player.teamDetails &&
                     player.teamDetails.some(
-                        (team) => team.under === "Academy Under 15" && parseInt(team.year, 10) === selectedYear
+                        (team) => team.under === "Academy Under 9" && parseInt(team.year, 10) === selectedYear
                     )
                 );
 
@@ -231,7 +231,7 @@ const summarizeStats = (type) => {
             <div className="text-center ml-8 md:text-left">
                 <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
                 <p className="text-gray-400 text-base md:text-3xl">
-                Academy Under 15
+                Academy Under 9
                                 </p>
             </div>
                {/* Year Dropdown */}

@@ -11,6 +11,9 @@ const PlayerForm = ({  onClose }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+
+
   const [formData, setFormData] = useState({
     image: "",
     name: "",
@@ -78,9 +81,12 @@ const PlayerForm = ({  onClose }) => {
       };
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          playerData 
+          playerData , { headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
         );
         console.log("Form submitted succedded: ", response.data);
+        console.log(accessToken);
         message.success("Successfull!");
         setFormData({
           image: "",

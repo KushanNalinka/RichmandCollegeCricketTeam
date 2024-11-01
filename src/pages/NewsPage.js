@@ -800,8 +800,15 @@ const NewsPage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/news');
-        setNewsData(response.data);
+        // const response = await axios.get('http://localhost:8080/api/news');
+        // setNewsData(response.data);
+        // setLoading(false);
+        const response = await axios.get('http://rcc.dockyardsoftware.com/api/news');
+        const newsWithFirstImage = response.data.map((news) => ({
+          ...news,
+          imageUrl: news.images?.[0]?.imageUrl || '', // Set the first image URL or fallback
+        }));
+        setNewsData(newsWithFirstImage);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching news:', error);

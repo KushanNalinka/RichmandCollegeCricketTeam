@@ -2709,17 +2709,18 @@ import { useNavigate } from 'react-router-dom';
 import TopLayer from '../components/TopLayer';
 import topImage from '../assets/images/BG3.png';
 import Upcoming from '../components/Upcoming';
-import Footer from '../components/Footer';  // Make sure this is only imported once
+import Footer from '../components/Footer';
 
 export default function MatchInfo() {
   const [matchDataList, setMatchDataList] = useState([]);
   const [filteredMatches, setFilteredMatches] = useState([]);
+  const [ageGroups, setAgeGroups] = useState([]);
+  const [matchTypes, setMatchTypes] = useState([]);
   const [selectedAgeGroup, setSelectedAgeGroup] = useState('All');
   const [selectedMatchType, setSelectedMatchType] = useState('All');
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
-
 
   const navigate = useNavigate();
 
@@ -2735,24 +2736,29 @@ export default function MatchInfo() {
   const isUpcomingMatch = (matchDate) => {
     const today = new Date();
     const matchDay = new Date(matchDate);
-    return matchDay >= today.setHours(0, 0, 0, 0); // Compare ignoring the time part
+    return matchDay >= today.setHours(0, 0, 0, 0);
   };
 
   useEffect(() => {
 
-
     fetch(`${API_URL}matchSummary/all`)
-
 
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);
-        filterMatches(data, false, true); // Filter matches immediately for latest
+        filterMatches(data, false, true);
+        
+        // Extract unique age groups and match types from the data
+        const uniqueAgeGroups = Array.from(new Set(data.map(match => match.under)));
+        const uniqueMatchTypes = Array.from(new Set(data.map(match => match.type)));
+        
+        // Set the state with the extracted unique values
+        setAgeGroups(['All', ...uniqueAgeGroups]); // Add 'All' as the first option
+        setMatchTypes(['All', ...uniqueMatchTypes]); // Add 'All' as the first option
       })
       .catch(error => console.error('Error fetching match summaries:', error));
   }, []);
 
-  // This useEffect will trigger filtering whenever any relevant state changes
   useEffect(() => {
     if (activeButton === 'Latest') {
       filterMatches(matchDataList, false, true);
@@ -2764,34 +2770,29 @@ export default function MatchInfo() {
   }, [selectedAgeGroup, selectedMatchType, activeButton]);
 
   const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
-    let filtered = [...data]; // Make a copy to avoid mutating the original data
+    let filtered = [...data];
 
-    // Filter by age group
     if (selectedAgeGroup !== 'All') {
       filtered = filtered.filter(match =>
         match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
       );
     }
 
-    // Filter by match type
     if (selectedMatchType !== 'All') {
       filtered = filtered.filter(match =>
         match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
       );
     }
 
-    // Filter for upcoming matches
     if (showOnlyUpcoming) {
       filtered = filtered.filter(match => isUpcomingMatch(match.date));
     }
 
-    // Sort for latest or upcoming matches
     filtered.sort((a, b) => showOnlyUpcoming
       ? new Date(a.date) - new Date(b.date)
       : new Date(b.date) - new Date(a.date)
     );
 
-    // Get the latest 5 matches if `latest` is true
     if (latest) {
       const groupedMatches = filtered.reduce((acc, match) => {
         if (!acc[match.type]) acc[match.type] = [];
@@ -2799,7 +2800,7 @@ export default function MatchInfo() {
         return acc;
       }, {});
 
-      filtered = []; // Reset filtered matches
+      filtered = [];
       if (selectedMatchType === 'All') {
         let count = 0;
         Object.values(groupedMatches).forEach(group => {
@@ -2816,7 +2817,6 @@ export default function MatchInfo() {
       }
     }
 
-    // Group Test matches by matchId and merge summaries if selected
     if (selectedMatchType === 'Test' || filtered.some(match => match.type.toLowerCase() === 'test')) {
       const groupedByMatchId = filtered.reduce((acc, match) => {
         if (match.type.toLowerCase() === 'test') {
@@ -2839,7 +2839,6 @@ export default function MatchInfo() {
         return acc;
       }, {});
 
-      // Convert the object back to an array
       filtered = Object.values(groupedByMatchId);
     }
 
@@ -2848,8 +2847,7 @@ export default function MatchInfo() {
   };
 
   const handleMatchCentreClick = (match) => {
-    // Dynamically load Richmond College logo from the assets folder
-    const richmondLogo = require('../assets/images/LOGO.png'); // Richmond College logo
+    const richmondLogo = require('../assets/images/LOGO.png');
   
     navigate('/scorecard', {
       state: {
@@ -2863,27 +2861,27 @@ export default function MatchInfo() {
           stadiumLine1: match.venue.toUpperCase(),
           stadiumLine2: "",
         },
-        matchType: match.type, // Pass match type to check for "Test"
+        matchType: match.type,
         teams: [
           {
             name: "Richmond College",
-            logo: richmondLogo, // Use dynamically imported Richmond logo
+            logo: richmondLogo,
             score: match.innings && match.innings.length > 1
               ? `${match.runs}/${match.wickets} & ${match.innings[1]?.runs}/${match.innings[1]?.wickets}`
-              : `${match.runs}/${match.wickets}`, // Show second inning only if exists
+              : `${match.runs}/${match.wickets}`,
             overs: match.innings && match.innings.length > 1
               ? `${match.overs} & ${match.innings[1]?.overs}`
-              : match.overs, // Show second inning overs only if exists
+              : match.overs,
           },
           {
             name: match.opposition,
-            logo: match.logo, // Opposition logo from the API response
+            logo: match.logo,
             score: match.innings && match.innings.length > 1
               ? `${match.oppositionRuns}/${match.oppositionWickets} & ${match.innings[1]?.oppositionRuns}/${match.innings[1]?.oppositionWickets}`
-              : `${match.oppositionRuns}/${match.oppositionWickets}`, // Show second inning score if exists
+              : `${match.oppositionRuns}/${match.oppositionWickets}`,
             overs: match.innings && match.innings.length > 1
               ? `${match.oppositionOvers} & ${match.innings[1]?.oppositionOvers}`
-              : match.oppositionOvers, // Show second inning overs if exists
+              : match.oppositionOvers,
           }
         ]
       }
@@ -2906,42 +2904,33 @@ export default function MatchInfo() {
             justifyContent: 'center',
           }}
         >
-         <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
-  <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
-    <select
-      className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
-      value={selectedAgeGroup}
-      onChange={(e) => {
-        setSelectedAgeGroup(e.target.value);
-        filterMatches(matchDataList, false, activeButton === 'Latest'); // Trigger filtering on change
-      }}
-    >
-      <option>Under 13</option>
-      <option>Under 15</option>
-      <option>Under 17</option>
-      <option>Under 19</option>
-      <option>Richmond legend  over  40
-      </option>
-      <option>Richmond legend over 50</option>
-      <option>Old boys
-      </option>
-      <option>Academy</option>
-      <option>All</option>
-    </select>
+          <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
+            <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
+              <select
+                className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
+                value={selectedAgeGroup}
+                onChange={(e) => {
+                  setSelectedAgeGroup(e.target.value);
+                  filterMatches(matchDataList, false, activeButton === 'Latest');
+                }}
+              >
+                {ageGroups.map((ageGroup, index) => (
+                  <option key={index} value={ageGroup}>{ageGroup}</option>
+                ))}
+              </select>
 
-    <select
-      className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
-      value={selectedMatchType}
-      onChange={(e) => {
-        setSelectedMatchType(e.target.value);
-        filterMatches(matchDataList, false, activeButton === 'Latest'); // Trigger filtering on change
-      }}
-    >
-      <option>Test</option>
-      <option>T20</option>
-      <option>ODI</option>
-      <option>All</option>
-    </select>
+              <select
+                className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
+                value={selectedMatchType}
+                onChange={(e) => {
+                  setSelectedMatchType(e.target.value);
+                  filterMatches(matchDataList, false, activeButton === 'Latest');
+                }}
+              >
+                {matchTypes.map((matchType, index) => (
+                  <option key={index} value={matchType}>{matchType}</option>
+                ))}
+              </select>
   </div>
 
 

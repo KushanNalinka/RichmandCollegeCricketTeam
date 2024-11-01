@@ -5,20 +5,17 @@ import '@fontsource/inter'; // Import Inter font
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AuthContexProvider } from './context/authContext';
+import { AuthContextProvider } from "./context/AuthContext";
 import { AuthProvider } from './hooks/UseAuth';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <AuthContexProvider> */}
-    <AuthProvider>
-
-      <App />
-    </AuthProvider>
-    
-
-    {/* </AuthContexProvider> */}
+     <AuthContextProvider>
+      
+        <App />
+      
+    </AuthContextProvider>
   </React.StrictMode>
 );
 

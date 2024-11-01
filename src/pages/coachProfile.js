@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../components/HomeNavbar";
+import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
@@ -8,12 +8,14 @@ import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
-import { useAuth } from "../hooks/UseAuth";
+import Footer from '../components/Footer';
+//import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
-  const { user } = useAuth();
+ // const { user } = useAuth();
   const API_URL = process.env.REACT_APP_API_URL;
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -21,11 +23,18 @@ const CoachProfile = () => {
   const [practiceSchedules, setPracticeSchedules] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [practiceToDelete, setPracticeToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
+
+  const user = JSON.parse(localStorage.getItem("user"));
+
+
   useEffect(() => {
-    console.log("coachId: ", user.userId);
+    console.log("coachId: ", user.coachId);
     axios
-      .get(`${API_URL}coaches/${user.userId}`)
+      .get(`${API_URL}coaches/${user.coachId}`)
       .then(response => {
         const coach = response.data;
         setCoach(coach);
@@ -34,6 +43,11 @@ const CoachProfile = () => {
       }).catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+
+      console.log("coach: ",coach);
+  }, []);
+
+  useEffect(() => {
       axios.get(`${API_URL}practiseSessions/coach/${user.userId}`)
       .then(response => {
         setPracticeSchedules(response.data);
@@ -43,7 +57,7 @@ const CoachProfile = () => {
         console.error("There was an error fetching the player data!", error);
       });
       console.log("coach: ",coach);
-  }, []);
+  }, [isSubmitted, isDeleted]);
 
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
@@ -51,25 +65,31 @@ const CoachProfile = () => {
     setIsEditFormOpen(true);
   };
   const handleDelete = id => {
-    setPracticeToDelete(id)
-;
-;
+    setPracticeToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(
         `${API_URL}practiseSessions/${practiceToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
+      setIsDeleted(!isDeleted);
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting player:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
   
@@ -88,6 +108,7 @@ const CoachProfile = () => {
   };
 
   return (
+    <>
     <div
       className={`flex relative justify-center lg:p-10 p-5 lg:pt-28 pt-28 h-auto items-stretch min-h-screen text-white w-full`}
       style={{
@@ -96,7 +117,7 @@ const CoachProfile = () => {
         backgroundPosition: "center"
       }}
     >
-      <Navbar />
+      <MemberNavbar />
             <div
               className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
               style={{
@@ -289,9 +310,16 @@ const CoachProfile = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} />}
-          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule}/>}
+          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+          {uploading && (
+            <div className="absolute items-center justify-center my-4">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
     </div>
+    <Footer />
+    </>
   );
 };
 

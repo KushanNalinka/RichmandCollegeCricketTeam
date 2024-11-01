@@ -34,7 +34,7 @@ const MainNavbarToggle = () => {
             >
               {isMenuOpen
                 ? <FaXmark className="text-lg text-[#00175F] " />
-                : <FaBars className="text-lg text-[#00175F] " />}
+                :  <FaUserCircle className="text-2xl text-[#00175F]" />}
             </button>
             <button
               className="text-[#00175F] lg:hidden flex focus:outline-none m-4 focus:test-gray-500  "
@@ -44,7 +44,7 @@ const MainNavbarToggle = () => {
             </button>
           </div>
           <div
-            className={`absolute space-y-2 z-30 mt-10 w-[200px] mb-2 rounded-md justify-end items-center py-3 transition-all duration-500000 ease-in-out  shadow-lg border-[3px] ${isMenuOpen
+            className={`absolute space-y-2 z-30 right-10 mt-10 w-[200px] mb-2 rounded-md justify-end items-center py-3 transition-all duration-500000 ease-in-out  shadow-lg border-[3px] ${isMenuOpen
               ? " h-auto w-48 block justify-center items-center transition-transform text-opacity-100 duration-50000 ease-in-out bg-white mb-10"
               : "hidden"}`}
           >

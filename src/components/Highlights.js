@@ -1189,7 +1189,7 @@ const HighlightTabs = () => {
             Array.from({ length: isMobile ? 1 : 3 }).map((_, idx) => {
               const index = (activeIndex + idx) % sliderData.length;
               return (
-                <div key={index} className="w-full md:w-[400px] h-[300px] md:h-[600px] p-4">
+                <div key={index} className="w-full md:w-[400px] h-[600px] md:h-[600px] p-4">
                   <iframe
                     width="100%"
                     height="100%"

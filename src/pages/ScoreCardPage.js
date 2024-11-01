@@ -6,6 +6,7 @@ import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import flag from "../assets/images/backDrop3.png";
+import { Link } from "react-router-dom";
 import richmandLogo from "../assets/images/RLogo.png";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosArrowDropup } from "react-icons/io";
@@ -143,8 +144,10 @@ const ScoreCardPage = () => {
         </div>
         <div className="w-[88%] py-5 flex flex-col items-center justify-center h-auto">
           <div className="flex justify-between w-full lg:px-10 py-3">
-             <MainNavbarToggle/>
-             <img src={logo} className="h-12 w-12"/>
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
@@ -172,10 +175,12 @@ const ScoreCardPage = () => {
   
               <div key={match.matchId} className="relative flex-grow ">
                 <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
-                  <div className="flex gap-5 items-center w-44%]">
+                  <div className="flex gap-5 items-center w-[40%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.runs}/{match.wickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.overs} </p>
                     </div>
                     <div className="flex flex-col justify-center items-center w-[10%]">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
@@ -185,12 +190,14 @@ const ScoreCardPage = () => {
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={match.logo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.oppositionRuns}/{match.oppositionWickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.oppositionOvers}</p>
                     </div>
                   </div>
-                  <div className="w-[30%] lg:w-[26%] justify-center flex ">
+                  <div className="w-[20%] lg:w-[20%] justify-center flex ">
                     <p className="lg:text-sm text-lg text-center font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
                   </div>
-                  <div className="flex lg:w-[30%] w-[30%] items-center justify-end lg:gap-5">
+                  <div className="flex lg:w-[40%] w-[40%] items-center justify-end lg:gap-5">
                     <div className="flex items-center gap-3 tracking-wider">
                       {match.type === 'Test' && (
                         <div className={`flex tracking-wider justify-end`}>

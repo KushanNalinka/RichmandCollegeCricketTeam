@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { message, Spin } from "antd";
+import { DatePicker, message, Spin } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
@@ -18,7 +18,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({
     image: "",
     name: "",
-    dateOfBirth: "",
+    dateOfBirth:"" ,
     email: "",
     roles: ["ROLE_PLAYER"], 
     battingStyle: "",
@@ -42,13 +42,33 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     const { name, value, files } = e.target;
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
-      setFormData({
-        ...formData,
+      if (name === "membership.startDate") {
+        // Handle the DatePicker value change
+        setFormData({
+          ...formData,
         [mainKey]: {
           ...formData[mainKey],
-          [subKey]: value
+          [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
         }
-      });
+        });
+      }else if(name === "membership.endDate") {
+        // Handle the DatePicker value change
+        setFormData({
+          ...formData,
+        [mainKey]: {
+          ...formData[mainKey],
+          [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+        }
+        });
+      }else{
+        setFormData({
+          ...formData,
+          [mainKey]: {
+            ...formData[mainKey],
+            [subKey]: value
+          }
+        });
+      }; 
     }else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -56,12 +76,19 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
-    }else {
+    }else if (name === "dateOfBirth") {
+      // Handle the DatePicker value change
       setFormData({
         ...formData,
-        [name]: value
+        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+      });
+    }else {
+      setFormData({
+          ...formData,
+          [name]: value
       });
     }
+    
   };
 
   const handleSubmit = async e => {
@@ -163,7 +190,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
     if (formData.membership.startDate && new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
       newErrors.membershipEndDate = "End date must be after start date.";
-    }
+    };
 
     if (!/^image\//.test(formData.image.type)) {
       newErrors.image = "Only image files are allowed.";
@@ -232,18 +259,18 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-              
+              required   
             />
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">DOB</label>
-            <input
-              type="date"
+            <DatePicker
               name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              dateFormat="yyyy-mm-dd"
+              // selected={new Date(formData.dateOfBirth)}
+              onChange={(date) => handleChange({ target: { name: 'dateOfBirth', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
             {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
@@ -309,9 +336,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className=" py-1 px-3 border border-gray-300 text-gray-600 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-              <option value='' disabled>
-                Select
-              </option>
+              <option value='' disabled>Select batting style </option>
               <option value="LHB">Left-hand batting</option>
               <option value="RHB">Right-hand batting</option>
             </select>
@@ -325,29 +350,30 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className=" px-3 py-1 border text-gray-600 border-gray-300 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-              <option value='' disabled>
-                Select
-              </option>
+              <option value='' disabled> Select bowling style</option>
               <option value="RAF">Right-arm fast</option>
-              <option value="RAFM">Right-arm fast-medium
-              </option>
-              <option value="RAMF">Right-arm medium-fast
-              </option>
+              <option value="RAFM">Right-arm fast-medium</option>
+              <option value="RAMF">Right-arm medium-fast</option>
               <option value="RAM">Right-arm medium</option>
               <option value="RAMS">Right-arm medium-slow</option>
               <option value="RASM">Right-arm slow-medium </option>
               <option value="RAS">Right-arm slow</option>
+              <option value="RAL">Right-arm Leg</option>
               <option value="LAF">Left-arm fast</option>
               <option value="LAFM">Left-arm fast-medium</option>
               <option value="LAMF">Left-arm medium-fast</option>
               <option value="LAM">Left-arm medium</option>
               <option value="LAMS">Left-arm medium-slow</option>
               <option value="LASM">Left-arm slow-medium</option>
+              <option value="LAL">Left-arm Leg</option>
               <option value="OB">Off break</option>
               <option value="LB">Leg break</option>
               <option value="LBG">Leg break googly</option>
               <option value="SLAO">Slow left-arm orthodox</option>
+              <option value="SRAO">Slow Right-arm orthodox</option>
+              <option value="OS">Off spin</option>
               <option value="SLAWS">Slow left-arm wrist spin</option>
+              <option value="SRAWS">Slow Right-arm wrist spin</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -392,12 +418,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
             <label className="block text-black text-sm  font-semibold">
               Membership Starting Date
             </label>
-            <input
-              type="date"
+            <DatePicker
               name="membership.startDate"
-              value={formData.membership.startDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              dateFormat="yyyy-mm-dd"
+              // selected={new Date(formData.membership.startDate)}
+              onChange={(date) => handleChange({ target: { name: 'membership.startDate', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
           </div>
@@ -405,12 +432,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
             <label className="block  text-black text-sm  font-semibold">
               Membership Ending Date
             </label>
-            <input
-              type="date"
+            <DatePicker
               name="membership.endDate"
-              value={formData.membership.endDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              dateFormat="yyyy-mm-dd"
+              // selected={new Date(formData.membership.endDate)}
+              onChange={(date) => handleChange({ target: { name: 'membership.endDate', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
             {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}

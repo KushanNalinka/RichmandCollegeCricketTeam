@@ -226,24 +226,6 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
               )}
             </select>
           </div>
-          <div className="mb-2">
-            <label className="block text-black text-sm font-semibold">Vise Captain</label>
-            <select
-              type="text"
-              id='captain'
-              name="captain"
-              value={formData.captain}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            >
-              <option value="">Select Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
-                  {player.name}
-                </option>
-              )}
-            </select>
-          </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold" htmlFor="year">
               Players

@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { message } from "antd";
+import { message, DatePicker } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import dayjs from 'dayjs';
 
 const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
@@ -40,7 +41,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
           [subKey]: value
         }
       });
-    }else if (files && files[0]) {
+    } else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
       setFormData({
@@ -48,6 +49,12 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
+    } else if (name === "dateOfBirth") {
+      // Handle the DatePicker value change
+      setFormData({
+        ...formData,
+        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+      });
     } else {
       setFormData({
         ...formData,
@@ -217,13 +224,14 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
-            <input
-              type="date"
+            <DatePicker
               name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              dateFormat="yyyy-mm-dd"
+              defaultValue={dayjs(formData.dateOfBirth)}
+              onChange={(date) => handleChange({ target: { name: 'dateOfBirth', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+          
             />
             {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>

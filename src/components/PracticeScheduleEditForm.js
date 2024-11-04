@@ -3,17 +3,18 @@ import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import { message } from "antd";
+import { message , DatePicker} from "antd";
+import dayjs from 'dayjs';
 
 const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
-  const [formData, setFormData] = useState({...practiceSchedule});
+  const [formData, setFormData] = useState({...practiceSchedule, teamUnder: practiceSchedule.teamUnder});
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
-
+ console.log("teamUnder: ", formData.teamUnder)
   useEffect(() => {
     axios
       .get(`${API_URL}coaches/all`)
@@ -208,7 +209,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             >
               Date
             </label>
-            <input
+            {/* <input
               type="date"
               id="date"
               name="date"
@@ -216,6 +217,15 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               
+            /> */}
+            <DatePicker
+              name="date"
+              dateFormat="yyyy-mm-dd"
+              defaultValue={dayjs(formData.dateOfBirth)}
+              onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              required
             />
             {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
           </div>

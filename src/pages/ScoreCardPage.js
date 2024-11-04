@@ -250,9 +250,6 @@ const ScoreCardPage = () => {
                             Balls
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Maidens
-                          </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             4s
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -289,9 +286,6 @@ const ScoreCardPage = () => {
                               {player.balls}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                              {player.Maidens}
-                            </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                               {player.fours}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
@@ -320,19 +314,10 @@ const ScoreCardPage = () => {
                           Overs
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Medians
-                        </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           Run Conceded
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           Wickets
-                        </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          No Bolls
-                        </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Wide Bolls
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           <p>Economy Rate</p>
@@ -356,19 +341,10 @@ const ScoreCardPage = () => {
                             {player.overs}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.Maidens}
-                          </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {player.runsConceded}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {player.wickets}
-                          </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.noBolls}
-                          </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.wides}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {player.economyRate}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link ,useLocation} from 'react-router-dom';
 import axios from 'axios';
 
 import Footer from '../components/Footer';
@@ -11,11 +11,16 @@ const InitialNewsDetail = () => {
   const [newsItem, setNewsItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const location = useLocation();
+  const { state } = location;  // Access state from navigation
+  const role = state?.role || 'default';  // Default role if not passed
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/news/${id}`);
+        const response = await axios.get(`${API_URL}news/${id}`);
         setNewsItem(response.data);
         setLoading(false);
       } catch (error) {
@@ -27,6 +32,18 @@ const InitialNewsDetail = () => {
 
     fetchNewsDetail();
   }, [id]);
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
+    );
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -66,12 +83,36 @@ const InitialNewsDetail = () => {
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
 
             <div className="relative w-full h-[500px] mt-6">  {/* Adjusted to 500px for standard laptop display height */}
-  <img 
+  {/*<img 
     src={newsItem.imageUrl} 
     alt={newsItem.title} 
     className="w-full h-full object-cover"
     style={{ objectPosition: 'top center' }}  // Focuses on the top and center of the image
-  />
+  />*/}
+
+{newsItem.images && newsItem.images.length > 0 && (
+                <>
+                  <img
+                    src={newsItem.images[currentImageIndex].imageUrl}
+                    alt={`Slide ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: 'top center' }}
+                  />
+                  <button
+                    onClick={handlePrevImage}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-r-lg opacity-75 hover:opacity-100"
+                  >
+                    &#9664;
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-l-lg opacity-75 hover:opacity-100"
+                  >
+                    &#9654;
+                  </button>
+                </>
+              )}
+
 </div>
 
             

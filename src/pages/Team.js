@@ -11,27 +11,19 @@ import { GrLinkPrevious } from "react-icons/gr";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
+import TeamMembers from "../components/TeamMembers";
 import logo from "../assets/images/RLogo.png";
 import MainNavbarToggle from "../components/MainNavBarToggle";
-import { Link } from "react-router-dom";
-
-
 
 const TableComponent = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [teams, setTeams] = useState([]);
-  const [filteredTeams, setFilteredTeams] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTeamMembersOpen, setIsTeamMembersOpen] = useState(false);
+  const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [teamId, setTeamId] = useState(null);
-  const [filters, setFilters] = useState({ year: "", under: "" });
-  const [showUnderDropdown, setShowUnderDropdown] = useState(false);
-  const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [yearOptions, setYearOptions] = useState([]);
-  const [underOptions, setUnderOptions] = useState([]);
-  const rowsPerPage = 6;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -68,7 +60,7 @@ const TableComponent = () => {
         setUnderOptions(uniqueUnders);
 
       } catch (error) {
-        console.error("Error fetching teams:", error);
+        console.error("Error fetching matches:", error);
       }
     };
   
@@ -116,14 +108,35 @@ const TableComponent = () => {
     setIsEditModalOpen(true);
   };
 
+ 
+
   const handleViewMembers = teamId => {
-    setTeamId(teamId); // Set the teamId to open TeamMembers modal
+    console.log("selected team:" , teamId);
     setIsTeamMembersOpen(true);
+    setTeamId(teamId);
   };
 
   const handleDelete = id => {
-    setTeamToDelete(id);
-    setShowDeleteModal(true);
+    setTeamToDelete(id)
+;
+    setShowDeleteModal(true); // Show confirmation modal
+  };
+
+  const confirmDelete = async () => {
+    try{
+      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`)
+      message.success("Successfully Deleted!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+  } catch (error) {
+    console.error("Error deleting match:", error);
+    message.error("Failed!");
+  }
+  };
+
+  const toggleButton = () => {
+    setIsMenuOpen(!isMenuOpen);
   };
 
   const handleAddFormClose = () => {
@@ -272,84 +285,31 @@ const TableComponent = () => {
                     </td>
                     <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button
-                        onClick={() => setShowUnderDropdown(!showUnderDropdown)}
-                        className="ml-2 text-white"
+                        onClick={() => handleEdit(item)}
+                        className="text-blue-500 hover:text-blue-600 transition-colors"
+                        title="Edit"
                       >
-                        <FaChevronDown />
+                        <FaEdit />
                       </button>
-                      {showUnderDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
-                          {underOptions.map(under => (
-                            <button
-                              key={under}
-                              onClick={() => handleFilterChange("under", under)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                            >
-                              {under}
-                            </button>
-                          ))}
-                          <button
-                            onClick={() => handleFilterChange("under", "")}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                          >
-                            All
-                          </button>
-                        </div>
-                      )}
-                    </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                      Year
+                      {/* <button
+                        onClick={() => handleDelete(item.teamId)}
+                        className="text-red-500 hover:text-red-600 transition-colors"
+                        title="Delete"
+                      >
+                        <FaTrash />
+                      </button> */}
                       <button
-                        onClick={() => setShowYearDropdown(!showYearDropdown)}
-                        className="ml-2 text-white"
+                        onClick={() => handleViewMembers(item.teamId)}
+                        className="text-green-500 hover:text-green-600 transition-colors"
+                        title="Members"
                       >
-                        <FaChevronDown />
+                        <FaUsers />
                       </button>
-                      {showYearDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
-                          {yearOptions.map(year => (
-                            <button
-                              key={year}
-                              onClick={() => handleFilterChange("year", year)}
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                            >
-                              {year}
-                            </button>
-                          ))}
-                          <button
-                            onClick={() => handleFilterChange("year", "")}
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-                          >
-                            All
-                          </button>
-                        </div>
-                      )}
-                    </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">Captain</th>
-                    <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">Actions</th>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y-2 divide-gray-300">
-                  {paginatedData.map((item) => (
-                    <tr key={item.teamId} className="hover:bg-gray-50 bg-white align-middle">
-                      <td className="py-4 px-4 lg:rounded-l-lg text-sm text-gray-800 font-bold">{item.under}</td>
-                      <td className="py-4 px-4 text-sm text-gray-600">{item.year}</td>
-                      <td className="py-4 px-4 text-sm text-gray-600">{item.captain}</td>
-                      <td className="py-4 px-4 flex space-x-3 lg:rounded-r-lg">
-                        <button onClick={() => handleViewMembers(item.teamId)} className="text-blue-600 hover:text-blue-800">
-                          <FaUsers />
-                        </button>
-                        <button onClick={() => handleEdit(item)} className="text-yellow-600 hover:text-yellow-800">
-                          <FaEdit />
-                        </button>
-                        <button onClick={() => handleDelete(item.teamId)} className="text-red-600 hover:text-red-800">
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                )}
+              </tbody>
+            </table>
           </div>
           <div className="flex justify-between items-center p-1 bg-white shadow-md rounded mt-4">
             <button
@@ -374,7 +334,7 @@ const TableComponent = () => {
           </div>
         </div>
 
-        {/* Modal for adding new item */}
+        {/ Modal for adding new item /}
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -403,7 +363,7 @@ const TableComponent = () => {
             isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
 
-        {/* Edit Modal */}
+        {/ Edit Modal /}
         {isEditModalOpen &&
           editItem &&
           <EditModal
@@ -425,4 +385,3 @@ const TableComponent = () => {
 };
 
 export default TableComponent;
-

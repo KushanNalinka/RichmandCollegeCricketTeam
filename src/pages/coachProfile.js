@@ -48,7 +48,7 @@ const CoachProfile = () => {
   }, []);
 
   useEffect(() => {
-      axios.get(`${API_URL}practiseSessions/coach/${user.userId}`)
+      axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
         setPracticeSchedules(response.data);
         console.log("sessions Data:", response.data);

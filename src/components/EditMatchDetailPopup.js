@@ -6,7 +6,8 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { BsPeople } from 'react-icons/bs';
 import { MdPeople } from 'react-icons/md';
-import { message } from 'antd';
+import dayjs from 'dayjs';
+import { message, DatePicker } from 'antd';
 
 const EditPopup = ({ onClose, match, isSubmitted }) => {
   console.log("initial matches: ", match);
@@ -101,6 +102,12 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
+    }else if (name === "date") {
+      // Handle the DatePicker value change
+      setFormData({
+        ...formData,
+        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+      });
     } else {
       setFormData({
         ...formData,
@@ -246,12 +253,15 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         <form className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <div  className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
-            <input
-              type="date"
+            <DatePicker
               name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              dateFormat="yyyy-mm-dd"
+              // selected={new Date(formData.dateOfBirth)}
+              defaultValue={dayjs(formData.date)}
+              onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              required
             />
           </div>
           <div  className="col-span-1">
@@ -352,7 +362,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.under}>
-                  {team.under}
+                  {team.under}-{team.year}
                 </option>
               )}
             </select>

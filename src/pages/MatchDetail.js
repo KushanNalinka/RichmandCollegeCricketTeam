@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { message } from "antd";
 import { Link } from "react-router-dom";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
@@ -47,10 +47,22 @@ const MatchDetails = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
-const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-const [typeOptions, setTypeOptions] = useState([]);
-const [teamOptions, setTeamOptions] = useState([]);
-const [filters, setFilters] = useState({ type: '', team: '' });
+
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [teamOptions, setTeamOptions] = useState([]);
+  const [filters, setFilters] = useState({ type: '', team: '' });
+
+  const typeOptions = ["Test", "T20", "ODI"]
+
+  const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
+    "Under 19","Academy Under 9","Academy Under 11", "Academy Under 13",
+    "Academy Under 15","Academy Under 17","Academy Under 19","Richmond Legend Over 50","Richmond Legend Over 40", "Old Boys"  ];
+
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let i = currentYear; i >= 1990; i--) {
+    years.push(i);
+  } 
 
 
   useEffect(() => {
@@ -61,6 +73,14 @@ const [filters, setFilters] = useState({ type: '', team: '' });
           // Sort matches by date in descending order so future dates come first
         const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setMatches(sortedMatches);
+
+        const uniqueTeams = [];
+        years.forEach(year => {
+          teamUnder.forEach(team => {
+            uniqueTeams.push(`${team}-${year}`);
+          });
+        });
+        setTeamOptions(uniqueTeams);
         console.log(response.data);
 
       } catch (error) {
@@ -73,7 +93,24 @@ const [filters, setFilters] = useState({ type: '', team: '' });
   }, [isSubmitted, isDeleted]);
 
 
-  const totalPages = Math.ceil(matches.length / rowsPerPage);
+  useEffect(() => {
+    const filtered = matches.filter(match => {
+      return (
+        (filters.type ? match.type === filters.type : true) &&
+        (filters.team ? `${match.under} - ${match.teamYear}` === filters.team : true)
+      );
+    });
+    setFilteredsortedMatches(filtered);
+  }, [filters, matches]);
+
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setShowTypeDropdown(false);
+    setShowTeamDropdown(false);
+  };
+
+  const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
+
 
 
   const paginatedData = filteredMatches.slice(
@@ -307,53 +344,49 @@ const [filters, setFilters] = useState({ type: '', team: '' });
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Type
                       <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
-        <FaChevronDown />
-      </button>
-      {showTypeDropdown && (
-  <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
-    {typeOptions.map(type => (
-      <button
-        key={type}
-        onClick={() => handleFilterChange("type", type)}
-        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-      >
-        {type}
-      </button>
-    ))}
-    <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-      All
-    </button>
-  </div>
-)}
 
-      
-    </th>
+                        {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
+                      </button>
+                      {showTypeDropdown && (
+                        <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
+                          <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                            All
+                          </button>
+                          {typeOptions.map(type => (
+                            <button
+                              key={type}
+                              onClick={() => handleFilterChange("type", type)}
+                              className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {type}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Team
-                    <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
-        <FaChevronDown />
-      </button>
-      {showTeamDropdown && (
-  <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
-    {teamOptions.map(team => ( // Use 'team' as the map parameter here
-      <button
-        key={team}
-        onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
-        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
-      >
-        {team}
-      </button>
-    ))}
-    <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
-      All
-    </button>
-  </div>
-)}
+                      <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
+                        {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
+                      </button>
+                          {showTeamDropdown && (
+                      <div className="absolute mt-1 h-96 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
+                        <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                          All
+                        </button>
+                        {teamOptions.map(team => ( // Use 'team' as the map parameter here
+                          <button
+                            key={team}
+                            onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
+                            {team}
+                          </button>
+                        ))}
+                      </div>
+                      )}
+                  </th>
 
-
-      
-    </th>
-         
                     <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>
@@ -400,6 +433,9 @@ const [filters, setFilters] = useState({ type: '', team: '' });
                       </td>
                       <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
+                      </td>
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                        {match.under} - {match.teamYear}
                       </td>
                       <td className="py-4 px-2 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button

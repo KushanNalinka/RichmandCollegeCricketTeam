@@ -215,32 +215,32 @@ const summarizeStats = (type) => {
                 {players.length > 0 ? (<img
                     src={selectedPlayer?.image || playerPlaceholderImage}
                     alt={selectedPlayer?.name}
-                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
+                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
                 />) : (<img
                     src={ playerPlaceholderImage}
                     alt="No image Available"
-                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
                 />)}
             </div>
-            <div className="text-center ml-8 md:text-left">
+            <div className="text-center md:text-left md:ml-8">
               
-                <h1 className="text-2xl md:text-5xl font-bold"> {players.length > 0 ? (
-        <h1 className="text-2xl md:text-5xl font-bold mt-4">{selectedPlayer.name}</h1>
+                <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4"> {players.length > 0 ? (
+        <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">{selectedPlayer.name}</h1>
     ) :  (
-            <h1 className="text-2xl md:text-5xl font-bold">No Player Available</h1>
+            <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">No Player Available</h1>
         
     )}</h1>
-                <p className="text-gray-400 text-base md:text-3xl mt-2">
+                <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
                 Richmond Legend Over 40s Year {selectedYear}
                                 </p>
             </div>
                {/* Year Dropdown */}
-               <div className="absolute top-4 right-6 md:top-8 md:right-10">
-                <p> Select the Year</p>
+               <div className="absolute top-4 right-4 md:top-8 md:right-10">
+                <p className="text-sm md:text-base"> Select the Year</p>
                             <select
                                 value={selectedYear}
                                 onChange={handleYearChange}
-                                className="bg-gray-200 text-gray-900 font-semibold py-3 mt-1 px-8 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="bg-gray-200 text-gray-900 font-semibold py-2 px-4 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
                             >
                                 {getYearOptions().map((year) => (
                                     <option key={year} value={year}>

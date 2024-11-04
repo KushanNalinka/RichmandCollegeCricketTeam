@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { message } from "antd";
+import { message, DatePicker } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
+import dayjs from 'dayjs';
 import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
 
 
@@ -15,7 +16,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
     image: player.image,
     name: player.name,
-    dateOfBirth: player.dateOfBirth,
+    dateOfBirth:  player.dateOfBirth ? new Date(player.dateOfBirth) : null,
     roles: ["ROLE_PLAYER"], 
     battingStyle: player.battingStyle,
     bowlingStyle: player.bowlingStyle,
@@ -37,19 +38,41 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
+  const dateFormat = 'YYYY/MM/DD';
   console.log("player to be edited: ", player);
+  console.log("foemdata DOB: ", formData.dateOfBirth);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
-      setFormData({
-        ...formData,
+      if (name === "membership.startDate") {
+        // Handle the DatePicker value change
+        setFormData({
+          ...formData,
         [mainKey]: {
           ...formData[mainKey],
-          [subKey]: value
+          [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
         }
-      });
+        });
+      }else if(name === "membership.endDate") {
+        // Handle the DatePicker value change
+        setFormData({
+          ...formData,
+        [mainKey]: {
+          ...formData[mainKey],
+          [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+        }
+        });
+      }else{
+        setFormData({
+          ...formData,
+          [mainKey]: {
+            ...formData[mainKey],
+            [subKey]: value
+          }
+        });
+      }; 
     }else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -57,8 +80,13 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
-      setIsImageAdded(true);
-    } else {
+    } else if (name === "dateOfBirth") {
+      // Handle the DatePicker value change
+      setFormData({
+        ...formData,
+        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
+      });
+    }else {
       setFormData({
         ...formData,
         [name]: value
@@ -261,12 +289,14 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>
-            <input
-              type="date"
+            <DatePicker
               name="dateOfBirth"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              dateFormat="yyyy-mm-dd"
+              defaultValue={dayjs(formData.dateOfBirth)}
+              onChange={(date) => handleChange({ target: { name: 'dateOfBirth', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              required
             />
              {errors.dateOfBirth && <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth}</p>}
           </div>
@@ -329,8 +359,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Left-hand batting">Left-hand batting</option>
-              <option value="Right-hand batting">Right-hand batting</option>
+              <option value="LHB">Left-hand batting</option>
+              <option value="RHB">Right-hand batting</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -342,11 +372,30 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               className=" px-3 py-1 border text-gray-600 border-gray-300 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               
             >
-              <option value='' disabled>
-                Select
-              </option>
-              <option value="Left-arm spin">Left-arm spin</option>
-              <option value="Right-arm spin">Right-arm spin</option>
+               <option value='' disabled> Select bowling style</option>
+              <option value="RAF">Right-arm fast</option>
+              <option value="RAFM">Right-arm fast-medium</option>
+              <option value="RAMF">Right-arm medium-fast</option>
+              <option value="RAM">Right-arm medium</option>
+              <option value="RAMS">Right-arm medium-slow</option>
+              <option value="RASM">Right-arm slow-medium </option>
+              <option value="RAS">Right-arm slow</option>
+              <option value="RAL">Right-arm Leg</option>
+              <option value="LAF">Left-arm fast</option>
+              <option value="LAFM">Left-arm fast-medium</option>
+              <option value="LAMF">Left-arm medium-fast</option>
+              <option value="LAM">Left-arm medium</option>
+              <option value="LAMS">Left-arm medium-slow</option>
+              <option value="LASM">Left-arm slow-medium</option>
+              <option value="LAL">Left-arm Leg</option>
+              <option value="OB">Off break</option>
+              <option value="LB">Leg break</option>
+              <option value="LBG">Leg break googly</option>
+              <option value="SLAO">Slow left-arm orthodox</option>
+              <option value="SRAO">Slow Right-arm orthodox</option>
+              <option value="OS">Off spin</option>
+              <option value="SLAWS">Slow left-arm wrist spin</option>
+              <option value="SRAWS">Slow Right-arm wrist spin</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -361,9 +410,13 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value='' disabled>
                 Select
               </option>
-              <option value="Batsman">Batsman</option>
               <option value="Bowler">Bowler</option>
-              <option value="All-rounder">All-rounder</option>
+              <option value="Batter">Batter</option>
+              <option value="Top Order Batter">Top Order Batter</option>
+              <option value="Wicketkeeper Batter">Wicketkeeper Batter</option>
+              <option value="Allrounder">Allrounder</option>
+              <option value="Bawlling Allrounder">Bawlling Allrounder</option>
+              <option value="Batting Allrounder">Batting Allrounder</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -386,26 +439,28 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             <label className="block text-black text-sm font-semibold">
               Membership Starting Date
             </label>
-            <input
-              type="date"
+            <DatePicker
               name="membership.startDate"
-              value={formData.membership.startDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-        
+              dateFormat="yyyy-mm-dd"
+              defaultValue={dayjs(formData.membership.startDate)}
+              onChange={(date) => handleChange({ target: { name: 'membership.startDate', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              required
             />
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
               Membership Ending Date
             </label>
-            <input
-              type="date"
+            <DatePicker
               name="membership.endDate"
-              value={formData.membership.endDate}
-              onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            
+              dateFormat="yyyy-mm-dd"
+              defaultValue={dayjs(formData.membership.endDate)}
+              onChange={(date) => handleChange({ target: { name: 'membership.endDate', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              required
             />
             {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>

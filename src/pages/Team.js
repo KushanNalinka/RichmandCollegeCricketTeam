@@ -249,6 +249,9 @@ const TableComponent = () => {
                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                     Captain
                   </th>
+                  <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    Vice Captain
+                  </th>
                   <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
@@ -269,6 +272,9 @@ const TableComponent = () => {
                     </td>
                     <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.captain}
+                    </td>
+                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                      {item.viceCaptain}
                     </td>
                     <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                       <button

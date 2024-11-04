@@ -13,6 +13,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     under:'',
     year:'',
     captain:'',
+    viceCaptain:'',
     players:[]
   });
   const [uploading, setUploading] = useState(false);
@@ -68,6 +69,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
         under:'',
         year:'',
         captain:'',
+        viceCaptain:'',
         players:[]
       });
       setSelectedPlayers([]);
@@ -184,7 +186,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
               ))}
             </select>
           </div>
-          <div>
+          <div className="mb-2">
             <label className="block text-black text-sm font-semibold">Captain</label>
             <select
               type="text"
@@ -195,6 +197,24 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
               required
             >
               <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
+            </select>
+          </div>
+          <div className="mb-2">
+            <label className="block text-black text-sm font-semibold">Vice Captain</label>
+            <select
+              type="text"
+              name="viceCaptain"
+              value={formData.viceCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Vice Captain</option>
               {players.map(player =>
                 <option key={player.playerId} value={player.name}>
                   {player.name}

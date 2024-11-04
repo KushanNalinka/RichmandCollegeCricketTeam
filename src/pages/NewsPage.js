@@ -796,12 +796,20 @@ const NewsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/news');
-        setNewsData(response.data);
+        // const response = await axios.get('http://localhost:8080/api/news');
+        // setNewsData(response.data);
+        // setLoading(false);
+        const response = await axios.get(`${API_URL}news`);
+        const newsWithFirstImage = response.data.map((news) => ({
+          ...news,
+          imageUrl: news.images?.[0]?.imageUrl || '', // Set the first image URL or fallback
+        }));
+        setNewsData(newsWithFirstImage);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching news:', error);

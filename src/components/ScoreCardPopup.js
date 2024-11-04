@@ -6,6 +6,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaWindowClose } from "react-icons/fa";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { MdFileDownloadDone } from "react-icons/md";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardAIModel from "./ScoreCardAIModel";
 
 
@@ -45,7 +46,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   const [scoreToDelete, setScoreToDelete] = useState(null);
   const [inningNumber, setInningNumber] = useState(); // Default to first inning
   const [filteredStats, setFilteredStats] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const [playerStats, setPlayerStats] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [formData, setFormData] = useState({
     inning: "1",
@@ -82,16 +86,47 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
     return { fifties, centuries };
   };
 
+  const validationErrors = () => {
+    const newErrors = {};
+    if (!formData.player.playerId) {
+      message.error("Please select a player before entering stats.");
+
+    } else {
+      // Check if balls is provided for runs, 4s, and 6s
+      if (
+        !formData.balls &&
+        (formData.runs || formData.fours || formData.sixers)
+      ) {
+        newErrors.balls = "Balls must be specified to enter runs, 4s, or 6s.";
+      } else {
+        // Check if overs is provided for wickets and runs conceded
+        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
+          newErrors.overs = "Overs must be specified to enter wickets or runs conceded.";
+        }
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   useEffect(() => {
     const fetchPlayerStat = async () => {
       try {
         const playersResponse = await axios.get(`${API_URL}teams/${teamId}/players`);
-        dispatch({ type: "SET_PLAYERS", payload: playersResponse.data });
+        const allPlayers = playersResponse.data; 
 
         const statsResponse = await axios.get(
           `${API_URL}playerStats/match/player-stats?matchId=${matchId}`
         );
         const allStats = statsResponse.data;
+
+        const playersWithStats = new Set(allStats.map(stat => stat.player.playerId))
+   
+        const availablePlayers = allPlayers.filter(
+          player => !playersWithStats.has(player.playerId)
+        );
+        dispatch({ type: "SET_PLAYERS", payload: availablePlayers });
 
         // Apply inning filter only for Test matches
         if (matchType === "Test") {
@@ -109,7 +144,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       }
     };
     fetchPlayerStat();
-  }, [matchId, inningNumber, matchType]);
+  }, [matchId, inningNumber, matchType,isSubmitted]);
 
   useEffect(() => {
     if (matchType === "Test") {
@@ -153,7 +188,27 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   // Add player stat
   const handleSubmit = async e => {
     e.preventDefault();
+    setUploading(true);
     console.log("formdata submit: ", formData);
+    if (!formData.player.playerId) {
+      message.error("Please select a player before entering stats.");
+      return
+    } else {
+      // Check if balls is provided for runs, 4s, and 6s
+      if (
+        !formData.balls &&
+        (formData.runs || formData.fours || formData.sixers)
+      ) {
+        message.error("Balls must be specified to enter runs, 4s, or 6s.");
+        return
+      } else {
+        // Check if overs is provided for wickets and runs conceded
+        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
+          message.error("Overs must be specified to enter wickets or runs conceded.");
+          return
+        }
+      }
+    };
     try {
       const {fifties, centuries} = calculateMilestones(formData.runs);
       const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
@@ -180,14 +235,22 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
           matchId: matchId,
         },
       });
+      setIsSubmitted(!isSubmitted);
       message.success("Player stats added successfully!");
       console.log("Player stats response :", response.data);
       setIsAdding(false);
       setIsNewScoreAdded(!isNewScoreAdded);
     } catch (error) {
-      message.error("Failed to add player stats. Please try again.");
-      console.error("Error saving player stats:", error);
-    }
+      console.error("Error submitting form:", error);
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+      }
   };
 
   const handleEditPlayerStack = player => {
@@ -214,6 +277,26 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   };
 
   const handleSaveEdit = async id => {
+    setUploading(true);
+    if (!formData.player.playerId) {
+      message.error("Please select a player before entering stats.");
+      return
+    } else {
+      // Check if balls is provided for runs, 4s, and 6s
+      if (
+        !formData.balls &&
+        (formData.runs || formData.fours || formData.sixers)
+      ) {
+        message.error("Balls must be specified to enter runs, 4s, or 6s.");
+        return
+      } else {
+        // Check if overs is provided for wickets and runs conceded
+        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
+          message.error("Overs must be specified to enter wickets or runs conceded.");
+          return
+        }
+      }
+    };
     try {
       const {fifties, centuries} = calculateMilestones(formData.runs);
       console.log("formData edit:", formData);
@@ -224,11 +307,18 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       console.log("Edit response: ", response.data);
       message.success("Player stats updated successfully!");
       dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
-      
       setIsEditButtonPressed(false);
+      setIsSubmitted(!isSubmitted);
     } catch (error) {
-      message.error("Failed to update player stats. Please try again.");
-      console.error("Error editing player stats:", error);
+      console.error("Error submitting form:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
   const handleDelete = id => {
@@ -237,13 +327,22 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try {
       await axios.delete(`${API_URL}playerStats/${scoreToDelete}`);
       dispatch({ type: "DELETE_PLAYER_STAT", payload: scoreToDelete });
       message.success("Player stats deleted successfully!");
+      setIsSubmitted(!isSubmitted);
     } catch (error) {
-      message.error("Failed to delete player stats. Please try again.");
-      console.error("Error deleting player stat:", error);
+      console.error("Error deleting coach:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
   
@@ -252,6 +351,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       message.error("Please select an inning");
       return; // Prevent further execution if inning is not selected
     }
+    setErrors({});
     setPressedPlus(matchId);
     setIsAdding(!isAdding);
   };
@@ -347,6 +447,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                               onChange={handleInputChange}
                               placeholder="Enter runs"
                               className="border rounded p-1"
+                              disabled={
+                                !formData.player.playerId || !formData.balls
+                              }
                             />
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
@@ -625,6 +728,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
           </table>
         </div>
         </div>
+        {uploading && (
+          <div className="absolute items-center justify-center my-4">
+            <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+          </div>
+        )}
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">

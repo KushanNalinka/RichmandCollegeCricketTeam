@@ -3,7 +3,7 @@ import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
-import { message } from "antd";
+import { message, DatePicker } from "antd";
 
 const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -63,6 +63,12 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
           ...formData[mainKey],
           [subKey]: value
         }
+      });
+    } else if (name === "date") {
+      // Handle the DatePicker value change
+      setFormData({
+        ...formData,
+        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
       });
     } else {
       setFormData({
@@ -207,13 +213,22 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
             >
               Date
             </label>
-            <input
+            {/* <input
               type="date"
               id="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            /> */}
+            <DatePicker
+              name="date"
+              dateFormat="yyyy-mm-dd"
+              // selected={new Date(formData.dateOfBirth)}
+              onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
+              placeholder="yyyy-mm-dd"
+              className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
             {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}

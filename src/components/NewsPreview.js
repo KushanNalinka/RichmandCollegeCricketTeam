@@ -11,9 +11,9 @@ const NewsPreview = ({ news, onClose }) => {
   const API_URL = process.env.REACT_APP_API_URL;
 
   return (
-    <div className="fixed inset-0 flex p-20 items-center justify-center  bg-gray-600 bg-opacity-75">
+    <div className="fixed inset-0 flex p-5 items-center w-full justify-center  bg-gray-600 bg-opacity-75">
       
-      <div className="bg-white p-8 rounded-lg shadow-lg relative">
+      <div className="bg-white p-8 h-full w-full hover:overflow-auto overflow-hidden rounded-lg shadow-lg relative">
         <div className="flex justify-end ">
           <button
             onClick={onClose}

@@ -47,6 +47,7 @@ const MatchDetails = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [teamOptions, setTeamOptions] = useState([]);
   const [filters, setFilters] = useState({ type: '', team: '' });
@@ -62,6 +63,7 @@ const MatchDetails = () => {
   for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
   } 
+
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -110,18 +112,37 @@ const MatchDetails = () => {
   const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
 
 
-  // Slice data for current page
+
   const paginatedData = filteredMatches.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+  
+  
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
+  
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setShowTypeDropdown(false);
+    setShowTeamDropdown(false);
+  };
+  
 
+  useEffect(() => {
+    const filtered = matches.filter(match => {
+      return (
+        (filters.type ? match.type === filters.type : true) &&
+        (filters.team ? `${match.under} - ${match.teamYear}` === filters.team : true)
+      );
+    });
+    setFilteredsortedMatches(filtered);
+  }, [filters, matches]);
+   
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -323,6 +344,7 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Type
                       <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
+
                         {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTypeDropdown && (
@@ -364,6 +386,7 @@ const MatchDetails = () => {
                       </div>
                       )}
                   </th>
+
                     <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>

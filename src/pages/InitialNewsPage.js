@@ -64,9 +64,13 @@ const InitialNewsPage = () => {
         const response = await axios.get(`${API_URL}news`);
         const newsWithFirstImage = response.data.map((news) => ({
           ...news,
-          imageUrl: news.images?.[0]?.imageUrl || '', // Set the first image URL or fallback
+          imageUrl: news.images?.[0] || '', // Set the first image URL or fallback
         }));
-        setNewsData(newsWithFirstImage);
+  
+        // Sort the news data to display the latest news first
+        const sortedNewsData = newsWithFirstImage.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+  
+        setNewsData(sortedNewsData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching news:', error);
@@ -76,7 +80,12 @@ const InitialNewsPage = () => {
     };
     fetchNews();
   }, []);
-
+  
+  // Pagination logic
+  const totalPages = Math.ceil(newsData.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const initialcurrentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
   useEffect(() => {
     const interval = setInterval(() => {
       setNewsData([...newsData]);
@@ -84,11 +93,7 @@ const InitialNewsPage = () => {
     return () => clearInterval(interval);
   }, [newsData]);
 
-  const totalPages = Math.ceil(newsData.length / itemsPerPage);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const initialcurrentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
+  
 
   const latestFiveNews = newsData
     .slice()

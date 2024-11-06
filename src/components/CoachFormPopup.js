@@ -146,6 +146,7 @@ const CoachForm = ({  onClose, isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
     
   };

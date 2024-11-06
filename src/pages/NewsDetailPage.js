@@ -334,7 +334,7 @@ const NewsDetailPage = () => {
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Top Image Section with Back Arrow */}
+       {/* {/ Top Image Section with Back Arrow  /} */}
       <div
         style={{
           backgroundImage: `url(${topImage})`,
@@ -351,7 +351,7 @@ const NewsDetailPage = () => {
       >
       </div>
 
-      {/* News Detail Section */}
+       {/* {/ News Detail Section  /} */}
       <div className="container mx-auto px-4 mb-8 max-w-6xl -mt-20 relative z-10">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 text-center">
@@ -362,13 +362,13 @@ const NewsDetailPage = () => {
               Published {new Date(newsItem.dateTime).toLocaleDateString()}
             </p>
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
-
-            {/* Image Carousel */}
+{/* 
+            Image Carousel */}
             <div className="relative w-full h-[500px] mt-6">
               {newsItem.images && newsItem.images.length > 0 && (
                 <>
                   <img
-                    src={newsItem.images[currentImageIndex].imageUrl}
+                    src={newsItem.images[currentImageIndex]}
                     alt={`Slide ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover"
                     style={{ objectPosition: 'top center' }}

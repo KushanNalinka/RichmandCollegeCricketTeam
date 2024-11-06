@@ -193,6 +193,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 
@@ -470,7 +471,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
            
           </div>
           <div className="col-span-1 md:col-span-2 ">
-            <label className="block text-black text-sm font-semibold">Logo</label>
+            <label className="block text-black text-sm font-semibold">Opponent Logo</label>
             <input
               id="logo"
               type="file" 

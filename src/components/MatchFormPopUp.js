@@ -187,6 +187,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 
@@ -475,14 +476,14 @@ const FormPopup = ({  onClose, isSumitted }) => {
            
           </div>
           <div className="col-span-1 md:col-span-2 ">
-            <label className="block text-black text-sm font-semibold">Logo</label>
+            <label className="block text-black text-sm font-semibold">Opponent Logo</label>
             <input
               id="logo"
               type="file" 
               name="logo" 
               accept="image/*" 
               onChange={handleChange}
-              // required
+              required
               className="w-full px-3 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&

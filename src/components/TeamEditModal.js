@@ -93,6 +93,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 

@@ -221,6 +221,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
     
   };

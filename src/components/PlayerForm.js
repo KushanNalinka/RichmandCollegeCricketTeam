@@ -152,6 +152,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
   };
 

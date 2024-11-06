@@ -87,6 +87,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 

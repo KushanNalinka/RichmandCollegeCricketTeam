@@ -100,6 +100,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
   };
 

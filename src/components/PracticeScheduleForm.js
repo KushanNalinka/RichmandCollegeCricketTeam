@@ -150,6 +150,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 

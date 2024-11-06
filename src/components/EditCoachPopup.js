@@ -166,6 +166,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
   };
 

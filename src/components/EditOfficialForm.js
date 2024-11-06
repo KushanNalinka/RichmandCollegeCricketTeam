@@ -84,6 +84,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
     
   };

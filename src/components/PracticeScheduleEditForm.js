@@ -125,6 +125,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 

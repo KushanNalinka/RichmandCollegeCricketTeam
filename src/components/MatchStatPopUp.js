@@ -165,15 +165,22 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
       isSubmitted();
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed submit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleUpdate = async (e) => {
@@ -204,15 +211,22 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
       isSubmitted();
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed Edit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleClose = () =>{

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {  DatePicker, message } from "antd";
+import {  DatePicker, message, Select } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
-import { MdPeople } from 'react-icons/md';
+import { MdArrowDropDown, MdPeople } from 'react-icons/md';
+import { RiArrowDropDownLine } from "react-icons/ri";
 
 const FormPopup = ({  onClose, isSumitted }) => {
   const [coaches, setCoaches] = useState([]);
@@ -18,6 +19,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     date: "",
@@ -30,6 +32,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
     umpires: "",
     type: "",
     matchCaptain: "",
+    matchViceCaptain:"",
     team: {
       teamId: "",
     
@@ -314,7 +317,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Division</label>
-            <select
+            {/* <select
               type="text"
               name="division"
               value={formData.division}
@@ -325,7 +328,18 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="" disabled selected>Select division</option>
               <option value="Division 1"> Division 1</option>
               <option value="Division 2">Division 2</option>
-            </select>
+            </select> */}
+            <Select
+              mode="tags" // Enable dropdown and custom input
+              style={{ width: "100%"}}
+              placeholder="Select or add a division"
+              value={formData.division ? [formData.division] : []} // Convert to array for controlled input
+              onChange={(value) => handleChange({ target: { name: "division", value: value[0] } })} // Handle single selection
+              showSearch={false} // Disable search functionality
+            >
+              <Option value="Division 1">Division 1</Option>
+              <Option value="Division 2">Division 2</Option>
+            </Select>
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Umpires</label>
@@ -337,6 +351,21 @@ const FormPopup = ({  onClose, isSumitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+          </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+               <option value="" disabled selected>Select type</option>
+              <option value="Test">Test</option>
+              <option value="ODI">ODI</option>
+              <option value="T20">T20</option>
+            </select>
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
@@ -356,23 +385,24 @@ const FormPopup = ({  onClose, isSumitted }) => {
               )}
             </select>
           </div>
-        
           <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Type</label>
+            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
             <select
-              name="type"
-              value={formData.type}
+              type="text"
+              name="matchViceCaptain"
+              value={formData.matchViceCaptain}
               onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-               <option value="" disabled selected>Select type</option>
-              <option value="Test">Test</option>
-              <option value="ODI">ODI</option>
-              <option value="T20">T20</option>
+              <option value="">Select Vice-captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
             </select>
           </div>
-
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Team</label>
             <select
@@ -390,12 +420,12 @@ const FormPopup = ({  onClose, isSumitted }) => {
               )}
             </select>
           </div>
-          <div className="col-span-1 md:col-span-2 ">
+          <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
+            <div className="flex border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none" onClick={() => setDropdownOpen(!dropdownOpen)}>
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md text-gray-600 outline-none "
+                className="py-1 px-3 w-[88%] rounded-md cursor-pointer text-gray-600 border-0 focus:outline-non pointer-events-none  "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 required
@@ -405,14 +435,14 @@ const FormPopup = ({  onClose, isSumitted }) => {
                   type='button'
                   title='Select coaches'
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center w-[6%] justify-center text-2xl text-green-500 hover:text-green-600 rounded-lg"
+                  className="flex items-center w-[6%] justify-center text-3xl rounded-lg"
                 >
-                  <MdPeople/>
+                  <RiArrowDropDownLine />
               </button>
               <button
                 type="button"
                 title='delete'
-                className=" items-center w-[6%] justify-center text-red-500 hover:text-red-600 rounded-lg"
+                className=" items-center text-sm w-[6%] justify-center text-red-500 hover:text-red-600 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>

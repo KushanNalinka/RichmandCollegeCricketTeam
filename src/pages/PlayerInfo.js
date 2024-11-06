@@ -119,7 +119,8 @@ const TableComponent = () => {
 // });
 
   const handleDelete = id => {
-    setPlayerToDelete(id);
+    setPlayerToDelete(id)
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -290,7 +291,7 @@ const TableComponent = () => {
                         </div>
                       )}
                     </th>
-                    {/* <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> */}
+                    {/* { <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> /} */}
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
                       <button onClick={() => setShowRoleDropdown(!showRoleDropdown)} className="ml-2">
@@ -338,7 +339,7 @@ const TableComponent = () => {
                             alt={item.name}
                             className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
-                          {/* Use truncate or text wrapping for small screens */}
+                         
                           <span className="truncate whitespace-nowrap">
                             {item.name.split(" ").slice(-2).join(" ")}
                           </span>

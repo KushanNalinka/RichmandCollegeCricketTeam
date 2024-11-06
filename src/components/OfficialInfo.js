@@ -25,19 +25,20 @@ const OfficialsTable = () => {
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
-  useEffect(() => {
-    // Fetch player data for playerId 4
-    axios
-      .get(`${API_URL}admin/officials/all`)
-      .then(response => {
-        const officials = response.data;
-        setOfficialData(officials);
-        console.log("Player Data:", officialData);
-      })
-      .catch(error => {
-        console.error("There was an error fetching the player data!", error);
-      });
-  }, []);
+  // Fetch officials function
+const fetchOfficials = async () => {
+  try {
+    const response = await axios.get(`${API_URL}admin/officials/all`);
+    setOfficialData(response.data);
+  } catch (error) {
+    console.error("Error fetching officials data", error);
+  }
+};
+
+// Use fetchOfficials in useEffect to initially load data
+useEffect(() => {
+  fetchOfficials();
+}, []);
 
   useEffect(() => {
 

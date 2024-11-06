@@ -34,7 +34,9 @@ const FormPopup = ({  onClose, isSumitted }) => {
     matchCaptain: "",
     matchViceCaptain:"",
     team: {
-      teamId: ""
+      teamId: "",
+    
+
     },
     coaches: []
   });

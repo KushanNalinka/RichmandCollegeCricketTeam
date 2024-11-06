@@ -10,6 +10,7 @@ import Hero from '../components/Hero';
 import Footer from '../components/Footer';
 import videoSrc from '../assets/images/new.mp4'; // Corrected import for video
 import Highlights from '../components/Highlights';
+import videoSrc1 from '../assets/images/MP5.mp4';
 
 const HomePage = () => {
   const [matchId, setMatchId] = useState(null); // State to manage matchId
@@ -22,21 +23,32 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
-      < div className="relative w-full h-screen md:min-h-[600px]">
-        {/* Video Background */}
-        <video 
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          autoPlay 
-          loop = {false}
+     {/* Video Background for large screens */}
+     <div className="relative w-full h-screen md:h-[75vh] lg:h-[100vh]">
+        <video
+          className="absolute inset-0 w-full h-full object-cover hidden md:block" // Visible only on medium screens and up
+          autoPlay
+          loop={false}
           muted
-          style={{ zIndex: -1 }} // Ensures video is behind other elements
+          style={{ zIndex: -1 }}
         >
           <source src={videoSrc} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+      </div>
 
-        
-      
+      {/* Video Background for mobile screens */}
+      <div className="">
+        <video
+          className="absolute inset-0 w-full h-full object-cover block md:hidden" // Visible only on small screens
+          autoPlay
+          loop={false}
+          muted
+          style={{ zIndex: -1 }}
+        >
+          <source src={videoSrc1} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
 
       {/* Other Components */}

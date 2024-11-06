@@ -117,7 +117,8 @@ const TableComponent = () => {
   };
 
   const handleDelete = id => {
-    setTeamToDelete(id);
+    setTeamToDelete(id)
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -339,7 +340,7 @@ const TableComponent = () => {
           </div>
         </div>
 
-        {/* Modal for adding new item */}
+        {/ Modal for adding new item /}
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -368,7 +369,7 @@ const TableComponent = () => {
             isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
 
-        {/* Edit Modal */}
+        {/ Edit Modal /}
         {isEditModalOpen &&
           editItem &&
           <EditModal
@@ -389,5 +390,5 @@ const TableComponent = () => {
   );
 };
 
-export default TableComponent;
 
+export default TableComponent;

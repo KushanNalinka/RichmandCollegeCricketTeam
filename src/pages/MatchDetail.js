@@ -28,6 +28,7 @@ const MatchDetails = () => {
   const [teamId, setTeamId] = useState(null);
   const [matchOpponent, setMatchOpponent] = useState(null);
   const [matchType, setMatchType] = useState(null);
+  const [matchDate, setMatchDate] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
   const navigate = useNavigate();
   const [currentMatchIndex, setCurrentMatchIndex] = useState(null);
@@ -186,6 +187,7 @@ const MatchDetails = () => {
     setMatchType(match.type);
     // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
+    setMatchDate(match.date);
     //setChoiseModelOpen(true);
   };
   const handleFormSubmit = playerData => {
@@ -550,6 +552,7 @@ const MatchDetails = () => {
               matchType={matchType}
               matchOpponent={matchOpponent}
               teamId={teamId}
+              date={matchDate}
             />}
            {isScorePopupAIOpen &&
             <ScoreCardAIModel

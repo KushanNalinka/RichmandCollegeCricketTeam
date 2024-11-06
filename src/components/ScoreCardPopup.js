@@ -6,6 +6,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import { FaWindowClose } from "react-icons/fa";
 import { FaSave, FaTimes } from "react-icons/fa";
 import { MdFileDownloadDone } from "react-icons/md";
+import dayjs from "dayjs";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardAIModel from "./ScoreCardAIModel";
 
@@ -35,7 +36,7 @@ const playerStatsReducer = (state, action) => {
   }
 };
 
-const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent }) => {
+const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, date }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [currentPlayerStackId, setCurrentPlayerStackId] = useState();
   const [isEditButtonPressed, setIsEditButtonPressed] = useState(false);
@@ -121,11 +122,23 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
         );
         const allStats = statsResponse.data;
 
-        const playersWithStats = new Set(allStats.map(stat => stat.player.playerId))
-   
-        const availablePlayers = allPlayers.filter(
-          player => !playersWithStats.has(player.playerId)
+        const playersWithInningStats = new Set(
+          allStats
+            .filter(stat => stat.inning === inningNumber) // Filter by selected inning for Test matches
+            .map(stat => stat.player.playerId)
         );
+  
+        // Filter available players for the specific inning in Test matches
+        const availablePlayers = allPlayers.filter(player => {
+          if (matchType === "Test") {
+            // For Test matches, check stats for the specific inning
+            return !playersWithInningStats.has(player.playerId);
+          } else {
+            // For ODI and T20 matches, check if the player has any stats for the match
+            return !allStats.some(stat => stat.player.playerId === player.playerId);
+          }
+        });
+  
         dispatch({ type: "SET_PLAYERS", payload: availablePlayers });
 
         // Apply inning filter only for Test matches
@@ -188,7 +201,6 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   // Add player stat
   const handleSubmit = async e => {
     e.preventDefault();
-    setUploading(true);
     console.log("formdata submit: ", formData);
     if (!formData.player.playerId) {
       message.error("Please select a player before entering stats.");
@@ -196,20 +208,21 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
     } else {
       // Check if balls is provided for runs, 4s, and 6s
       if (
-        !formData.balls &&
-        (formData.runs || formData.fours || formData.sixers)
+        (!formData.balls|| formData.balls == 0 ) &&
+        ((formData.runs && formData.runs !=0) || (formData.fours && formData.fours !=0) || (formData.sixers && formData.fours !=0) )
       ) {
         message.error("Balls must be specified to enter runs, 4s, or 6s.");
         return
       } else {
         // Check if overs is provided for wickets and runs conceded
-        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
+        if ((!formData.overs ||formData.overs == 0 ) && ((formData.wickets && formData.wickets != 0) || (formData.runsConceded && formData.runsConceded !=0))) {
           message.error("Overs must be specified to enter wickets or runs conceded.");
           return
         }
       }
     };
     try {
+      setUploading(true);
       const {fifties, centuries} = calculateMilestones(formData.runs);
       const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
       console.log("submitted player stats: ", response.data);
@@ -277,27 +290,28 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
   };
 
   const handleSaveEdit = async id => {
-    setUploading(true);
+    
     if (!formData.player.playerId) {
       message.error("Please select a player before entering stats.");
       return
     } else {
       // Check if balls is provided for runs, 4s, and 6s
       if (
-        !formData.balls &&
-        (formData.runs || formData.fours || formData.sixers)
+        (!formData.balls|| formData.balls == 0 ) &&
+        ((formData.runs && formData.runs !=0) || (formData.fours && formData.fours !=0) || (formData.sixers && formData.fours !=0) )
       ) {
         message.error("Balls must be specified to enter runs, 4s, or 6s.");
         return
       } else {
         // Check if overs is provided for wickets and runs conceded
-        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
+        if ((!formData.overs ||formData.overs == 0 ) && ((formData.wickets && formData.wickets != 0) || (formData.runsConceded && formData.runsConceded !=0))) {
           message.error("Overs must be specified to enter wickets or runs conceded.");
           return
         }
       }
     };
     try {
+      setUploading(true);
       const {fifties, centuries} = calculateMilestones(formData.runs);
       console.log("formData edit:", formData);
       const response = await axios.put(
@@ -307,8 +321,28 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       console.log("Edit response: ", response.data);
       message.success("Player stats updated successfully!");
       dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
+      setFormData({
+        inning: "1",
+        runs: 0,
+        wickets: 0,
+        fours: 0,
+        sixers: 0,
+        fifties: 0,
+        centuries: 0,
+        balls: 0,
+        overs: 0,
+        runsConceded: 0,
+        player: {
+          playerId: 0,
+          name: "",
+        },
+        match: {
+          matchId: matchId,
+        },
+      });
       setIsEditButtonPressed(false);
       setIsSubmitted(!isSubmitted);
+
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -343,6 +377,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
       }
     } finally {
       setUploading(false);
+      setShowDeleteModal(false);
     }
   };
   
@@ -387,12 +422,12 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
             }}>
         <div>
         
-      <h className="flex text-center lg:text-xl text-md py-3 font-bold text-[#480D35]">Add Player Score Details of the &nbsp;{matchType} against {matchOpponent}&nbsp;</h>
+      <h className="flex text-center lg:text-xl text-md py-3 font-bold text-[#480D35]">Score Card - {matchType} match against {matchOpponent} on {dayjs(date).format("YYYY-MMM-DD")}</h>
       {matchType === 'Test' && (
-        <div className={`flex pb-2 tracking-wider justify-start items-center gap-3`}>
+        <div className={`flex pb-2 tracking-wider justify-start items-center mydfdsfh-1 gap-3`}>
           <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
           <select
-            className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 mb-3 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#2c2e34]"
             id="inning"
             value={inningNumber}
             onChange={handleInningChange}
@@ -413,6 +448,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Balls</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 4s</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> 6s</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Status</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
@@ -446,6 +482,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                               value={formData.runs}
                               onChange={handleInputChange}
                               placeholder="Enter runs"
+                              min={0}
                               className="border rounded p-1"
                               disabled={
                                 !formData.player.playerId || !formData.balls
@@ -457,6 +494,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                               type="number"
                               name="balls"
                               value={formData.balls}
+                              min={0}
                               onChange={handleInputChange}
                               placeholder="Enter balls"
                               className="border rounded p-1"
@@ -466,6 +504,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             <input
                               type="number"
                               name="fours"
+                              min={0}
                               value={formData.fours}
                               onChange={handleInputChange}
                               placeholder="Enter fours"
@@ -476,6 +515,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             <input
                               type="number"
                               name="sixers"
+                              min={0}
                               value={formData.sixers}
                               onChange={handleInputChange}
                               placeholder="Enter sixes"
@@ -483,9 +523,26 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             />
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                             <select
+                              name="howOut"
+                              value={formData.howOut}
+                              onChange={handleInputChange}
+                              placeholder="Enter Status"
+                              className="border rounded p-1"
+                            >
+                              <option value="" disabled >Select status</option>
+                              <option value="Not out">Not Out</option>
+                              <option value="LBW">LBW</option>
+                              <option value="Bowled">Bowled</option>
+                              <option value="Run out">Run out</option>
+                              <option value="Catch">Catch</option>
+                            </select>
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             <input
                               type="number"
                               name="wickets"
+                              min={0}
                               value={formData.wickets}
                               onChange={handleInputChange}
                               placeholder="Enter Wickets"
@@ -496,6 +553,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             <input
                               type="number"
                               name="overs"
+                              min={0}
                               value={formData.overs}
                               onChange={handleInputChange}
                               placeholder="Enter Overs"
@@ -506,6 +564,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             <input
                               type="number"
                               name="runsConceded"
+                              min={0}
                               value={formData.runsConceded}
                               onChange={handleInputChange}
                               placeholder="Enter Run Conceded"
@@ -567,6 +626,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             {player.sixers}
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
+                            {player.howOut}
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             {player.wickets}
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
@@ -625,6 +687,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="runs"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter runs"
                       className="border rounded p-1"
@@ -634,6 +697,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="balls"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter balls"
                       className="border rounded p-1"
@@ -643,6 +707,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="fours"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter fours"
                       className="border rounded p-1"
@@ -652,15 +717,33 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="sixers"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter sixes"
                       className="border rounded p-1"
                     />
                   </td>
                   <td className="border px-4 py-2">
+                    <select
+                      name="howOut"
+                      value={formData.howOut}
+                      onChange={handleInputChange}
+                      placeholder="Enter Status"
+                      className="border rounded p-1"
+                    >
+                      <option value="" disabled >Select status</option>
+                      <option value="Not out">Not Out</option>
+                      <option value="LBW">LBW</option>
+                      <option value="Bowled">Bowled</option>
+                      <option value="Run out">Run out</option>
+                      <option value="Catch">Catch</option>
+                    </select>
+                  </td>
+                  <td className="border px-4 py-2">
                     <input
                       type="number"
                       name="wickets"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter Wickets"
                       className="border rounded p-1"
@@ -670,6 +753,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="overs"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter Overs"
                       className="border rounded p-1"
@@ -679,6 +763,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                     <input
                       type="number"
                       name="runsConceded"
+                      min={0}
                       onChange={handleInputChange}
                       placeholder="Enter Runs Conceded"
                       className="border rounded p-1"
@@ -728,11 +813,6 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
           </table>
         </div>
         </div>
-        {uploading && (
-          <div className="absolute items-center justify-center my-4">
-            <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
-          </div>
-        )}
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -755,6 +835,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                 </div>
               </div>
             )}
+             {uploading && (
+                <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-50">
+                  <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+                </div>
+              )}
       </div>
     </div>
   );

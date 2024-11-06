@@ -8,6 +8,8 @@ import { BsPeople } from 'react-icons/bs';
 import { MdPeople } from 'react-icons/md';
 import dayjs from 'dayjs';
 import { message, DatePicker } from 'antd';
+import { Select } from "antd";
+import { RiArrowDownLine, RiArrowDropDownLine } from 'react-icons/ri';
 
 const EditPopup = ({ onClose, match, isSubmitted }) => {
   console.log("initial matches: ", match);
@@ -21,6 +23,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   console.log("selected coaches: ", selectedCoaches);
   const convertTimeTo24Hour = (time12h) => {
@@ -311,7 +314,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
           </div>
           <div  className="col-span-1">
             <label className="block text-black text-sm font-semibold">Division</label>
-            <select
+            {/* <select
               type="text"
               name="division"
               value={formData.division}
@@ -321,7 +324,20 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <option value="" disabled selected>Select division</option>
               <option value="Division 1"> Division 1</option>
               <option value="Division 2">Division 2</option>
-            </select>
+            </select> */}
+            <Select
+              mode="tags" // Enable dropdown and custom input
+              style={{ width: "100%" }}
+              placeholder="Select or add a division"
+              value={formData.division ? [formData.division] : []} // Convert to array for controlled input
+              onChange={(value) => handleChange({ target: { name: "division", value: value[0] } })} // Handle single selection
+              showSearch={false} // Disable search functionality
+            >
+              <Option value="Division 1">Division 1</Option>
+              <Option value="Division 2">Division 2</Option>
+              <Option value="Division 3">Division 3</Option>
+            </Select>
+            
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Umpires</label>
@@ -334,6 +350,20 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             />
           </div>
           <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Type</label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+               <option value="" disabled selected>Select type</option>
+              <option value="Test">Test</option>
+              <option value="ODI">ODI</option>
+              <option value="T20">T20</option>
+            </select>
+          </div>
+          <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
             <select
               type="text"
@@ -343,6 +373,24 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.name}>
+                  {player.name}
+                </option>
+              )}
+            </select>
+          </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
+            <select
+              type="text"
+              name="matchViceCaptain"
+              value={formData.matchViceCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Vice-captain</option>
               {players.map(player =>
                 <option key={player.playerId} value={player.name}>
                   {player.name}
@@ -367,26 +415,12 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               )}
             </select>
           </div>
-          <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Type</label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            >
-               <option value="" disabled selected>Select type</option>
-              <option value="Test">Test</option>
-              <option value="ODI">ODI</option>
-              <option value="T20">T20</option>
-            </select>
-          </div>
           <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border gap-1 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]">
+            <div className="flex border gap-1 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]" onClick={() => setDropdownOpen(!dropdownOpen)}>
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md outline-none text-gray-600 "
+                className="py-1 px-3 w-[88%] rounded-md cursor-pointer outline-none text-gray-600 "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 placeholder='Choose coaches from the list...'
@@ -395,9 +429,9 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                   type='button'
                   title='Select coaches'
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center w-[6%] justify-center text-2xl text-green-500 hover:text-green-600 rounded-lg"
+                  className="flex items-center w-[6%] justify-center text-3xl rounded-lg"
                 >
-                  <MdPeople/>
+                  <RiArrowDropDownLine />
               </button>
               <button
                 type="button"

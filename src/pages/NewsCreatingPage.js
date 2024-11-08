@@ -641,6 +641,7 @@ const NewsCreator = () => {
   const [errors, setErrors] = useState({});
   const [newsToDelete, setNewsToDelete] = useState(null);
   const [existingImageURLs, setExistingImageURLs] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
@@ -650,6 +651,7 @@ const NewsCreator = () => {
   });
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
+  console.log("logged user in news: ", user);
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -714,17 +716,20 @@ const NewsCreator = () => {
     } else {
       // Removing a newly added image
       const newIndex = index - existingImageURLs.length;  // Adjust index for new images
-      setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
-  
-      // Log to check
-      console.log("Updated imageFiles after removing new image: ", imageFiles);
+      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
+      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
+      setImageFiles(updatedImageFiles);
+      
     }
   
-    // Update previews
-    setImagePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
-  
-    // Log to check previews update
-    console.log("Updated imagePreviews after removing image: ", imagePreviews);
+    // Update previews for both new and existing images
+    const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(updatedImagePreviews);
+
+    // Log to confirm changes
+    console.log("Updated existingImageURLs:", existingImageURLs);
+    console.log("Updated imageFiles:", imageFiles);
+    console.log("Updated imagePreviews:", imagePreviews);
   };
   
 
@@ -831,26 +836,6 @@ const NewsCreator = () => {
     }
   };
 
-  const uploadImagesToFirebase = () => {
-    return Promise.all(
-      imageFiles.map((file) => {
-        return new Promise((resolve, reject) => {
-          const storageRef = ref(storage, `news/${file.name}`);
-          const uploadTask = uploadBytesResumable(storageRef, file);
-
-          uploadTask.on(
-            "state_changed",
-            () => {},
-            (error) => reject(error),
-            () => {
-              getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
-            }
-          );
-        });
-      })
-    );
-  };
-
   const EditNews = (news) => {
     console.log("newsId: ", news.id);
     setCurrentNewsId(news.id);
@@ -892,11 +877,20 @@ const NewsCreator = () => {
       // if (formData.imageUrl instanceof File) {
       //   imageURL = await handleImageUpload(formData.imageUrl);
       // }
-      const urls = await uploadImagesToFirebase();
-      console.log("current:", formData);
+      const existingImageUrls = formData.images
+      ? formData.images.map((img) => img.imageUrl)
+      : [];
+
+    // Upload new images, if any
+    const uploadedUrls = await uploadImagesToFirebase();
+    
+    // Merge existing URLs with newly uploaded ones
+    const allImageUrls = [...existingImageUrls, ...uploadedUrls];
+      
       const editedNewsData = {
         ...formData,
-        images: urls.map((url) => ({ imageUrl: url })),
+       
+        images:  allImageUrls.map((url) => ({ imageUrl: url })),
         dateTime: formData.dateTime || new Date().getTime(),
       };
       
@@ -930,6 +924,26 @@ const NewsCreator = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const uploadImagesToFirebase = () => {
+    return Promise.all(
+      imageFiles.map((file) => {
+        return new Promise((resolve, reject) => {
+          const storageRef = ref(storage, `news/${file.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, file);
+
+          uploadTask.on(
+            "state_changed",
+            () => {},
+            (error) => reject(error),
+            () => {
+              getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
+            }
+          );
+        });
+      })
+    );
   };
 
   const handleDelete = id => {
@@ -978,7 +992,7 @@ const NewsCreator = () => {
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center w-full items-stretch min-h-screen">
         <div
-          className="lg:flex hidden justify-center items-center w-[12%] h-auto"
+          className="lg:flex hidden fixed left-0 justify-center items-center w-[12%] h-screen"
           style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -987,7 +1001,9 @@ const NewsCreator = () => {
         >
           <Navbar />
         </div>
-        <div className="lg:w-[88%] w-full py-5 px-5 flex flex-col items-center justify-center h-auto">
+        <div className="w-full flex px-5 lg:px-0 ">
+        <div className="lg:w-[12%] w-0 "></div>
+        <div className="lg:w-[88%] w-full md:py-5 md:px-5 flex flex-col items-center justify-center h-auto">
           <div className="flex justify-between w-full lg:px-10 py-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
@@ -1008,9 +1024,9 @@ const NewsCreator = () => {
                 News Creator
               </h2>
             </div>
-            <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 max-h-full lg:grid-cols-3 gap-5`}>
+            <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
               <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
-                <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 h-full w-full md:p-8 ">
+                <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 w-full md:p-8 ">
                  
                       <div className=" col-span-1">
                         <label htmlFor="author" className="block text-black  text-sm font-semibold">Author</label>
@@ -1077,22 +1093,22 @@ const NewsCreator = () => {
                           accept="image/*"
                           onChange={handleChange}
                           multiple
-                          // required
+                          required
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                           {imagePreviews.map((image,index)=>(
-                            <div className="flex flex-col">
+                            <div className="flex flex-col relative">
                             <img
                               key={index}
                               src={image}
                               alt="Preview"
-                              className="mt-4 w-full h-40 object-cover border border-gray-300"
+                              className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
                           />
-                              <p>{index}</p>
                              <button
                               type="button"
+                              title="Remove"
                               onClick={() => handleImageRemove(index)}
-                              className="right-0 self-end justify-end items-end text-[red]"
+                              className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-[red]"
                             >
                               <FaTrash />
                             </button>
@@ -1127,11 +1143,11 @@ const NewsCreator = () => {
                   </h1>
 
                   <div
-                    className={`flex flex-col ${
+                    className={`flex flex-col h-[70vh] ${
                       isShowmorePressed
                         ? " hover:overflow-auto overflow-hidden"
                         : " overflow-hidden"
-                    } h-96 `}
+                    } `}
                   >
                     {createdNews &&
                       createdNews.map((news) => (
@@ -1192,6 +1208,7 @@ const NewsCreator = () => {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
       {showDeleteModal && (

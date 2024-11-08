@@ -731,7 +731,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       placeholder="Enter Status"
                       className="border rounded p-1"
                     >
-                      <option value="" disabled >Select status</option>
+                      <option value="" disabled selected >Select status</option>
                       <option value="Not out">Not Out</option>
                       <option value="LBW">LBW</option>
                       <option value="Bowled">Bowled</option>

@@ -308,7 +308,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
                 <option value="">Select team</option>
                 {teams && teams.map(team =>
                     <option key={team.teamId} value={team.teamId}>
-                    {team.under}
+                    {team.under}-{team.year}
                     </option>
                 )}
                 </select>

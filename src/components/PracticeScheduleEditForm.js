@@ -11,7 +11,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
-  const [formData, setFormData] = useState({...practiceSchedule, teamUnder: practiceSchedule.teamUnder});
+  const [formData, setFormData] = useState({...practiceSchedule, team:{teamId:practiceSchedule.teamId}});
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
  console.log("teamUnder: ", formData.teamUnder)
@@ -222,7 +222,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             <DatePicker
               name="date"
               dateFormat="yyyy-mm-dd"
-              defaultValue={dayjs(formData.dateOfBirth)}
+              defaultValue={dayjs(formData.date)}
               onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
@@ -274,10 +274,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-               <option value="" disabled >Select type</option>
-               <option value="Batting Practice">Batting Practice</option>
-               <option value="Bawling Practice">Bawling Practice</option>
-               <option value="Fielding Practice">Fielding Practice</option>
+              <option value="" disabled >Select type</option>
+              <option value="Batting Practice">Batting Practice</option>
+              <option value="Bawling Practice">Bawling Practice</option>
+              <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -285,15 +285,15 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               Team
             </label>
                 <select
-                name="teamUnder"
-                value={formData.teamUnder}
+                name="team.teamId"
+                value={formData.team.teamId || ""}
                 onChange={handleChange}
                 className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                 >
                 <option value="" disabled>Select team</option>
                 {teams && teams.map(team =>
                     <option key={team.teamId} value={team.teamId}>
-                    {team.under}
+                    {team.under}-{team.year}
                     </option>
                 )}
                 </select>

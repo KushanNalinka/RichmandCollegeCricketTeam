@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
+import { GrLinkNext } from "react-icons/gr";
+import { GrLinkPrevious } from "react-icons/gr";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
@@ -27,9 +29,25 @@ const CoachProfile = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10); 
   const user = JSON.parse(localStorage.getItem("user"));
+  const [filteredPracticeSchedule, setFilteredPracticeSchedule] = useState([]);
+  const [filters, setFilters] = useState({ type: '', team: '' });
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [teamOptions, setTeamOptions] = useState([]);
 
+  const typeOptions = ["Bawling Practice","Batting Practice", "Fielding Practice"]
+  const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
+    "Under 19","Academy Under 9","Academy Under 11", "Academy Under 13",
+    "Academy Under 15","Academy Under 17","Academy Under 19","Richmond Legend Over 50","Richmond Legend Over 40", "Old Boys"  ];
+
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let i = currentYear; i >= 1990; i--) {
+    years.push(i);
+  } 
 
   useEffect(() => {
     console.log("coachId: ", user.coachId);
@@ -57,7 +75,53 @@ const CoachProfile = () => {
         console.error("There was an error fetching the player data!", error);
       });
       console.log("coach: ",coach);
+      const uniqueTeams = [];
+        years.forEach(year => {
+          teamUnder.forEach(team => {
+            uniqueTeams.push(`${team}-${year}`);
+          });
+        });
+        setTeamOptions(uniqueTeams);
+
   }, [isSubmitted, isDeleted]);
+
+  useEffect(() => {
+    const filtered = practiceSchedules && practiceSchedules.filter(schedule => {
+      return (
+        (filters.type ? schedule.pracType === filters.type : true) &&
+        (filters.team ? `${schedule.teamUnder}-${schedule.teamYear}` === filters.team : true)
+      );
+    });
+    setFilteredPracticeSchedule(filtered);
+    console.log("sorted matches: ", filters.team);
+  }, [filters, practiceSchedules]);
+
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setCurrentPage(1);
+    setShowTypeDropdown(false);
+    setShowTeamDropdown(false);
+  };
+
+
+  const totalPages = Math.ceil(filteredPracticeSchedule && filteredPracticeSchedule.length / rowsPerPage);
+
+  // Slice data for the current page after sorting
+  const paginatedData = filteredPracticeSchedule && filteredPracticeSchedule.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
@@ -105,6 +169,21 @@ const CoachProfile = () => {
       return age - 1;
     }
     return age;
+  };
+
+  const formatTimeToAMPM = (time) => {
+    const [hours, minutes] = time.split(':');
+    let period = 'AM';
+    let hour = parseInt(hours);
+  
+    if (hour >= 12) {
+      period = 'PM';
+      if (hour > 12) hour -= 12;
+    } else if (hour === 0) {
+      hour = 12;
+    }
+  
+    return `${hour}:${minutes} ${period}`;
   };
 
   return (
@@ -223,6 +302,25 @@ const CoachProfile = () => {
                     <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                       <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                         Team
+                        <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
+                          {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
+                        </button>
+                            {showTeamDropdown && (
+                        <div className="absolute mt-1 h-96 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
+                          <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                            All
+                          </button>
+                          {teamOptions.map(team => ( // Use 'team' as the map parameter here
+                            <button
+                              key={team}
+                              onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                              className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                              {team}
+                            </button>
+                          ))}
+                        </div>
+                        )}
                       </th>
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Venue
@@ -238,6 +336,25 @@ const CoachProfile = () => {
                       </th>
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Type
+                        <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
+                          {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
+                        </button>
+                        {showTypeDropdown && (
+                          <div className="absolute mt-5 bg-white border rounded shadow-lg z-50">
+                            <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                              All
+                            </button>
+                            {typeOptions.map(type => (
+                              <button
+                                key={type}
+                                onClick={() => handleFilterChange("type", type)}
+                                className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                              >
+                                {type}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </th>
                       <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                         Actions
@@ -246,11 +363,19 @@ const CoachProfile = () => {
                     <tr className=" h-2"></tr>
                   </thead>
                   <tbody className=" divide-y-2 divide-gray-300 " >
-                    {practiceSchedules &&
-                      practiceSchedules.map(schedule =>
+                    {paginatedData && paginatedData.length === 0 ? (
+
+                        <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                        <td colSpan={7} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                            No Practice Schedule available
+                        </td>
+                        </tr>
+                    ):
+                    (paginatedData &&
+                      paginatedData.map(schedule =>
                         <tr key={schedule.id} className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                          <td className="px-2 py-4 h-14 lg:rounded-l-lg  whitespace-nowrap text-sm">
-                            {schedule.teamUnder}
+                          <td className="px-4 py-4 h-14 lg:rounded-l-lg  whitespace-nowrap text-sm">
+                            {schedule.teamUnder}-{schedule.teamYear}
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.venue}
@@ -259,10 +384,10 @@ const CoachProfile = () => {
                             {schedule.date}
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
-                            {schedule.startTime}
+                            {formatTimeToAMPM(schedule.startTime)}
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
-                            {schedule.endTime}
+                            {formatTimeToAMPM(schedule.endTime)}
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.pracType}
@@ -281,10 +406,33 @@ const CoachProfile = () => {
                         
                           </td>
                         </tr>
-                      )}
+                    ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex w-full justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+                <button
+                  onClick={handlePrevPage}
+                  title="Prev"
+                  disabled={currentPage === 1}
+                  className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+                >
+                  <GrLinkPrevious style={{ color: "#fff" }} />
+                </button>
+
+                <div className="text-sm text-black font-semibold">
+                  Page {currentPage} of {totalPages}
                 </div>
+
+                <button
+                  onClick={handleNextPage}
+                  title="Next"
+                  disabled={currentPage === totalPages}
+                  className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+                >
+                  <GrLinkNext style={{ color: "#fff" }} />
+                </button>
+              </div>
         </div>
         
       </div>

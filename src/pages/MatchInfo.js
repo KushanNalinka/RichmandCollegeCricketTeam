@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopLayer from '../components/TopLayer';
@@ -17,6 +14,8 @@ export default function MatchInfo() {
   const [selectedMatchType, setSelectedMatchType] = useState('All');
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const matchesPerPage = 5;
   const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
@@ -37,9 +36,7 @@ export default function MatchInfo() {
   };
 
   useEffect(() => {
-
     fetch(`${API_URL}matchSummary/all`)
-
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);
@@ -49,9 +46,8 @@ export default function MatchInfo() {
         const uniqueAgeGroups = Array.from(new Set(data.map(match => match.under)));
         const uniqueMatchTypes = Array.from(new Set(data.map(match => match.type)));
         
-        // Set the state with the extracted unique values
-        setAgeGroups(['All', ...uniqueAgeGroups]); // Add 'All' as the first option
-        setMatchTypes(['All', ...uniqueMatchTypes]); // Add 'All' as the first option
+        setAgeGroups(['All', ...uniqueAgeGroups]);
+        setMatchTypes(['All', ...uniqueMatchTypes]);
       })
       .catch(error => console.error('Error fetching match summaries:', error));
   }, []);
@@ -64,85 +60,83 @@ export default function MatchInfo() {
     } else {
       filterMatches(matchDataList);
     }
-  }, [selectedAgeGroup, selectedMatchType, activeButton]);
+  }, [selectedAgeGroup, selectedMatchType, activeButton, currentPage]);
 
-  const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
-    let filtered = [...data];
 
-    if (selectedAgeGroup !== 'All') {
-      filtered = filtered.filter(match =>
-        match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
-      );
-    }
+  // Inside your main component:
 
-    if (selectedMatchType !== 'All') {
-      filtered = filtered.filter(match =>
-        match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
-      );
-    }
+const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
+  let filtered = [...data];
 
-    if (showOnlyUpcoming) {
-      filtered = filtered.filter(match => isUpcomingMatch(match.date));
-    }
-
-    filtered.sort((a, b) => showOnlyUpcoming
-      ? new Date(a.date) - new Date(b.date)
-      : new Date(b.date) - new Date(a.date)
+  if (selectedAgeGroup !== 'All') {
+    filtered = filtered.filter(match => 
+      match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
     );
+  }
 
-    if (latest) {
-      const groupedMatches = filtered.reduce((acc, match) => {
-        if (!acc[match.type]) acc[match.type] = [];
-        acc[match.type].push(match);
-        return acc;
-      }, {});
+  if (selectedMatchType !== 'All') {
+    filtered = filtered.filter(match => 
+      match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
+    );
+  }
 
-      filtered = [];
-      if (selectedMatchType === 'All') {
-        let count = 0;
-        Object.values(groupedMatches).forEach(group => {
-          const latestMatches = group.slice(0, 5);
-          filtered = filtered.concat(latestMatches);
-          count += latestMatches.length;
-          if (count >= 5) return;
-        });
-        filtered = filtered.slice(0, 5);
-      } else {
-        if (groupedMatches[selectedMatchType]) {
-          filtered = groupedMatches[selectedMatchType].slice(0, 5);
-        }
+  if (showOnlyUpcoming) {
+    filtered = filtered.filter(match => isUpcomingMatch(match.date));
+  }
+
+  filtered.sort((a, b) => showOnlyUpcoming 
+    ? new Date(a.date) - new Date(b.date) 
+    : new Date(b.date) - new Date(a.date)
+  );
+
+  if (latest) {
+    const groupedMatches = filtered.reduce((acc, match) => {
+      if (!acc[match.type]) acc[match.type] = [];
+      acc[match.type].push(match);
+      return acc;
+    }, {});
+
+    filtered = [];
+    if (selectedMatchType === 'All') {
+      let count = 0;
+      Object.values(groupedMatches).forEach(group => {
+        const latestMatches = group.slice(0, 5);
+        filtered = filtered.concat(latestMatches);
+        count += latestMatches.length;
+        if (count >= 5) return;
+      });
+      filtered = filtered.slice(0, 5);
+    } else {
+      if (groupedMatches[selectedMatchType]) {
+        filtered = groupedMatches[selectedMatchType].slice(0, 5);
       }
     }
+  }
 
-    if (selectedMatchType === 'Test' || filtered.some(match => match.type.toLowerCase() === 'test')) {
-      const groupedByMatchId = filtered.reduce((acc, match) => {
-        if (match.type.toLowerCase() === 'test') {
-          if (!acc[match.matchId]) {
-            acc[match.matchId] = { ...match, innings: [] };
-          }
-          acc[match.matchId].innings.push({
-            runs: match.runs,
-            wickets: match.wickets,
-            overs: match.overs,
-            oppositionRuns: match.oppositionRuns,
-            oppositionWickets: match.oppositionWickets,
-            oppositionOvers: match.oppositionOvers,
-            result: match.result,
-          });
-          acc[match.matchId].result = match.result;
-        } else {
-          acc[match.matchId] = match;
-        }
-        return acc;
-      }, {});
+  setFilteredMatches(filtered);
 
-      filtered = Object.values(groupedByMatchId);
-    }
+  // Only reset to the first page if filters have changed
+  if (selectedAgeGroup !== 'All' || selectedMatchType !== 'All' || activeButton !== 'Matches') {
+    setCurrentPage(1);
+  }
+};
 
-    console.log("Final filtered matches: ", filtered);
-    setFilteredMatches(filtered);
-  };
+// Adjust handlePageChange to prevent unnecessary re-renders or state resets
+const handlePageChange = (page) => {
+  if (page !== currentPage) {
+    setCurrentPage(page)
+;
+  }
+};
 
+  const paginateMatches = filteredMatches.slice(
+    (currentPage - 1) * matchesPerPage,
+    currentPage * matchesPerPage
+  );
+
+  const totalPages = Math.ceil(filteredMatches.length / matchesPerPage);
+
+ 
   const handleMatchCentreClick = (match) => {
     const richmondLogo = require('../assets/images/LOGO.png');
   
@@ -269,14 +263,14 @@ export default function MatchInfo() {
       </div>
 
       <div className="flex flex-col items-center flex-grow mt-7 space-y-4 px-4">
-  {showUpcoming ? (
-    <Upcoming selectedAgeGroup={selectedAgeGroup} selectedMatchType={selectedMatchType} />
-  ) : (
-    filteredMatches.map((matchData, index) => (
-      <div
-        key={index}
-        className="bg-white font-bold text-[#012D5E] rounded-3xl shadow-lg p-4 w-full max-w-5xl h-auto flex flex-col sm:flex-row items-center justify-between space-x-0 sm:space-x-4 space-y-4 sm:space-y-0"
-      >
+      {showUpcoming ? (
+  <Upcoming selectedAgeGroup={selectedAgeGroup} selectedMatchType={selectedMatchType} />
+) : (
+  paginateMatches.map((matchData, index) => (
+    <div
+      key={index}
+      className="bg-white font-bold text-[#012D5E] rounded-3xl shadow-lg p-4 w-full max-w-5xl h-auto flex flex-col sm:flex-row items-center justify-between space-x-0 sm:space-x-4 space-y-4 sm:space-y-0"
+    >
         {/* Richmond College Section */}
         <div className="flex flex-row items-center justify-between w-full">
           <div className="flex flex-col items-center w-full sm:w-1/2">
@@ -360,11 +354,51 @@ export default function MatchInfo() {
           ))
         )}
 
+         {/* Render paginated match items */}
+         <div className="match-list">
+          {paginateMatches.map((match, index) => (
+            <div key={index}>
+              {/* Render each match item */}
+            </div>
+          ))}
+        </div>
 
-      </div>
+      {/* Pagination controls */}
+{!showUpcoming && activeButton !== 'Latest' && (
+  <div className="pagination flex space-x-2 mt-4">
+    <button
+      disabled={currentPage === 1}
+      onClick={() => handlePageChange(currentPage - 1)}
+      className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+    >
+      «
+    </button>
+    {Array.from({ length: totalPages }, (_, index) => (
+      <button
+        key={index}
+        onClick={() => handlePageChange(index + 1)}
+        className={`w-8 h-8 flex items-center justify-center rounded ${
+          currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-400'
+        }`}
+      >
+        {index + 1}
+      </button>
+    ))}
+    <button
+      disabled={currentPage === totalPages}
+      onClick={() => handlePageChange(currentPage + 1)}
+      className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+    >
+      »
+    </button>
+  </div>
+)}
+
+</div>
+  
 
       
-             {/* Footer */}
+             {/*Footer*/}
              <Footer/>
     </div>
   );

@@ -47,11 +47,23 @@ const OfficialsTable = () => {
       });
   }, [isSubmitted, isDeleted]);
 
-  useEffect(() => {
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
 
-    if (divRef.current) {
-      setDivHeight(divRef.current.offsetHeight);
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(10); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(7); // Smaller screens (tablets, mobile)
     }
+  };
+
+  useEffect(() => {
+    updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
 
   const handleEdit = official => {
@@ -245,29 +257,29 @@ const OfficialsTable = () => {
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
-              <button
-                onClick={handlePrevPage}
-                title="Prev"
-                disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkPrevious style={{ color: "#fff" }} />
-              </button>
+          </div>
+          <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+            <button
+              onClick={handlePrevPage}
+              title="Prev"
+              disabled={currentPage === 1}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkPrevious style={{ color: "#fff" }} />
+            </button>
 
-              <div className="text-sm font-semibold">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                title="Next"
-                disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkNext style={{ color: "#fff" }} />
-              </button>
+            <div className="text-sm font-semibold">
+              Page {currentPage} of {totalPages}
             </div>
+
+            <button
+              onClick={handleNextPage}
+              title="Next"
+              disabled={currentPage === totalPages}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkNext style={{ color: "#fff" }} />
+            </button>
           </div>
           {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">

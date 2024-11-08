@@ -39,6 +39,9 @@ const CoachTable = () => {
 
   useEffect(() => {
     loadCoaches();
+    updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
   }, [isSubmitted, isDeleted]);
 
   const loadCoaches = async () => {
@@ -52,6 +55,19 @@ const CoachTable = () => {
       .catch((error) => {
         console.error("There was an error fetching the player data!", error);
       });
+  };
+
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(12); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(6); // Smaller screens (tablets, mobile)
+    }
   };
 
   useEffect(() => {
@@ -73,6 +89,7 @@ const CoachTable = () => {
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
+    setCurrentPage(1);
     setShowStatusDropdown(false);
   }; 
 
@@ -196,7 +213,7 @@ const CoachTable = () => {
                     {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
                     </button>
                     {showStatusDropdown && (
-                      <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                      <div className="absolute mt-1 z-50 bg-white border rounded shadow-lg">
                         <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">All</button>
                         <button onClick={() => handleFilterChange("status", "Active")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Active</button>
                         <button onClick={() => handleFilterChange("status", "Inactive")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Inactive</button>
@@ -292,7 +309,8 @@ const CoachTable = () => {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+        </div>
+        <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
             <button
               onClick={handlePrevPage}
               title="Prev"
@@ -315,7 +333,6 @@ const CoachTable = () => {
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
           </div>
-        </div>
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">

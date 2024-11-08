@@ -29,7 +29,7 @@ const ScoreCardPage = () => {
   const [selectedInning, setSelectedInning] = useState({}); // Tracks selected inning per Test match
   const [pressedIndex, setPressedIndex] = useState({}); 
   const [currentMatchID, setCurrentMatchID] = useState(null);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(matchSummary.length / rowsPerPage);
 
@@ -44,7 +44,23 @@ const ScoreCardPage = () => {
       .catch(error => {
         console.error("There was an error fetching the match data!", error);
       });
+      updateRowsPerPage(); // Initial setup
+      window.addEventListener('resize', updateRowsPerPage);
+      return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
+
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(6); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(5); // Laptop screens
+    } else {
+      setRowsPerPage(4); // Smaller screens (tablets, mobile)
+    }
+  };
 
   const sortedMatches = matchSummary
     .filter(
@@ -133,7 +149,7 @@ const ScoreCardPage = () => {
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center items-stretch min-h-screen w-full">
-        <div className="lg:flex hidden justify-center items-center w-[12%]  h-auto "
+        <div className="lg:flex hidden fixed z-50 justify-center left-0 items-center w-[12%]  h-screen "
            style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -142,7 +158,9 @@ const ScoreCardPage = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] py-5 flex flex-col items-center justify-center h-auto">
+        <div className="w-full flex px-5 lg:px-0 ">
+        <div className="lg:w-[12%] w-0 "></div>
+        <div className="lg:w-[88%] w-full py-5 flex flex-col items-center justify-center h-auto">
           <div className="flex justify-between w-full lg:px-10 py-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
@@ -164,7 +182,7 @@ const ScoreCardPage = () => {
               </h2>
             </div>
           <div
-            className=" relative min-w-full divide-y divide-gray-300 max-h-[600px] bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
+            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(5px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -215,13 +233,13 @@ const ScoreCardPage = () => {
                         </div>
                         ) 
                       }
-                      <div className="w-36 lg:flex flex-col hidden ">
-                        <p className="justify-end flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
+                      <div className="w-36 lg:flex flex-col justify-end hidden ">
+                        <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })} </p>
-                        <p className="lg:flex justify-end hidden text-xs font-semibold">{match.venue} </p>
+                        <p className="lg:flex hidden text-xs font-semibold">{match.venue} </p>
                       </div>
                     </div>
                     <button
@@ -358,28 +376,32 @@ const ScoreCardPage = () => {
                 </div>
             )}
           </div>
-          <div className="flex justify-between items-center mt-2 p-1 bg-white shadow-md rounded">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
-            >
-              <GrLinkPrevious style={{ color: "#fff" }} />
-            </button>
-
-            <div className="text-sm font-semibold">
-              Page {currentPage} of {totalPages}
-            </div>
-
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
-            >
-              <GrLinkNext style={{ color: "#fff" }} />
-            </button>
-          </div>
         </div>
+        <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+          >
+            <GrLinkPrevious style={{ color: "#fff" }} />
+          </button>
+
+          <div className="text-sm font-semibold">
+            Page {currentPage} of {totalPages}
+          </div>
+
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+          >
+            <GrLinkNext style={{ color: "#fff" }} />
+          </button>
+        </div>
+
+        </div>
+        
+        
 
         {/* Player Form Popup
       <PlayerFormPopup

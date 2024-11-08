@@ -44,7 +44,7 @@ const TableComponent = () => {
   const [divHeight, setDivHeight] = useState(0);
   const statusOptions = ["Active", "Inactive"];
   const roleOptions = ["Bowler","Batter", "Top Order Batter", "Wicketkeeper Batter", "Allrounder", "Bawlling Allrounder", "Batting Allrounder"];
-  const bowlingOptions = ["RAF","RAFM","RAMF","RAM","RASM","RAS","LAF", "LAFM", "LAMF", "LAM","LAMS", "LASM", "OB", "LB", "LBG", "SLAO", "SLAWS"];
+  const bowlingOptions = ["RAF","RAFM","RAMF","RAM","RAMS","RASM","RAS","LAF", "LAFM", "LAMF", "LAM","LAMS", "LASM","LAL", "OB", "LB", "LBG", "SLAO","SRAO","OS","SLAWS", "SRAWS", "N/A"];
   const battingOptions = ["LHB","RHB"]
 
   useEffect(() => {
@@ -63,7 +63,23 @@ const TableComponent = () => {
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
+      updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
   }, [isSubmitted, isDeleted]);
+
+    const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(10); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(6); // Smaller screens (tablets, mobile)
+    }
+  };
 
   useEffect(() => {
     const filtered = playerData.filter(player => {
@@ -79,6 +95,7 @@ const TableComponent = () => {
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
+    setCurrentPage(1);
     setShowStatusDropdown(false);
     setShowBowlingDropdown(false);
     setShowBattingDropdown(false);
@@ -186,7 +203,7 @@ const TableComponent = () => {
           <Navbar />
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -219,7 +236,7 @@ const TableComponent = () => {
               <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">
                 <thead className=" text-white">
                   <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 relative lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
                       <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
                         {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
@@ -386,7 +403,8 @@ const TableComponent = () => {
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+          </div>
+          <div className="flex w-[95%] justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
               <button
                 onClick={handlePrevPage}
                 title="Prev"
@@ -408,7 +426,6 @@ const TableComponent = () => {
               >
                 <GrLinkNext style={{ color: "#fff" }} />
               </button>
-            </div>
           </div>
           {showDeleteModal && (
               <div className={`fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75`}>

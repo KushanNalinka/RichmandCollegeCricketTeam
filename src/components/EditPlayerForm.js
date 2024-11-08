@@ -8,7 +8,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import dayjs from 'dayjs';
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
@@ -39,6 +39,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   const dateFormat = 'YYYY/MM/DD';
+  const [passwordVisible, setPasswordVisible] = useState(false);
   console.log("player to be edited: ", player);
   console.log("foemdata DOB: ", formData.dateOfBirth);
 
@@ -296,6 +297,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               defaultValue={dayjs(formData.dateOfBirth)}
               onChange={(date) => handleChange({ target: { name: 'dateOfBirth', value: date } })}
               placeholder="yyyy-mm-dd"
+              isClearable={false} 
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
@@ -325,15 +327,22 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+              <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute right-3 bottom-2 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="col-span-1">
@@ -397,6 +406,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value="OS">Off spin</option>
               <option value="SLAWS">Slow left-arm wrist spin</option>
               <option value="SRAWS">Slow Right-arm wrist spin</option>
+              <option value='N/A'>Not applicable</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -448,6 +458,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
+              isClearable={false} 
             />
           </div>
           <div className="col-span-1">
@@ -462,6 +473,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
+              isClearable={false} 
             />
             {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>

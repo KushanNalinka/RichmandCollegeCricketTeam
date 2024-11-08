@@ -12,6 +12,7 @@ const isUpcomingMatch = (matchDate) => {
   const matchDateObj = new Date(matchDate);
   return matchDateObj > today;
 };
+const API_URL = process.env.REACT_APP_API_URL;
 // Filter function for upcoming matches
 const filterMatches = (data, selectedAgeGroup, selectedMatchType) => {
   console.log("Filtering matches with:", { selectedAgeGroup, selectedMatchType }); // Debug log
@@ -39,7 +40,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
 
   
   useEffect(() => {
-    fetch("http://localhost:8080/api/matches/all")
+    fetch(`${API_URL}matches/all`)
       .then(response => response.json())
       .then(data => {
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);

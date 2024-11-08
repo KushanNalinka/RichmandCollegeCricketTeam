@@ -5,7 +5,7 @@ import { message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
   const [formData, setFormData] = useState({ 
@@ -22,6 +22,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = e => {
@@ -185,15 +186,22 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+             <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute right-3 bottom-2 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="mb-4">

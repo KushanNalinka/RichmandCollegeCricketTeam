@@ -6,7 +6,7 @@ import { message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 const OfficialForm = ({ onClose, isSubmitted }) => {
@@ -22,6 +22,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,10 +159,10 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -179,6 +180,13 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               //   }
               // }}
             />
+            <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute right-3 bottom-2 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="mb-4">

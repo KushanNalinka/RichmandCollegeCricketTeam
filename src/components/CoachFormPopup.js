@@ -6,7 +6,7 @@ import { DatePicker, message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { setUserId } from "firebase/analytics";
 
 const CoachForm = ({  onClose, isSubmitted }) => {
@@ -27,6 +27,7 @@ const CoachForm = ({  onClose, isSubmitted }) => {
   const [imagePreview, setImagePreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -241,10 +242,10 @@ const CoachForm = ({  onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -252,6 +253,13 @@ const CoachForm = ({  onClose, isSubmitted }) => {
               required
               placeholder="********"
             />
+              <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute right-3 bottom-2 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="col-span-1">
@@ -317,7 +325,7 @@ const CoachForm = ({  onClose, isSubmitted }) => {
               accept="image/*" 
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              // required
+              required
             />
             {imagePreview &&
               <img

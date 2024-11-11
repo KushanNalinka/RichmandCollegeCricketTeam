@@ -37,14 +37,14 @@ const NavbarToggleMenu = () => {
               <Link to={"/player"} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<FaPeopleGroup className="text-[#00175F]"/> Players
               </Link>
+              <Link to={"/team"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
+                {" "}<RiTeamFill className="text-[#00175F]"/> Teams
+              </Link>
               <Link to={"/match"} className=" flex gap-3 items-center cursor-pointer  p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<BiSolidCricketBall className="text-[#00175F]"/> Match
               </Link>
               <Link to={"/admin-scorecard"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<TbScoreboard className="text-[#00175F]"/> Score
-              </Link>
-              <Link to={"/team"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
-                {" "}<RiTeamFill className="text-[#00175F]"/> Teams
               </Link>
               <Link to={"/coachInfo"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<MdPeople className="text-[#00175F]"/> Coaches

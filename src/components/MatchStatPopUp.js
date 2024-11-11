@@ -23,7 +23,8 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [statData, setStatData] = useState(initialStatData);
   const [selectedIning, setSelectedIning] = useState(statData.inning);
-  console.log("selected inning normal: ", statData.inning);
+  const [errors, setErrors] = useState({});
+  console.log("selected inning in stat data: ", statData.inning);
 
   useEffect(() => {
     // Reset statData each time the popup is opened
@@ -37,7 +38,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
     if (matchId) {
       setStatData(prevState => ({ ...prevState, match:{matchId:matchId} }));
     }
-  }, [onClose, matchType, matchId]);;
+  }, [onClose, matchType, matchId]);
 
   useEffect(() => {
     axios.get(`${API_URL}matchSummary/match/${matchId}`)
@@ -58,19 +59,20 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
               setStatData(...matchInnings); // Set statData with received summary data
               setIsSummaryExists(true);
             } else {
-              setStatData(initialStatData); // Use initial statData if no summary data is available
+              setStatData({...initialStatData, inning:selectedIning}); // Use initial statData if no summary data is available
               setIsSummaryExists(false);
             }
           }
         })
         .catch(error => {
           console.error("Error fetching match summary:", error);
-          setStatData(initialStatData); // Use initial statData on error
+          setStatData({...initialStatData, inning:selectedIning}); // Use initial statData on error
         });
         console.log("Is summary exists:", isSummaryExists);
   
     if (selectedIning) {
       console.log("Updated selected inning:", selectedIning);
+      setStatData({...statData, inning:selectedIning});
     }
   }, [ matchType, matchId, selectedIning, isSummaryExists]);
   
@@ -95,17 +97,54 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
     }
     if( name === "inning"){
       setSelectedIning(value);
+      setStatData({
+        ...statData,
+        [name]: value
+      });
     }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (matchType === "Test" && !statData.inning) {
+      newErrors.inning = "Inning is required.";
+      message.error("Please select an inning before submitting.");
+    }
+    if (!statData.overs) {
+      newErrors.overs = "Overs are required.";
+    }
+    if (!statData.runs) {
+      newErrors.runs = "Runs are required.";
+    }
+    if (!statData.wickets) {
+      newErrors.wickets = "Wickets are required.";
+    }
+    if (!statData.oppositionOvers) {
+      newErrors.oppositionOvers = "Opposition Overs are required.";
+    }
+    if (!statData.oppositionRuns) {
+      newErrors.oppositionRuns = "Opposition Runs are required.";
+    }
+    if (!statData.oppositionWickets) {
+      newErrors.oppositionWickets = "Opposition Wickets are required.";
+    }
+    if (!(matchType === "Test" && statData.inning === "1") && !statData.result) {
+      newErrors.result = "Result is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUploading(true);
-    if (matchType === "Test" && !statData.inning) {
-      message.error("Please select an inning before submitting.");
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
       return;
-    };
-    console.log("add :" ,statData); // Log to verify structure before making request
+      };
+      
+      setUploading(true);
+      console.log("add :" ,statData); // Log to verify structure before making request
 
     try {
       const response = await axios.post(
@@ -139,11 +178,12 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setUploading(true);
-    if (matchType === "Test" && !statData.inning) {
-      message.error("Please select an inning before submitting.");
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
       return;
     };
+
+    setUploading(true);
     console.log("update: ",statData); // Log to verify structure before making request
     try {
       const response = await axios.put(
@@ -211,6 +251,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                       <option value="1">1</option> 
                       <option  value="2">2</option>
                   </select>
+                  {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}
                 </div>
               ):(
                 <div className="col-span-1">
@@ -223,6 +264,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                      disabled
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
                   />
+                  {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}
                 </div>
               )
             }
@@ -232,71 +274,83 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
               <input
                 type="number"
                 name="overs"
+                min={0}
                 value={statData.overs}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.overs && <p className="text-red-500 text-xs mt-1">{errors.overs}</p>}
             </div>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Runs</label>
               <input
                 type="number"
                 name="runs"
+                min={0}
                 value={statData.runs}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.runs && <p className="text-red-500 text-xs mt-1">{errors.runs}</p>}
             </div>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Wickets</label>
               <input
                 type="number"
                 name="wickets"
+                min={0}
                 value={statData.wickets}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
+              {errors.wickets && <p className="text-red-500 text-xs mt-1">{errors.wickets}</p>}
             </div>
-            <p className="col-span-1 md:col-span-2 text-md text-[black] font-semibold">Opposition match stats details</p>
+            <p className="col-span-1 md:col-span-2 text-md text-[#480D35] font-semibold">Opposition match stats details</p>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Overs</label>
               <input
                 type="number"
                 name="oppositionOvers"
+                min={0}
                 value={statData.oppositionOvers}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionOvers && <p className="text-red-500 text-xs mt-1">{errors.oppositionOvers}</p>}
             </div>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Runs</label>
               <input
                 type="number"
                 name="oppositionRuns"
+                min={0}
                 value={statData.oppositionRuns}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionRuns && <p className="text-red-500 text-xs mt-1">{errors.oppositionRuns}</p>}
             </div>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Wickets</label>
               <input
                 type="number"
                 name="oppositionWickets"
+                min={0}
                 value={statData.oppositionWickets}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionWickets && <p className="text-red-500 text-xs mt-1">{errors.oppositionWickets}</p>}
             </div>
            
             {(matchType==="Test" && selectedIning==="1")?(
-              <div className="col-span-1">
+              <div className="col-span-1 md:col-span-2">
                 <label className="block text-black text-sm font-semibold">Result</label>
                   <input
                      type="text"
@@ -320,6 +374,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                         placeholder="Victory for college A by X runs."
                         className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
+                      {errors.result && <p className="text-red-500 text-xs mt-1">{errors.result}</p>}
                     </div>
                   )}
           {isSummaryExists?(

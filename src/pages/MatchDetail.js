@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaPlus, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
 import { message } from "antd";
-import { Link } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
@@ -15,18 +15,16 @@ import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import HomeNavbar from "../components/HomeNavbar.js";
-import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
 import ScoreCardAIModel from "../components/ScoreCardAIModel.js";
+import { useRef } from "react";
 
 const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
-  const [teamId, setTeamId] = useState(null);
-  const [matchOpponent, setMatchOpponent] = useState(null);
   const [matchType, setMatchType] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
   const navigate = useNavigate();
@@ -34,83 +32,67 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   const [isScorePopupAIOpen, setIsScorePopupAIOpen] = useState(false);
   const [choiseModelOpen, setChoiseModelOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+const [typeOptions, setTypeOptions] = useState([]);
+const [teamOptions, setTeamOptions] = useState([]);
+const [filters, setFilters] = useState({ type: '', team: '' });
+const typeDropdownRef = useRef(null);
+const teamDropdownRef = useRef(null);
 
-  const [showTeamDropdown, setShowTeamDropdown] = useState(false);
-  const [teamOptions, setTeamOptions] = useState([]);
-  const [filters, setFilters] = useState({ type: '', team: '' });
-
-  const typeOptions = ["Test", "T20", "ODI"]
-
-  const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
-    "Under 19","Academy Under 9","Academy Under 11", "Academy Under 13",
-    "Academy Under 15","Academy Under 17","Academy Under 19","Richmond Legend Over 50","Richmond Legend Over 40", "Old Boys"  ];
-
-  const years = [];
-  const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1990; i--) {
-    years.push(i);
-  } 
-
-
-  useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-
-        const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
-          // Sort matches by date in descending order so future dates come first
-        const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
-        setMatches(sortedMatches);
-
-        const uniqueTeams = [];
-        years.forEach(year => {
-          teamUnder.forEach(team => {
-            uniqueTeams.push(`${team}-${year}`);
-          });
-        });
-        setTeamOptions(uniqueTeams);
-        console.log(response.data);
-
-      } catch (error) {
-        console.error("Error fetching matches:", error);
-      }
-    };
-  
-    fetchMatches();
-
-  }, [isSubmitted, isDeleted]);
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      typeDropdownRef.current && !typeDropdownRef.current.contains(event.target)
+    ) {
+      setShowTypeDropdown(false);
+    }
+    if (
+      teamDropdownRef.current && !teamDropdownRef.current.contains(event.target)
+    ) {
+      setShowTeamDropdown(false);
+    }
+  };
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
 
 
-  useEffect(() => {
-    const filtered = matches.filter(match => {
-      return (
-        (filters.type ? match.type === filters.type : true) &&
-        (filters.team ? `${match.under} - ${match.teamYear}` === filters.team : true)
-      );
-    });
-    setFilteredsortedMatches(filtered);
-  }, [filters, matches]);
+useEffect(() => {
+  const fetchMatches = async () => {
+    try {
+      const response = await axios.get(`${API_URL}matches/all`);
+      const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setMatches(sortedMatches);
 
-  const handleFilterChange = (name, value) => {
-    setFilters({ ...filters, [name]: value });
-    setShowTypeDropdown(false);
-    setShowTeamDropdown(false);
+      setTypeOptions([...new Set(sortedMatches.map(match => match.type))]);
+
+      // Create unique 'under - teamYear' combinations
+      const uniqueTeams = [
+        ...new Set(sortedMatches.map(match => `${match.under} - ${match.teamYear}`)),
+      ];
+      setTeamOptions(uniqueTeams);
+
+    } catch (error) {
+      console.error("Error fetching matches:", error);
+    }
   };
 
-  const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
-
+  fetchMatches();
+}, []);
+  
+  const totalPages = Math.ceil(matches.length / rowsPerPage);
 
 
   const paginatedData = filteredMatches.slice(
@@ -156,32 +138,25 @@ const MatchDetails = () => {
   };
 
   const handleDelete = id => {
-    setMatchToDelete(id);
+    setMatchToDelete(id)
+
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
-    setUploading(true);
     try {
       const deleteMatch = await axios.delete(
         `${API_URL}matches/delete/${matchToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setIsDeleted(!isDeleted);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
-
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to delete: ${error.response.data.message}`);
-      } else {
-        message.error("An unexpected error occurred. Please try again later.");
-      }
-    } finally {
-      setUploading(false);
+      message.error("Failed!");
     }
   };
 
@@ -202,9 +177,6 @@ const MatchDetails = () => {
   const handleAddScoreCard = match => {
     setMatchType(match.type);
     setMatchId(match.matchId);
-    setTeamId(match.teamId);
-    setMatchOpponent(match.opposition);
-    setMatchType(match.type);
     // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
     //setChoiseModelOpen(true);
@@ -290,10 +262,8 @@ const MatchDetails = () => {
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 py-3">
-            <Link to={"/member"}>
-              <img src={logo} className="h-12 w-12" />
-            </Link >
-            <MainNavbarToggle/>
+            <MainNavbarToggle />
+            <img src={logo} className="h-12 w-12" />
           </div>
           <div
             className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
@@ -316,7 +286,9 @@ const MatchDetails = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex overflow-x-auto">
+            <div 
+  className={`flex overflow-x-auto ${filteredMatches.length === 0 ? "h-[200px]" : ""}`}
+>
               <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
                 <thead className=" text-white ">
                   <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -341,52 +313,65 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Umpire
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                      Type
-                      <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
+                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider relative">
+  Type
+  <button 
+    onClick={() => setShowTypeDropdown(!showTypeDropdown)} 
+    className="ml-2"
+  >
+    <FaChevronDown />
+  </button>
+  
+  {showTypeDropdown && (
+  <div ref={typeDropdownRef} className="absolute mt-1 bg-white border rounded shadow-lg z-50 w-40 max-w-xs">
+    {typeOptions.map(type => (
+      <button
+        key={type}
+        onClick={() => handleFilterChange("type", type)}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+      >
+        {type}
+      </button>
+    ))}
+    <button 
+      onClick={() => handleFilterChange("type", "")} 
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+    >
+      All
+    </button>
+  </div>
+)}
+</th>
 
-                        {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
-                      </button>
-                      {showTypeDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
-                          <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                            All
-                          </button>
-                          {typeOptions.map(type => (
-                            <button
-                              key={type}
-                              onClick={() => handleFilterChange("type", type)}
-                              className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
-                            >
-                              {type}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                   <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider relative">
                       Team
-                      <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
-                        {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
-                      </button>
-                          {showTeamDropdown && (
-                      <div className="absolute mt-1 h-96 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
-                        <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                          All
-                        </button>
-                        {teamOptions.map(team => ( // Use 'team' as the map parameter here
-                          <button
-                            key={team}
-                            onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
-                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
-                          >
-                            {team}
-                          </button>
-                        ))}
-                      </div>
-                      )}
-                  </th>
+                    <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
+        <FaChevronDown />
+      </button>
+      {showTeamDropdown && (
+  <div ref={teamDropdownRef} className="absolute mt-1 bg-white border rounded shadow-lg z-50 w-40 max-w-xs">
+    {teamOptions.map(team => (
+      <button
+        key={team}
+        onClick={() => handleFilterChange("team", team)}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+      >
+        {team}
+      </button>
+    ))}
+    <button 
+      onClick={() => handleFilterChange("team", "")} 
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+    >
+      All
+    </button>
+  </div>
+)}
 
+
+      
+    </th>
+         
                     <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>
@@ -394,50 +379,56 @@ const MatchDetails = () => {
                   <tr className=" h-2"></tr>
                 </thead>
                 <tbody className=" divide-y-2 divide-gray-300">
-                  
-                  {paginatedData.map((match, index) =>
-                    <tr
-                      key={match.matchId}
-                      className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
-                    >
+  {paginatedData.length === 0 ? (
+    <tr>
+      <td colSpan="10" className="py-4 text-center text-gray-500">
+        No matches available for the selected filters.
+      </td>
+    </tr>
+  ) : (
+    paginatedData.map((match, index) => (
+      <tr
+        key={match.matchId}
+        className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
+      >
                       <td className="gap-4 px-4 lg:rounded-l-lg py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                         <div className="flex items-center justify-start gap-2 ">
                           <img
                             src={match.logo}
                             alt={match.matchId}
-                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                            className="h-14 w-14 rounded-full object-cover border border-gray-300"
                           />
-                          {/* Use truncate or text wrapping for small screens */}
+                          {/* {/ Use truncate or text wrapping for small screens /} */}
                           <span className="truncate whitespace-nowrap">
                             {match.opposition}
                           </span>
                         </div>
                       </td>
-                      <td className="py-2 px-2 h-16 whitespace-nowrap text-sm text-gray-600 ">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.time}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.tier}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.division}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.umpires}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.under} - {match.teamYear}
                       </td>
-                      <td className="py-4 px-2 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -467,9 +458,10 @@ const MatchDetails = () => {
                           <FaTrash />
                         </button>
                       </td>
-                    </tr>
-                  )}
-                </tbody>
+                      </tr>
+    ))
+  )}
+</tbody>
               </table>
             </div>
             <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
@@ -496,7 +488,7 @@ const MatchDetails = () => {
           </div>
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
+              <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-4">
@@ -526,7 +518,7 @@ const MatchDetails = () => {
                 </p>
 
                 <div className="flex flex-col space-y-4">
-                  <button
+                  {/* <button
                     onClick={handleScorePopupAIOpen}
                     className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
@@ -537,7 +529,7 @@ const MatchDetails = () => {
                     className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
-                  </button>
+                  </button> */}
                 </div>
 
                 <div className="flex justify-center mt-6">
@@ -551,28 +543,25 @@ const MatchDetails = () => {
               </div>
             </div>}
 
-          {/* Popup for Adding Form */}
+          {/* {/ Popup for Adding Form /} */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
+            <FormPopup onClose={handleAddPopupClose} />}
           {
             isPopupOpen &&
             <MatchStatPopup
               matchType={matchType}
               matchId={matchId}
               onClose={handlePopupClose}
-              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />
           }
           {isEditPopupOpen &&
-            <EditPopup onClose={handleEditPopupClose} match={currentMatch} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
-          {/* Player Form Popup */}
+            <EditPopup onClose={handleEditPopupClose} match={currentMatch} />}
+          {/* {/ Player Form Popup /} */}
           {isScorePopupOpen &&
             <ScoreCardPopup
               onClose={handleScorePopupClose}
               matchId={matchId}
               matchType={matchType}
-              matchOpponent={matchOpponent}
-              teamId={teamId}
             />}
            {isScorePopupAIOpen &&
             <ScoreCardAIModel
@@ -580,11 +569,6 @@ const MatchDetails = () => {
               matchId={matchId}
             />} 
         </div>
-        {uploading && (
-            <div className="absolute items-center justify-center my-4">
-              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
-            </div>
-            )}
       </div>
     </div>
   );

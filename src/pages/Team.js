@@ -339,8 +339,8 @@ const TableComponent = () => {
             </button>
           </div>
         </div>
-
-        {/ Modal for adding new item /}
+{/* 
+        {/ Modal for adding new item /} */}
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -369,7 +369,7 @@ const TableComponent = () => {
             isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
 
-        {/ Edit Modal /}
+        {/* {/ Edit Modal /} */}
         {isEditModalOpen &&
           editItem &&
           <EditModal

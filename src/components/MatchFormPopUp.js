@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {  DatePicker, message } from "antd";
+import { message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { MdPeople } from 'react-icons/md';
+import { Select } from "antd"; 
 
 const FormPopup = ({  onClose, isSumitted }) => {
   const [coaches, setCoaches] = useState([]);
@@ -18,6 +19,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [players, setPlayers] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [errors, setErrors] = useState({});
+  const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const [formData, setFormData] = useState({
     date: "",
@@ -98,12 +100,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
-    }else if (name === "date") {
-      // Handle the DatePicker value change
-      setFormData({
-        ...formData,
-        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
-      });
     }else {
       setFormData({
         ...formData,
@@ -236,7 +232,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
   return (
     <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full h-auto relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full h-auto hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -254,13 +250,12 @@ const FormPopup = ({  onClose, isSumitted }) => {
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
-            <DatePicker
+            <input
+              type="date"
               name="date"
-              dateFormat="yyyy-mm-dd"
-              // selected={new Date(formData.dateOfBirth)}
-              onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
-              placeholder="yyyy-mm-dd"
-              className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -313,20 +308,21 @@ const FormPopup = ({  onClose, isSumitted }) => {
             </select>
           </div>
           <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Division</label>
-            <select
-              type="text"
-              name="division"
-              value={formData.division}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="" disabled selected>Select division</option>
-              <option value="Division 1"> Division 1</option>
-              <option value="Division 2">Division 2</option>
-            </select>
-          </div>
+  <label className="block text-black text-sm font-semibold">Division</label>
+  <Select
+    mode="tags" // Enable dropdown and custom input
+    style={{ width: "100%" }}
+    placeholder="Select or add a division"
+    value={formData.division ? [formData.division] : []} // Convert to array for controlled input
+    onChange={(value) => handleChange({ target: { name: "division", value: value[0] } })} // Handle single selection
+    showSearch={false} // Disable search functionality
+  >
+    <Option value="Division 1">Division 1</Option>
+    <Option value="Division 2">Division 2</Option>
+    <Option value="Division 3">Division 3</Option>
+  </Select>
+</div>
+
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Umpires</label>
             <input
@@ -385,7 +381,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.teamId}>
-                  {team.under}-{team.year}
+                  {team.under}
                 </option>
               )}
             </select>

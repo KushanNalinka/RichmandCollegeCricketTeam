@@ -414,24 +414,7 @@ const TableComponent = () => {
     setFilteredPlayers(filtered);
   }, [filters, playerData]);
 
-  const handleFilterChange = (name, value) => {
-    setFilters({ ...filters, [name]: value });
-    setShowStatusDropdown(false);
-    setShowBowlingDropdown(false);
-    setShowBattingDropdown(false);
-    setShowRoleDropdown(false);
-  };
-
-
-
-  // Calculate total pages
-  const totalPages = Math.ceil(filteredPlayers.length / rowsPerPage);
-
-  // Slice data for the current page after sorting
-  const paginatedData = filteredPlayers.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  
 
   const handlePrevPage = () => {
     if (currentPage > 1) {

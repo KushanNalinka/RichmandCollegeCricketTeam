@@ -1169,20 +1169,22 @@ const PlayerProfile = () => {
 
     
    
-    
-    // Fetch player stats based on the selected player
     useEffect(() => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
                     const response = await fetch(`http://localhost:8080/api/playerStats/all-stats/${selectedPlayer.playerId}`);
+                    
                     const data = await response.json();
+                    console.log('Fetched player stats:', data); // Log the fetched response data
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {
                     console.error('Error fetching player stats:', error);
                 }
             }
         };
+    
+      
 
         // Fetch stats only if a player is selected
         if (selectedPlayer) {

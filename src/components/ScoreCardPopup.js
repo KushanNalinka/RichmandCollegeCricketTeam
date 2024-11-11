@@ -157,6 +157,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
 
   const handleInputChange = e => {
     const { name, value } = e.target;
+  
+    // Allow only positive integers or zero
+    const positiveIntegerValue = Math.max(0, parseInt(value) || 0);
+  
     if (name === "player.playerId") {
       const selectedPlayer = state.players.find(
         player => player.playerId === parseInt(value)
@@ -176,15 +180,14 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
         ...prev,
         [mainKey]: {
           ...prev[mainKey],
-          [subKey]: value,
+          [subKey]: positiveIntegerValue,
         },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ ...prev, [name]: positiveIntegerValue }));
     }
-    
   };
-
+  
   // Add player stat
   const handleSubmit = async e => {
     e.preventDefault();
@@ -440,17 +443,18 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent })
                             />
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
-                            <input
-                              type="number"
-                              name="runs"
-                              value={formData.runs}
-                              onChange={handleInputChange}
-                              placeholder="Enter runs"
-                              className="border rounded p-1"
-                              disabled={
-                                !formData.player.playerId || !formData.balls
-                              }
-                            />
+                          <input
+  type="number"
+  name="runs"
+  value={formData.runs}
+  onChange={handleInputChange}
+  placeholder="Enter runs"
+  className="border rounded p-1"
+  min="0" // Prevents negative numbers
+  disabled={!formData.player.playerId || !formData.balls}
+/>
+
+
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                             <input

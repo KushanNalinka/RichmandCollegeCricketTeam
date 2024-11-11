@@ -20,8 +20,9 @@ dayjs.extend(relativeTime);
 
 const NewsCreator = () => {
   const [createdNews, setCreatedNews] = useState([]);
-  const [imageFile, setImageFiles] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  const [imageFiles, setImageFiles] = useState([]);
+  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
   const [isShowmorePressed, setIsShowmorePressed] = useState(false);
@@ -39,7 +40,9 @@ const NewsCreator = () => {
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
-    imageUrl: "",
+    images: [
+      {imageUrl:""},
+    ],
     body: "",
     dateTime: "",
   });
@@ -65,18 +68,37 @@ const NewsCreator = () => {
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
       });
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (files && files[0]) {
-      const file = files[0];
-      setImagePreview(URL.createObjectURL(file));
-      setFormData({
-        ...formData,
-        [name]: file,
-      });
-      setIsImageAdded(true);
+    // if (files && files[0]) {
+    //   const file = files[0];
+    //   setImagePreview(URL.createObjectURL(file));
+    //   setFormData({
+    //     ...formData,
+    //     [name]: file,
+    //   });
+    //   setIsImageAdded(true);
+    if (files) {
+      const filesArray = Array.from(files); // Convert FileList to Array
+      setImageFiles(filesArray);
+  
+      // Upload files and set URLs
+      console.log("imageUrls: ",imageFiles);
+      Promise.all(filesArray.map(file => handleImageUpload(file)))
+        .then(urls => {
+          setImagePreviews(prevURLs => [...prevURLs, ...urls]); // Store the URLs of the uploaded images
+          setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, ...urls.map(url => ({ imageUrl: url }))], // Update formData with image URLs
+          }));
+          console.log("Urls: ",urls);
+        })
+        .catch(error => {
+          console.error("Error uploading images:", error);
+        });
+        console.log("image previews: ",imagePreviews);
     } else {
       setFormData({
         ...formData,
@@ -141,22 +163,27 @@ const NewsCreator = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateFormEdit()) {
-      message.error("Please fix validation errors before submitting");
-      return;
-    };
+    // if (!validateFormEdit()) {
+    //   message.error("Please fix validation errors before submitting");
+    //   return;
+    // };
     setUploading(true);
     try {
-      let imageURL = formData.imageUrl;
-      if (formData.imageUrl instanceof File) {
-        imageURL = await handleImageUpload(formData.imageUrl);
-      }
+      // let imageURL = formData.imageUrl;
+      // if (formData.imageUrl instanceof File) {
+      //   imageURL = await handleImageUpload(formData.imageUrl);
+      // }
 
+      // const uploadedURLs = await Promise.all(
+      //   imageFiles.map(file => handleImageUpload(file)) // Upload each file and get URLs
+      // );
+      console.log("formdata1: ",formData.images[0]);
+      console.log("formdata2: ",formData.images[2]);
       const createdNews = {
         ...formData,
-        imageUrl: imageURL, // Assign the uploaded image URL to formData
         dateTime: formData.dateTime || new Date().getTime(),
       };
+      console.log("images in formdata: ", formData);
 
       const response = await axios.post(
         `${API_URL}news`,
@@ -165,13 +192,13 @@ const NewsCreator = () => {
       console.log("Form submitted succedded: ", response.data);
       message.success("News Creation Successfull!");
       setFormData({
-        imageUrl: "",
+        images: [],
         author: "",
         heading: "",
         dateTime: "",
         body: "",
       });
-      setImagePreview("");
+      setImagePreviews([]);
       loadNews();
       // setIsSubmitted(!isSubmitted);      
       // setTimeout(() => {
@@ -213,12 +240,13 @@ const NewsCreator = () => {
       );
     });
   };
+
   const EditNews = (news) => {
     console.log("newsId: ", news.id);
     setCurrentNewsId(news.id);
     setIsEditPressed(true);
     setFormData({ ...news });
-    setImagePreview((prevId) =>
+    setImagePreviews((prevId) =>
       prevId === news.imageUrl ? null : news.imageUrl
     );
   };
@@ -232,7 +260,7 @@ const NewsCreator = () => {
       dateTime: "",
       body: "",
     });
-    setImagePreview("");
+    setImagePreviews([]);
     setCurrentNewsId(null);
   };
 
@@ -269,7 +297,7 @@ const NewsCreator = () => {
         dateTime: "",
         body: "",
       });
-      setImagePreview("");
+      setImagePreviews([]);
       setIsEditPressed(false);
       setCurrentNewsId(null);
       loadNews();
@@ -289,7 +317,8 @@ const NewsCreator = () => {
   };
 
   const handleDelete = id => {
-    setNewsToDelete(id);
+    setNewsToDelete(id)
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -432,16 +461,19 @@ const NewsCreator = () => {
                           name="imageUrl"
                           accept="image/*"
                           onChange={handleChange}
+                          multiple
                           // required
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
-                        {imagePreview && (
-                          <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="mt-4 w-full h-40 object-cover border border-gray-300"
+                          {imagePreviews.map((image,index)=>(
+                            <img
+                              key={index}
+                              src={image}
+                              alt="Preview"
+                              className="mt-4 w-full h-40 object-cover border border-gray-300"
                           />
-                        )}
+                          ))
+                        }
                         {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageURL}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2 flex gap-2 justify-end">

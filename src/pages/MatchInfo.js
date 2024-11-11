@@ -441,59 +441,70 @@ export default function MatchInfo() {
 
   // Inside your main component:
 
-const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
-  let filtered = [...data];
+  const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
+    let filtered = [...data];
+  
+    // Filter by age group if a specific age group is selected
+    if (selectedAgeGroup !== 'All') {
+      filtered = filtered.filter(match => 
+        match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
+      );
+    }
+  
+    // Filter by match type if a specific match type is selected
+    if (selectedMatchType !== 'All') {
+      filtered = filtered.filter(match => 
+        match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
+      );
+    }
+  
+    // Filter upcoming matches if the 'Upcoming' button is active
+    if (showOnlyUpcoming) {
+      filtered = filtered.filter(match => isUpcomingMatch(match.date));
+    }
 
-  if (selectedAgeGroup !== 'All') {
-    filtered = filtered.filter(match => 
-      match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
-    );
-  }
-
-  if (selectedMatchType !== 'All') {
-    filtered = filtered.filter(match => 
-      match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
-    );
-  }
-
-  if (showOnlyUpcoming) {
-    filtered = filtered.filter(match => isUpcomingMatch(match.date));
-  }
-
+  // Sort matches by date (descending order for latest, ascending for upcoming)
   filtered.sort((a, b) => showOnlyUpcoming 
     ? new Date(a.date) - new Date(b.date) 
     : new Date(b.date) - new Date(a.date)
   );
 
+  // If the 'Latest' button is active and both filters are set to 'All'
   if (latest) {
-    const groupedMatches = filtered.reduce((acc, match) => {
-      if (!acc[match.type]) acc[match.type] = [];
-      acc[match.type].push(match);
-      return acc;
-    }, {});
-
-    filtered = [];
-    if (selectedMatchType === 'All') {
-      let count = 0;
-      Object.values(groupedMatches).forEach(group => {
-        const latestMatches = group.slice(0, 5);
-        filtered = filtered.concat(latestMatches);
-        count += latestMatches.length;
-        if (count >= 5) return;
-      });
+    if (selectedAgeGroup === 'All' && selectedMatchType === 'All') {
+      // Show only the latest 5 matches overall
       filtered = filtered.slice(0, 5);
     } else {
-      if (groupedMatches[selectedMatchType]) {
-        filtered = groupedMatches[selectedMatchType].slice(0, 5);
+      // Group by type and get the latest 5 matches per type
+      const groupedMatches = filtered.reduce((acc, match) => {
+        if (!acc[match.type]) acc[match.type] = [];
+        acc[match.type].push(match);
+        return acc;
+      }, {});
+
+      filtered = [];
+      if (selectedMatchType === 'All') {
+        let count = 0;
+        Object.values(groupedMatches).forEach(group => {
+          const latestMatches = group.slice(0, 5);
+          filtered = filtered.concat(latestMatches);
+          count += latestMatches.length;
+          if (count >= 5) return;
+        });
+        filtered = filtered.slice(0, 5);
+      } else {
+        if (groupedMatches[selectedMatchType]) {
+          filtered = groupedMatches[selectedMatchType].slice(0, 5);
+        }
       }
     }
   }
 
   setFilteredMatches(filtered);
 
-  // Only reset to the first page if filters have changed
-  if (selectedAgeGroup !== 'All' || selectedMatchType !== 'All' || activeButton !== 'Matches') {
-    setCurrentPage(1);
+ // Reset to the first page if filters have changed
+ if (selectedAgeGroup !== 'All' || selectedMatchType !== 'All' || activeButton !== 'Matches') {
+  setCurrentPage(1);
   }
 };
 
@@ -602,16 +613,17 @@ const handlePageChange = (page) => {
 
 
             <div className="flex space-x-4">
-              <button
-                className={`w-24 h-8 rounded-full text-white text-xxs  ${activeButton === 'Latest' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
-                onClick={() => {
-                  setActiveButton('Latest');
-                  filterMatches(matchDataList, false, true); // Show latest 5 matches per type
-                  setShowUpcoming(false);
-                }}
-              >
-                Latest
-              </button>
+            <button
+  className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Latest' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
+  onClick={() => {
+    setActiveButton('Latest');
+    filterMatches(matchDataList, false, true); // Show latest 5 matches
+    setShowUpcoming(false);
+  }}
+>
+  Latest
+</button>
+
               <button
                 className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Upcoming' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
                 onClick={() => {

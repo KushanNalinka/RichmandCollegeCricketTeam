@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaChevronDown} from "react-icons/fa";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
@@ -12,6 +12,8 @@ import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
 import Footer from '../components/Footer';
+import { GrLinkNext } from "react-icons/gr";
+import { GrLinkPrevious } from "react-icons/gr";
 //import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
@@ -20,13 +22,27 @@ const CoachProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editSchedule, setEditSchedule] = useState(null);
-  const [practiceSchedules, setPracticeSchedules] = useState(null);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [practiceToDelete, setPracticeToDelete] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
+  const [practiceSchedules, setPracticeSchedules] = useState([]);
+const [filteredPracticeSchedules, setFilteredsortedPracticeSchedules] = useState([]);
+
+
+
+ 
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+const [typeOptions, setTypeOptions] = useState([]);
+const [teamOptions, setTeamOptions] = useState([]);
+const [filters, setFilters] = useState({ type: '', team: '' });
+const rowsPerPage = 6; // Number of rows per page
+  const [currentPage, setCurrentPage] = useState(1);
+
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -48,17 +64,64 @@ const CoachProfile = () => {
   }, []);
 
   useEffect(() => {
-      axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
+    axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
-        setPracticeSchedules(response.data);
-        console.log("sessions Data:", response.data);
+        const sortedPracticeSchedules = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setPracticeSchedules(sortedPracticeSchedules);
+        
+        // Populate type options and team options
+        setTypeOptions([...new Set(sortedPracticeSchedules.map(practiceSchedule => practiceSchedule.pracType))]);
+        const uniqueTeams = [
+          ...new Set(sortedPracticeSchedules.map(practiceSchedule => `${practiceSchedule.teamUnder} - ${practiceSchedule.teamYear}`)),
+        ];
+        setTeamOptions(uniqueTeams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the practice session data!", error);
       });
-      console.log("coach: ",coach);
   }, [isSubmitted, isDeleted]);
+  
+// Updated handleFilterChange
+const handleFilterChange = (name, value) => {
+  setFilters({ ...filters, [name]: value });
+  setShowTypeDropdown(false);
+  setShowTeamDropdown(false);
+};
 
+const handlePrevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+const handleNextPage = () => {
+  if (currentPage < totalPages) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+  const totalPages = practiceSchedules ? Math.ceil(practiceSchedules.length / rowsPerPage) : 1;
+
+
+ // Slice filteredPracticeSchedules instead of practiceSchedules for pagination
+const paginatedData = filteredPracticeSchedules.slice(
+  (currentPage - 1) * rowsPerPage,
+  currentPage * rowsPerPage
+);
+  
+  
+  
+ // Update filtering logic in useEffect
+useEffect(() => {
+  if (practiceSchedules) {
+    const filtered = practiceSchedules.filter(practiceSchedule => {
+      return (
+        (filters.type ? practiceSchedule.pracType === filters.type : true) &&
+        (filters.team ? `${practiceSchedule.teamUnder} - ${practiceSchedule.teamYear}` === filters.team : true)
+      );
+    });
+    setFilteredsortedPracticeSchedules(filtered);
+  }
+}, [filters, practiceSchedules]);
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
     setEditSchedule(schedule);
@@ -222,8 +285,30 @@ const CoachProfile = () => {
                   <thead className=" text-white">
                     <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                       <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
-                        Team
-                      </th>
+                      Team
+                    <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
+        <FaChevronDown />
+      </button>
+      {showTeamDropdown && (
+  <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
+    {teamOptions.map(team => ( // Use 'team' as the map parameter here
+      <button
+        key={team}
+        onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+      >
+        {team}
+      </button>
+    ))}
+    <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+      All
+    </button>
+  </div>
+)}
+
+
+      
+    </th>
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Venue
                       </th>
@@ -237,8 +322,29 @@ const CoachProfile = () => {
                         End Time
                       </th>
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                        Type
-                      </th>
+                      Type
+                      <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
+        <FaChevronDown />
+      </button>
+      {showTypeDropdown && (
+  <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
+    {typeOptions.map(pracType => (
+      <button
+        key={pracType}
+        onClick={() => handleFilterChange("type", pracType)}
+        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+      >
+        {pracType}
+      </button>
+    ))}
+    <button onClick={() => handleFilterChange("pracType", "")} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200">
+      All
+    </button>
+  </div>
+)}
+
+      
+    </th>
                       <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                         Actions
                       </th>
@@ -246,11 +352,10 @@ const CoachProfile = () => {
                     <tr className=" h-2"></tr>
                   </thead>
                   <tbody className=" divide-y-2 divide-gray-300 " >
-                    {practiceSchedules &&
-                      practiceSchedules.map(schedule =>
+                      {paginatedData.map(schedule => 
                         <tr key={schedule.id} className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
                           <td className="px-2 py-4 h-14 lg:rounded-l-lg  whitespace-nowrap text-sm">
-                            {schedule.teamUnder}
+                            {schedule.teamUnder}- {schedule.teamYear}
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.venue}
@@ -285,6 +390,28 @@ const CoachProfile = () => {
                   </tbody>
                 </table>
                 </div>
+
+                <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+              <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+              >
+                <GrLinkPrevious style={{ color: "#fff" }} />
+              </button>
+
+              <div className="text-sm font-semibold">
+                Page {currentPage} of {totalPages}
+              </div>
+
+              <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+              >
+                <GrLinkNext style={{ color: "#fff" }} />
+              </button>
+            </div>
         </div>
         
       </div>
@@ -310,8 +437,9 @@ const CoachProfile = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
-          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+        {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={() => setIsSubmitted(!isSubmitted)}/>}
+{isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={() => setIsSubmitted(!isSubmitted)}/>}
+
           {uploading && (
             <div className="absolute items-center justify-center my-4">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />

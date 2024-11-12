@@ -236,7 +236,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -247,7 +247,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-3 p-1 max-h-[80vh] hover:overflow-auto overflow-hidden custom-scrollbar">
          
             {
               matchType==="Test"?(
@@ -282,7 +282,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 </div>
               )
             }
-            
+            <p className="col-span-1 md:col-span-2 text-md text-[#480D35] font-semibold">Richmond match stats details</p>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Overs</label>
               <input

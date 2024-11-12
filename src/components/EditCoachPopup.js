@@ -272,6 +272,7 @@ import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import dayjs from 'dayjs';
 
 const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({ 
     status: coach.status,
     image: coach.image,
@@ -285,7 +286,10 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
       email: coach.email,
       username: coach.username,
       password: coach.password,
-    } });
+    },
+    updatedOn:new Date().toISOString(),
+    updatedBy:user.username,
+  });
   const [imagePreview, setImagePreview] = useState(coach.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -413,7 +417,9 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               email: "",
               username:"",
               Password:""
-            }
+            },
+            updatedOn:"",
+            updatedBy:""
         });
         setImagePreview();
         isSubmitted();
@@ -461,7 +467,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -474,7 +480,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Coach Details</h2>
         <form
           onSubmit={handleEdit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          className="grid grid-cols-1 md:grid-cols-2 gap-3 p-1 hover:overflow-y-auto overflow-hidden max-h-[80vh] custom-srollbar"
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
@@ -508,7 +514,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="@username"
+              placeholder="username"
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
@@ -530,13 +536,13 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
               <button
                 type="button"
                 onClick={()=>setPasswordVisible(!passwordVisible)}
-                className="absolute right-3 bottom-2 text-gray-600"
+                className="absolute top-7 right-3 text-gray-600"
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -575,7 +581,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
           
             >
               <option value='' disabled >
-                Select
+                Select status
               </option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>

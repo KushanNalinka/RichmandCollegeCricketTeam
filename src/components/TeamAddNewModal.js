@@ -7,6 +7,7 @@ import { FaTimes,  FaTrash } from 'react-icons/fa';
 
 const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [formData, setFormData] = useState({
@@ -14,7 +15,9 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     year:'',
     captain:'',
     viceCaptain:'',
-    players:[]
+    players:[],
+    createdBy:user.username,
+    createdOn: new Date().toISOString()
   });
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -70,7 +73,9 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
         year:'',
         captain:'',
         viceCaptain:'',
-        players:[]
+        players:[],
+        createdBy:'',
+        createdOn: ''
       });
       setSelectedPlayers([]);
       isSubmitted();
@@ -125,7 +130,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-md w-full max-h-screen relative`}>
         <div className='flex justify-end '>
             <button 
               onClick={onClose} 
@@ -136,7 +141,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             </button>
           </div>
         <h3 className="text-xl text-[#480D35] font-bold mb-4">Add New Team</h3>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className=" custom-scrollbar hover:overflow-y-auto p-1 overflow-hidden max-h-[80vh]">
           
           <div className="mb-2">
             <label className="block text-black text-sm font-semibold" >
@@ -227,10 +232,10 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             <label className="block text-black text-sm font-semibold" htmlFor="year">
               Players
             </label>
-            <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md  focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+            <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
               <input
                 type="text"
-                className="border-0 py-1 px-3 w-[90%] rounded-md focus:outline-non pointer-events-none"
+                className="border-0 py-1 px-3 w-[90%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 placeholder='Choose players from the list...'
@@ -245,7 +250,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             </div>
             {errors.player && <p className="text-red-500 text-xs mt-1">{errors.player}</p>}
             <div className="relative">
-              <div className="border overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
+              <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input
@@ -261,7 +266,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
                   </div>
                 ))}
               </div>
-          </div>
+            </div>
           </div>
           <div className="flex justify-end space-x-2 ">
             <button

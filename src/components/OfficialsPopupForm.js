@@ -10,6 +10,7 @@ import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 const OfficialForm = ({ onClose, isSubmitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -17,7 +18,9 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
     roles: ["ROLE_OFFICIAL"],
     name: "",
     contactNo: "",
-    position: ""
+    position: "",
+    createdOn: new Date().toISOString(),
+    createdBy:user.username,
   });
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
@@ -85,7 +88,9 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
           roles: ["ROLE_OFFICIAL"],
           name: "",
           contactNo: "",
-          position: ""
+          position: "",
+          createdBy:"",
+          createdOn:""
         });
         isSubmitted();
         // setTimeout(() => {
@@ -108,7 +113,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
   return (
 
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-md w-full relative`}>
         <div className="flex justify-end ">
 
           <button
@@ -142,7 +147,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
-              placeholder="@username"
+              placeholder="username"
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
@@ -166,7 +171,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
               placeholder="********"
               // onBlur={() => {
@@ -183,7 +188,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
             <button
                 type="button"
                 onClick={()=>setPasswordVisible(!passwordVisible)}
-                className="absolute right-3 bottom-2 text-gray-600"
+                className="absolute top-7 right-3 text-gray-600"
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>

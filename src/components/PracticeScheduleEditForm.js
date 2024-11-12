@@ -8,10 +8,11 @@ import dayjs from 'dayjs';
 
 const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
-  const [formData, setFormData] = useState({...practiceSchedule, team:{teamId:practiceSchedule.teamId}});
+  const [formData, setFormData] = useState({...practiceSchedule, updatedOn: new Date().toISOString() ,updatedBy:user.username, team:{teamId:practiceSchedule.teamId}});
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
  console.log("teamUnder: ", formData.teamUnder)
@@ -76,11 +77,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select coaches.";
     }
-    const today = new Date();
-    const selectedDate = new Date(formData.date);
-    if (selectedDate <= today) {
-      newErrors.date = "The date must be in the present.";
-    };
+    // const today = new Date();
+    // const selectedDate = new Date(formData.date);
+    // if (selectedDate <= today) {
+    //   newErrors.date = "The date must be in the present.";
+    // };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -112,6 +113,8 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             team: {
               teamId: 0,
             },
+            updatedOn:"",
+            updatedBy:""
         });
         setSelectedCoaches([]);
         isSubmitted();
@@ -228,7 +231,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
-            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+            {/* {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>} */}
           </div>
           <div className="col-span-1">
             <label

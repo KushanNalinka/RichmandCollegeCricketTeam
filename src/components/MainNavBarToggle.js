@@ -49,7 +49,7 @@ const MainNavbarToggle = () => {
               : "hidden"}`}
           >
             <div className="relative group w-full">
-                <ul className=" flex flex-col gap-1 relative w-full !mt-[8.00px] !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
+                <ul className=" flex flex-col gap-1 relative w-full !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
                     {/* <Link to={"/playerProfile"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                         {" "}<CgProfile className="text-[#00175F] text-xl" />Profile
                     </Link> */}

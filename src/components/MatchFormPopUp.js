@@ -9,6 +9,7 @@ import { MdArrowDropDown, MdPeople } from 'react-icons/md';
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 const FormPopup = ({  onClose, isSumitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
@@ -38,7 +39,9 @@ const FormPopup = ({  onClose, isSumitted }) => {
     
 
     },
-    coaches: []
+    coaches: [],
+    createdBy:user.username,
+    createdOn:new Date().toISOString()
   });
 
   const formatDate = (date) => {
@@ -171,7 +174,9 @@ const FormPopup = ({  onClose, isSumitted }) => {
         team: {
           teamId: ""
         },
-        coaches: []
+        coaches: [],
+        createdBy:"",
+        createdOn:""
       })
       isSumitted();
       setImagePreview();
@@ -240,7 +245,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
   return (
     <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full h-auto relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -254,7 +259,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
           </h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-2"
+          className="grid grid-cols-1 md:grid-cols-2 gap-2 custom-scrollbar p-1 hover:overflow-y-auto overflow-hidden max-h-[80vh]"
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
@@ -404,7 +409,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               )}
             </select>
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Team</label>
             <select
               name="team.teamId"
@@ -423,10 +428,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
           </div>
           <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <div className="flex border gap-1 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none" onClick={() => setDropdownOpen(!dropdownOpen)}>
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md cursor-pointer text-gray-600 border-0 focus:outline-non pointer-events-none  "
+                className="py-1 px-3 w-[88%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 required

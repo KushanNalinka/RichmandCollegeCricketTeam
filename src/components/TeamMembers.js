@@ -21,7 +21,7 @@ const TeamMembers = ({teamId, onClose}) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-70 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
+      <div className="bg-white p-8 rounded-3xl shadow-lg max-w-lg w-full max-h-screen relative">
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -32,10 +32,10 @@ const TeamMembers = ({teamId, onClose}) => {
         </div>
         <h2 className="text-xl font-bold text-[#480D35]">Team Members</h2>
         <div className="relative pt-4">
-            <div className="border-[1px] border-[#00175f] overflow-auto rounded-lg mt-2 px-5 py-2">
+            <div className=" bg-gray-100 custom-scrollbar p-1 hover:overflow-y-auto overflow-hidden max-h-[80vh] rounded-3xl px-5 py-5">
             {members && members.map((member) => (
                 <ul key={member.playerId} className="flex items-center mb-2 ">
-                <li className="flex items-center justify-center gap-3"><img className="w-10 h-10 rounded-full border border-gray-300 bg-gray-300 " alt={member.name} src={member.image}/>{member.name}</li>
+                <li className="flex items-center justify-center gap-3"><img className="w-10 h-10 rounded-full border border-gray-300 bg-white " alt={member.name} src={member.image}/>{member.name}</li>
                 </ul>
                 ))}
             </div>

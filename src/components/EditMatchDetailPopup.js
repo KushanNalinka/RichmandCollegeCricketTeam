@@ -25,6 +25,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const [errors, setErrors] = useState({});
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   console.log("selected coaches: ", selectedCoaches);
   const convertTimeTo24Hour = (time12h) => {
     const [time, modifier] = time12h.split(' ');
@@ -41,7 +42,9 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       under:match.under,
     },
     time: convertTimeTo24Hour(match.time),
-    coaches: match.coaches || []
+    coaches: match.coaches || [],
+    updatedBy:user.username,
+    updatedOn:new Date().toISOString(),
   });
 
   useEffect(() => {
@@ -175,7 +178,9 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
           under:"",
           teamId:""
         },
-        coaches: []
+        coaches: [],
+        updatedBy:"",
+        updatedOn:""
       })
       isSubmitted();
       setSelectedCoaches([]);
@@ -244,7 +249,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -254,7 +259,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-4 text-[#480D35]"> Edit Match Details</h2>
-        <form className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+        <form className='grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[80vh] p-1 custom-scrollbar hover:overflow-auto overflow-hidden'>
         <div  className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
             <DatePicker
@@ -399,7 +404,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               )}
             </select>
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold" htmlFor="team.under">Team</label>
             <select
               id="team.under"
@@ -418,10 +423,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
           </div>
           <div className="col-span-1 md:col-span-2 ">
             <label className="block text-black text-sm font-semibold">Coaches</label>
-            <div className="flex border gap-1 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]" onClick={() => setDropdownOpen(!dropdownOpen)}>
+            <div tabIndex={-1} className="flex border gap-1 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none" onClick={() => setDropdownOpen(!dropdownOpen)}>
               <input
                 type="text"
-                className="py-1 px-3 w-[88%] rounded-md cursor-pointer outline-none text-gray-600 "
+                className="py-1 px-3 w-[88%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600 "
                 value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 placeholder='Choose coaches from the list...'

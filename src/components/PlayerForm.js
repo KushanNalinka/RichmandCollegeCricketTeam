@@ -11,8 +11,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
-
 
   const [formData, setFormData] = useState({
     image: "",
@@ -30,7 +30,9 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       startDate:"",
       endDate:"",
     },
-    contactNo: ""
+    contactNo: "",
+    createdBy: user.username,
+    createdOn: new Date().toISOString(),
   });
 
   const [errors, setErrors] = useState({});
@@ -237,7 +239,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
   return (
     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white  ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+      <div className={`bg-white  ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -250,7 +252,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Player Details</h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3"
+          className="grid grid-cols-1 custom-scrollbar sm:grid-cols-1 md:grid-cols-2 gap-3 p-1 hover:overflow-y-auto overflow-hidden max-h-[80vh]"
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
@@ -284,7 +286,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               value={formData.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="@username"
+              placeholder="username"
               required
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
@@ -309,14 +311,14 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
+              className=" w-full px-3 py-1 border flex relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               placeholder="********"
               required
             />
              <button
                 type="button"
                 onClick={()=>setPasswordVisible(!passwordVisible)}
-                className="absolute right-3 bottom-2 text-gray-600"
+                className="absolute top-7 right-3 text-gray-600"
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -461,13 +463,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               accept="image/*" 
               onChange={handleChange}
               required
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border bg-white text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
+                className="mt-1 w-20 h-20 bg-white rounded-full object-cover border border-gray-300"
               />}
              {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}  
           </div>

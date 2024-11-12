@@ -441,7 +441,7 @@ const CoachProfile = () => {
                 <div className="bg-white text-[black] rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this practice session?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
+                  <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
                       className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"

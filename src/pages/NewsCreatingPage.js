@@ -648,6 +648,10 @@ const NewsCreator = () => {
     images: [],
     body: "",
     dateTime: "",
+    createdBy:"",
+    createdOn: "",
+    updatedBy:"",
+    updatedOn: "",
   });
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
@@ -732,7 +736,6 @@ const NewsCreator = () => {
     console.log("Updated imagePreviews:", imagePreviews);
   };
   
-
   const validateFormEdit = () => {
     const newErrors = {};
 
@@ -752,10 +755,10 @@ const NewsCreator = () => {
     }
 
     // DateTime validation
-    const selectedDate = new Date(formData.dateTime);
-    if (selectedDate >= new Date()) {
-      newErrors.dateTime = "Date and time must be in the past.";
-    }  
+    // const selectedDate = new Date(formData.dateTime);
+    // if (selectedDate >= new Date()) {
+    //   newErrors.dateTime = "Date and time must be in the past.";
+    // }  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }; 
@@ -789,10 +792,10 @@ const NewsCreator = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!validateFormEdit()) {
-    //   message.error("Please fix validation errors before submitting");
-    //   return;
-    // };
+    if (!validateFormEdit()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       console.log("formdata1: ",formData.images[0]);
@@ -801,7 +804,9 @@ const NewsCreator = () => {
       const createdNews = {
         ...formData,
         images: urls.map((url) => ({ imageUrl: url })),
-        dateTime: formData.dateTime || new Date().getTime()
+        dateTime: new Date().toISOString(),
+        createdBy: user.username,
+        createdOn: new Date().toISOString()
       };
       console.log("images in formdata: ", formData);
 
@@ -817,6 +822,10 @@ const NewsCreator = () => {
         heading: "",
         dateTime: "",
         body: "",
+        createdBy:"",
+        createdOn: "",
+        updatedBy: "",
+        updatedOn: "",
       });
       setImagePreviews([]);
       loadNews();
@@ -858,6 +867,10 @@ const NewsCreator = () => {
       heading: "",
       dateTime: "",
       body: "",
+      createdBy:"",
+      createdOn: "",
+      updatedBy: "",
+      updatedOn: "",
     });
     setImagePreviews([]);
     setCurrentNewsId(null);
@@ -865,10 +878,10 @@ const NewsCreator = () => {
 
   const handleNewsEdit = async (e) => {
      e.preventDefault();
-    // if (!validateFormEdit()) {
-    //   message.error("Please fix validation errors before submitting");
-    //   return;
-    // };
+    if (!validateFormEdit()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       // let imageURL = formData.imageUrl;
@@ -891,7 +904,9 @@ const NewsCreator = () => {
         ...formData,
        
         images:  allImageUrls.map((url) => ({ imageUrl: url })),
-        dateTime: formData.dateTime || new Date().getTime(),
+        dateTime: new Date().toISOString(),
+        updatedBy: user.username,
+        updatedOn: new Date().toISOString()
       };
       
       const response = await axios.put(
@@ -906,6 +921,10 @@ const NewsCreator = () => {
         heading: "",
         dateTime: "",
         body: "",
+        createdBy:"",
+        createdOn: "",
+        updatedBy: "",
+        updatedOn: "",
       });
       setImagePreviews([]);
       setIsEditPressed(false);
@@ -1003,8 +1022,8 @@ const NewsCreator = () => {
         </div>
         <div className="w-full flex px-5 lg:px-0 ">
         <div className="lg:w-[12%] w-0 "></div>
-        <div className="lg:w-[88%] w-full md:py-5 md:px-5 flex flex-col items-center justify-center h-auto">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+        <div className="lg:w-[88%] w-full md:py-5 flex flex-col items-center justify-center ">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -1042,7 +1061,7 @@ const NewsCreator = () => {
                         />
                         {errors.author && <p className="text-red-500 text-xs mt-1">{errors.author}</p>}
                       </div>
-                      <div className=" col-span-1">
+                      {/* <div className=" col-span-1">
                         <label htmlFor="dateTime" className="block text-black text-sm w-full font-semibold">Date</label>
                         <input
                           type="datetime-local"
@@ -1054,7 +1073,7 @@ const NewsCreator = () => {
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {errors.dateTime && <p className="text-red-500 text-xs mt-1">{errors.dateTime}</p>}
-                      </div>
+                      </div> */}
                     <div className="col-span-1 md:col-span-2">
                       <label htmlFor="heading" className="block text-black text-sm font-semibold">Heading</label>
                       <input
@@ -1077,7 +1096,7 @@ const NewsCreator = () => {
                         name="body"
                         value={formData.body}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border custom-scrollbar border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         placeholder="......"
                         height="Auto"
                         required
@@ -1127,7 +1146,7 @@ const NewsCreator = () => {
                         {isEditPressed && (
                           <button
                             onClick={handleEditCancel}
-                            className="bg-gray-300 hover:bg-gray-400 py-2 text-end px-3 rounded-md focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
+                            className="bg-gray-400 hover:bg-opacity-100 bg-opacity-90 py-2 text-end px-3 rounded-md focus:bg-slate-500 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
                           >
                             {" "}
                             Cancel
@@ -1143,7 +1162,7 @@ const NewsCreator = () => {
                   </h1>
 
                   <div
-                    className={`flex flex-col h-[70vh] ${
+                    className={`flex flex-col custom-scrollbar h-[60vh] ${
                       isShowmorePressed
                         ? " hover:overflow-auto overflow-hidden"
                         : " overflow-hidden"
@@ -1180,7 +1199,7 @@ const NewsCreator = () => {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex justify-end gap-3 text-[#00175f] p-1">
+                            <div className="flex justify-end space-x-2 text-[#00175f] p-1">
                               <button onClick={() => toggleView(news)} className=" items-center justify-center text-blue-500 hover:text-blue-600 rounded-lg">
                                 {<FaEye />}
                               </button>
@@ -1216,7 +1235,7 @@ const NewsCreator = () => {
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this news?</p>
-              <div className="flex justify-end mt-4 space-x-4">
+              <div className="flex justify-end mt-4 space-x-2">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"

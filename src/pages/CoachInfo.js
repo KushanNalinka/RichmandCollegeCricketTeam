@@ -174,7 +174,7 @@ const CoachTable = () => {
         <Navbar />
       </div>
       <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-        <div className="flex justify-between w-full lg:px-10 py-3">
+        <div className="flex justify-between w-full lg:px-10 pt-3">
           <Link to={"/member"}>
             <img src={logo} className="h-12 w-12" />
           </Link >
@@ -187,7 +187,6 @@ const CoachTable = () => {
             border: "1px solid rgba(255, 255, 255, 0.3)",
             
           }}
-          
         >
           <div className="flex justify-between items-center content-center mb-3">
             <NavbarToggleMenu />
@@ -245,7 +244,14 @@ const CoachTable = () => {
                 <tr className=" h-2"></tr>
               </thead>
               <tbody className=" divide-y-2 divide-gray-300">
-                {paginatedData.map((item, index) =>
+              {paginatedData && paginatedData.length === 0 ? (
+                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                  <td colSpan={8} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                      There is no data available
+                  </td>
+                  </tr>
+                  ):(
+                paginatedData.map((item, index) =>
                   <tr
                     key={item.coachId}
                     className=" hover:bg-gray-50 lg:rounded-lg bg-white h-full align-middle"
@@ -286,7 +292,7 @@ const CoachTable = () => {
                     <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.description}
                     </td>
-                    <td className="px-4 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
+                    <td className="px-4 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-2">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-green-500 hover:text-green-600 text-md"
@@ -305,7 +311,7 @@ const CoachTable = () => {
                       </button>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
@@ -338,7 +344,7 @@ const CoachTable = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this coach?</p>
-              <div className="flex justify-end mt-4 space-x-4">
+              <div className="flex justify-end mt-4 space-x-2">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"

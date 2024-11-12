@@ -67,7 +67,7 @@ const ScoreCardPage = () => {
       (match, index, self) =>
         self.findIndex((m) => m.matchId === match.matchId) === index
     ) // Ensuring unique matches by matchId
-    .sort((a, b) => new Date(b.time) - new Date(a.time));
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   useEffect(() => {
     console.log("matchID: ", currentMatchID);
@@ -161,7 +161,7 @@ const ScoreCardPage = () => {
         <div className="w-full flex px-5 lg:px-0 ">
         <div className="lg:w-[12%] w-0 "></div>
         <div className="lg:w-[88%] w-full py-5 flex flex-col items-center justify-center h-auto">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -180,6 +180,9 @@ const ScoreCardPage = () => {
               <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
                 Match Updates
               </h2>
+              <h2 className="md:text-2xl text-xl w-14 font-bold text-center font-popins text-[#480D35]">
+               
+              </h2>
             </div>
           <div
             className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
@@ -193,7 +196,7 @@ const ScoreCardPage = () => {
   
               <div key={match.matchId} className="relative flex-grow ">
                 <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
-                  <div className="flex gap-5 items-center w-[40%]">
+                  <div className="flex gap-5 items-center w-[30%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
@@ -212,10 +215,10 @@ const ScoreCardPage = () => {
                       <p className="lg:text-xs text-xxs text-center font-semibold" >{match.oppositionOvers}</p>
                     </div>
                   </div>
-                  <div className="w-[20%] lg:w-[20%] justify-center flex ">
+                  <div className="w-[40%] lg:w-[40%] justify-center flex ">
                     <p className="lg:text-sm text-lg text-center font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
                   </div>
-                  <div className="flex lg:w-[40%] w-[40%] items-center justify-end lg:gap-5">
+                  <div className="flex lg:w-[30%] w-[40%] items-center justify-end lg:gap-5">
                     <div className="flex items-center gap-3 tracking-wider">
                       {match.type === 'Test' && (
                         <div className={`flex tracking-wider justify-end`}>
@@ -233,7 +236,7 @@ const ScoreCardPage = () => {
                         </div>
                         ) 
                       }
-                      <div className="w-36 lg:flex flex-col justify-end hidden ">
+                      <div className="w-36 lg:flex flex-col justify-right items-end hidden ">
                         <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
@@ -282,9 +285,9 @@ const ScoreCardPage = () => {
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             <p>strikeRate</p>
                           </th>
-                          <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
+                          {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                             <p>{match.runs}/{match.wickets}<span>({match.overs})</span></p>
-                          </th>
+                          </th> */}
                         </tr>
                       </thead>
 
@@ -316,7 +319,7 @@ const ScoreCardPage = () => {
                               {player.centuries}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                              {player.strikeRate}
+                              {(player.runs/player.balls*100).toFixed(2)}
                             </td>
                           </tr>
                         )}
@@ -338,11 +341,14 @@ const ScoreCardPage = () => {
                           Wickets
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <p>Strike Rate</p>
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           <p>Economy Rate</p>
                         </th>
-                        <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
+                        {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                           <p>{match.oppositionRuns}/{match.oppositionWickets}<span>({match.oppositionOvers})</span></p>
-                        </th>
+                        </th> */}
                       </tr>
                     </thead>
 
@@ -365,7 +371,10 @@ const ScoreCardPage = () => {
                             {player.wickets}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.economyRate}
+                            {((player.overs*6)/player.wickets).toFixed(2)}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {(player.runsConceded/player.overs).toFixed(2)}
                           </td>
                         </tr>
                       )}

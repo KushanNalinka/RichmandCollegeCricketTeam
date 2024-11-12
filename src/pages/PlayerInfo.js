@@ -236,7 +236,7 @@ const TableComponent = () => {
               <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">
                 <thead className=" text-white">
                   <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="px-4 py-3 relative lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
                       <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
                         {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
@@ -256,19 +256,19 @@ const TableComponent = () => {
                         </div>
                       )}
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Name
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       DOB
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Email
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Contact No
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Batting Style
                       <button onClick={() => setShowBattingDropdown(!showBattingDropdown)} className="ml-2">
                       {showBattingDropdown? <FaChevronUp /> : <FaChevronDown />}
@@ -288,13 +288,13 @@ const TableComponent = () => {
                         </div>
                       )}
                     </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Bowling Style
                       <button onClick={() => setShowBowlingDropdown(!showBowlingDropdown)} className="ml-2">
                         {showBowlingDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showBowlingDropdown && (
-                        <div className="absolute mt-1 bg-white h-96 hover:overflow-auto overflow-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-96 hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("bowlingStyle", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {bowlingOptions.map(style => (
                             <button
@@ -309,7 +309,7 @@ const TableComponent = () => {
                       )}
                     </th>
                     {/* { <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> /} */}
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
                       <button onClick={() => setShowRoleDropdown(!showRoleDropdown)} className="ml-2">
                         {showRoleDropdown? <FaChevronUp /> : <FaChevronDown />}
@@ -329,82 +329,91 @@ const TableComponent = () => {
                         </div>
                       )}
                     </th>
-                    <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="px-4 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                   <tr className=" h-2"></tr>
                 </thead>
                 <tbody className=" divide-y-2 divide-gray-300 ">
-                  {paginatedData.map((item, index) =>
-                    <tr
-                      key={index}
-                      className=" hover:bg-gray-50 lg:rounded-lg h-full bg-white align-middle text-gray-900"
-                    >
-                      <td className={`px-4 py-2 lg:rounded-l-lg h-14 whitespace-nowrap text-sm`}>
-                        <div
-                          className={`flex items-center justify-center h-6 w-6  ${item.status ==
-                          "Active"
-                            ? "bg-green-500 p-3 rounded-full font-bold text-green-500"
-                            : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
-                        />
-                      </td>
-                      <td className="gap-4 px-2 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
-                        <div className="flex items-center justify-start gap-2 ">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                {paginatedData && paginatedData.length === 0 ? (
+                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                  <td colSpan={9} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                      There is no data available
+                  </td>
+                  </tr>
+                  ):(
+                    paginatedData.map((item, index) =>
+                      <tr
+                        key={index}
+                        className=" hover:bg-gray-50 lg:rounded-lg h-full bg-white align-middle text-gray-900"
+                      >
+                        <td className={`px-4 py-2 lg:rounded-l-lg h-14 whitespace-nowrap text-sm`}>
+                          <div
+                            className={`flex items-center justify-center h-6 w-6  ${item.status ==
+                            "Active"
+                              ? "bg-green-500 p-3 rounded-full font-bold text-green-500"
+                              : "bg-slate-300 p-3 text-slate-600 font-bold rounded-full"}`}
                           />
-                         
-                          <span className="truncate whitespace-nowrap">
-                            {item.name.split(" ").slice(-2).join(" ")}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-2 py-4 h-14  whitespace-nowrap text-sm ">
-                        {item.dateOfBirth}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm " >
-                        {item.email}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.contactNo}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.battingStyle}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.bowlingStyle}
-                      </td>
-                      <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
-                        {item.playerRole}
-                      </td>
-                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
-                        <button
-                          onClick={() => handleEdit(item)}
-                          className="text-green-500 hover:text-green-600 text-md"
-                          aria-label="Edit"
-                          title="Edit"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(item.playerId)}
-                          className="text-red-500 hover:text-red-600 text-md"
-                          aria-label="Delete"
-                          title="Delete"
-                        >
-                          <FaTrash />
-                        </button>
-                      </td>
-                    </tr>
+                        </td>
+                        <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                          <div className="flex items-center justify-start gap-2 ">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                            />
+                           
+                            <span className="truncate whitespace-nowrap">
+                              {item.name.split(" ").slice(-2).join(" ")}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 h-14  whitespace-nowrap text-sm ">
+                          {item.dateOfBirth}
+                        </td>
+                        <td className="px-4 py-4 h-14 whitespace-nowrap text-sm " >
+                          {item.email}
+                        </td>
+                        <td className="px-4 py-4 h-14 whitespace-nowrap text-sm ">
+                          {item.contactNo}
+                        </td>
+                        <td className="px-4 py-4 h-14 whitespace-nowrap text-sm ">
+                          {item.battingStyle}
+                        </td>
+                        <td className="px-4 py-4 h-14 whitespace-nowrap text-sm ">
+                          {item.bowlingStyle}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap h-14 text-sm ">
+                          {item.playerRole}
+                        </td>
+                        <td className="px-4 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="text-green-500 hover:text-green-600 text-md"
+                            aria-label="Edit"
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.playerId)}
+                            className="text-red-500 hover:text-red-600 text-md"
+                            aria-label="Delete"
+                            title="Delete"
+                          >
+                            <FaTrash />
+                          </button>
+                        </td>
+                      </tr>
+                    )
                   )}
+                  
                 </tbody>
               </table>
             </div>
           </div>
-          <div className="flex w-[95%] justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+          <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
               <button
                 onClick={handlePrevPage}
                 title="Prev"
@@ -429,10 +438,10 @@ const TableComponent = () => {
           </div>
           {showDeleteModal && (
               <div className={`fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75`}>
-                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
+                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg p-8`}>
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this player?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
+                  <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
                       className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"

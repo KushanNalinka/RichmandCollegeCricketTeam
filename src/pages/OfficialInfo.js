@@ -160,7 +160,7 @@ const OfficialsTable = () => {
           <Navbar />
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -234,7 +234,7 @@ const OfficialsTable = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.position}
                       </td>
-                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -286,7 +286,7 @@ const OfficialsTable = () => {
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this official?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
+                  <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
                       className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"

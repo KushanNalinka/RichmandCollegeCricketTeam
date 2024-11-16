@@ -49,7 +49,8 @@ const CoachTable = () => {
     .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
-        setCoachData(coaches);
+        const sortedCoaches = coaches.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setCoachData(sortedCoaches);
         console.log("All coaches:", coaches);
       })
       .catch((error) => {

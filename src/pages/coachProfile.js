@@ -68,7 +68,8 @@ const CoachProfile = () => {
   useEffect(() => {
       axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
-        setPracticeSchedules(response.data);
+        const sortedPracticeSchedule = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setPracticeSchedules(sortedPracticeSchedule);
         console.log("sessions Data:", response.data);
       })
       .catch(error => {

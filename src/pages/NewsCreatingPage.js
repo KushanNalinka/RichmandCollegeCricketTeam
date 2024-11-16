@@ -735,6 +735,30 @@ const NewsCreator = () => {
     console.log("Updated imageFiles:", imageFiles);
     console.log("Updated imagePreviews:", imagePreviews);
   };
+
+  const validateFormAdd = () => {
+    const newErrors = {};
+
+    // Heading validation
+    if (formData.heading.length > 50) {
+      newErrors.heading = "Heading should be under 50 characters.";
+    };  
+
+    // Image URL validation
+    if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
+      newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
+    };
+    if (imagePreviews.length === 0 && imageFiles.length === 0) {
+      newErrors.imageUrl = "At least one image is required.";
+    }
+
+    // Body validation
+    if (formData.body.length < 50) {
+      newErrors.body = "Body should be at least 50 characters.";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   
   const validateFormEdit = () => {
     const newErrors = {};
@@ -748,6 +772,9 @@ const NewsCreator = () => {
     if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
       newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
     };
+    if (existingImageURLs.length === 0 && imageFiles.length === 0) {
+      newErrors.imageUrl = "At least one image is required.";
+    }
 
     // Body validation
     if (formData.body.length < 50) {
@@ -761,38 +788,11 @@ const NewsCreator = () => {
     // }  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }; 
-
-  const validateFormAdd = () => {
-    const newErrors = {};
-
-    // Heading validation
-    if (formData.heading.length > 50) {
-      newErrors.heading = "Heading should be under 50 characters.";
-    };  
-
-    // Image URL validation
-    // if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
-    //   newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
-    // };
-
-    // Body validation
-    if (formData.body.length < 50) {
-      newErrors.body = "Body should be at least 50 characters.";
-    }
-
-    // DateTime validation
-    const selectedDate = new Date(formData.dateTime);
-    if (selectedDate >= new Date()) {
-      newErrors.dateTime = "Date and time must be in the past.";
-    }  
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }; 
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateFormEdit()) {
+    if (!validateFormAdd()) {
       message.error("Please fix validation errors before submitting");
       return;
     };
@@ -1112,9 +1112,9 @@ const NewsCreator = () => {
                           accept="image/*"
                           onChange={handleChange}
                           multiple
-                          required
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
+                        {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageUrl}</p>}
                           {imagePreviews.map((image,index)=>(
                             <div className="flex flex-col relative">
                             <img
@@ -1134,7 +1134,6 @@ const NewsCreator = () => {
                             </div>
                           ))
                         }
-                        {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageURL}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2 flex gap-2 justify-end">
                         <button

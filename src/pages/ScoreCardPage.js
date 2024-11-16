@@ -144,6 +144,7 @@ const ScoreCardPage = () => {
       setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
       setMatchType(match.type);
     }
+   
   };
 
   return (
@@ -185,7 +186,7 @@ const ScoreCardPage = () => {
               </h2>
             </div>
           <div
-            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
+            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col gap-2 lg:py-2 lg:p-2 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(5px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -261,7 +262,7 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] items-stretch lg:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
                             Batting
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -297,7 +298,7 @@ const ScoreCardPage = () => {
                             key={index2}
                             className=" hover:bg-gray-50 h-full align-middle"
                           >
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-800 font-bold">
+                            <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                               {player.player.name}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
@@ -328,7 +329,7 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
                           Bowling
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -358,7 +359,7 @@ const ScoreCardPage = () => {
                           key={index3}
                           className=" hover:bg-gray-50 h-full align-middle"
                         >
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">

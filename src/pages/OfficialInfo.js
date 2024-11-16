@@ -39,7 +39,8 @@ const OfficialsTable = () => {
       .get(`${API_URL}officials/all`)
       .then(response => {
         const officials = response.data;
-        setOfficialData(officials);
+        const sortedOfficials = officials.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setOfficialData(sortedOfficials);
         console.log("Officials Data:", response.data);
       })
       .catch(error => {
@@ -189,7 +190,7 @@ const OfficialsTable = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+            <div className="flex overflow-x-auto" >
               <table className="min-w-full bg-gray-200  rounded-t-3xl shadow-md">
                 <thead className=" text-white">
                   <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">

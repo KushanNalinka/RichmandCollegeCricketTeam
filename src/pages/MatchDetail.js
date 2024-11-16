@@ -665,7 +665,7 @@ const MatchDetails = () => {
 
         const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
           // Sort matches by date in descending order so future dates come first
-        const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setMatches(sortedMatches);
 
         const uniqueTeams = [];

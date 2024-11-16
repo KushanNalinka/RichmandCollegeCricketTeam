@@ -53,7 +53,8 @@ const TableComponent = () => {
       .get(`${API_URL}admin/players/all`)
       .then(response => {
         const players = response.data;
-        setPlayerData(players);
+        const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setPlayerData(sortedPlayers);
         // setStatusOptions([...new Set(players.map(player => player.status))]);
         // setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
         // setBattingOptions([...new Set(players.map(player => player.battingStyle))]);

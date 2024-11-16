@@ -43,12 +43,8 @@ const TableComponent = () => {
       try {
         const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
   
-        const sortedTeams = response.data.sort((a, b) => {
-          if (b.year === a.year) {
-            return a.under.localeCompare(b.under); 
-          }
-          return b.year - a.year; 
-        });
+        const sortedTeams = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+
         setTeams(sortedTeams);
         setFilteredTeams(sortedTeams);
         console.log(sortedTeams);
@@ -64,7 +60,7 @@ const TableComponent = () => {
         return () => window.removeEventListener('resize', updateRowsPerPage);
 
       } catch (error) {
-        console.error("Error fetching matches:", error);
+        console.error("Error fetching teams:", error);
       }
     };
   

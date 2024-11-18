@@ -178,6 +178,7 @@ const ScorecardData = () => {
             <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
             <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
             <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
+            
           </tr>
         </tbody>
       </table>
@@ -197,6 +198,9 @@ const ScorecardData = () => {
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">O</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">W</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">M</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Nb</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Wb</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -206,6 +210,9 @@ const ScorecardData = () => {
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.overs}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.runsConceded}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
             </tr>
           ))}
           {/* Total Wickets Row */}
@@ -214,6 +221,9 @@ const ScorecardData = () => {
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900">{totalWickets}</td>
+            <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
+            <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
+            <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
           </tr>
         </tbody>
       </table>

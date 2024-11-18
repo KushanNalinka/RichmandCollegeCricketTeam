@@ -200,9 +200,9 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
               </div>
               {/* VS Section */}
               <div className="flex flex-col items-center justify-center">
-                <div className="h-6 w-px bg-gradient-to-b from-transparent via-white to-transparent sm:h-12" />
+                <div className="h-6 w-px bg-gradient-to-b from-transparent via-blue to-transparent sm:h-12" />
                 <span className="text-[#012D5E] text-sm sm:text-sm my-2">VS</span>
-                <div className="h-6 w-px bg-gradient-to-t from-transparent via-white to-transparent sm:h-12" />
+                <div className="h-6 w-px bg-gradient-to-t from-transparent via-blue to-transparent sm:h-12" />
               </div>
               {/* Opposition Info */}
               <div className="flex flex-col items-center space-y-2 w-1/4">

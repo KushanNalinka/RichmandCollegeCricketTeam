@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import {  DatePicker, message, Select } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
@@ -7,6 +7,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaTimes, FaTrash } from "react-icons/fa";
 import { MdArrowDropDown, MdPeople } from 'react-icons/md';
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { GiClick } from "react-icons/gi";
 
 const FormPopup = ({  onClose, isSumitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -22,6 +23,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [errors, setErrors] = useState({});
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     date: "",
     time: "",
@@ -243,9 +246,40 @@ const FormPopup = ({  onClose, isSumitted }) => {
     });
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+  };
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
-    <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center"}>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
+    <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen"}>
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -259,7 +293,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
           </h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-2 custom-scrollbar p-1 hover:overflow-y-auto overflow-hidden max-h-[80vh]"
+          className="grid grid-cols-1 md:grid-cols-2 gap-2"
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
@@ -482,9 +516,9 @@ const FormPopup = ({  onClose, isSumitted }) => {
             </div>
            
           </div>
-          <div className="col-span-1 md:col-span-2 ">
+          <div className="col-span-1 md:col-span-2 relative">
             <label className="block text-black text-sm font-semibold">Opponent Logo</label>
-            <input
+            {/* <input
               id="logo"
               type="file" 
               name="logo" 
@@ -498,8 +532,56 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 src={imagePreview}
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
-              />}
-              {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
+              />}*/}
+
+              <div
+                className={`w-full px-3 py-4 border rounded-md ${
+                  isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                } flex flex-col items-center justify-center cursor-pointer`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={handleClick}
+              >
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="h-32 w-32 object-cover border border-gray-300"
+                  />
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    {isDragging
+                      ? "Drop the image here"
+                      : <div className="flex">
+                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
+                            click here
+                            <GiClick className="ml-1 text-lg" />
+                          </span>&nbsp; to upload images
+                        </div>}
+                  </p>
+                )}
+              <input
+                ref={fileInputRef}
+                id="logo"
+                type="file" 
+                name="logo" 
+                accept="image/*" 
+                onChange={handleChange}
+                required
+                className="hidden"
+              />
+            </div>
+            {imagePreview && (
+              <button
+              title="Remove image"
+                onClick={handleRemoveImage}
+                className="absolute right-2 bottom-2 text-sm text-red-500"
+              >
+                <FaTrash/>
+              </button>
+            )}
+          {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>} 
           </div>
 
           <div className="col-span-1 md:col-span-2 ">
@@ -512,8 +594,9 @@ const FormPopup = ({  onClose, isSumitted }) => {
           </div>
         </form>
       </div>
+      </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

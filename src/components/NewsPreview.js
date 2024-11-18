@@ -24,8 +24,9 @@ const NewsPreview = ({ news, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center w-full bg-gray-800 bg-opacity-75 p-5 z-50">
-    <div className="bg-white w-full max-w-6xl rounded-3xl shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen w-full bg-gray-800 bg-opacity-75 p-5 z-50">
+      <div className="flex items-center justify-center">
+       <div className="bg-white w-full max-w-6xl rounded-3xl shadow-2xl relative overflow-hidden">
       {/* Close Button */}
       <div className="flex justify-end p-4">
         <button
@@ -41,7 +42,7 @@ const NewsPreview = ({ news, onClose }) => {
       <h2 className="text-center text-2xl font-bold text-[#480D35] mb-4">News Preview</h2>
       
       {/* Content */}
-      <div className="bg-gray-100 px-10 py-6 rounded-t-3xl custom-scrollbar overflow-hidden hover:overflow-auto h-[80vh]">
+      <div className="bg-gray-100 px-10 py-6 rounded-t-3xl ">
         <div className="h-full space-y-3">
           {/* Heading and Author */}
           <div>
@@ -93,6 +94,7 @@ const NewsPreview = ({ news, onClose }) => {
             />
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>

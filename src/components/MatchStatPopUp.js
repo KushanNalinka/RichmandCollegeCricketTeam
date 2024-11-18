@@ -3,6 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
+import { GiClick } from "react-icons/gi";
 
 const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -235,8 +236,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -247,7 +249,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-3 p-1 max-h-[80vh] hover:overflow-auto overflow-hidden custom-scrollbar">
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
          
             {
               matchType==="Test"?(
@@ -414,9 +416,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
             )
           }
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
       )}

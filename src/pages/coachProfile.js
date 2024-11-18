@@ -439,7 +439,7 @@ const CoachProfile = () => {
       </div>
       {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-                <div className="bg-white text-[black] rounded-lg shadow-lg p-6">
+                <div className="bg-white text-[black] rounded-3xl shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this practice session?</p>
                   <div className="flex justify-end mt-4 space-x-2">
@@ -462,7 +462,7 @@ const CoachProfile = () => {
           {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
           {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
           {uploading && (
-            <div className="absolute items-center justify-center my-4">
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
           )}

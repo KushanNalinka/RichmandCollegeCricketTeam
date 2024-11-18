@@ -197,18 +197,19 @@ html {
 
 /* custom toolbar */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 3px; /* Adjust the width of the scrollbar */
+  width: 10px; /* Adjust the width of the scrollbar */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Track background */
+  background: #d2d2d2; /* Track background */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgb(137, 137, 139); /* Thumb color */
+  background-color: #b4b4b4; /* Thumb color */
+  opacity: 50;
   border-radius: 10px; /* Rounded corners for the thumb */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #888; /* Hover color for the thumb */
+  background: #aeaeae; /* Hover color for the thumb */
 }

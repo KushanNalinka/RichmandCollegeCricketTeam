@@ -615,6 +615,8 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { GiClick } from "react-icons/gi";
+
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
@@ -642,6 +644,8 @@ const NewsCreator = () => {
   const [newsToDelete, setNewsToDelete] = useState(null);
   const [existingImageURLs, setExistingImageURLs] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
@@ -740,8 +744,8 @@ const NewsCreator = () => {
     const newErrors = {};
 
     // Heading validation
-    if (formData.heading.length > 50) {
-      newErrors.heading = "Heading should be under 50 characters.";
+    if (formData.heading.length > 100) {
+      newErrors.heading = "Heading should be under 100 characters.";
     };  
 
     // Image URL validation
@@ -764,8 +768,8 @@ const NewsCreator = () => {
     const newErrors = {};
 
     // Heading validation
-    if (formData.heading.length > 50) {
-      newErrors.heading = "Heading should be under 50 characters.";
+    if (formData.heading.length > 100) {
+      newErrors.heading = "Heading should be under 100 characters.";
     };  
 
     // Image URL validation
@@ -1007,6 +1011,33 @@ const NewsCreator = () => {
     setIsViewPressed(false);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreviews(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center w-full items-stretch min-h-screen">
@@ -1104,8 +1135,8 @@ const NewsCreator = () => {
                       {errors.body && <p className="text-red-500 text-xs mt-1">{errors.body}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2">
-                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Image</label>
-                        <input
+                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Upload Images</label>
+                        {/* <input
                           id="imageUrl"
                           type="file"
                           name="imageUrl"
@@ -1133,8 +1164,61 @@ const NewsCreator = () => {
                             </button>
                             </div>
                           ))
-                        }
+                        } */}
+                      <div
+                        className={`w-full px-3 py-4 border rounded-md ${
+                          isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                        } flex flex-col items-center justify-center cursor-pointer`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        
+                      >
+                        <div onClick={handleClick} className="py-5">
+                          <p className="text-gray-500 text-sm">
+                            {isDragging
+                              ? "Drop the image here"
+                              : <div className="flex">
+                                  Drag and drop images, or&nbsp;<span className="flex flex-row items-center">
+                                    click here
+                                    <GiClick className="ml-1 text-lg" />
+                                  </span>&nbsp; to upload images
+                                </div>}
+                          </p>
+                          <input
+                            ref={fileInputRef}
+                            id="imageUrl"
+                            type="file"
+                            name="imageUrl"
+                            accept="image/*"
+                            onChange={handleChange}
+                            multiple
+                            required
+                            className="hidden"
+                          />
+                        </div>
+                        {imagePreviews && (
+                           imagePreviews.map((image,index)=>(
+                            <div className="flex flex-col relative">
+                              <img
+                                key={index}
+                                src={image}
+                                alt="Preview"
+                                className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
+                              />
+                              <button
+                                type="button"
+                                title="Remove"
+                                onClick={() => handleImageRemove(index)}
+                                className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-red-500 hover:text-red-600"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          )))}
+                        
                       </div>
+                    </div>
                       <div className="col-span-1 md:col-span-2 flex gap-2 justify-end">
                         <button
                           type="submit"
@@ -1255,7 +1339,7 @@ const NewsCreator = () => {
         <NewsPreview onClose={handlePreviewClose} news={currentNews} />
       )}
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

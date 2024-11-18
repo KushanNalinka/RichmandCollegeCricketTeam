@@ -1226,7 +1226,7 @@ const MatchDetails = () => {
             />} 
         </div>
         {uploading && (
-            <div className="absolute items-center justify-center my-4">
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
             )}

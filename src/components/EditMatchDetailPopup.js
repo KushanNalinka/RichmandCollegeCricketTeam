@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from "axios";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import ball from "./../assets/images/CricketBall-unscreen.gif";
@@ -9,6 +9,7 @@ import { MdPeople } from 'react-icons/md';
 import dayjs from 'dayjs';
 import { message, DatePicker } from 'antd';
 import { Select } from "antd";
+import { GiClick } from "react-icons/gi";
 import { RiArrowDownLine, RiArrowDropDownLine } from 'react-icons/ri';
 
 const EditPopup = ({ onClose, match, isSubmitted }) => {
@@ -26,7 +27,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   console.log("selected coaches: ", selectedCoaches);
+
   const convertTimeTo24Hour = (time12h) => {
     const [time, modifier] = time12h.split(' ');
     let [hours, minutes] = time.split(':');
@@ -247,9 +251,40 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
     });
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+  };
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full max-h-screen relative`}>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto py-10 min-h-screen">
+      <div className='flex items-center justify-center'>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -259,7 +294,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-4 text-[#480D35]"> Edit Match Details</h2>
-        <form className='grid grid-cols-1 md:grid-cols-2 gap-2 max-h-[80vh] p-1 custom-scrollbar hover:overflow-auto overflow-hidden'>
+        <form className='grid grid-cols-1 md:grid-cols-2 gap-2'>
         <div  className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
             <DatePicker
@@ -442,7 +477,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <button
                 type="button"
                 title='delete'
-                className=" items-center w-[6%] justify-center text-red-500 hover:text-red-600 rounded-lg"
+                className=" items-center w-[6%] justify-center text-sm text-red-500 hover:text-red-600 rounded-lg"
                 onClick={clearSelectedCoaches}
               >
                 <FaTrash/>
@@ -475,9 +510,9 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             </div>
            
           </div>
-          <div className="col-span-1 md:col-span-2 ">
+          <div className="col-span-1 md:col-span-2 relative">
             <label className="block text-black text-sm font-semibold">Opponent Logo</label>
-            <input
+            {/* <input
               id="logo"
               type="file" 
               name="logo" 
@@ -490,7 +525,54 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                 src={imagePreview}
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
-              />}
+              />} */}
+              <div
+                className={`w-full px-3 py-4 border rounded-md ${
+                  isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                } flex flex-col items-center justify-center cursor-pointer`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={handleClick}
+              >
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="h-32 w-32 object-cover border border-gray-300"
+                  />
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    {isDragging
+                      ? "Drop the image here"
+                      : <div className="flex">
+                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
+                            click here
+                            <GiClick className="ml-1 text-lg" />
+                          </span>&nbsp; to upload images
+                        </div>}
+                  </p>
+                )}
+              <input
+                ref={fileInputRef}
+                id="logo"
+                type="file" 
+                name="logo" 
+                accept="image/*" 
+                onChange={handleChange}
+                required
+                className="hidden"
+              />
+            </div>
+            {imagePreview && (
+              <button
+              title="Remove image"
+                onClick={handleRemoveImage}
+                className="absolute right-2 bottom-2 text-sm text-red-500 hover:text-red-600"
+              >
+                <FaTrash/>
+              </button>
+            )}
               {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
           </div>
 
@@ -504,9 +586,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
       )}

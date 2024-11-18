@@ -64,7 +64,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     overs: 0,
     howOut:"",
     noBalls:0,
-    wideBalls:0,
+    wides:0,
     runsConceded: 0,
     player: {
       playerId: 0,
@@ -87,7 +87,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     overs: 0,
     howOut:"",
     noBalls:0,
-    wideBalls:0,
+    wides:0,
     runsConceded: 0,
     player: {
       playerId: 0,
@@ -300,7 +300,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         overs: 0,
         runsConceded: 0,
         noBalls:0,
-        wideBalls:0,
+        wides:0,
         player: {
           playerId: 0,
           name: "",
@@ -350,7 +350,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       },
       howOut:player.howOut,
       noBalls:player.noBalls,
-      wideBalls:player.wideBalls,
+      wides:player.wides,
     });
     console.log("formData runs :", formData.runs);
   };
@@ -410,7 +410,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         },
         howOut:"",
         noBalls:0,
-        wideBalls:0,
+        wides:0,
       });
       setIsEditButtonPressed(false);
       setIsSubmitted(!isSubmitted);
@@ -655,7 +655,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                             <input
                               type="number"
                               name="noBalls"
-                              value={formData.noBalls}
+                              value={editFormData.noBalls}
                               onChange={handleEditInputChange}
                               placeholder="Enter no balls"
                               className="border rounded p-1"
@@ -664,8 +664,8 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
                             <input
                               type="number"
-                              name="wideBalls"
-                              value={formData.wideBalls}
+                              name="wides"
+                              value={editFormData.wides}
                               onChange={handleEditInputChange}
                               placeholder="Enter wide balls"
                               className="border rounded p-1"
@@ -721,7 +721,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                             {player.noBalls}
                           </td> 
                            <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
-                            {player.wideBalls}
+                            {player.wides}
                           </td>
                           <td className="px-4 lg:rounded-r-lg space-x-2 h-10 whitespace-nowrap text-sm text-gray-600">
                             <button
@@ -856,17 +856,19 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                     <input
                       type="number"
                       name="noBalls"
+                      min={0}
                       onChange={handleAddInputChange}
-                      placeholder="Enter fifties"
+                      placeholder="Enter no balls"
                       className="border rounded p-1 bg-blue-50"
                     />
                   </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
-                      name="centuries"
+                      name="wides"
+                      min={0}
                       onChange={handleAddInputChange}
-                      placeholder="Enter hundreds"
+                      placeholder="Enter wideBalls"
                       className="border rounded p-1 bg-blue-50"
                     />
                   </td>

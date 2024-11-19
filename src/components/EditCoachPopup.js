@@ -261,17 +261,19 @@
 // export default EditCoachForm;
 
 
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message, DatePicker } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import dayjs from 'dayjs';
+import { GiClick } from "react-icons/gi";
 
 const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({ 
     status: coach.status,
     image: coach.image,
@@ -285,12 +287,18 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
       email: coach.email,
       username: coach.username,
       password: coach.password,
-    } });
+    },
+    updatedOn:new Date().toISOString(),
+    updatedBy:user.username,
+  });
   const [imagePreview, setImagePreview] = useState(coach.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -412,7 +420,9 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               email: "",
               username:"",
               Password:""
-            }
+            },
+            updatedOn:"",
+            updatedBy:""
         });
         setImagePreview();
         isSubmitted();
@@ -458,9 +468,40 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
     });
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+  };
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
+      <div className=" flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -473,7 +514,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Coach Details</h2>
         <form
           onSubmit={handleEdit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          className="grid grid-cols-1 md:grid-cols-2 gap-3 "
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
@@ -507,7 +548,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="@username"
+              placeholder="username"
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
@@ -523,15 +564,22 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+              <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute top-7 right-3 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="col-span-1">
@@ -567,7 +615,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
           
             >
               <option value='' disabled >
-                Select
+                Select status
               </option>
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -584,9 +632,9 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
             />
             {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
           </div>
-          <div className="col-span-1 md:col-span-2 ">
+          <div className="col-span-1 md:col-span-2 relative">
             <label className="block text-black text-sm font-semibold">Image</label>
-            <input
+            {/* <input
               id="image"
               type="file" 
               name="image" 
@@ -599,8 +647,56 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
                 src={imagePreview}
                 alt="Preview"
                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
-              />}
-               {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
+              />} */}
+              <div
+                className={`w-full px-3 py-4 border rounded-md ${
+                  isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                } flex flex-col items-center justify-center cursor-pointer`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={handleClick}
+              >
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="h-40 w-40 object-cover border border-gray-300"
+                  />
+                ) : (
+                  <p className="text-gray-500 text-sm">
+                    {isDragging
+                      ? "Drop the image here"
+                      : <div className="flex">
+                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
+                            click here
+                            <GiClick className="ml-1 text-lg" />
+                          </span>&nbsp; to upload images
+                        </div>}
+                  </p>
+                )}
+              <input
+                ref={fileInputRef}
+                id="image"
+                type="file" 
+                name="image" 
+                accept="image/*" 
+                onChange={handleChange}
+                required
+                className="hidden"
+              />
+            </div>
+            {imagePreview && (
+              <button
+              title="Remove image"
+                onClick={handleRemoveImage}
+                className="absolute right-2 bottom-2 text-sm text-red-500"
+              >
+                <FaTrash/>
+              </button>
+            )}
+
+            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           </div>
           <div className="col-span-1 md:col-span-2">
             <button
@@ -611,9 +707,10 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

@@ -615,6 +615,8 @@ import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { GiClick } from "react-icons/gi";
+
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
@@ -641,15 +643,23 @@ const NewsCreator = () => {
   const [errors, setErrors] = useState({});
   const [newsToDelete, setNewsToDelete] = useState(null);
   const [existingImageURLs, setExistingImageURLs] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
     images: [],
     body: "",
     dateTime: "",
+    createdBy:"",
+    createdOn: "",
+    updatedBy:"",
+    updatedOn: "",
   });
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
+  console.log("logged user in news: ", user);
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -714,59 +724,61 @@ const NewsCreator = () => {
     } else {
       // Removing a newly added image
       const newIndex = index - existingImageURLs.length;  // Adjust index for new images
-      setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
-  
-      // Log to check
-      console.log("Updated imageFiles after removing new image: ", imageFiles);
+      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
+      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
+      setImageFiles(updatedImageFiles);
+      
     }
   
-    // Update previews
-    setImagePreviews((prevPreviews) => prevPreviews.filter((_, i) => i !== index));
-  
-    // Log to check previews update
-    console.log("Updated imagePreviews after removing image: ", imagePreviews);
-  };
-  
+    // Update previews for both new and existing images
+    const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
+    setImagePreviews(updatedImagePreviews);
 
-  const validateFormEdit = () => {
+    // Log to confirm changes
+    console.log("Updated existingImageURLs:", existingImageURLs);
+    console.log("Updated imageFiles:", imageFiles);
+    console.log("Updated imagePreviews:", imagePreviews);
+  };
+
+  const validateFormAdd = () => {
     const newErrors = {};
 
     // Heading validation
-    if (formData.heading.length > 50) {
-      newErrors.heading = "Heading should be under 50 characters.";
+    if (formData.heading.length > 100) {
+      newErrors.heading = "Heading should be under 100 characters.";
     };  
 
     // Image URL validation
     if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
       newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
     };
+    if (imagePreviews.length === 0 && imageFiles.length === 0) {
+      newErrors.imageUrl = "At least one image is required.";
+    }
 
     // Body validation
     if (formData.body.length < 50) {
       newErrors.body = "Body should be at least 50 characters.";
     }
-
-    // DateTime validation
-    const selectedDate = new Date(formData.dateTime);
-    if (selectedDate >= new Date()) {
-      newErrors.dateTime = "Date and time must be in the past.";
-    }  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }; 
-
-  const validateFormAdd = () => {
+  };
+  
+  const validateFormEdit = () => {
     const newErrors = {};
 
     // Heading validation
-    if (formData.heading.length > 50) {
-      newErrors.heading = "Heading should be under 50 characters.";
+    if (formData.heading.length > 100) {
+      newErrors.heading = "Heading should be under 100 characters.";
     };  
 
     // Image URL validation
-    // if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
-    //   newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
-    // };
+    if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
+      newErrors.imageUrl = "Invalid image URL. Must be a valid URL ending in jpg, jpeg, png, or gif.";
+    };
+    if (existingImageURLs.length === 0 && imageFiles.length === 0) {
+      newErrors.imageUrl = "At least one image is required.";
+    }
 
     // Body validation
     if (formData.body.length < 50) {
@@ -774,20 +786,20 @@ const NewsCreator = () => {
     }
 
     // DateTime validation
-    const selectedDate = new Date(formData.dateTime);
-    if (selectedDate >= new Date()) {
-      newErrors.dateTime = "Date and time must be in the past.";
-    }  
+    // const selectedDate = new Date(formData.dateTime);
+    // if (selectedDate >= new Date()) {
+    //   newErrors.dateTime = "Date and time must be in the past.";
+    // }  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }; 
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!validateFormEdit()) {
-    //   message.error("Please fix validation errors before submitting");
-    //   return;
-    // };
+    if (!validateFormAdd()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
     try {
       console.log("formdata1: ",formData.images[0]);
@@ -796,7 +808,9 @@ const NewsCreator = () => {
       const createdNews = {
         ...formData,
         images: urls.map((url) => ({ imageUrl: url })),
-        dateTime: formData.dateTime || new Date().getTime()
+        dateTime: new Date().toISOString(),
+        createdBy: user.username,
+        createdOn: new Date().toISOString()
       };
       console.log("images in formdata: ", formData);
 
@@ -812,10 +826,114 @@ const NewsCreator = () => {
         heading: "",
         dateTime: "",
         body: "",
+        createdBy:"",
+        createdOn: "",
+        updatedBy: "",
+        updatedOn: "",
       });
       setImagePreviews([]);
       loadNews();
       // setIsSubmitted(!isSubmitted);      
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const EditNews = (news) => {
+    console.log("newsId: ", news.id);
+    setCurrentNewsId(news.id);
+    setIsEditPressed(true);
+    setFormData({ ...news, images:news.images.map(image =>({ imageUrl: image}))} );
+    setImagePreviews((prevId) =>
+      prevId === news.images ? null : news.images
+    );
+    setExistingImageURLs((prevId) =>
+      prevId === news.images ? null : news.images);
+    //setImagePreviews(news.images.map((img) => img.imageUrl));
+    setImageFiles([]); 
+  };
+
+  const handleEditCancel = () => {
+    setIsEditPressed(false);
+    setFormData({
+      images: [],
+      author: "",
+      heading: "",
+      dateTime: "",
+      body: "",
+      createdBy:"",
+      createdOn: "",
+      updatedBy: "",
+      updatedOn: "",
+    });
+    setImagePreviews([]);
+    setCurrentNewsId(null);
+  };
+
+  const handleNewsEdit = async (e) => {
+     e.preventDefault();
+    if (!validateFormEdit()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
+    setUploading(true);
+    try {
+      // let imageURL = formData.imageUrl;
+      // console.log("image1:", formData.imageUrl);
+      // Upload image if an image file is added
+      // if (formData.imageUrl instanceof File) {
+      //   imageURL = await handleImageUpload(formData.imageUrl);
+      // }
+      const existingImageUrls = formData.images
+      ? formData.images.map((img) => img.imageUrl)
+      : [];
+
+    // Upload new images, if any
+    const uploadedUrls = await uploadImagesToFirebase();
+    
+    // Merge existing URLs with newly uploaded ones
+    const allImageUrls = [...existingImageUrls, ...uploadedUrls];
+      
+      const editedNewsData = {
+        ...formData,
+       
+        images:  allImageUrls.map((url) => ({ imageUrl: url })),
+        dateTime: new Date().toISOString(),
+        updatedBy: user.username,
+        updatedOn: new Date().toISOString()
+      };
+      
+      const response = await axios.put(
+        `${API_URL}news/${currentNewsId}`,
+        editedNewsData
+      );
+      console.log("Form submitted succedded: ", response.data);
+      message.success("Successfully Updated!");
+      setFormData({
+        images: [],
+        author: "",
+        heading: "",
+        dateTime: "",
+        body: "",
+        createdBy:"",
+        createdOn: "",
+        updatedBy: "",
+        updatedOn: "",
+      });
+      setImagePreviews([]);
+      setIsEditPressed(false);
+      setCurrentNewsId(null);
+      loadNews();
       // setTimeout(() => {
       //   window.location.reload();
       // }, 1500);
@@ -849,87 +967,6 @@ const NewsCreator = () => {
         });
       })
     );
-  };
-
-  const EditNews = (news) => {
-    console.log("newsId: ", news.id);
-    setCurrentNewsId(news.id);
-    setIsEditPressed(true);
-    setFormData({ ...news, images:news.images.map(image =>({ imageUrl: image}))} );
-    setImagePreviews((prevId) =>
-      prevId === news.images ? null : news.images
-    );
-    setExistingImageURLs((prevId) =>
-      prevId === news.images ? null : news.images);
-    //setImagePreviews(news.images.map((img) => img.imageUrl));
-    setImageFiles([]); 
-  };
-
-  const handleEditCancel = () => {
-    setIsEditPressed(false);
-    setFormData({
-      images: [],
-      author: "",
-      heading: "",
-      dateTime: "",
-      body: "",
-    });
-    setImagePreviews([]);
-    setCurrentNewsId(null);
-  };
-
-  const handleNewsEdit = async (e) => {
-     e.preventDefault();
-    // if (!validateFormEdit()) {
-    //   message.error("Please fix validation errors before submitting");
-    //   return;
-    // };
-    setUploading(true);
-    try {
-      // let imageURL = formData.imageUrl;
-      // console.log("image1:", formData.imageUrl);
-      // Upload image if an image file is added
-      // if (formData.imageUrl instanceof File) {
-      //   imageURL = await handleImageUpload(formData.imageUrl);
-      // }
-      const urls = await uploadImagesToFirebase();
-      console.log("current:", formData);
-      const editedNewsData = {
-        ...formData,
-        images: urls.map((url) => ({ imageUrl: url })),
-        dateTime: formData.dateTime || new Date().getTime(),
-      };
-      
-      const response = await axios.put(
-        `${API_URL}news/${currentNewsId}`,
-        editedNewsData
-      );
-      console.log("Form submitted succedded: ", response.data);
-      message.success("Successfully Updated!");
-      setFormData({
-        images: [],
-        author: "",
-        heading: "",
-        dateTime: "",
-        body: "",
-      });
-      setImagePreviews([]);
-      setIsEditPressed(false);
-      setCurrentNewsId(null);
-      loadNews();
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
-      } else {
-        message.error("An unexpected error occurred. Please try again later.");
-      }
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleDelete = id => {
@@ -974,11 +1011,38 @@ const NewsCreator = () => {
     setIsViewPressed(false);
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreviews(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center w-full items-stretch min-h-screen">
         <div
-          className="lg:flex hidden justify-center items-center w-[12%] h-auto"
+          className="lg:flex hidden fixed left-0 justify-center items-center w-[12%] h-screen"
           style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -987,8 +1051,10 @@ const NewsCreator = () => {
         >
           <Navbar />
         </div>
-        <div className="lg:w-[88%] w-full py-5 px-5 flex flex-col items-center justify-center h-auto">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+        <div className="w-full flex px-5 lg:px-0 ">
+        <div className="lg:w-[12%] w-0 "></div>
+        <div className="lg:w-[88%] w-full md:py-5 flex flex-col items-center justify-center ">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -1008,9 +1074,9 @@ const NewsCreator = () => {
                 News Creator
               </h2>
             </div>
-            <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 max-h-full lg:grid-cols-3 gap-5`}>
+            <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
               <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
-                <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 h-full w-full md:p-8 ">
+                <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 w-full md:p-8 ">
                  
                       <div className=" col-span-1">
                         <label htmlFor="author" className="block text-black  text-sm font-semibold">Author</label>
@@ -1026,7 +1092,7 @@ const NewsCreator = () => {
                         />
                         {errors.author && <p className="text-red-500 text-xs mt-1">{errors.author}</p>}
                       </div>
-                      <div className=" col-span-1">
+                      {/* <div className=" col-span-1">
                         <label htmlFor="dateTime" className="block text-black text-sm w-full font-semibold">Date</label>
                         <input
                           type="datetime-local"
@@ -1038,7 +1104,7 @@ const NewsCreator = () => {
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {errors.dateTime && <p className="text-red-500 text-xs mt-1">{errors.dateTime}</p>}
-                      </div>
+                      </div> */}
                     <div className="col-span-1 md:col-span-2">
                       <label htmlFor="heading" className="block text-black text-sm font-semibold">Heading</label>
                       <input
@@ -1061,7 +1127,7 @@ const NewsCreator = () => {
                         name="body"
                         value={formData.body}
                         onChange={handleChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        className="bg-gray-50 border custom-scrollbar border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         placeholder="......"
                         height="Auto"
                         required
@@ -1069,38 +1135,90 @@ const NewsCreator = () => {
                       {errors.body && <p className="text-red-500 text-xs mt-1">{errors.body}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2">
-                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Image</label>
-                        <input
+                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Upload Images</label>
+                        {/* <input
                           id="imageUrl"
                           type="file"
                           name="imageUrl"
                           accept="image/*"
                           onChange={handleChange}
                           multiple
-                          // required
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
+                        {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageUrl}</p>}
                           {imagePreviews.map((image,index)=>(
-                            <div className="flex flex-col">
+                            <div className="flex flex-col relative">
                             <img
                               key={index}
                               src={image}
                               alt="Preview"
-                              className="mt-4 w-full h-40 object-cover border border-gray-300"
+                              className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
                           />
-                              <p>{index}</p>
                              <button
                               type="button"
+                              title="Remove"
                               onClick={() => handleImageRemove(index)}
-                              className="right-0 self-end justify-end items-end text-[red]"
+                              className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-[red]"
                             >
                               <FaTrash />
                             </button>
                             </div>
                           ))
-                        }
-                        {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageURL}</p>}
+                        } */}
+                      <div
+                        className={`w-full px-3 py-4 border rounded-md ${
+                          isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                        } flex flex-col items-center justify-center cursor-pointer`}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        
+                      >
+                        <div onClick={handleClick} className="py-5">
+                          <p className="text-gray-500 text-sm">
+                            {isDragging
+                              ? "Drop the image here"
+                              : <div className="flex">
+                                  Drag and drop images, or&nbsp;<span className="flex flex-row items-center">
+                                    click here
+                                    <GiClick className="ml-1 text-lg" />
+                                  </span>&nbsp; to upload images
+                                </div>}
+                          </p>
+                          <input
+                            ref={fileInputRef}
+                            id="imageUrl"
+                            type="file"
+                            name="imageUrl"
+                            accept="image/*"
+                            onChange={handleChange}
+                            multiple
+                            required
+                            className="hidden"
+                          />
+                        </div>
+                        {imagePreviews && (
+                           imagePreviews.map((image,index)=>(
+                            <div className="flex flex-col relative">
+                              <img
+                                key={index}
+                                src={image}
+                                alt="Preview"
+                                className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
+                              />
+                              <button
+                                type="button"
+                                title="Remove"
+                                onClick={() => handleImageRemove(index)}
+                                className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-red-500 hover:text-red-600"
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
+                          )))}
+                        
                       </div>
+                    </div>
                       <div className="col-span-1 md:col-span-2 flex gap-2 justify-end">
                         <button
                           type="submit"
@@ -1111,7 +1229,7 @@ const NewsCreator = () => {
                         {isEditPressed && (
                           <button
                             onClick={handleEditCancel}
-                            className="bg-gray-300 hover:bg-gray-400 py-2 text-end px-3 rounded-md focus:bg-slate-600 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
+                            className="bg-gray-400 hover:bg-opacity-100 bg-opacity-90 py-2 text-end px-3 rounded-md focus:bg-slate-500 focus:ring-4 focus:outline-none border-[2px] border-[white]  text-white font-semibold text-sm"
                           >
                             {" "}
                             Cancel
@@ -1127,11 +1245,11 @@ const NewsCreator = () => {
                   </h1>
 
                   <div
-                    className={`flex flex-col ${
+                    className={`flex flex-col custom-scrollbar h-[60vh] ${
                       isShowmorePressed
                         ? " hover:overflow-auto overflow-hidden"
                         : " overflow-hidden"
-                    } h-96 `}
+                    } `}
                   >
                     {createdNews &&
                       createdNews.map((news) => (
@@ -1164,7 +1282,7 @@ const NewsCreator = () => {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex justify-end gap-3 text-[#00175f] p-1">
+                            <div className="flex justify-end space-x-2 text-[#00175f] p-1">
                               <button onClick={() => toggleView(news)} className=" items-center justify-center text-blue-500 hover:text-blue-600 rounded-lg">
                                 {<FaEye />}
                               </button>
@@ -1193,13 +1311,14 @@ const NewsCreator = () => {
             </div>
           </div>
         </div>
+        </div>
       </div>
       {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this news?</p>
-              <div className="flex justify-end mt-4 space-x-4">
+              <div className="flex justify-end mt-4 space-x-2">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -1220,7 +1339,7 @@ const NewsCreator = () => {
         <NewsPreview onClose={handlePreviewClose} news={currentNews} />
       )}
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

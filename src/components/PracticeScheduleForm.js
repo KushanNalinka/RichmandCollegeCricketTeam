@@ -7,11 +7,13 @@ import { message, DatePicker } from "antd";
 
 const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
-  const [selectedCoaches, setSelectedCoaches] = useState([]);
+  const [selectedCoaches, setSelectedCoaches] = useState([{coachId:user.coachId,name:user.username}]);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  console.log("user: ", user);
   const [formData, setFormData] = useState({
     venue: "",
     date: "",
@@ -29,6 +31,8 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
     team: {
       teamId: 0,
     },
+    createdBy: user.username,
+    createdOn: new Date().toISOString()
   });
 
   useEffect(() => {
@@ -94,11 +98,11 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select coaches.";
     }
-    const today = new Date();
-    const selectedDate = new Date(formData.date);
-    if (selectedDate <= today) {
-      newErrors.date = "The date must be in the present.";
-    };
+    // const today = new Date();
+    // const selectedDate = new Date(formData.date);
+    // if (selectedDate <= today) {
+    //   newErrors.date = "The date must be in the present.";
+    // };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -137,6 +141,8 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
         team: {
           teamId: 0,
         },
+        createdBy: "",
+        createdOn: ""
       });
       setSelectedCoaches([]);
       isSubmitted();
@@ -172,8 +178,9 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={` bg-white  ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
+      <div className=" flex items-center justify-center">
+      <div className={` bg-white  ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -232,7 +239,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
               className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
-            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+            {/* {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>} */}
           </div>
           <div className="col-span-1">
             <label
@@ -308,7 +315,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
                 <option value="">Select team</option>
                 {teams && teams.map(team =>
                     <option key={team.teamId} value={team.teamId}>
-                    {team.under}
+                    {team.under}-{team.year}
                     </option>
                 )}
                 </select>
@@ -374,9 +381,10 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
               </button>
         </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

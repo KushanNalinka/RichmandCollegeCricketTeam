@@ -23,8 +23,8 @@ const Navbar = () => {
     // Function to apply active styles
     const getLinkClass = (path) => {
         return path === activeLink 
-            ? "bg-gray-300 bg-opacity-20"
-            : "hover:bg-gray-300 hover:bg-opacity-20";
+            ? "bg-gray-300 bg-opacity-30"
+            : "hover:bg-gray-300 hover:bg-opacity-10";
     };
 
     return (

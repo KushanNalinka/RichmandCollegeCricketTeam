@@ -57,7 +57,7 @@ const NewsPage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/api/news');
+        const response = await axios.get(`${API_URL}news`);
         // setNewsData(response.data);
         // setLoading(false);
         // const response = await axios.get(`${API_URL}news`);

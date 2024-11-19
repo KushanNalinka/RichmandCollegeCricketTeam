@@ -642,6 +642,7 @@ const MatchDetails = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
+  const [showTierDropdown, setShowTierDropdown] = useState(false);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [teamOptions, setTeamOptions] = useState([]);
   const [filters, setFilters] = useState({ type: '', team: '' });
@@ -664,7 +665,7 @@ const MatchDetails = () => {
 
         const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
           // Sort matches by date in descending order so future dates come first
-        const sortedMatches = response.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setMatches(sortedMatches);
 
         const uniqueTeams = [];
@@ -675,6 +676,10 @@ const MatchDetails = () => {
         });
         setTeamOptions(uniqueTeams);
         console.log(response.data);
+        
+        updateRowsPerPage(); // Initial setup
+        window.addEventListener('resize', updateRowsPerPage);
+        return () => window.removeEventListener('resize', updateRowsPerPage);
 
       } catch (error) {
         console.error("Error fetching matches:", error);
@@ -685,19 +690,35 @@ const MatchDetails = () => {
 
   }, [isSubmitted, isDeleted]);
 
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(10); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(6); // Smaller screens (tablets, mobile)
+    }
+  };
+
 
   useEffect(() => {
     const filtered = matches.filter(match => {
       return (
         (filters.type ? match.type === filters.type : true) &&
-        (filters.team ? `${match.under} - ${match.teamYear}` === filters.team : true)
+        (filters.team ? `${match.under}-${match.teamYear}` === filters.team : true) &&
+        (filters.tier ? match.tier === filters.tier : true)
       );
     });
     setFilteredsortedMatches(filtered);
+    console.log("sorted matches: ", filters.team);
   }, [filters, matches]);
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
+    setCurrentPage(1);
     setShowTypeDropdown(false);
     setShowTeamDropdown(false);
   };
@@ -765,7 +786,9 @@ const MatchDetails = () => {
     const matchDateTime = new Date(`${match.date}T${match.time}`);
 
     if(matchDateTime>currentDateTime){
-      message.error("This match is scheduled for a future date. Match summary cannot be added at this time.");
+      message.error({
+        content: "This match is scheduled for a future date. Match summary cannot be added at this time.",
+        duration: 10,});
       return;
     }
     setMatchId(match.matchId);
@@ -775,6 +798,15 @@ const MatchDetails = () => {
   };
 
   const handleAddScoreCard = match => {
+    const currentDateTime = new Date();
+    const matchDateTime = new Date(`${match.date}T${match.time}`);
+
+    if(matchDateTime>currentDateTime){
+      message.error({
+        content: "This match is scheduled for a future date. Player stats cannot be added at this time.",
+        duration: 10,});
+      return;
+    }
     setMatchType(match.type);
     setMatchId(match.matchId);
     setTeamId(match.teamId);
@@ -851,6 +883,21 @@ const MatchDetails = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const formatTimeToAMPM = (time) => {
+    const [hours, minutes] = time.split(':');
+    let period = 'AM';
+    let hour = parseInt(hours);
+  
+    if (hour >= 12) {
+      period = 'PM';
+      if (hour > 12) hour -= 12;
+    } else if (hour === 0) {
+      hour = 12;
+    }
+  
+    return `${hour}:${minutes} ${period}`;
+  };
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center items-stretch min-h-screen w-full">
@@ -864,8 +911,8 @@ const MatchDetails = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+        <div className="w-[88%] h-auto py-4 flex flex-col items-center justify-center">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -910,6 +957,23 @@ const MatchDetails = () => {
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Tier
+                      <button onClick={() => setShowTierDropdown(!showTierDropdown)} className="ml-2">
+                        {showTierDropdown?<FaChevronUp />:<FaChevronDown />}
+                      </button>
+                      {showTierDropdown && (
+                        <div className="absolute mt-2 bg-white border rounded shadow-lg z-50">
+                          <button onClick={() => handleFilterChange("tier", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                            All
+                          </button>
+                            <button onClick={() => handleFilterChange("tier",  "Tier A")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                             Tier A
+                            </button>
+                            <button onClick={() => handleFilterChange("tier", "Tier B")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                            >
+                             Tier B
+                            </button>
+                        </div>
+                      )}
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Division
@@ -917,13 +981,13 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Umpire
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className=" py-3 px-4 text-left flex text-xs font-semibold uppercase tracking-wider">
                       Type
                       <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
                         {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTypeDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg z-50">
+                        <div className="absolute mt-5 bg-white border rounded shadow-lg z-50">
                           <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                             All
                           </button>
@@ -967,51 +1031,57 @@ const MatchDetails = () => {
                   </tr>
                   <tr className=" h-2"></tr>
                 </thead>
-                <tbody className=" divide-y-2 divide-gray-300">
-                  
-                  {paginatedData.map((match, index) =>
+                <tbody  className="divide-y-2 divide-gray-300" >
+                {paginatedData && paginatedData.length === 0 ? (
+                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                  <td colSpan={10} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                      There is no data available
+                  </td>
+                  </tr>
+                  ):(
+                  paginatedData.map((match, index) =>
                     <tr
                       key={match.matchId}
-                      className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
+                      className=" hover:bg-gray-50 h-[64px] lg:rounded-lg bg-white align-middle"
                     >
-                      <td className="gap-4 px-4 lg:rounded-l-lg py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                      <td className="gap-4 px-4 lg:rounded-l-lg py-2 h-16 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                         <div className="flex items-center justify-start gap-2 ">
                           <img
                             src={match.logo}
                             alt={match.matchId}
                             className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />
-                          {/ Use truncate or text wrapping for small screens /}
+                           {/* Use truncate or text wrapping for small screens  */}
                           <span className="truncate whitespace-nowrap">
                             {match.opposition}
                           </span>
                         </div>
                       </td>
-                      <td className="py-2 px-2 h-16 whitespace-nowrap text-sm text-gray-600 ">
+                      <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.time}
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                        {formatTimeToAMPM(match.time)}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.tier}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.division}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.umpires}
                       </td>
-                      <td className="py-4 px-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.type}
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.under} - {match.teamYear}
                       </td>
-                      <td className="py-4 px-2 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 flex items-center whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -1042,11 +1112,12 @@ const MatchDetails = () => {
                         </button>
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+          </div>
+          <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
               <button
                 onClick={handlePrevPage}
                 disabled={currentPage === 1}
@@ -1067,13 +1138,12 @@ const MatchDetails = () => {
                 <GrLinkNext style={{ color: "#fff" }} />
               </button>
             </div>
-          </div>
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
+              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg p-8`}>
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
-                <div className="flex justify-end mt-4 space-x-4">
+                <div className="flex justify-end mt-4 space-x-2">
                   <button
                     onClick={() => setShowDeleteModal(false)}
                     className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -1125,7 +1195,7 @@ const MatchDetails = () => {
               </div>
             </div>}
 
-          {/ Popup for Adding Form /}
+          {/* Popup for Adding Form  */}
           {isFormPopupOpen &&
             <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
           {
@@ -1139,7 +1209,7 @@ const MatchDetails = () => {
           }
           {isEditPopupOpen &&
             <EditPopup onClose={handleEditPopupClose} match={currentMatch} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
-          {/ Player Form Popup /}
+          {/* Player Form Popup */}
           {isScorePopupOpen &&
             <ScoreCardPopup
               onClose={handleScorePopupClose}
@@ -1156,7 +1226,7 @@ const MatchDetails = () => {
             />} 
         </div>
         {uploading && (
-            <div className="absolute items-center justify-center my-4">
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
             )}

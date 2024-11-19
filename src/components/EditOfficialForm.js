@@ -5,9 +5,10 @@ import { message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({ 
     user:{
       username: official.username,
@@ -16,12 +17,15 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
     },
     name: official.name,
     contactNo: official.contactNo,
-    position: official.position
+    position: official.position,
+    updatedBy:user.username,
+    updatedOn: new Date().toISOString(),
    });
   const [imagePreview, setImagePreview] = useState(official.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
 
   const handleChange = e => {
@@ -66,7 +70,9 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
           roles: ["ROLE_OFFICIAL"],
           name: "",
           contactNo: "",
-          position: ""
+          position: "",
+          updatedBy:"",
+          updatedOn:"",
         });
         setImagePreview();
         setUploading(false);
@@ -134,8 +140,9 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
 
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
+      <div className=" flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-md w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -169,7 +176,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="@username"
+              placeholder="username"
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
@@ -185,15 +192,22 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className=" w-full px-3 py-1 relative border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+             <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute top-7 right-3 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="mb-4">
@@ -228,9 +242,10 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}

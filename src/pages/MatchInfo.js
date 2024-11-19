@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TopLayer from '../components/TopLayer';
@@ -17,6 +14,8 @@ export default function MatchInfo() {
   const [selectedMatchType, setSelectedMatchType] = useState('All');
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const matchesPerPage = 5;
   const API_URL = process.env.REACT_APP_API_URL;
 
   const navigate = useNavigate();
@@ -37,9 +36,7 @@ export default function MatchInfo() {
   };
 
   useEffect(() => {
-
     fetch(`${API_URL}matchSummary/all`)
-
       .then(response => response.json())
       .then(data => {
         setMatchDataList(data);
@@ -49,9 +46,8 @@ export default function MatchInfo() {
         const uniqueAgeGroups = Array.from(new Set(data.map(match => match.under)));
         const uniqueMatchTypes = Array.from(new Set(data.map(match => match.type)));
         
-        // Set the state with the extracted unique values
-        setAgeGroups(['All', ...uniqueAgeGroups]); // Add 'All' as the first option
-        setMatchTypes(['All', ...uniqueMatchTypes]); // Add 'All' as the first option
+        setAgeGroups(['All', ...uniqueAgeGroups]);
+        setMatchTypes(['All', ...uniqueMatchTypes]);
       })
       .catch(error => console.error('Error fetching match summaries:', error));
   }, []);
@@ -64,33 +60,46 @@ export default function MatchInfo() {
     } else {
       filterMatches(matchDataList);
     }
-  }, [selectedAgeGroup, selectedMatchType, activeButton]);
+  }, [selectedAgeGroup, selectedMatchType, activeButton, currentPage]);
+
+
+  // Inside your main component:
 
   const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
     let filtered = [...data];
-
+  
+    // Filter by age group if a specific age group is selected
     if (selectedAgeGroup !== 'All') {
-      filtered = filtered.filter(match =>
+      filtered = filtered.filter(match => 
         match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
       );
     }
-
+  
+    // Filter by match type if a specific match type is selected
     if (selectedMatchType !== 'All') {
-      filtered = filtered.filter(match =>
+      filtered = filtered.filter(match => 
         match.type && match.type.toLowerCase() === selectedMatchType.toLowerCase()
       );
     }
-
+  
+    // Filter upcoming matches if the 'Upcoming' button is active
     if (showOnlyUpcoming) {
       filtered = filtered.filter(match => isUpcomingMatch(match.date));
     }
 
-    filtered.sort((a, b) => showOnlyUpcoming
-      ? new Date(a.date) - new Date(b.date)
-      : new Date(b.date) - new Date(a.date)
-    );
+  // Sort matches by date (descending order for latest, ascending for upcoming)
+  filtered.sort((a, b) => showOnlyUpcoming 
+    ? new Date(a.date) - new Date(b.date) 
+    : new Date(b.date) - new Date(a.date)
+  );
 
-    if (latest) {
+  // If the 'Latest' button is active and both filters are set to 'All'
+  if (latest) {
+    if (selectedAgeGroup === 'All' && selectedMatchType === 'All') {
+      // Show only the latest 5 matches overall
+      filtered = filtered.slice(0, 5);
+    } else {
+      // Group by type and get the latest 5 matches per type
       const groupedMatches = filtered.reduce((acc, match) => {
         if (!acc[match.type]) acc[match.type] = [];
         acc[match.type].push(match);
@@ -113,36 +122,32 @@ export default function MatchInfo() {
         }
       }
     }
+  }
 
-    if (selectedMatchType === 'Test' || filtered.some(match => match.type.toLowerCase() === 'test')) {
-      const groupedByMatchId = filtered.reduce((acc, match) => {
-        if (match.type.toLowerCase() === 'test') {
-          if (!acc[match.matchId]) {
-            acc[match.matchId] = { ...match, innings: [] };
-          }
-          acc[match.matchId].innings.push({
-            runs: match.runs,
-            wickets: match.wickets,
-            overs: match.overs,
-            oppositionRuns: match.oppositionRuns,
-            oppositionWickets: match.oppositionWickets,
-            oppositionOvers: match.oppositionOvers,
-            result: match.result,
-          });
-          acc[match.matchId].result = match.result;
-        } else {
-          acc[match.matchId] = match;
-        }
-        return acc;
-      }, {});
+  setFilteredMatches(filtered);
 
-      filtered = Object.values(groupedByMatchId);
-    }
+ // Reset to the first page if filters have changed
+ if (selectedAgeGroup !== 'All' || selectedMatchType !== 'All' || activeButton !== 'Matches') {
+  setCurrentPage(1);
+  }
+};
 
-    console.log("Final filtered matches: ", filtered);
-    setFilteredMatches(filtered);
-  };
+// Adjust handlePageChange to prevent unnecessary re-renders or state resets
+const handlePageChange = (page) => {
+  if (page !== currentPage) {
+    setCurrentPage(page)
+;
+  }
+};
 
+  const paginateMatches = filteredMatches.slice(
+    (currentPage - 1) * matchesPerPage,
+    currentPage * matchesPerPage
+  );
+
+  const totalPages = Math.ceil(filteredMatches.length / matchesPerPage);
+
+ 
   const handleMatchCentreClick = (match) => {
     const richmondLogo = require('../assets/images/LOGO.png');
   
@@ -201,171 +206,205 @@ export default function MatchInfo() {
             justifyContent: 'center',
           }}
         >
-          <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
-            <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
-              <select
-                className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
-                value={selectedAgeGroup}
-                onChange={(e) => {
-                  setSelectedAgeGroup(e.target.value);
-                  filterMatches(matchDataList, false, activeButton === 'Latest');
-                }}
-              >
-                {ageGroups.map((ageGroup, index) => (
-                  <option key={index} value={ageGroup}>{ageGroup}</option>
-                ))}
-              </select>
+            <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
+              <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
+                <select
+                  className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
+                  value={selectedAgeGroup}
+                  onChange={(e) => {
+                    setSelectedAgeGroup(e.target.value);
+                    filterMatches(matchDataList, false, activeButton === 'Latest');
+                  }}
+                >
+                  {ageGroups.map((ageGroup, index) => (
+                    <option key={index} value={ageGroup}>{ageGroup}</option>
+                  ))}
+                </select>
 
-              <select
-                className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
-                value={selectedMatchType}
-                onChange={(e) => {
-                  setSelectedMatchType(e.target.value);
-                  filterMatches(matchDataList, false, activeButton === 'Latest');
-                }}
-              >
-                {matchTypes.map((matchType, index) => (
-                  <option key={index} value={matchType}>{matchType}</option>
-                ))}
-              </select>
-  </div>
-
-
-
+                <select
+                  className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
+                  value={selectedMatchType}
+                  onChange={(e) => {
+                    setSelectedMatchType(e.target.value);
+                    filterMatches(matchDataList, false, activeButton === 'Latest');
+                  }}
+                >
+                  {matchTypes.map((matchType, index) => (
+                    <option key={index} value={matchType}>{matchType}</option>
+                  ))}
+                </select>
+              </div>
             <div className="flex space-x-4">
-              <button
-                className={`w-24 h-8 rounded-full text-white text-xxs  ${activeButton === 'Latest' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
-                onClick={() => {
-                  setActiveButton('Latest');
-                  filterMatches(matchDataList, false, true); // Show latest 5 matches per type
-                  setShowUpcoming(false);
-                }}
-              >
-                Latest
-              </button>
-              <button
-                className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Upcoming' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
-                onClick={() => {
-                  setActiveButton('Upcoming');
-                  filterMatches(matchDataList, true); // Filter only upcoming matches
-                  setShowUpcoming(true);
-                }}
-              >
-                Upcoming
-              </button>
-              <button
-                className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Matches' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
-                onClick={() => {
-                  setActiveButton('Matches');
-                  filterMatches(matchDataList); // Keep filters and show all matches
-                  setShowUpcoming(false);
-                }}
-              >
-                All Matches
-              </button>
+          <button
+    className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Latest' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
+    onClick={() => {
+      setActiveButton('Latest');
+      filterMatches(matchDataList, false, true); // Show latest 5 matches
+      setShowUpcoming(false);
+    }}
+  >
+    Latest
+  </button>
+
+                <button
+                  className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Upcoming' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
+                  onClick={() => {
+                    setActiveButton('Upcoming');
+                    filterMatches(matchDataList, true); // Filter only upcoming matches
+                    setShowUpcoming(true);
+                  }}
+                >
+                  Upcoming
+                </button>
+                <button
+                  className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Matches' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
+                  onClick={() => {
+                    setActiveButton('Matches');
+                    filterMatches(matchDataList); // Keep filters and show all matches
+                    setShowUpcoming(false);
+                  }}
+                >
+                  All Matches
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex flex-col items-center flex-grow mt-7 space-y-4 px-4">
-  {showUpcoming ? (
+        <div className="flex flex-col items-center flex-grow mt-7 space-y-4 px-4">
+        {showUpcoming ? (
     <Upcoming selectedAgeGroup={selectedAgeGroup} selectedMatchType={selectedMatchType} />
   ) : (
-    filteredMatches.map((matchData, index) => (
+    paginateMatches.map((matchData, index) => (
       <div
         key={index}
         className="bg-white font-bold text-[#012D5E] rounded-3xl shadow-lg p-4 w-full max-w-5xl h-auto flex flex-col sm:flex-row items-center justify-between space-x-0 sm:space-x-4 space-y-4 sm:space-y-0"
       >
-        {/* Richmond College Section */}
-        <div className="flex flex-row items-center justify-between w-full">
-          <div className="flex flex-col items-center w-full sm:w-1/2">
-            <img
-              src={require('../assets/images/LOGO.png')}
-              alt="RICHMOND COLLEGE"
-              className="w-10 h-10 sm:w-12 sm:h-12 "
-            />
-            <h3 className="text-xxs sm:text-sm text-[#012D5E] font-bold tracking-wide mt-2">RICHMOND COLLEGE</h3>
-            {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
-              matchData.innings.map((inning, idx) => (
-                <div key={idx} className="mt-2">
-                  <p className="text-sm sm:text-xs mt-2">{inning.runs}/{inning.wickets}</p>
-                  <p className="text-xxs sm:text-xxs  text-center">{inning.overs}</p>
-                </div>
-              ))
-            ) : (
-              <>
-                <p className="text-sm sm:text-xs mt-2">{matchData.runs}/{matchData.wickets}</p>
-                <p className="text-xxs sm:text-xxs">{matchData.overs}</p>
-              </>
-            )}
-          </div>
-
-          {/* VS Divider */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="h-6 md:h-10 w-px bg-gradient-to-b from-transparent via-[#012D5E] to-transparent sm:h-12" />
-            <span className="text-[#012D5E] text-sm sm:text-base my-2">VS</span>
-            <div className="h-6 md:h-10 w-px bg-gradient-to-t from-transparent via-[#012D5E] to-transparent sm:h-12 " />
-          </div>
-
-          {/* Opposition Section */}
-          <div className="flex flex-col items-center w-full sm:w-1/2">
-            <img
-              src={matchData.logo}
-              alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
-              className="w-10 h-10 sm:w-12 sm:h-12 "
-            />
-            <h3 className="text-xxs sm:text-sm tracking-wide mt-2 font-bold">{matchData.opposition.toUpperCase()}</h3>
-            {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
-              matchData.innings.map((inning, idx) => (
-                <div key={idx} className="mt-2">
-                  <p className="text-sm sm:text-xs mt-2">{inning.oppositionRuns}/{inning.oppositionWickets}</p>
-                  <p className=" text-xxs sm:text-xxs text-center">{inning.oppositionOvers}</p>
-                </div>
-              ))
-            ) : (
-              <>
-                <p className="text-sm sm:text-xs mt-2">{matchData.oppositionRuns}/{matchData.oppositionWickets}</p>
-                <p className="text-xxs sm:text-xxs">{matchData.oppositionOvers}</p>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Match Details Section */}
-        <div className="w-full sm:w-1/2 p-2 text-left flex flex-col items-start ">
-          <h4 className="text-xs sm:text-sm text-[#012D5E] mt-2 font-bold">
-            {matchData.result.toUpperCase()} ({matchData.type.toUpperCase()})
-          </h4>
-          <div className="flex justify-between mt-2 w-full">
-            <div className="flex flex-col text-left">
-              <p className="text-xxs sm:text-xxs text-black">{formatDate(matchData.date)}</p>
-              <p className="text-xxs sm:text-xxs text-black mt-2">{matchData.venue.toUpperCase()}</p>
+          {/* Richmond College Section */}
+          <div className="flex flex-row items-center justify-between w-full">
+            <div className="flex flex-col items-center w-full sm:w-1/2">
+              <img
+                src={require('../assets/images/LOGO.png')}
+                alt="RICHMOND COLLEGE"
+                className="w-10 h-10 sm:w-12 sm:h-12 "
+              />
+              <h3 className="text-xxs sm:text-sm text-[#012D5E] font-bold tracking-wide mt-2">RICHMOND COLLEGE</h3>
+              {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
+                matchData.innings.map((inning, idx) => (
+                  <div key={idx} className="mt-2">
+                    <p className="text-sm sm:text-xs mt-2">{inning.runs}/{inning.wickets}</p>
+                    <p className="text-xxs sm:text-xxs  text-center">{inning.overs}</p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <p className="text-sm sm:text-xs mt-2">{matchData.runs}/{matchData.wickets}</p>
+                  <p className="text-xxs sm:text-xxs">{matchData.overs}</p>
+                </>
+              )}
             </div>
-            <div className="flex flex-col text-right">
-             
-              <p className="text-xxs sm:text-xs text-black mt-2">{matchData.tossResult}</p>
+
+            {/* VS Divider  */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="h-6 md:h-10 w-px bg-gradient-to-b from-transparent via-[#012D5E] to-transparent sm:h-12" />
+              <span className="text-[#012D5E] text-sm sm:text-base my-2">VS</span>
+              <div className="h-6 md:h-10 w-px bg-gradient-to-t from-transparent via-[#012D5E] to-transparent sm:h-12 " />
+            </div>
+
+            {/* Opposition Section */}
+            <div className="flex flex-col items-center w-full sm:w-1/2">
+              <img
+                src={matchData.logo}
+                alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
+                className="w-10 h-10 sm:w-12 sm:h-12 "
+              />
+              <h3 className="text-xxs sm:text-sm tracking-wide mt-2 font-bold">{matchData.opposition.toUpperCase()}</h3>
+              {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
+                matchData.innings.map((inning, idx) => (
+                  <div key={idx} className="mt-2">
+                    <p className="text-sm sm:text-xs mt-2">{inning.oppositionRuns}/{inning.oppositionWickets}</p>
+                    <p className=" text-xxs sm:text-xxs text-center">{inning.oppositionOvers}</p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <p className="text-sm sm:text-xs mt-2">{matchData.oppositionRuns}/{matchData.oppositionWickets}</p>
+                  <p className="text-xxs sm:text-xxs">{matchData.oppositionOvers}</p>
+                </>
+              )}
             </div>
           </div>
-          <div className="flex justify-end w-full mt-4">
-            <button
-              className="bg-[#012D5E] rounded-full h-8 sm:h-10 w-24 sm:w-28 text-xxs sm:text-xs text-white hover:bg-blue-700"
-              onClick={() => handleMatchCentreClick(matchData)}
-            >
-              Score Card
-            </button>
+
+          {/* Match Details Section */}
+          <div className="w-full sm:w-1/2 p-2 text-left flex flex-col items-start ">
+            <h4 className="text-xs sm:text-sm text-[#012D5E] mt-2 font-bold">
+              {matchData.result.toUpperCase()} ({matchData.type.toUpperCase()})
+            </h4>
+            <div className="flex justify-between mt-2 w-full">
+              <div className="flex flex-col text-left">
+                <p className="text-xxs sm:text-xxs text-black">{formatDate(matchData.date)}</p>
+                <p className="text-xxs sm:text-xxs text-black mt-2">{matchData.venue.toUpperCase()}</p>
+              </div>
+              <div className="flex flex-col text-right">
+              
+                <p className="text-xxs sm:text-xs text-black mt-2">{matchData.tossResult}</p>
+              </div>
+            </div>
+            <div className="flex justify-end w-full mt-4">
+              <button
+                className="bg-[#012D5E] rounded-full h-8 sm:h-10 w-24 sm:w-28 text-xxs sm:text-xs text-white hover:bg-blue-700"
+                onClick={() => handleMatchCentreClick(matchData)}
+              >
+                Score Card
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-          ))
-        )}
+            ))
+          )}
 
+          {/* Render paginated match items */}
+          <div className="match-list">
+            {paginateMatches.map((match, index) => (
+              <div key={index}>
+                {/* Render each match item  */}
+              </div>
+            ))}
+          </div>
 
-      </div>
-
-      
-             {/* Footer */}
-             <Footer/>
+        {/* Pagination controls */}
+  {!showUpcoming && activeButton !== 'Latest' && (
+    <div className="pagination flex space-x-2 mt-4">
+      <button
+        disabled={currentPage === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+      >
+        «
+      </button>
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => handlePageChange(index + 1)}
+          className={`w-8 h-8 flex items-center justify-center rounded ${
+            currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-400'
+          }`}
+        >
+          {index + 1}
+        </button>
+      ))}
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+      >
+        »
+      </button>
+    </div>
+  )}
+  </div>
+      {/* Footer  */}
+      <Footer/>
     </div>
   );
 }

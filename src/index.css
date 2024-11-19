@@ -195,4 +195,21 @@ html {
 }
 
 
+/* custom toolbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px; /* Adjust the width of the scrollbar */
+}
 
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #d2d2d2; /* Track background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #b4b4b4; /* Thumb color */
+  opacity: 50;
+  border-radius: 10px; /* Rounded corners for the thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #aeaeae; /* Hover color for the thumb */
+}

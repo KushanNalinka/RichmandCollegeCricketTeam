@@ -12,6 +12,9 @@
 //   const matchDateObj = new Date(matchDate);
 //   return matchDateObj > today;
 // };
+
+// const API_URL = process.env.REACT_APP_API_URL;
+
 // // Filter function for upcoming matches
 // const filterMatches = (data, selectedAgeGroup, selectedMatchType) => {
 //   console.log("Filtering matches with:", { selectedAgeGroup, selectedMatchType }); // Debug log
@@ -39,7 +42,11 @@
 
   
 //   useEffect(() => {
+
 //     fetch("http://localhost:8080/api/matches/all")
+
+//     fetch(`${API_URL}matches/all`)
+
 //       .then(response => response.json())
 //       .then(data => {
 //         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);
@@ -120,6 +127,9 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+const API_URL = process.env.REACT_APP_API_URL;
+
+
 const isUpcomingMatch = (matchDate) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -153,7 +163,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
   const itemsPerPage = 6;  // Set the limit of items per page
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/matches/all")
+    fetch(`${API_URL}matches/all`)
       .then(response => response.json())
       .then(data => {
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);
@@ -167,9 +177,12 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
   const currentMatches = matchDataList.slice(startIdx, startIdx + itemsPerPage);
   const totalPages = Math.ceil(matchDataList.length / itemsPerPage);
 
-  const handlePageChange = (page) => {
+
+  const handlePageChange = (page)=> {
     if (page > 0 && page <= totalPages) {
-      setCurrentPage(page);
+      setCurrentPage(page)
+;
+
     }
   };
 
@@ -200,9 +213,11 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
               </div>
               {/* VS Section */}
               <div className="flex flex-col items-center justify-center">
+
                 <div className="h-6 w-px bg-gradient-to-b from-transparent via-blue to-transparent sm:h-12" />
                 <span className="text-[#012D5E] text-sm sm:text-sm my-2">VS</span>
                 <div className="h-6 w-px bg-gradient-to-t from-transparent via-blue to-transparent sm:h-12" />
+
               </div>
               {/* Opposition Info */}
               <div className="flex flex-col items-center space-y-2 w-1/4">
@@ -270,3 +285,4 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
 
   );
 }
+

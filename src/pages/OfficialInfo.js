@@ -39,7 +39,8 @@ const OfficialsTable = () => {
       .get(`${API_URL}officials/all`)
       .then(response => {
         const officials = response.data;
-        setOfficialData(officials);
+        const sortedOfficials = officials.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setOfficialData(sortedOfficials);
         console.log("Officials Data:", response.data);
       })
       .catch(error => {
@@ -47,11 +48,23 @@ const OfficialsTable = () => {
       });
   }, [isSubmitted, isDeleted]);
 
-  useEffect(() => {
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
 
-    if (divRef.current) {
-      setDivHeight(divRef.current.offsetHeight);
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(10); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(7); // Smaller screens (tablets, mobile)
     }
+  };
+
+  useEffect(() => {
+    updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
 
   const handleEdit = official => {
@@ -148,7 +161,7 @@ const OfficialsTable = () => {
           <Navbar />
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-          <div className="flex justify-between w-full lg:px-10 py-3">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
@@ -177,7 +190,7 @@ const OfficialsTable = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+            <div className="flex overflow-x-auto" >
               <table className="min-w-full bg-gray-200  rounded-t-3xl shadow-md">
                 <thead className=" text-white">
                   <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -222,7 +235,7 @@ const OfficialsTable = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.position}
                       </td>
-                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -245,36 +258,36 @@ const OfficialsTable = () => {
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
-              <button
-                onClick={handlePrevPage}
-                title="Prev"
-                disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkPrevious style={{ color: "#fff" }} />
-              </button>
+          </div>
+          <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+            <button
+              onClick={handlePrevPage}
+              title="Prev"
+              disabled={currentPage === 1}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkPrevious style={{ color: "#fff" }} />
+            </button>
 
-              <div className="text-sm font-semibold">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                title="Next"
-                disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkNext style={{ color: "#fff" }} />
-              </button>
+            <div className="text-sm font-semibold">
+              Page {currentPage} of {totalPages}
             </div>
+
+            <button
+              onClick={handleNextPage}
+              title="Next"
+              disabled={currentPage === totalPages}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkNext style={{ color: "#fff" }} />
+            </button>
           </div>
           {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this official?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
+                  <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
                       className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -300,7 +313,7 @@ const OfficialsTable = () => {
             />}
         </div>
         {uploading && (
-            <div className="absolute items-center justify-center my-4">
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
           )}

@@ -8,12 +8,12 @@ const ScorecardData = () => {
   const location = useLocation();
   const { match, teams, matchType } = location.state || {};
   const [playerStats, setPlayerStats] = useState([]);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   const [selectedInning, setSelectedInning] = useState('1st');
 
   useEffect(() => {
     if (match) {
-      fetch(`http://localhost:8080/api/playerStats/match/player-stats?matchId=${match.matchId}`)
+      fetch(`${API_URL}playerStats/match/player-stats?matchId=${match.matchId}`)
 
         .then((response) => response.json())
         .then((data) => {

@@ -921,7 +921,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
               </div>
             )}
              {uploading && (
-                <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-50">
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-40">
                   <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
                 </div>
               )}

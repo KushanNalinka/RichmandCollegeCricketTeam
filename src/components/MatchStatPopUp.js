@@ -3,6 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
+import { GiClick } from "react-icons/gi";
 
 const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
@@ -165,15 +166,22 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
       isSubmitted();
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed submit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleUpdate = async (e) => {
@@ -204,15 +212,22 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
       isSubmitted();
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed Edit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleClose = () =>{
@@ -221,8 +236,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -268,7 +284,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 </div>
               )
             }
-            
+            <p className="col-span-1 md:col-span-2 text-md text-[#480D35] font-semibold">Richmond match stats details</p>
             <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Overs</label>
               <input
@@ -400,9 +416,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
             )
           }
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
       )}

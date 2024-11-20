@@ -58,9 +58,9 @@ import player3Image from '../assets/images/dana.jpeg'; // Replace with the actua
 import player4Image from '../assets/images/dana.jpeg'; // Replace with actual placeholder image path
 
 const playersData = [];
-
+const API_URL = process.env.REACT_APP_API_URL;
 // Fetch player data from the API
-fetch("http://localhost:8080/api/admin/players/all")
+fetch(`${API_URL}admin/players/all`)
     .then(response => response.json())
     .then(data => {
         data.forEach(player => {

@@ -668,17 +668,20 @@
 // export default HomeNavbar;
 
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
 import { FaUser, FaBars } from 'react-icons/fa'; // Import FaUser and FaBars for user and hamburger icons
-import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
+//import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
 
 const HomeNavbar = () => {
-  const { userRole, logout, user } = useAuth();
+  //const { userRole, logout, user } = useAuth();
   const navigate = useNavigate();
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
-
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const API_URL = process.env.REACT_APP_API_URL;
+  
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollTop = window.pageYOffset;
@@ -699,26 +702,83 @@ const HomeNavbar = () => {
   const handleDropdownClick = (path) => {
     navigate(path); // Navigate to the selected page
   };
+  const userData = localStorage.getItem("userData");
+  const user = localStorage.getItem("user");
+  console.log("User Data are ", userData);
+  console.log("User: ", user)
+  
+
   const handleProfileClick = () => {
-    switch (userRole) {
-      case 'coach':
-        navigate('/coachProfile');
-        break;
-      case 'player':
-        navigate('/playerProfile');
-        break;
-      case 'official':
-        navigate('/officialProfile');
-        break;
-      default:
-        navigate('/member');
+    //const userData = JSON.parse(localStorage.getItem("userData"));
+    const user = JSON.parse(localStorage.getItem("user"));
+    
+    
+   if (userData && userData.roles) {
+      const userRole = userData.roles[0]; // Assuming the first role in the array is primary
+  
+      switch (userRole) {
+        case 'ROLE_COACH':
+          navigate('/coachProfile');
+          break;
+        case 'ROLE_PLAYER':
+          navigate('/playerProfile');
+          break;
+        case 'ROLE_OFFICIAL':
+          navigate('/officialProfile');
+          break;
+        default:
+          navigate('/member');
+      }
+    }else if (user && user.roles) {
+      const userRole = user.roles[0]; // Assuming the first role in the array is primary
+  
+      switch (userRole) {
+        case 'ROLE_COACH':
+          navigate('/coachProfile');
+          break;
+        case 'ROLE_PLAYER':
+          navigate('/playerProfile');
+          break;
+        case 'ROLE_OFFICIAL':
+          navigate('/officialProfile');
+          break;
+        default:
+          navigate('/member');
+      }
+    } 
+
+     else {
+      console.warn("User data or roles not found in local storage.");
     }
   };
+  // const toggleMobileMenu = () => {
+  //   setIsMobileMenuOpen(!isMobileMenuOpen);
+  // };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+    setActiveDropdown(null); // Close any open dropdowns on toggle
   };
 
+  const toggleDropdown = (menu) => {
+    setActiveDropdown(activeDropdown === menu ? null : menu);
+  };
+
+  const handleLogoutClick = async () => {
+    try {
+      // Call the backend logout endpoint
+      await axios.post(`${API_URL}auth/logout`); // Adjust endpoint if necessary
+
+      // Clear user data from local storage
+      localStorage.removeItem("userData");
+      localStorage.removeItem("user");
+
+      // Redirect to home or login page
+      navigate('/');
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 flex justify-center p-3 transition-transform duration-300 ease-in-out ${
@@ -828,6 +888,14 @@ const HomeNavbar = () => {
             <li>
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
+                  onClick={() => handleDropdownClick('/academy9')}
+                >
+                  Academy 9
+                </button>
+              </li>
+            <li>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"
                   onClick={() => handleDropdownClick('/academy11')}
                 >
                   Academy 11
@@ -919,7 +987,7 @@ const HomeNavbar = () => {
             <li>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                onClick={handleLoginClick}
+                onClick={handleLogoutClick}
               >
                 Logout
               </button>
@@ -948,20 +1016,48 @@ const HomeNavbar = () => {
             </Link>
           </li>
           <li>
-            <button
-              className="hover:text-yellow-300 transition-all duration-300 ease-in-out"
-              onClick={() => handleDropdownClick('/about-us')}
-            >
-              About Us
-            </button>
+            <button onClick={() => toggleDropdown('overview')} className="hover:text-yellow-300">Overview</button>
+            {activeDropdown === 'overview' && (
+              <ul className="space-y-2 mt-2 text-white text-left">
+                <li><button onClick={() => handleDropdownClick('/coach')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Coaches</button></li>
+                <li><button onClick={() => handleDropdownClick('/allplayers')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">All Players</button></li>
+                <li><button onClick={() => handleDropdownClick('/oldboys')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Old Boys</button></li>
+                <li><button onClick={() => handleDropdownClick('/about-us')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">About Us</button></li>
+              </ul>
+            )}
           </li>
           <li>
-            <button
-              className="hover:text-yellow-300 transition-all duration-300 ease-in-out"
-              onClick={() => handleDropdownClick('/coach')}
-            >
-              Coaches
-            </button>
+            <button onClick={() => toggleDropdown('teams')} className="hover:text-yellow-300">Teams</button>
+            {activeDropdown === 'teams' && (
+              <ul className="space-y-2 mt-2 text-white text-left">
+                <li><button onClick={() => handleDropdownClick('/under13')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 13</button></li>
+                <li><button onClick={() => handleDropdownClick('/under15')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 15</button></li>
+                <li><button onClick={() => handleDropdownClick('/under17')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 17</button></li>
+                <li><button onClick={() => handleDropdownClick('/under19')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 19</button></li>
+              </ul>
+            )}
+          </li>
+          <li>
+            <button onClick={() => toggleDropdown('academy')} className="hover:text-yellow-300">Academy</button>
+            {activeDropdown === 'academy' && (
+              <ul className="space-y-2 mt-2 text-white text-left">
+                <li><button onClick={() => handleDropdownClick('/academy9')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 9</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy11')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 11</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy13')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 13</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy15')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 15</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy17')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 17</button></li>
+              </ul>
+            )}
+          </li>
+          <li>
+            <button onClick={() => toggleDropdown('legends')} className="hover:text-yellow-300">Legends</button>
+            {activeDropdown === 'legends' && (
+              <ul className="space-y-2 mt-2 text-white text-left">
+                <li><button onClick={() => handleDropdownClick('/over40')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Over 40s</button></li>
+                <li><button onClick={() => handleDropdownClick('/over50')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Over 50s</button></li>
+                
+              </ul>
+            )}
           </li>
           <li>
             <Link to="/match-info" className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
@@ -979,6 +1075,16 @@ const HomeNavbar = () => {
             </a>
           </li>
           <li>
+            <button   onClick={handleProfileClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+             Profile
+            </button>
+          </li>
+          <li>
+            <button  onClick={handleLogoutClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+             Logout
+            </button>
+          </li>
+         {/* <li>
             <button
               className="flex items-center space-x-2 text-white font-semibold bg-transparent border-2 border-white rounded-full px-4 py-1 hover:bg-white hover:text-gray-900 transition-all duration-300 ease-in-out"
               onClick={handleLoginClick}
@@ -986,7 +1092,8 @@ const HomeNavbar = () => {
               <FaUser />
               <span>Login</span>
             </button>
-          </li>
+          </li> */}
+          
         </ul>
       </div>
     </nav>

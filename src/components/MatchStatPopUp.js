@@ -3,8 +3,9 @@ import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { message } from 'antd';
+import { GiClick } from "react-icons/gi";
 
-const MatchStatPopup = ({ matchId, matchType, onClose }) => {
+const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
@@ -23,7 +24,8 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
   const [uploading, setUploading] = useState(false);
   const [statData, setStatData] = useState(initialStatData);
   const [selectedIning, setSelectedIning] = useState(statData.inning);
-  console.log("selected inning normal: ", statData.inning);
+  const [errors, setErrors] = useState({});
+  console.log("selected inning in stat data: ", statData.inning);
 
   useEffect(() => {
     // Reset statData each time the popup is opened
@@ -37,7 +39,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
     if (matchId) {
       setStatData(prevState => ({ ...prevState, match:{matchId:matchId} }));
     }
-  }, [onClose, matchType, matchId]);;
+  }, [onClose, matchType, matchId]);
 
   useEffect(() => {
     axios.get(`${API_URL}matchSummary/match/${matchId}`)
@@ -58,19 +60,20 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
               setStatData(...matchInnings); // Set statData with received summary data
               setIsSummaryExists(true);
             } else {
-              setStatData(initialStatData); // Use initial statData if no summary data is available
+              setStatData({...initialStatData, inning:selectedIning}); // Use initial statData if no summary data is available
               setIsSummaryExists(false);
             }
           }
         })
         .catch(error => {
           console.error("Error fetching match summary:", error);
-          setStatData(initialStatData); // Use initial statData on error
+          setStatData({...initialStatData, inning:selectedIning}); // Use initial statData on error
         });
         console.log("Is summary exists:", isSummaryExists);
   
     if (selectedIning) {
       console.log("Updated selected inning:", selectedIning);
+      setStatData({...statData, inning:selectedIning});
     }
   }, [ matchType, matchId, selectedIning, isSummaryExists]);
   
@@ -95,17 +98,54 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
     }
     if( name === "inning"){
       setSelectedIning(value);
+      setStatData({
+        ...statData,
+        [name]: value
+      });
     }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (matchType === "Test" && !statData.inning) {
+      newErrors.inning = "Inning is required.";
+      message.error("Please select an inning before submitting.");
+    }
+    if (!statData.overs) {
+      newErrors.overs = "Overs are required.";
+    }
+    if (!statData.runs) {
+      newErrors.runs = "Runs are required.";
+    }
+    if (!statData.wickets) {
+      newErrors.wickets = "Wickets are required.";
+    }
+    if (!statData.oppositionOvers) {
+      newErrors.oppositionOvers = "Opposition Overs are required.";
+    }
+    if (!statData.oppositionRuns) {
+      newErrors.oppositionRuns = "Opposition Runs are required.";
+    }
+    if (!statData.oppositionWickets) {
+      newErrors.oppositionWickets = "Opposition Wickets are required.";
+    }
+    if (!(matchType === "Test" && statData.inning === "1") && !statData.result) {
+      newErrors.result = "Result is required.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setUploading(true);
-    if (matchType === "Test" && !statData.inning) {
-      message.error("Please select an inning before submitting.");
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
       return;
-    };
-    console.log("add :" ,statData); // Log to verify structure before making request
+      };
+      
+      setUploading(true);
+      console.log("add :" ,statData); // Log to verify structure before making request
 
     try {
       const response = await axios.post(
@@ -126,23 +166,32 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed submit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    setUploading(true);
-    if (matchType === "Test" && !statData.inning) {
-      message.error("Please select an inning before submitting.");
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
       return;
     };
+
+    setUploading(true);
     console.log("update: ",statData); // Log to verify structure before making request
     try {
       const response = await axios.put(
@@ -163,14 +212,22 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
           matchId: '', // matchId must be a valid existing ID
         }
       })
-      setUploading(false);
-      setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+      isSubmitted();
+      // setTimeout(() => {
+      //     window.location.reload();
+      //   }, 1000);
     } catch (error) {
       console.error("Error submitting form:", error);
-      message.error("Failed Edit!");
-    }
+
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   const handleClose = () =>{
@@ -179,8 +236,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-xl w-full relative`}>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 
@@ -192,10 +250,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
         </div>
         <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
         <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="space-y-4">
+         
             {
               matchType==="Test"?(
-                <div>
+                <div className="col-span-1">
                   <label className="block text-black text-sm font-semibold">Inning</label>
                   <select
                     type="text"
@@ -209,9 +267,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                       <option value="1">1</option> 
                       <option  value="2">2</option>
                   </select>
+                  {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}
                 </div>
               ):(
-                <div>
+                <div className="col-span-1">
                   <label className="block text-black text-sm font-semibold">Inning</label>
                   <input
                      type="text"
@@ -221,81 +280,93 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                      disabled
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
                   />
+                  {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}
                 </div>
               )
             }
-            
-            <div>
+            <p className="col-span-1 md:col-span-2 text-md text-[#480D35] font-semibold">Richmond match stats details</p>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Overs</label>
               <input
                 type="number"
                 name="overs"
+                min={0}
                 value={statData.overs}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.overs && <p className="text-red-500 text-xs mt-1">{errors.overs}</p>}
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Runs</label>
               <input
                 type="number"
                 name="runs"
+                min={0}
                 value={statData.runs}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.runs && <p className="text-red-500 text-xs mt-1">{errors.runs}</p>}
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Wickets</label>
               <input
                 type="number"
                 name="wickets"
+                min={0}
                 value={statData.wickets}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
+              {errors.wickets && <p className="text-red-500 text-xs mt-1">{errors.wickets}</p>}
             </div>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-black text-sm font-semibold">opposition Overs</label>
+            <p className="col-span-1 md:col-span-2 text-md text-[#480D35] font-semibold">Opposition match stats details</p>
+            <div className="col-span-1">
+              <label className="block text-black text-sm font-semibold">Opposition Overs</label>
               <input
                 type="number"
                 name="oppositionOvers"
+                min={0}
                 value={statData.oppositionOvers}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionOvers && <p className="text-red-500 text-xs mt-1">{errors.oppositionOvers}</p>}
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Runs</label>
               <input
                 type="number"
                 name="oppositionRuns"
+                min={0}
                 value={statData.oppositionRuns}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionRuns && <p className="text-red-500 text-xs mt-1">{errors.oppositionRuns}</p>}
             </div>
-            <div>
+            <div className="col-span-1">
               <label className="block text-black text-sm font-semibold">Opposition Wickets</label>
               <input
                 type="number"
                 name="oppositionWickets"
+                min={0}
                 value={statData.oppositionWickets}
                 onChange={handleChange}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
+              {errors.oppositionWickets && <p className="text-red-500 text-xs mt-1">{errors.oppositionWickets}</p>}
             </div>
            
             {(matchType==="Test" && selectedIning==="1")?(
-              <div>
+              <div className="col-span-1 md:col-span-2">
                 <label className="block text-black text-sm font-semibold">Result</label>
                   <input
                      type="text"
@@ -308,7 +379,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                    />
                  </div>
                 ):(
-                  <div>
+                  <div className="col-span-1 md:col-span-2">
                     <label className="block text-black text-sm font-semibold">Result</label>
                       <input
                         type="text"
@@ -319,11 +390,11 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                         placeholder="Victory for college A by X runs."
                         className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                       />
+                      {errors.result && <p className="text-red-500 text-xs mt-1">{errors.result}</p>}
                     </div>
                   )}
-                </div>
           {isSummaryExists?(
-              <div className="flex justify-end space-x-4 pt-4 col-span-2">
+              <div className="flex justify-end col-span-1 pt-4 md:col-span-2">
                 <button
                   onClick={handleUpdate}
                   type="submit"
@@ -333,7 +404,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
                 </button>
               </div>
             ):(
-              <div className="flex justify-end space-x-4 pt-4 col-span-2">
+              <div className="flex justify-end col-span-1 pt-4 md:col-span-2">
                 <button
                   onClick={handleSubmit}
                   type="submit"
@@ -345,9 +416,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose }) => {
             )
           }
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
       )}

@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { message } from "antd";
+import { Flex, message } from "antd";
 
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
-const OfficialForm = ({ onClose }) => {
+const OfficialForm = ({ onClose, isSubmitted }) => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -17,44 +18,49 @@ const OfficialForm = ({ onClose }) => {
     roles: ["ROLE_OFFICIAL"],
     name: "",
     contactNo: "",
-    position: ""
+    position: "",
+    createdOn: new Date().toISOString(),
+    createdBy:user.username,
   });
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
+  const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "contactNo") {
-      // Ensure only numbers or "+" are entered in contactNo
-      if (/^\+?\d*$/.test(value)) {
-        setFormData({
-          ...formData,
-          [name]: value
-        });
-      }
-    } else {
       setFormData({
         ...formData,
         [name]: value
       });
-    }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
+    //username validation
+    if (formData.username.length < 4 || formData.username.length > 20) {
+      newErrors.username = "Username must be between 4 and 20 characters.";
+    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+    };
+
     // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
-    }
+    };
 
     // Password validation
     const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordPattern.test(formData.password)) {
       newErrors.password = "Password must be at least 8 characters long and include a special character";
-    }
+    };
+
+    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+    if (!sriLankaPattern.test(formData.contactNo)) {
+      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX' and exactly 10 or 12 digits";
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -62,7 +68,10 @@ const OfficialForm = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validateForm()) {
+      message.error("Please fix validation errors before submitting");
+      return;
+    };
     setUploading(true);
 
       try {
@@ -79,24 +88,33 @@ const OfficialForm = ({ onClose }) => {
           roles: ["ROLE_OFFICIAL"],
           name: "",
           contactNo: "",
-          position: ""
+          position: "",
+          createdBy:"",
+          createdOn:""
         });
-        setUploading(false);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+        isSubmitted();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
-        message.error("Failed!");
-      }
-    
 
+        if (error.response && error.response.data && error.response.data.message) {
+          message.error(`Failed to submit: ${error.response.data.message}`);
+        } else {
+          message.error("An unexpected error occurred. Please try again later.");
+        }
+      } finally {
+        setUploading(false);
+        onClose();
+      }
   };
 
   return (
 
-    <div className="fixed inset-0 flex  items-center justify-center bg-black bg-opacity-70">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-lg shadow-lg max-w-md w-full relative`}>
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-md w-full relative`}>
         <div className="flex justify-end ">
 
           <button
@@ -117,6 +135,7 @@ const OfficialForm = ({ onClose }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="Jhon Doe"
               required
             />
           </div>
@@ -129,8 +148,9 @@ const OfficialForm = ({ onClose }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
-              placeholder="@username"
+              placeholder="username"
             />
+            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Email</label>
@@ -143,32 +163,37 @@ const OfficialForm = ({ onClose }) => {
               required
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className="w-full px-3 py-1 border relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
               placeholder="********"
-              onBlur={() => {
-                if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(formData.password)) {
-                  setErrors({
-                    ...errors,
-                    password: "Password must be at least 8 characters long and include a special character",
-                  });
-                } else {
-                  setErrors({ ...errors, password: "" });
-                }
-              }}
+              // onBlur={() => {
+              //   if (!/^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/.test(formData.password)) {
+              //     setErrors({
+              //       ...errors,
+              //       password: "Password must be at least 8 characters long and include a special character",
+              //     });
+              //   } else {
+              //     setErrors({ ...errors, password: "" });
+              //   }
+              // }}
             />
-            <p className="text-gray-500 text-sm mt-1">
-            </p>
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute top-7 right-3 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Contact No</label>
@@ -178,10 +203,10 @@ const OfficialForm = ({ onClose }) => {
               value={formData.contactNo}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="+1 (555) 123-4567"
+              placeholder="+947XXXXXXXX"
               required
             />
-            {errors.contactNo && <p className="text-red-500 text-sm mt-1">{errors.contactNo}</p>}
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Position</label>
@@ -204,12 +229,13 @@ const OfficialForm = ({ onClose }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
-        )}
+      )}
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import flag from "../assets/images/backDrop3.png";
+import { Link } from "react-router-dom";
 import richmandLogo from "../assets/images/RLogo.png";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosArrowDropup } from "react-icons/io";
@@ -28,7 +29,7 @@ const ScoreCardPage = () => {
   const [selectedInning, setSelectedInning] = useState({}); // Tracks selected inning per Test match
   const [pressedIndex, setPressedIndex] = useState({}); 
   const [currentMatchID, setCurrentMatchID] = useState(null);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(matchSummary.length / rowsPerPage);
 
@@ -43,14 +44,30 @@ const ScoreCardPage = () => {
       .catch(error => {
         console.error("There was an error fetching the match data!", error);
       });
+      updateRowsPerPage(); // Initial setup
+      window.addEventListener('resize', updateRowsPerPage);
+      return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
+
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(6); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(5); // Laptop screens
+    } else {
+      setRowsPerPage(4); // Smaller screens (tablets, mobile)
+    }
+  };
 
   const sortedMatches = matchSummary
     .filter(
       (match, index, self) =>
         self.findIndex((m) => m.matchId === match.matchId) === index
     ) // Ensuring unique matches by matchId
-    .sort((a, b) => new Date(b.time) - new Date(a.time));
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   useEffect(() => {
     console.log("matchID: ", currentMatchID);
@@ -127,12 +144,13 @@ const ScoreCardPage = () => {
       setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
       setMatchType(match.type);
     }
+   
   };
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center items-stretch min-h-screen w-full">
-        <div className="lg:flex hidden justify-center items-center w-[12%]  h-auto "
+        <div className="lg:flex hidden fixed z-50 justify-center left-0 items-center w-[12%]  h-screen "
            style={{
             backgroundImage: `url(${flag})`,
             backgroundSize: "cover",
@@ -141,10 +159,14 @@ const ScoreCardPage = () => {
         >
           <Navbar />
         </div>
-        <div className="w-[88%] py-5 flex flex-col items-center justify-center h-auto">
-          <div className="flex justify-between w-full lg:px-10 py-3">
-             <MainNavbarToggle/>
-             <img src={logo} className="h-12 w-12"/>
+        <div className="w-full flex px-5 lg:px-0 ">
+        <div className="lg:w-[12%] w-0 "></div>
+        <div className="lg:w-[88%] w-full py-5 flex flex-col items-center justify-center h-auto">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
@@ -159,9 +181,12 @@ const ScoreCardPage = () => {
               <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
                 Match Updates
               </h2>
+              <h2 className="md:text-2xl text-xl w-14 font-bold text-center font-popins text-[#480D35]">
+               
+              </h2>
             </div>
           <div
-            className=" relative min-w-full divide-y divide-gray-300 max-h-[600px] bg-gray-300 flex flex-col hover:overflow-auto gap-2 overflow-hidden lg:py-2 lg:p-2 rounded-lg shadow-lg"
+            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col gap-2 lg:py-2 lg:p-2 rounded-lg shadow-lg"
             style={{
               backdropFilter: "blur(5px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -172,10 +197,12 @@ const ScoreCardPage = () => {
   
               <div key={match.matchId} className="relative flex-grow ">
                 <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
-                  <div className="flex gap-5 items-center w-44%]">
+                  <div className="flex gap-5 items-center w-[30%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.runs}/{match.wickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.overs} </p>
                     </div>
                     <div className="flex flex-col justify-center items-center w-[10%]">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
@@ -185,12 +212,14 @@ const ScoreCardPage = () => {
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={match.logo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.oppositionRuns}/{match.oppositionWickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.oppositionOvers}</p>
                     </div>
                   </div>
-                  <div className="w-[30%] lg:w-[26%] justify-center flex ">
+                  <div className="w-[40%] lg:w-[40%] justify-center flex ">
                     <p className="lg:text-sm text-lg text-center font-bold uppercase flex items-center  text-[#08165A] font-sans">{match.under}<span className="text-black px-3 text-md"> - </span> <span className="text-[#480D35] text-sm"> {match.type}</span> </p>
                   </div>
-                  <div className="flex lg:w-[30%] w-[30%] items-center justify-end lg:gap-5">
+                  <div className="flex lg:w-[30%] w-[40%] items-center justify-end lg:gap-5">
                     <div className="flex items-center gap-3 tracking-wider">
                       {match.type === 'Test' && (
                         <div className={`flex tracking-wider justify-end`}>
@@ -208,13 +237,13 @@ const ScoreCardPage = () => {
                         </div>
                         ) 
                       }
-                      <div className="w-36 lg:flex flex-col hidden ">
-                        <p className="justify-end flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
+                      <div className="w-36 lg:flex flex-col justify-right items-end hidden ">
+                        <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })} </p>
-                        <p className="lg:flex justify-end hidden text-xs font-semibold">{match.venue} </p>
+                        <p className="lg:flex hidden text-xs font-semibold">{match.venue} </p>
                       </div>
                     </div>
                     <button
@@ -233,7 +262,7 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] items-stretch lg:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
                             Batting
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
@@ -241,9 +270,6 @@ const ScoreCardPage = () => {
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             Balls
-                          </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Maidens
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             4s
@@ -260,9 +286,9 @@ const ScoreCardPage = () => {
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                             <p>strikeRate</p>
                           </th>
-                          <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
+                          {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                             <p>{match.runs}/{match.wickets}<span>({match.overs})</span></p>
-                          </th>
+                          </th> */}
                         </tr>
                       </thead>
 
@@ -272,7 +298,7 @@ const ScoreCardPage = () => {
                             key={index2}
                             className=" hover:bg-gray-50 h-full align-middle"
                           >
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-800 font-bold">
+                            <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                               {player.player.name}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
@@ -280,9 +306,6 @@ const ScoreCardPage = () => {
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                               {player.balls}
-                            </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                              {player.Maidens}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                               {player.fours}
@@ -297,7 +320,7 @@ const ScoreCardPage = () => {
                               {player.centuries}
                             </td>
                             <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                              {player.strikeRate}
+                              {(player.runs/player.balls*100).toFixed(2)}
                             </td>
                           </tr>
                         )}
@@ -306,14 +329,11 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
                           Bowling
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           Overs
-                        </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Medians
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           Run Conceded
@@ -322,17 +342,14 @@ const ScoreCardPage = () => {
                           Wickets
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          No Bolls
-                        </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Wide Bolls
+                          <p>Strike Rate</p>
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                           <p>Economy Rate</p>
                         </th>
-                        <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
+                        {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                           <p>{match.oppositionRuns}/{match.oppositionWickets}<span>({match.oppositionOvers})</span></p>
-                        </th>
+                        </th> */}
                       </tr>
                     </thead>
 
@@ -342,14 +359,11 @@ const ScoreCardPage = () => {
                           key={index3}
                           className=" hover:bg-gray-50 h-full align-middle"
                         >
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {player.overs}
-                          </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.Maidens}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {player.runsConceded}
@@ -358,13 +372,10 @@ const ScoreCardPage = () => {
                             {player.wickets}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.noBolls}
+                            {((player.overs*6)/player.wickets).toFixed(2)}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.wides}
-                          </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {player.economyRate}
+                            {(player.runsConceded/player.overs).toFixed(2)}
                           </td>
                         </tr>
                       )}
@@ -375,28 +386,32 @@ const ScoreCardPage = () => {
                 </div>
             )}
           </div>
-          <div className="flex justify-between items-center mt-2 p-1 bg-white shadow-md rounded">
-            <button
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
-            >
-              <GrLinkPrevious style={{ color: "#fff" }} />
-            </button>
-
-            <div className="text-sm font-semibold">
-              Page {currentPage} of {totalPages}
-            </div>
-
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
-            >
-              <GrLinkNext style={{ color: "#fff" }} />
-            </button>
-          </div>
         </div>
+        <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+          >
+            <GrLinkPrevious style={{ color: "#fff" }} />
+          </button>
+
+          <div className="text-sm font-semibold">
+            Page {currentPage} of {totalPages}
+          </div>
+
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-700 rounded disabled:bg-gray-300"
+          >
+            <GrLinkNext style={{ color: "#fff" }} />
+          </button>
+        </div>
+
+        </div>
+        
+        
 
         {/* Player Form Popup
       <PlayerFormPopup

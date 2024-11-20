@@ -33,8 +33,8 @@ const MainNavbarToggle = () => {
               onClick={toggleButton}
             >
               {isMenuOpen
-                ? <FaXmark className="text-lg text-[#00175F] " />
-                : <FaBars className="text-lg text-[#00175F] " />}
+                ? <FaXmark className="text-2xl text-[#00175F] " />
+                :  <FaUserCircle className="text-2xl text-[#00175F]" />}
             </button>
             <button
               className="text-[#00175F] lg:hidden flex focus:outline-none m-4 focus:test-gray-500  "
@@ -44,15 +44,15 @@ const MainNavbarToggle = () => {
             </button>
           </div>
           <div
-            className={`absolute space-y-2 z-30 mt-10 w-[200px] mb-2 rounded-md justify-end items-center py-3 transition-all duration-500000 ease-in-out  shadow-lg border-[3px] ${isMenuOpen
+            className={`absolute space-y-2 z-30 right-10 mt-10 w-[200px] mb-2 rounded-md justify-end items-center py-3 transition-all duration-500000 ease-in-out  shadow-lg border-[3px] ${isMenuOpen
               ? " h-auto w-48 block justify-center items-center transition-transform text-opacity-100 duration-50000 ease-in-out bg-white mb-10"
               : "hidden"}`}
           >
             <div className="relative group w-full">
-                <ul className=" flex flex-col gap-1 relative w-full !mt-[8.00px] !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
-                    <Link to={"/playerProfile"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
+                <ul className=" flex flex-col gap-1 relative w-full !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
+                    {/* <Link to={"/playerProfile"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                         {" "}<CgProfile className="text-[#00175F] text-xl" />Profile
-                    </Link>
+                    </Link> */}
                     <Link to={"/login"} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20 ">
                         {" "}<RiLogoutCircleRLine className="text-[#00175F] text-xl"/> Logout
                     </Link>

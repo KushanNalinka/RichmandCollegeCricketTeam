@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import OfficialForm from "../components/OfficialsPopupForm";
@@ -18,9 +21,12 @@ const OfficialsTable = () => {
   const [currentOfficial, setCurrentOfficial] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(6); // Default rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [officialToDelete, setOfficialToDelete] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
 
@@ -33,19 +39,32 @@ const OfficialsTable = () => {
       .get(`${API_URL}officials/all`)
       .then(response => {
         const officials = response.data;
-        setOfficialData(officials);
+        const sortedOfficials = officials.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setOfficialData(sortedOfficials);
         console.log("Officials Data:", response.data);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, [isSubmitted, isDeleted]);
+
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(10); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(7); // Smaller screens (tablets, mobile)
+    }
+  };
 
   useEffect(() => {
-
-    if (divRef.current) {
-      setDivHeight(divRef.current.offsetHeight);
-    }
+    updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
 
   const handleEdit = official => {
@@ -80,15 +99,26 @@ const OfficialsTable = () => {
   };
 
   const confirmDelete = async () => {
-    console.log("Delete Official: ", officialToDelete);
-    const deleteOfficial = await axios.delete(
-      `${API_URL}officials/delete/${officialToDelete}`
-    );
+    setUploading(true);
+    try{
+      console.log("Delete Official: ", officialToDelete);
+      const deleteOfficial = await axios.delete(
+        `${API_URL}officials/delete/${officialToDelete}`
+      );
+      message.success("Successfully Deleted!");
+      setShowDeleteModal(false);
+      setIsDeleted(!isDeleted);
+    } catch (error) {
+      console.error("Error deleting official:", error);
 
-    console.log("Delete row:", officialToDelete);
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
+    }
   };
 
   const toggleForm = () => {
@@ -131,9 +161,11 @@ const OfficialsTable = () => {
           <Navbar />
         </div>
         <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-          <div className="flex justify-between w-full lg:px-10 py-3">
-             <MainNavbarToggle/>
-             <img src={logo} className="h-12 w-12"/>
+          <div className="flex justify-between w-full lg:px-10 pt-3">
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link >
+            <MainNavbarToggle/>
           </div>
           <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
             style={{
@@ -158,7 +190,7 @@ const OfficialsTable = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+            <div className="flex overflow-x-auto" >
               <table className="min-w-full bg-gray-200  rounded-t-3xl shadow-md">
                 <thead className=" text-white">
                   <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -203,7 +235,7 @@ const OfficialsTable = () => {
                       <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
                         {item.position}
                       </td>
-                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-4">
+                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
                         <button
                           onClick={() => handleEdit(item)}
                           className="text-green-500 hover:text-green-600 text-md"
@@ -226,36 +258,36 @@ const OfficialsTable = () => {
                 </tbody>
               </table>
             </div>
-            <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
-              <button
-                onClick={handlePrevPage}
-                title="Prev"
-                disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkPrevious style={{ color: "#fff" }} />
-              </button>
+          </div>
+          <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
+            <button
+              onClick={handlePrevPage}
+              title="Prev"
+              disabled={currentPage === 1}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkPrevious style={{ color: "#fff" }} />
+            </button>
 
-              <div className="text-sm font-semibold">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                title="Next"
-                disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkNext style={{ color: "#fff" }} />
-              </button>
+            <div className="text-sm font-semibold">
+              Page {currentPage} of {totalPages}
             </div>
+
+            <button
+              onClick={handleNextPage}
+              title="Next"
+              disabled={currentPage === totalPages}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkNext style={{ color: "#fff" }} />
+            </button>
           </div>
           {showDeleteModal && (
               <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this official?</p>
-                  <div className="flex justify-end mt-4 space-x-4">
+                  <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
                       className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -272,13 +304,19 @@ const OfficialsTable = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <OfficialForm onClose={handleAddFormClose} />}
+          {isFormOpen && <OfficialForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
           {isEditFormOpen &&
             <EditOfficialForm
               official={currentOfficial}
               onClose={handleEditFormClose}
+              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />}
         </div>
+        {uploading && (
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import backgroundImage from '../assets/images/flag.png';
-import playerPlaceholderImage from '../assets/images/dana.jpeg'; // Placeholder image
+import playerPlaceholderImage from '../assets/images/defaultPlayer.jpg'; // Placeholder image
 import Footer from '../components/Footer';
 
 
@@ -50,7 +50,7 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/playerStats/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {
@@ -77,16 +77,6 @@ const PlayerProfile = () => {
     };
 
 
-    if (!players.length) {
-        return (
-            <div className="bg-gray-400 min-h-screen text-white">
-                <Navbar />
-                <div className="max-w-screen pt-20 text-center">
-                    <h1 className="text-4xl">Loading players...</h1>
-                </div>
-            </div>
-        );
-    }
 
    
     // Function to summarize player stats for display in the table
@@ -222,24 +212,35 @@ const summarizeStats = (type) => {
         <div className="absolute inset-0 flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start px-4 md:px-20 py-6 space-y-4 md:space-y-0">
             {/* Profile Image Container */}
             <div className="relative flex-shrink-0 mb-4 md:mb-0">
-                <img
+                {players.length > 0 ? (<img
                     src={selectedPlayer?.image || playerPlaceholderImage}
                     alt={selectedPlayer?.name}
-                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
-                />
+                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
+                />) : (<img
+                    src={ playerPlaceholderImage}
+                    alt="No image Available"
+                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                />)}
             </div>
-            <div className="text-center ml-8 md:text-left">
-                <h1 className="text-2xl md:text-5xl font-bold">{selectedPlayer?.name}</h1>
-                <p className="text-gray-400 text-base md:text-3xl">
-                Richmond Legend Over 40s
+            <div className="text-center md:text-left md:ml-8">
+              
+                <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4"> {players.length > 0 ? (
+        <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">{selectedPlayer.name}</h1>
+    ) :  (
+            <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">No Player Available</h1>
+        
+    )}</h1>
+                <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
+                Richmond Legend Over 40s Year {selectedYear}
                                 </p>
             </div>
                {/* Year Dropdown */}
                <div className="absolute top-4 right-4 md:top-8 md:right-10">
+                <p className="text-sm md:text-base"> Select the Year</p>
                             <select
                                 value={selectedYear}
                                 onChange={handleYearChange}
-                                className="bg-gray-200 text-gray-900 font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                                className="bg-gray-200 text-gray-900 font-semibold py-2 px-4 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
                             >
                                 {getYearOptions().map((year) => (
                                     <option key={year} value={year}>
@@ -259,13 +260,20 @@ const summarizeStats = (type) => {
                     <div className="md:flex hidden bg-gray-200 rounded-lg shadow-md" style={{ width: '350px', flexShrink: 0, maxHeight: '469px', flexDirection: 'column' }}>
                         {/* Fixed Heading */}
                         <div className="p-4 border-b text-black border-gray-100">
-                            <h2 className="text-xl font-bold text-gray-900">Our Players</h2>
+                            <h2 className="text-xl font-bold text-gray-900 text-center">Our Players</h2>
                         </div>
                         {/* Scrollable Player List */}
                         <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                        <p>
+    {!players.length ? (
+        <div className="max-w-screen pt-1  text-center text-red-950">
+            <h1 className="text-2xl">No players for Richmond Legends over 40s {selectedYear}</h1>
+        </div>
+    ) : null}
+</p>
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {players.map((player) => (
-                                    <li key={player.playerId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedPlayer(player)}>
+                                    <li key={player.playerId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedPlayer(player)}>
                                         <img src={player.image || playerPlaceholderImage} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {player.name}
                                     </li>
@@ -275,7 +283,7 @@ const summarizeStats = (type) => {
                     </div>
 
                     {/* Player Details */}
-                    {selectedPlayer && (
+                    {players.length > 0 && selectedPlayer && (
                         <div className="flex-grow text-gray-700 bg-gray-200 p-6 rounded-lg shadow-md ml-18">
                             <div className="bg-gray-100 p-6 rounded-lg">
                                 <h2 className="text-xl font-bold mb-4 text-center">Personal Information</h2>
@@ -319,7 +327,7 @@ const summarizeStats = (type) => {
                             <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
                                 {/* Batting Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4">Batting and Fielding Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Batting and Fielding Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
                                         <thead>
@@ -361,7 +369,7 @@ const summarizeStats = (type) => {
                                 </div>
 
                                 {/* Bowling Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4">Bowling Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">
                                         <thead>

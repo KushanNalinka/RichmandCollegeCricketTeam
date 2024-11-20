@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { message } from "antd";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaEdit, FaTrash, FaPlus,FaChevronDown, FaChevronUp } from "react-icons/fa";
 import PlayerForm from "../components/PlayerForm";
 import EditPlayerForm from "../components/EditPlayerForm";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import Navbar from "../components/Navbar";
 // import flag from "../assets/images/flagbg.png";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import flag from "../assets/images/backDrop3.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import HomeNavbar from "../components/HomeNavbar";
@@ -23,21 +25,32 @@ const CoachTable = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [currentCoach, setCurrentCoach] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const rowsPerPage = 6; // Number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [coachToDelete, setCoachToDelete] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [filteredCoaches, setFilteredCoaches] = useState([]);
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [filters, setFilters] = useState({ status: ''});
 
   useEffect(() => {
     loadCoaches();
-  }, []);
+    updateRowsPerPage(); // Initial setup
+    window.addEventListener('resize', updateRowsPerPage);
+    return () => window.removeEventListener('resize', updateRowsPerPage);
+  }, [isSubmitted, isDeleted]);
 
   const loadCoaches = async () => {
     axios
     .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
-        setCoachData(coaches);
+        const sortedCoaches = coaches.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        setCoachData(sortedCoaches);
         console.log("All coaches:", coaches);
       })
       .catch((error) => {
@@ -45,16 +58,47 @@ const CoachTable = () => {
       });
   };
 
-  const handleEdit = coach => {
-    setCurrentCoach(coach);
-    setIsEditFormOpen(true);
+  const updateRowsPerPage = () => {
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+
+    if (screenWidth >= 1440 && screenHeight >= 900) {
+      setRowsPerPage(12); // Desktop screens
+    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+      setRowsPerPage(8); // Laptop screens
+    } else {
+      setRowsPerPage(6); // Smaller screens (tablets, mobile)
+    }
   };
 
+  useEffect(() => {
+    const filtered = coachData.filter(coach => {
+      return (
+        (filters.status ? coach.status === filters.status : true)  
+      );
+    });
+    setFilteredCoaches(filtered);
+  }, [filters, coachData]); 
+
+    // Sort players by status before slicing for pagination
+  // const sortedPlayerData = [...coachData].sort((a, b) => {
+  //   // Move "Active" players to the top
+  //   if (a.status === "Active" && b.status !== "Active") return -1;
+  //   if (a.status !== "Active" && b.status === "Active") return 1;
+  //   return 0;
+  // });
+
+  const handleFilterChange = (name, value) => {
+    setFilters({ ...filters, [name]: value });
+    setCurrentPage(1);
+    setShowStatusDropdown(false);
+  }; 
+
   // Calculate total pages
-  const totalPages = Math.ceil(coachData.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredCoaches.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = coachData.slice(
+  const paginatedData = filteredCoaches.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -71,23 +115,36 @@ const CoachTable = () => {
     }
   };
 
+  const handleEdit = coach => {
+    setCurrentCoach(coach);
+    setIsEditFormOpen(true);
+  };
+
   const handleDelete = id => {
     setCoachToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
+    setUploading(true);
     try{
       const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      loadCoaches();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      setIsDeleted(!isDeleted);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 1500);
     } catch (error) {
-      console.error("Error deleting match:", error);
-      message.error("Failed!");
+      console.error("Error deleting coach:", error);
+
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to delete: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -118,9 +175,11 @@ const CoachTable = () => {
         <Navbar />
       </div>
       <div className="w-[88%] h-auto py-5 flex flex-col items-center justify-center">
-        <div className="flex justify-between w-full lg:px-10 py-3">
-           <MainNavbarToggle/>
-           <img src={logo} className="h-12 w-12"/>
+        <div className="flex justify-between w-full lg:px-10 pt-3">
+          <Link to={"/member"}>
+            <img src={logo} className="h-12 w-12" />
+          </Link >
+          <MainNavbarToggle/>
         </div>
         <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
           style={{
@@ -129,7 +188,6 @@ const CoachTable = () => {
             border: "1px solid rgba(255, 255, 255, 0.3)",
             
           }}
-          
         >
           <div className="flex justify-between items-center content-center mb-3">
             <NavbarToggleMenu />
@@ -149,35 +207,52 @@ const CoachTable = () => {
             <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="px-6 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="pl-4 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     STATUS
+                    <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
+                    {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
+                    </button>
+                    {showStatusDropdown && (
+                      <div className="absolute mt-1 z-50 bg-white border rounded shadow-lg">
+                        <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">All</button>
+                        <button onClick={() => handleFilterChange("status", "Active")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Active</button>
+                        <button onClick={() => handleFilterChange("status", "Inactive")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Inactive</button>
+                      </div>
+                    )}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     COACH
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DOB
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     EMAIL
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     Contact No
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     ADDRESS
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                     DESCRIPTION
                   </th>
-                  <th className="px-6 py-3 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="px-4 py-3 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
                 <tr className=" h-2"></tr>
               </thead>
               <tbody className=" divide-y-2 divide-gray-300">
-                {paginatedData.map((item, index) =>
+              {paginatedData && paginatedData.length === 0 ? (
+                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                  <td colSpan={8} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                      There is no data available
+                  </td>
+                  </tr>
+                  ):(
+                paginatedData.map((item, index) =>
                   <tr
                     key={item.coachId}
                     className=" hover:bg-gray-50 lg:rounded-lg bg-white h-full align-middle"
@@ -195,7 +270,7 @@ const CoachTable = () => {
                         <img
                           src={item.image}
                           alt={item.name}
-                          className="h-14 w-14 rounded-full object-cover border border-gray-300"
+                          className="h-12 w-12 rounded-full object-cover border border-gray-300"
                         />
                         {/* Use truncate or text wrapping for small screens */}
                         <span className="truncate whitespace-nowrap">
@@ -203,22 +278,22 @@ const CoachTable = () => {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 h-14  whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-2 h-14  whitespace-nowrap text-sm text-gray-600">
                       {item.dateOfBirth}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.email}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.contactNo}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.address}
                     </td>
-                    <td className="px-6 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
+                    <td className="px-4 py-4 h-14 whitespace-nowrap text-sm text-gray-600">
                       {item.description}
                     </td>
-                    <td className="px-6 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-4">
+                    <td className="px-4 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm text-gray-600 space-x-2">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-green-500 hover:text-green-600 text-md"
@@ -237,11 +312,12 @@ const CoachTable = () => {
                       </button>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center mt-4 p-1 bg-white shadow-md rounded">
+        </div>
+        <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
             <button
               onClick={handlePrevPage}
               title="Prev"
@@ -264,13 +340,12 @@ const CoachTable = () => {
               <GrLinkNext style={{ color: "#fff" }} />
             </button>
           </div>
-        </div>
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this coach?</p>
-              <div className="flex justify-end mt-4 space-x-4">
+              <div className="flex justify-end mt-4 space-x-2">
                 <button
                   onClick={() => setShowDeleteModal(false)}
                   className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
@@ -288,13 +363,19 @@ const CoachTable = () => {
           </div>
         )}
         {isFormOpen &&
-          <CoachForm onClose={handleAddFormClose} />}
+          <CoachForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
         {isEditFormOpen &&
           <EditCoachForm
             coach={currentCoach}
             onClose={handleEditFormClose}
+            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
           />}
       </div>
+      {uploading && (
+          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+            <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+          </div>
+        )}
     </div>
   </div>  
   );

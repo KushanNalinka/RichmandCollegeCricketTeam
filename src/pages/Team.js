@@ -361,7 +361,9 @@ const TableComponent = () => {
             </button>
           </div>
 
+
          {/* Modal for adding new item */}
+
         {showDeleteModal && (
           <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
             <div className="bg-white rounded-3xl shadow-lg p-8">
@@ -391,6 +393,7 @@ const TableComponent = () => {
           />}
 
          {/* Edit Modal  */}
+
         {isEditModalOpen &&
           editItem &&
           <EditModal

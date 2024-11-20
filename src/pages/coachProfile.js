@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
+
 import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
+
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
 import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
@@ -14,6 +16,8 @@ import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
 import Footer from '../components/Footer';
+import { GrLinkNext } from "react-icons/gr";
+import { GrLinkPrevious } from "react-icons/gr";
 //import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
@@ -22,15 +26,17 @@ const CoachProfile = () => {
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editSchedule, setEditSchedule] = useState(null);
-  const [practiceSchedules, setPracticeSchedules] = useState(null);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [practiceToDelete, setPracticeToDelete] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [coach, setCoach] = useState();
+
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10); 
+
   const user = JSON.parse(localStorage.getItem("user"));
   const [filteredPracticeSchedule, setFilteredPracticeSchedule] = useState([]);
   const [filters, setFilters] = useState({ type: '', team: '' });
@@ -66,15 +72,18 @@ const CoachProfile = () => {
   }, []);
 
   useEffect(() => {
-      axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
+    axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
+
         const sortedPracticeSchedule = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPracticeSchedules(sortedPracticeSchedule);
         console.log("sessions Data:", response.data);
+
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the practice session data!", error);
       });
+
       console.log("coach: ",coach);
       const uniqueTeams = [];
         years.forEach(year => {
@@ -84,7 +93,22 @@ const CoachProfile = () => {
         });
         setTeamOptions(uniqueTeams);
 
+
   }, [isSubmitted, isDeleted]);
+  
+// Updated handleFilterChange
+const handleFilterChange = (name, value) => {
+  setFilters({ ...filters, [name]: value });
+  setShowTypeDropdown(false);
+  setShowTeamDropdown(false);
+};
+
+const handlePrevPage = () => {
+  if (currentPage > 1) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
 
   useEffect(() => {
     const filtered = practiceSchedules && practiceSchedules.filter(schedule => {
@@ -123,6 +147,7 @@ const CoachProfile = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+
 
   const handleEditSchedule = schedule => {
     console.log("schedule: ", schedule);
@@ -302,6 +327,7 @@ const CoachProfile = () => {
                   <thead className=" text-white">
                     <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                       <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+
                         Team
                         <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
                           {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
@@ -323,6 +349,7 @@ const CoachProfile = () => {
                         </div>
                         )}
                       </th>
+
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                         Venue
                       </th>
@@ -336,6 +363,7 @@ const CoachProfile = () => {
                         End Time
                       </th>
                       <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
+
                         Type
                         <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
                           {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
@@ -357,6 +385,7 @@ const CoachProfile = () => {
                           </div>
                         )}
                       </th>
+
                       <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                         Actions
                       </th>
@@ -364,6 +393,7 @@ const CoachProfile = () => {
                     <tr className=" h-2"></tr>
                   </thead>
                   <tbody className=" divide-y-2 divide-gray-300 " >
+
                     {paginatedData && paginatedData.length === 0 ? (
 
                         <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
@@ -377,6 +407,7 @@ const CoachProfile = () => {
                         <tr key={schedule.id} className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
                           <td className="px-4 py-4 h-14 lg:rounded-l-lg  whitespace-nowrap text-sm">
                             {schedule.teamUnder}-{schedule.teamYear}
+
                           </td>
                           <td className="px-2 py-4 h-14  whitespace-nowrap text-sm">
                             {schedule.venue}
@@ -425,6 +456,7 @@ const CoachProfile = () => {
                   Page {currentPage} of {totalPages}
                 </div>
 
+
                 <button
                   onClick={handleNextPage}
                   title="Next"
@@ -434,6 +466,7 @@ const CoachProfile = () => {
                   <GrLinkNext style={{ color: "#fff" }} />
                 </button>
               </div>
+
         </div>
         
       </div>
@@ -459,8 +492,9 @@ const CoachProfile = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
-          {isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+        {isFormOpen && <PracticeScheduleForm onClose={() => setIsFormOpen(false)} isSubmitted={() => setIsSubmitted(!isSubmitted)}/>}
+{isEditFormOpen && <PracticeScheduleEditForm onClose={() => setIsEditFormOpen(false)} practiceSchedule={editSchedule} isSubmitted={() => setIsSubmitted(!isSubmitted)}/>}
+
           {uploading && (
             <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />

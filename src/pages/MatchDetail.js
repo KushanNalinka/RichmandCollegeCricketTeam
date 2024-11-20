@@ -594,9 +594,9 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaPlus, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaEdit, FaTrash, FaPlus, FaClipboardList } from "react-icons/fa";
 import { message } from "antd";
-import { Link } from "react-router-dom";
+import { FaChevronDown } from "react-icons/fa";
 import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
@@ -609,18 +609,16 @@ import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 import HomeNavbar from "../components/HomeNavbar.js";
-import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
 import ScoreCardAIModel from "../components/ScoreCardAIModel.js";
+import { useRef } from "react";
 
 const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [matchId, setMatchId] = useState(null);
-  const [teamId, setTeamId] = useState(null);
-  const [matchOpponent, setMatchOpponent] = useState(null);
   const [matchType, setMatchType] = useState(null);
   const [matchDate, setMatchDate] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
@@ -629,16 +627,13 @@ const MatchDetails = () => {
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 6; // Number of rows per page
   const [currentPage, setCurrentPage] = useState(1);
   const [isScorePopupOpen, setIsScorePopupOpen] = useState(false);
   const [isScorePopupAIOpen, setIsScorePopupAIOpen] = useState(false);
   const [choiseModelOpen, setChoiseModelOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [matchToDelete, setMatchToDelete] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
@@ -680,6 +675,7 @@ const MatchDetails = () => {
         updateRowsPerPage(); // Initial setup
         window.addEventListener('resize', updateRowsPerPage);
         return () => window.removeEventListener('resize', updateRowsPerPage);
+
 
       } catch (error) {
         console.error("Error fetching matches:", error);
@@ -757,27 +753,18 @@ const MatchDetails = () => {
   };
 
   const confirmDelete = async () => {
-    setUploading(true);
     try {
       const deleteMatch = await axios.delete(
         `${API_URL}matches/delete/${matchToDelete}`
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
-      setIsDeleted(!isDeleted);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
-
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to delete: ${error.response.data.message}`);
-      } else {
-        message.error("An unexpected error occurred. Please try again later.");
-      }
-    } finally {
-      setUploading(false);
+      message.error("Failed!");
     }
   };
 
@@ -809,9 +796,6 @@ const MatchDetails = () => {
     }
     setMatchType(match.type);
     setMatchId(match.matchId);
-    setTeamId(match.teamId);
-    setMatchOpponent(match.opposition);
-    setMatchType(match.type);
     // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
     setMatchDate(match.date);
@@ -911,12 +895,14 @@ const MatchDetails = () => {
         >
           <Navbar />
         </div>
+
         <div className="w-[88%] h-auto py-4 flex flex-col items-center justify-center">
           <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
             </Link >
             <MainNavbarToggle/>
+
           </div>
           <div
             className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
@@ -939,7 +925,9 @@ const MatchDetails = () => {
                 <FaPlus />
               </button>
             </div>
-            <div className="flex overflow-x-auto">
+            <div 
+  className={`flex overflow-x-auto ${filteredMatches.length === 0 ? "h-[200px]" : ""}`}
+>
               <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
                 <thead className=" text-white ">
                   <tr className="rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -1031,6 +1019,7 @@ const MatchDetails = () => {
                   </tr>
                   <tr className=" h-2"></tr>
                 </thead>
+
                 <tbody  className="divide-y-2 divide-gray-300" >
                 {paginatedData && paginatedData.length === 0 ? (
                   <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
@@ -1045,11 +1034,12 @@ const MatchDetails = () => {
                       className=" hover:bg-gray-50 h-[64px] lg:rounded-lg bg-white align-middle"
                     >
                       <td className="gap-4 px-4 lg:rounded-l-lg py-2 h-16 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+
                         <div className="flex items-center justify-start gap-2 ">
                           <img
                             src={match.logo}
                             alt={match.matchId}
-                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                            className="h-14 w-14 rounded-full object-cover border border-gray-300"
                           />
                            {/* Use truncate or text wrapping for small screens  */}
                           <span className="truncate whitespace-nowrap">
@@ -1057,11 +1047,13 @@ const MatchDetails = () => {
                           </span>
                         </div>
                       </td>
+
                       <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
                         {match.date}
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {formatTimeToAMPM(match.time)}
+
                       </td>
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.venue}
@@ -1081,7 +1073,9 @@ const MatchDetails = () => {
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.under} - {match.teamYear}
                       </td>
+
                       <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 flex items-center whitespace-nowrap text-sm text-gray-600">
+
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}
@@ -1111,9 +1105,11 @@ const MatchDetails = () => {
                           <FaTrash />
                         </button>
                       </td>
+
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           </div>
@@ -1140,7 +1136,9 @@ const MatchDetails = () => {
             </div>
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
+
               <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg p-8`}>
+
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-2">
@@ -1170,7 +1168,7 @@ const MatchDetails = () => {
                 </p>
 
                 <div className="flex flex-col space-y-4">
-                  <button
+                  {/* <button
                     onClick={handleScorePopupAIOpen}
                     className="w-full bg-[#00175f] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
@@ -1181,7 +1179,7 @@ const MatchDetails = () => {
                     className="w-full bg-[#480D35] bg-opacity-80 hover:bg-opacity-90 text-white font-medium py-3 rounded-md transition duration-300"
                   >
                     Add Player Score Details Manually
-                  </button>
+                  </button> */}
                 </div>
 
                 <div className="flex justify-center mt-6">
@@ -1197,14 +1195,13 @@ const MatchDetails = () => {
 
           {/* Popup for Adding Form  */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
+            <FormPopup onClose={handleAddPopupClose} />}
           {
             isPopupOpen &&
             <MatchStatPopup
               matchType={matchType}
               matchId={matchId}
               onClose={handlePopupClose}
-              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />
           }
           {isEditPopupOpen &&
@@ -1225,11 +1222,13 @@ const MatchDetails = () => {
               matchId={matchId}
             />} 
         </div>
+
         {uploading && (
             <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
               <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
             </div>
             )}
+
       </div>
     </div>
   );

@@ -8,10 +8,11 @@ import dayjs from 'dayjs';
 
 const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
-  const [formData, setFormData] = useState({...practiceSchedule, teamUnder: practiceSchedule.teamUnder});
+  const [formData, setFormData] = useState({...practiceSchedule, updatedOn: new Date().toISOString() ,updatedBy:user.username, team:{teamId:practiceSchedule.teamId}});
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
  console.log("teamUnder: ", formData.teamUnder)
@@ -76,11 +77,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select coaches.";
     }
-    const today = new Date();
-    const selectedDate = new Date(formData.date);
-    if (selectedDate <= today) {
-      newErrors.date = "The date must be in the present.";
-    };
+    // const today = new Date();
+    // const selectedDate = new Date(formData.date);
+    // if (selectedDate <= today) {
+    //   newErrors.date = "The date must be in the present.";
+    // };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -112,6 +113,8 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             team: {
               teamId: 0,
             },
+            updatedOn:"",
+            updatedBy:""
         });
         setSelectedCoaches([]);
         isSubmitted();
@@ -125,6 +128,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
       }
     } finally {
       setUploading(false);
+      onClose();
     }
   };
 
@@ -167,8 +171,9 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
 
 
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+    <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
+      <div className=" flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} m-5 md:m-0 p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -221,13 +226,13 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             <DatePicker
               name="date"
               dateFormat="yyyy-mm-dd"
-              defaultValue={dayjs(formData.dateOfBirth)}
+              defaultValue={dayjs(formData.date)}
               onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
-            {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
+            {/* {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>} */}
           </div>
           <div className="col-span-1">
             <label
@@ -273,10 +278,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-               <option value="" disabled >Select type</option>
-               <option value="Batting Practice">Batting Practice</option>
-               <option value="Bawling Practice">Bawling Practice</option>
-               <option value="Fielding Practice">Fielding Practice</option>
+              <option value="" disabled >Select type</option>
+              <option value="Batting Practice">Batting Practice</option>
+              <option value="Bawling Practice">Bawling Practice</option>
+              <option value="Fielding Practice">Fielding Practice</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -284,15 +289,15 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               Team
             </label>
                 <select
-                name="teamUnder"
-                value={formData.teamUnder}
+                name="team.teamId"
+                value={formData.team.teamId || ""}
                 onChange={handleChange}
                 className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                 >
                 <option value="" disabled>Select team</option>
                 {teams && teams.map(team =>
                     <option key={team.teamId} value={team.teamId}>
-                    {team.under}
+                    {team.under}-{team.year}
                     </option>
                 )}
                 </select>
@@ -355,9 +360,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             </button>
           </div>
         </form>
+        </div>
       </div>
       {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
       )}

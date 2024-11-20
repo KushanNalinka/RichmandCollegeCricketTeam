@@ -278,8 +278,6 @@
 // };
 
 // export default NewsDetailPage;
-
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -334,7 +332,7 @@ const NewsDetailPage = () => {
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <Navbar />
 
-       {/* {/ Top Image Section with Back Arrow  /} */}
+       {/* Top Image Section with Back Arrow */}
       <div
         style={{
           backgroundImage: `url(${topImage})`,
@@ -351,7 +349,7 @@ const NewsDetailPage = () => {
       >
       </div>
 
-       {/* {/ News Detail Section  /} */}
+        {/* News Detail Section */}
       <div className="container mx-auto px-4 mb-8 max-w-6xl -mt-20 relative z-10">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
           <div className="p-6 text-center">
@@ -360,11 +358,10 @@ const NewsDetailPage = () => {
             </h1>
             <p className="text-gray-500 text-sm mt-2">
               Published {new Date(newsItem.dateTime).toLocaleDateString()}  • {newsItem.author}
-            
+
             </p>
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
-{/* 
-            Image Carousel */}
+            {/* Image Carousel */}
             <div className="relative w-full h-[500px] mt-6">
               {newsItem.images && newsItem.images.length > 0 && (
                 <>
@@ -390,7 +387,6 @@ const NewsDetailPage = () => {
               )}
             </div>
           </div>
-
           <div className="p-6 text-gray-700 leading-relaxed text-justify">
             <p>{newsItem.body}</p>
           </div>

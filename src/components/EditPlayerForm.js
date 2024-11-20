@@ -1,6 +1,6 @@
 // src/components/EditPlayerForm.jsx
 
-import React, { useState, useEffect } from "react";
+import React, { useRef,useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message, DatePicker } from "antd";
@@ -8,11 +8,12 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import dayjs from 'dayjs';
-import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
-
+import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { GiClick } from "react-icons/gi";
 
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
+  const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({ 
     image: player.image,
     name: player.name,
@@ -32,13 +33,19 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       startDate:player.membershipStartDate,
       endDate:player.membershipEndDate,
     },
-    contactNo: player.contactNo });
+    contactNo: player.contactNo,
+    updatedBy:user.username,
+    updatedOn: new Date().toISOString(),
+   });
   const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
   const dateFormat = 'YYYY/MM/DD';
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const fileInputRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
   console.log("player to be edited: ", player);
   console.log("foemdata DOB: ", formData.dateOfBirth);
 
@@ -203,7 +210,9 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             startDate:"",
             endDate:"",
           },
-          contactNo: ""
+          contactNo: "",
+          updatedOn:"",
+          updatedBy:""
         });
         isSubmitted();
         setImagePreview();
@@ -221,6 +230,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         }
       } finally {
         setUploading(false);
+        onClose();
       }
     
   };
@@ -259,9 +269,40 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     });
   };
 
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+      setFormData({
+        ...formData,
+        image: file
+      });
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview(null);
+  };
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
   return (
-    <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 md:rounded-lg shadow-lg max-w-xl w-full max-h-screen hover:overflow-auto overflow-hidden relative`}>
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
+      <div className="flex items-center justify-center">
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -274,7 +315,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Player Details</h2>
         <form
           onSubmit={handleEdit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 p-1 "
         >
           <div className="col-span-1" >
             <label className="block text-black text-sm font-semibold ">Name</label>
@@ -295,6 +336,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               defaultValue={dayjs(formData.dateOfBirth)}
               onChange={(date) => handleChange({ target: { name: 'dateOfBirth', value: date } })}
               placeholder="yyyy-mm-dd"
+              isClearable={false} 
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
@@ -308,7 +350,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               value={formData.user.username}
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="@username"
+              placeholder="username"
             />
             {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
           </div>
@@ -324,15 +366,22 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-          <div className="col-span-1">
+          <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
-              type="password"
+              type={passwordVisible? "text": "password"}
               name="user.password"
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              className=" w-full px-3 py-1 border relative text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="********"
             />
+              <button
+                type="button"
+                onClick={()=>setPasswordVisible(!passwordVisible)}
+                className="absolute top-7 right-3 text-gray-600"
+              >
+                {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
           <div className="col-span-1">
@@ -396,6 +445,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value="OS">Off spin</option>
               <option value="SLAWS">Slow left-arm wrist spin</option>
               <option value="SRAWS">Slow Right-arm wrist spin</option>
+              <option value='N/A'>Not applicable</option>
             </select>
           </div>
           <div className="col-span-1">
@@ -447,6 +497,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
+              isClearable={false} 
             />
           </div>
           <div className="col-span-1">
@@ -461,17 +512,19 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               placeholder="yyyy-mm-dd"
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
+              isClearable={false} 
             />
             {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
           </div>
-          <div className="col-span-1 md:col-span-2 ">
+          <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
-            <input
+            {/* <input
               id="image"
               type="file" 
               name="image" 
               accept="image/*" 
               onChange={handleChange}
+              placeholder="Change image"
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
             {imagePreview &&
@@ -481,6 +534,53 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
                 className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
               />}
               {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>} 
+          </div> */}
+          <div
+            className={`w-full px-3 py-4 border rounded-md ${
+              isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+            } flex flex-col items-center justify-center cursor-pointer`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handleClick}
+          >
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="h-60 w-60 object-cover border border-gray-300"
+              />
+            ) : (
+              <p className="text-gray-500 text-sm">
+                {isDragging
+                  ? "Drop the image here"
+                  : <div className="flex">
+                      Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
+                        click here
+                        <GiClick className="ml-1 text-lg" />
+                      </span>&nbsp; to upload images
+                    </div>}
+              </p>
+            )}
+              <input
+                ref={fileInputRef}
+                id="image"
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={handleChange}
+                className="hidden"
+              />
+            </div>
+            {imagePreview && (
+              <button
+              title="Remove image"
+                onClick={handleRemoveImage}
+                className="absolute right-2 bottom-2 text-sm text-red-500"
+              >
+                <FaTrash/>
+              </button>
+            )}
           </div>
           <div className="flex justify-end col-span-1 md:col-span-2">
             <button
@@ -491,12 +591,13 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             </button>
           </div>
         </form>
-      </div>
-      {uploading && (
-        <div className="absolute items-center justify-center my-4">
+        </div>
+        {uploading && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
         </div>
         )}
+      </div>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 
 
 
+
 // import React, { useEffect, useState } from 'react';
 // import { useNavigate } from 'react-router-dom';
 // import TopLayer from '../components/TopLayer';
@@ -511,7 +512,9 @@ export default function MatchInfo() {
 // Adjust handlePageChange to prevent unnecessary re-renders or state resets
 const handlePageChange = (page) => {
   if (page !== currentPage) {
+
     setCurrentPage(page);
+
   }
 };
 
@@ -581,38 +584,36 @@ const handlePageChange = (page) => {
             justifyContent: 'center',
           }}
         >
-          <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
-            <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
-              <select
-                className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
-                value={selectedAgeGroup}
-                onChange={(e) => {
-                  setSelectedAgeGroup(e.target.value);
-                  filterMatches(matchDataList, false, activeButton === 'Latest');
-                }}
-              >
-                {ageGroups.map((ageGroup, index) => (
-                  <option key={index} value={ageGroup}>{ageGroup}</option>
-                ))}
-              </select>
+            <div className="flex flex-col items-center justify-center text-white space-y-4 w-full text-xs mt-70">
+              <div className="flex flex-row space-x-4 w-full max-w-[20rem] sm:max-w-[30rem] md:max-w-[35rem] lg:max-w-[40rem]">
+                <select
+                  className="bg-transparent/30 rounded-2xl p-2 pr-10 text-white w-full text-xs focus:outline-none"
+                  value={selectedAgeGroup}
+                  onChange={(e) => {
+                    setSelectedAgeGroup(e.target.value);
+                    filterMatches(matchDataList, false, activeButton === 'Latest');
+                  }}
+                >
+                  {ageGroups.map((ageGroup, index) => (
+                    <option key={index} value={ageGroup}>{ageGroup}</option>
+                  ))}
+                </select>
 
-              <select
-                className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
-                value={selectedMatchType}
-                onChange={(e) => {
-                  setSelectedMatchType(e.target.value);
-                  filterMatches(matchDataList, false, activeButton === 'Latest');
-                }}
-              >
-                {matchTypes.map((matchType, index) => (
-                  <option key={index} value={matchType}>{matchType}</option>
-                ))}
-              </select>
-  </div>
-
-
-
+                <select
+                  className="bg-transparent/30 rounded-2xl p-2 pr-8 text-white w-full text-xs focus:outline-none"
+                  value={selectedMatchType}
+                  onChange={(e) => {
+                    setSelectedMatchType(e.target.value);
+                    filterMatches(matchDataList, false, activeButton === 'Latest');
+                  }}
+                >
+                  {matchTypes.map((matchType, index) => (
+                    <option key={index} value={matchType}>{matchType}</option>
+                  ))}
+                </select>
+              </div>
             <div className="flex space-x-4">
+
             <button
   className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Latest' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
   onClick={() => {
@@ -644,10 +645,11 @@ const handlePageChange = (page) => {
               >
                 All Matches
               </button>
+
             </div>
           </div>
         </div>
-      </div>
+
 
       <div className="flex flex-col items-center flex-grow mt-7 space-y-4 px-4">
       {showUpcoming ? (
@@ -682,61 +684,64 @@ const handlePageChange = (page) => {
             )}
           </div>
 
-          {/* VS Divider */}
-          <div className="flex flex-col items-center justify-center">
-            <div className="h-6 md:h-10 w-px bg-gradient-to-b from-transparent via-[#012D5E] to-transparent sm:h-12" />
-            <span className="text-[#012D5E] text-sm sm:text-base my-2">VS</span>
-            <div className="h-6 md:h-10 w-px bg-gradient-to-t from-transparent via-[#012D5E] to-transparent sm:h-12 " />
+
+            {/* VS Divider  */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="h-6 md:h-10 w-px bg-gradient-to-b from-transparent via-[#012D5E] to-transparent sm:h-12" />
+              <span className="text-[#012D5E] text-sm sm:text-base my-2">VS</span>
+              <div className="h-6 md:h-10 w-px bg-gradient-to-t from-transparent via-[#012D5E] to-transparent sm:h-12 " />
+            </div>
+
+            {/* Opposition Section */}
+            <div className="flex flex-col items-center w-full sm:w-1/2">
+              <img
+                src={matchData.logo}
+                alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
+                className="w-10 h-10 sm:w-12 sm:h-12 "
+              />
+              <h3 className="text-xxs sm:text-sm tracking-wide mt-2 font-bold">{matchData.opposition.toUpperCase()}</h3>
+              {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
+                matchData.innings.map((inning, idx) => (
+                  <div key={idx} className="mt-2">
+                    <p className="text-sm sm:text-xs mt-2">{inning.oppositionRuns}/{inning.oppositionWickets}</p>
+                    <p className=" text-xxs sm:text-xxs text-center">{inning.oppositionOvers}</p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <p className="text-sm sm:text-xs mt-2">{matchData.oppositionRuns}/{matchData.oppositionWickets}</p>
+                  <p className="text-xxs sm:text-xxs">{matchData.oppositionOvers}</p>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Opposition Section */}
-          <div className="flex flex-col items-center w-full sm:w-1/2">
-            <img
-              src={matchData.logo}
-              alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
-              className="w-10 h-10 sm:w-12 sm:h-12 "
-            />
-            <h3 className="text-xxs sm:text-sm tracking-wide mt-2 font-bold">{matchData.opposition.toUpperCase()}</h3>
-            {matchData.type.toLowerCase() === 'test' && matchData.innings ? (
-              matchData.innings.map((inning, idx) => (
-                <div key={idx} className="mt-2">
-                  <p className="text-sm sm:text-xs mt-2">{inning.oppositionRuns}/{inning.oppositionWickets}</p>
-                  <p className=" text-xxs sm:text-xxs text-center">{inning.oppositionOvers}</p>
-                </div>
-              ))
-            ) : (
-              <>
-                <p className="text-sm sm:text-xs mt-2">{matchData.oppositionRuns}/{matchData.oppositionWickets}</p>
-                <p className="text-xxs sm:text-xxs">{matchData.oppositionOvers}</p>
-              </>
-            )}
+          {/* Match Details Section */}
+          <div className="w-full sm:w-1/2 p-2 text-left flex flex-col items-start ">
+            <h4 className="text-xs sm:text-sm text-[#012D5E] mt-2 font-bold">
+              {matchData.result.toUpperCase()} ({matchData.type.toUpperCase()})
+            </h4>
+            <div className="flex justify-between mt-2 w-full">
+              <div className="flex flex-col text-left">
+                <p className="text-xxs sm:text-xxs text-black">{formatDate(matchData.date)}</p>
+                <p className="text-xxs sm:text-xxs text-black mt-2">{matchData.venue.toUpperCase()}</p>
+              </div>
+              <div className="flex flex-col text-right">
+              
+                <p className="text-xxs sm:text-xs text-black mt-2">{matchData.tossResult}</p>
+              </div>
+            </div>
+            <div className="flex justify-end w-full mt-4">
+              <button
+                className="bg-[#012D5E] rounded-full h-8 sm:h-10 w-24 sm:w-28 text-xxs sm:text-xs text-white hover:bg-blue-700"
+                onClick={() => handleMatchCentreClick(matchData)}
+              >
+                Score Card
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Match Details Section */}
-        <div className="w-full sm:w-1/2 p-2 text-left flex flex-col items-start ">
-          <h4 className="text-xs sm:text-sm text-[#012D5E] mt-2 font-bold">
-            {matchData.result.toUpperCase()} ({matchData.type.toUpperCase()})
-          </h4>
-          <div className="flex justify-between mt-2 w-full">
-            <div className="flex flex-col text-left">
-              <p className="text-xxs sm:text-xxs text-black">{formatDate(matchData.date)}</p>
-              <p className="text-xxs sm:text-xxs text-black mt-2">{matchData.venue.toUpperCase()}</p>
-            </div>
-            <div className="flex flex-col text-right">
-             
-              <p className="text-xxs sm:text-xs text-black mt-2">{matchData.tossResult}</p>
-            </div>
-          </div>
-          <div className="flex justify-end w-full mt-4">
-            <button
-              className="bg-[#012D5E] rounded-full h-8 sm:h-10 w-24 sm:w-28 text-xxs sm:text-xs text-white hover:bg-blue-700"
-              onClick={() => handleMatchCentreClick(matchData)}
-            >
-              Score Card
-            </button>
-          </div>
-        </div>
       </div>
           ))
         )}
@@ -784,9 +789,40 @@ const handlePageChange = (page) => {
 </div>
   
 
-      
-             {/* Footer */}
-             <Footer/>
+
+        {/* Pagination controls */}
+  {!showUpcoming && activeButton !== 'Latest' && (
+    <div className="pagination flex space-x-2 mt-4">
+      <button
+        disabled={currentPage === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+        className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+      >
+        «
+      </button>
+      {Array.from({ length: totalPages }, (_, index) => (
+        <button
+          key={index}
+          onClick={() => handlePageChange(index + 1)}
+          className={`w-8 h-8 flex items-center justify-center rounded ${
+            currentPage === index + 1 ? 'bg-blue-500 text-white' : 'bg-gray-400'
+          }`}
+        >
+          {index + 1}
+        </button>
+      ))}
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() => handlePageChange(currentPage + 1)}
+        className="w-8 h-8 flex items-center justify-center bg-gray-400 rounded"
+      >
+        »
+      </button>
+    </div>
+  )}
+  </div>
+      {/* Footer  */}
+      <Footer/>
     </div>
   );
 }

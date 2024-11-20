@@ -389,18 +389,29 @@ const LatestNews = () => {
 
        // Filter news items that are today or earlier, then sort and slice to get the latest 5
         const today = new Date();
-        const filteredNews = data
-        .filter(newsItem => new Date(newsItem.dateTime) <= today)
-        .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
-        .slice(0, 5)
-        .map(newsItem => ({
-            title: newsItem.heading,
-            image: Array.isArray(newsItem.images) && newsItem.images.length > 0
-              ? (typeof newsItem.images[0] === 'string'
-                 ? newsItem.images[0] // If it's a string, use it directly
-                 : newsItem.images[0].imageUrl) // If it's an object, access imageUrl
-              : '', // Fallback
-        }));
+
+        // const filteredNews = data
+        //   .filter(newsItem => new Date(newsItem.dateTime) <= today)
+        //   .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+        //   .slice(0, 5)
+        //   .map(newsItem => ({
+        //     title: newsItem.heading,
+        //     image: newsItem.imageUrl,
+        //   }));
+
+          const filteredNews = data
+          .filter(newsItem => new Date(newsItem.dateTime) <= today)
+          .sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime))
+          .slice(0, 5)
+          .map(newsItem => ({
+              title: newsItem.heading,
+              image: Array.isArray(newsItem.images) && newsItem.images.length > 0
+                ? (typeof newsItem.images[0] === 'string' 
+                   ? newsItem.images[0] // If it's a string, use it directly
+                   : newsItem.images[0].imageUrl) // If it's an object, access imageUrl
+                : '', // Fallback
+          }));
+
 
         setNewsItems(filteredNews);
 

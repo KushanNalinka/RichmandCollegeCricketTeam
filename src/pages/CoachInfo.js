@@ -45,10 +45,12 @@ const CoachTable = () => {
   }, [isSubmitted, isDeleted]);
 
   const loadCoaches = async () => {
+    setUploading(true);
     axios
     .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
+        setUploading(false);
         const sortedCoaches = coaches.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setCoachData(sortedCoaches);
         console.log("All coaches:", coaches);

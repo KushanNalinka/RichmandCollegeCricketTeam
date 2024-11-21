@@ -49,9 +49,11 @@ const TableComponent = () => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    setUploading(true);
     axios
       .get(`${API_URL}admin/players/all`)
       .then(response => {
+        setUploading(false);
         const players = response.data;
         const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPlayerData(sortedPlayers);

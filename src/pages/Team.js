@@ -6,6 +6,7 @@ import EditModal from "../components/TeamEditModal"; // Import the EditModal com
 import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
 import flag from "../assets/images/backDrop3.png";
 import HomeNavbar from "../components/HomeNavbar";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import { Link } from "react-router-dom";
@@ -37,12 +38,14 @@ const TableComponent = () => {
   const [yearOptions, setYearOptions] = useState([]);
   const [underOptions, setUnderOptions] = useState([]);
   const [filteredTeams, setFilteredTeams] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    setUploading(true);
     const fetchTeams = async () => {
       try {
         const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
-  
+        setUploading(false);
         const sortedTeams = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
 
         setTeams(sortedTeams);
@@ -260,7 +263,7 @@ const TableComponent = () => {
                           >
                             All
                           </button>
-                          {years.map(year => (
+                          {yearOptions.map(year => (
                             <button
                               key={year}
                               onClick={() => handleFilterChange("year", year)}
@@ -406,6 +409,11 @@ const TableComponent = () => {
            
           />}
         </div>
+        {uploading && (
+            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+            </div>
+          )}
       </div>
     </div>
   );

@@ -298,7 +298,7 @@ const TableComponent = () => {
                     key={item.teamId}
                     className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
                   >
-                    <td className="py-2 px-4 lg:rounded-l-lg h-16 whitespace-nowrap text-sm text-gray-800 font-bold">
+                    <td className="py-2 px-4 h-16 lg:rounded-l-lg whitespace-nowrap text-sm text-gray-800 font-bold">
                       {item.under}
                     </td>
                     <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
@@ -310,7 +310,7 @@ const TableComponent = () => {
                     <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                       {item.viceCaptain}
                     </td>
-                    <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap flex items-center text-sm text-gray-600">
+                    <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap items-center text-sm text-gray-600">
                       <button
                         onClick={() => handleEdit(item)}
                         className="text-blue-500 hover:text-blue-600 transition-colors"

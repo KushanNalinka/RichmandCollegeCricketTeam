@@ -389,6 +389,162 @@
 // export default CoachSlider;
 
 
+// import React, { useState, useEffect } from 'react';
+// import image1 from '../assets/images/suranga.png';
+// import image2 from '../assets/images/charith.png';
+// import image3 from '../assets/images/wanindu.png';
+// import image4 from '../assets/images/dhananjay.png';
+// import image5 from '../assets/images/pabasara.png';
+// import image6 from '../assets/images/djananjaya.png';
+// import image7 from '../assets/images/kamindu.png';
+
+// import backgroundImage from '../assets/images/Hero.png';
+
+// const coaches = [
+//   {
+//     name: "Dhananjaya De Silva",
+//     role: "Batsman",
+//     imageUrl: image1,
+//   },
+//   {
+//     name: "Kushan Mendis",
+//     role: "Batsman",
+//     imageUrl: image2,
+//   },
+//   {
+//     name: "Wanidu Hasaranga De Silva",
+//     role: "Bowler",
+//     imageUrl: image3,
+//   },
+//   {
+//     name: "Dhananjaya Lakshan",
+//     role: "Batsman",
+//     imageUrl: image4,
+//   },
+//   {
+//     name: "Sherman Warner",
+//     role: "All Rounder",
+//     imageUrl: image5,
+//   },
+//   {
+//     name: "Sherman Warner",
+//     role: "All Rounder",
+//     imageUrl: image6,
+//   },
+//   {
+//     name: "Sherman Warner",
+//     role: "All Rounder",
+//     imageUrl: image7,
+//   },
+// ];
+
+// const CoachSlider = () => {
+//   const [currentIndex, setCurrentIndex] = useState(0);
+//   const [isMobile, setIsMobile] = useState(false);
+//   const [isTablet, setIsTablet] = useState(false);
+
+//   // Update the isMobile state based on window width
+//   useEffect(() => {
+//     const handleResize = () => {
+//       setIsMobile(window.innerWidth < 768);
+//       setIsTablet(window.innerWidth >= 768 && window.innerWidth <= 1024);
+//     };
+
+//     handleResize(); // Set on initial render
+//     window.addEventListener('resize', handleResize);
+
+//     return () => window.removeEventListener('resize', handleResize);
+//   }, []);
+
+//   // Navigation for previous button
+//   const handlePrev = () => {
+//     setCurrentIndex((prevIndex) =>
+//       prevIndex === 0 ? coaches.length - 1 : prevIndex - 1
+//     );
+//   };
+
+//   // Navigation for next button
+//   const handleNext = () => {
+//     setCurrentIndex((prevIndex) =>
+//       prevIndex === coaches.length - 1 ? 0 : prevIndex + 1
+//     );
+//   };
+
+//   // Ensure the slider shows 1 coach on mobile, 4 on larger screens
+//   const getVisibleCoaches = () => {
+//     const visible = [];
+//     const numOfVisibleCards = isMobile ? 1 : 4;
+
+//     for (let i = 0; i < numOfVisibleCards; i++) {
+//       visible.push(coaches[(currentIndex + i) % coaches.length]);
+//     }
+//     return visible;
+//   };
+
+//   const visibleCoaches = getVisibleCoaches();
+
+//   return (
+//     <div
+//       className="text-white py-8 px-4"
+//       style={{
+//         backgroundImage: `url(${backgroundImage})`,
+//         backgroundSize: 'cover',
+//         backgroundRepeat: 'no-repeat',
+//         backgroundPosition: 'center',
+//       }}
+//     >
+//       <div className="relative w-fit ml-20">
+//         <h3 className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
+//           MEET OUR HEROES
+//         </h3>
+//       </div>
+
+//       {/* Slider container with arrows on either side */}
+//       <div className="relative flex justify-center items-center mt-12 w-[90%] mx-auto">
+//         {/* Left Arrow with plain "<" style */}
+//         <button
+//           onClick={handlePrev}
+//           className="absolute left-[-40px] text-6xl text-white hover:text-white transition"
+//           style={{ top: '50%', transform: 'translateY(-50%)' }} // Center vertically
+//         >
+//           {"<"}
+//         </button>
+
+//         {/* Player Image Slider */}
+        // <div className="flex justify-center items-center space-x-1">
+        //   {visibleCoaches.map((coach, index) => (
+        //     <div key={index} className="text-center flex-shrink-0">
+//               <img
+//                 className={`${
+//                   isMobile
+//                     ? 'w-60 h-100 sm:w-48 sm:h-96' // Mobile sizes
+//                     : isTablet
+//                     ? 'w-48 h-96 sm:w-64 sm:h-128' // Tablet (iPad Mini): Medium image size
+//                     : 'w-60 h-120 sm:w-64 sm:h-136 md:w-72 md:h-144 lg:w-80 lg:h-160'
+//                 } object-contain rounded-xl mx-auto mb-4 transition-all duration-300`}
+//                 src={coach.imageUrl}
+//                 alt={coach.name}
+//               />
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* Right Arrow with plain ">" style */}
+//         <button
+//           onClick={handleNext}
+//           className="absolute right-[-40px] text-6xl text-white hover:text-white transition"
+//           style={{ top: '50%', transform: 'translateY(-50%)' }} // Center vertically
+//         >
+//           {">"}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default CoachSlider;
+
+
 import React, { useState, useEffect } from 'react';
 import image1 from '../assets/images/suranga.png';
 import image2 from '../assets/images/charith.png';
@@ -441,11 +597,13 @@ const coaches = [
 const CoachSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
-  // Update the isMobile state based on window width
+  // Update the screen state based on window width
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth <= 1024);
     };
 
     handleResize(); // Set on initial render
@@ -468,10 +626,18 @@ const CoachSlider = () => {
     );
   };
 
-  // Ensure the slider shows 1 coach on mobile, 4 on larger screens
+  // Ensure the slider shows 1 coach on mobile, 2 on tablet, 4 on larger screens
   const getVisibleCoaches = () => {
     const visible = [];
-    const numOfVisibleCards = isMobile ? 1 : 4;
+    let numOfVisibleCards;
+
+    if (isMobile) {
+      numOfVisibleCards = 1; // Mobile: Show 1 coach
+    } else if (isTablet) {
+      numOfVisibleCards = 2; // Tablet: Show 2 coaches (iPad Mini range)
+    } else {
+      numOfVisibleCards = 4; // Desktop: Show 4 coaches
+    }
 
     for (let i = 0; i < numOfVisibleCards; i++) {
       visible.push(coaches[(currentIndex + i) % coaches.length]);
@@ -491,8 +657,8 @@ const CoachSlider = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="relative w-fit ml-20">
-        <h3 className="text-[2rem] md:text-[3rem] lg:text-[3rem] font-extrabold text-white ">
+      <div className="relative w-full md:w-fit ml-4 md:ml-20">
+        <h3 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white">
           MEET OUR HEROES
         </h3>
       </div>
@@ -509,13 +675,15 @@ const CoachSlider = () => {
         </button>
 
         {/* Player Image Slider */}
-        <div className="flex justify-center items-center space-x-1">
+        <div className="flex justify-center items-center space-x-4 md:space-x-2">
           {visibleCoaches.map((coach, index) => (
             <div key={index} className="text-center flex-shrink-0">
-              <img
+             <img
                 className={`${
                   isMobile
                     ? 'w-60 h-100 sm:w-48 sm:h-96' // Mobile sizes
+                    : isTablet
+                    ? 'w-48 h-96 sm:w-64 sm:h-128' // Tablet (iPad Mini): Medium image size
                     : 'w-60 h-120 sm:w-64 sm:h-136 md:w-72 md:h-144 lg:w-80 lg:h-160'
                 } object-contain rounded-xl mx-auto mb-4 transition-all duration-300`}
                 src={coach.imageUrl}

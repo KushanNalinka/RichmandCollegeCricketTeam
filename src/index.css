@@ -194,6 +194,25 @@ html {
   opacity: 1; /* Ensures color appears fully */
 }
 
+/* Carousel container: prevent white space issues */
+.carousel-wrapper {
+  overflow: hidden;
+  width: 100%; /* Prevent overflow */
+  box-sizing: border-box;
+  margin: 0 auto; /* Center align */
+}
+
+/* Prevent child elements from causing overflow */
+.carousel-content {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.carousel-content > div {
+  flex: 0 0 100%; /* Each item takes 100% width */
+  max-width: 100%;
+}
+
 
 /* custom toolbar */
 .custom-scrollbar::-webkit-scrollbar {

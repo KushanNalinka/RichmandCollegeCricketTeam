@@ -30,8 +30,16 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {

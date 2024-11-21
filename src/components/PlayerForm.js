@@ -40,13 +40,21 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       if (name === "membership.startDate") {
         // Handle the DatePicker value change
         setFormData({
@@ -195,10 +203,12 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     };
 
     if (formData.membership.startDate && new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
-      newErrors.membershipEndDate = "End date must be after start date.";
+      newErrors.endDate = "End date must be after start date.";
     };
 
-    if (!/^image\//.test(formData.image.type)) {
+    if (!formData.image && imagePreview === null) {
+      newErrors.image = "Image is required.";
+    }else if (!/^image\//.test(formData.image.type)) {
       newErrors.image = "Only image files are allowed.";
     };
 
@@ -231,6 +241,46 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     });
   };
 
+  // const handleImageUpload = (file) => {
+  //   return new Promise((resolve, reject) => {
+  //     const formData = new FormData();
+  //     formData.append('file', file);
+  //     formData.append('folder', 'players'); // Optional, if your server needs a folder parameter
+  
+  //     setUploading(true);
+  
+  //     fetch('http://your-server-url/upload', {
+  //       method: 'POST',
+  //       body: formData,
+  //     })
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error(`Server responded with status ${response.status}`);
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((data) => {
+  //         // Assuming the server responds with the file's URL
+  //         setUploading(false);
+  //         resolve(data.fileUrl); // Adjust based on the server's response
+  //       })
+            /* if server not responds with the uploaded url then the code should be 
+              .then(() => {
+                // Construct the file URL based on the file name and upload path
+                const fileUrl = `http://your-server-url/uploads/players/${file.name}`;
+                setUploading(false);
+                resolve(fileUrl);
+              })
+                */
+  //       .catch((error) => {
+  //         console.error('Image upload failed:', error);
+  //         setUploading(false);
+  //         reject(error);
+  //       });
+  //   });
+  // };
+  
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -251,11 +301,17 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: "",
+      }));
+      
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setFormData({...formData, image:null})
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -476,8 +532,9 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
-            {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
+            {errors.endDate && <p className="text-red-500 text-xs">{errors.endDate}</p>}
           </div>
+          
           <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
             {/* <input
@@ -542,8 +599,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                 <FaTrash/>
               </button>
             )}
-            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}  
           </div>
+          {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}  
           <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"

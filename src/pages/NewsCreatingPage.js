@@ -692,6 +692,10 @@ const NewsCreator = () => {
     //     [name]: file,
     //   });
     //   setIsImageAdded(true);
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (files) {
       const selectedFiles = Array.from(e.target.files);
       const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
@@ -759,7 +763,8 @@ const NewsCreator = () => {
     // Body validation
     if (formData.body.length < 50) {
       newErrors.body = "Body should be at least 50 characters.";
-    }
+    };
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -800,6 +805,7 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
+    const currentTime = new Date().toISOString();
     setUploading(true);
     try {
       console.log("formdata1: ",formData.images[0]);
@@ -808,11 +814,11 @@ const NewsCreator = () => {
       const createdNews = {
         ...formData,
         images: urls.map((url) => ({ imageUrl: url })),
-        dateTime: new Date().toISOString(),
+        dateTime: currentTime,
         createdBy: user.username,
-        createdOn: new Date().toISOString()
+        createdOn: currentTime
       };
-      console.log("images in formdata: ", formData);
+      console.log("formdata before submit: ", createdNews);
 
       const response = await axios.post(
         `${API_URL}news`,
@@ -832,6 +838,7 @@ const NewsCreator = () => {
         updatedOn: "",
       });
       setImagePreviews([]);
+      setImageFiles([]);
       loadNews();
       // setIsSubmitted(!isSubmitted);      
       // setTimeout(() => {
@@ -886,6 +893,7 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
+    const currentTime = new Date().toISOString();
     setUploading(true);
     try {
       // let imageURL = formData.imageUrl;
@@ -906,12 +914,13 @@ const NewsCreator = () => {
       
       const editedNewsData = {
         ...formData,
-       
         images:  allImageUrls.map((url) => ({ imageUrl: url })),
-        dateTime: new Date().toISOString(),
+        dateTime: currentTime,
         updatedBy: user.username,
-        updatedOn: new Date().toISOString()
+        updatedOn: currentTime
       };
+
+      console.log("formdate before edit submit: ", editedNewsData);
       
       const response = await axios.put(
         `${API_URL}news/${currentNewsId}`,
@@ -931,6 +940,7 @@ const NewsCreator = () => {
         updatedOn: "",
       });
       setImagePreviews([]);
+      setImageFiles([]);
       setIsEditPressed(false);
       setCurrentNewsId(null);
       loadNews();
@@ -1023,16 +1033,32 @@ const NewsCreator = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImagePreviews(url);
-      setFormData({
-        ...formData,
-        image: file
-      });
+  
+    if (!e.dataTransfer || !e.dataTransfer.files) {
+      console.error("No files were dropped.");
+      return;
     }
+  
+    // Ensure that dropped files are iterable
+    const droppedFiles = Array.from(e.dataTransfer.files || []);
+  
+    if (droppedFiles.length === 0) {
+      console.error("No valid files to process.");
+      return;
+    }
+  
+    // Generate preview URLs and update the state
+    const previewUrls = droppedFiles.map((file) => URL.createObjectURL(file));
+  
+    setImageFiles((prevFiles) => [...prevFiles, ...droppedFiles]);
+    setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
+    console.log("Dropped files processed:", droppedFiles);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      imageUrl: "",
+    }));
   };
+  
 
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -1193,7 +1219,6 @@ const NewsCreator = () => {
                             accept="image/*"
                             onChange={handleChange}
                             multiple
-                            required
                             className="hidden"
                           />
                         </div>
@@ -1219,6 +1244,7 @@ const NewsCreator = () => {
                         
                       </div>
                     </div>
+                    {errors.imageUrl && <p className="text-red-500 text-xs">{errors.imageUrl}</p>} 
                       <div className="col-span-1 md:col-span-2 flex gap-2 justify-end">
                         <button
                           type="submit"

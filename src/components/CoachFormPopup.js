@@ -28,7 +28,7 @@ const CoachForm = ({  onClose, isSubmitted }) => {
     createdBy:user.username
   });
 
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -37,6 +37,10 @@ const CoachForm = ({  onClose, isSubmitted }) => {
 
   const handleChange = e => {
     const { name, value, files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -93,9 +97,11 @@ const CoachForm = ({  onClose, isSubmitted }) => {
       newErrors.description = "Description should be under 100 characters.";
     };
 
-    // if (!/^image\//.test(formData.image.type)) {
-    //   newErrors.image = "Only image files are allowed.";
-    // };
+    if (!formData.image) {
+      newErrors.image = "Image is required.";
+    }else if (!/^image\//.test(formData.image.type)) {
+      newErrors.image = "Only image files are allowed.";
+    };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -201,11 +207,16 @@ const CoachForm = ({  onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: "",
+      }));
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setFormData({...formData, image:null})
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -405,7 +416,6 @@ const CoachForm = ({  onClose, isSubmitted }) => {
                 name="image" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -418,9 +428,9 @@ const CoachForm = ({  onClose, isSubmitted }) => {
                 <FaTrash/>
               </button>
             )}
-            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           </div>
-          <div className="flex justify-end col-span-1 md:col-span-2 mt-4">
+          {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}
+          <div className="flex justify-end col-span-1 md:col-span-2 mt-2">
             <button
               type="submit"
               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"

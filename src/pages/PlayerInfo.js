@@ -34,18 +34,18 @@ const TableComponent = () => {
   const [showBowlingDropdown, setShowBowlingDropdown] = useState(false);
   const [showBattingDropdown, setShowBattingDropdown] = useState(false);
   const [showRoleDropdown, setShowRoleDropdown] = useState(false);
-  // const [statusOptions, setStatusOptions] = useState([]);
-  // const [bowlingOptions, setBowlingOptions] = useState([]);
-  // const [battingOptions, setBattingOptions] = useState([]);
-  // const [roleOptions, setRoleOptions] = useState([]);
+  const [statusOptions, setStatusOptions] = useState([]);
+  const [bowlingOptions, setBowlingOptions] = useState([]);
+  const [battingOptions, setBattingOptions] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
   const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingStyle: '', playerRole: '' });
 
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
-  const statusOptions = ["Active", "Inactive"];
-  const roleOptions = ["Bowler","Batter", "Top Order Batter", "Wicketkeeper Batter", "Allrounder", "Bawlling Allrounder", "Batting Allrounder"];
-  const bowlingOptions = ["RAF","RAFM","RAMF","RAM","RAMS","RASM","RAS","LAF", "LAFM", "LAMF", "LAM","LAMS", "LASM","LAL", "OB", "LB", "LBG", "SLAO","SRAO","OS","SLAWS", "SRAWS", "N/A"];
-  const battingOptions = ["LHB","RHB"]
+  // const statusOptions = ["Active", "Inactive"];
+  // const roleOptions = ["Bowler","Batter", "Top Order Batter", "Wicketkeeper Batter", "Allrounder", "Bawlling Allrounder", "Batting Allrounder"];
+  // const bowlingOptions = ["RAF","RAFM","RAMF","RAM","RAMS","RASM","RAS","LAF", "LAFM", "LAMF", "LAM","LAMS", "LASM","LAL", "OB", "LB", "LBG", "SLAO","SRAO","OS","SLAWS", "SRAWS", "N/A"];
+  // const battingOptions = ["LHB","RHB"]
 
   useEffect(() => {
     // Fetch player data for playerId 4
@@ -55,10 +55,10 @@ const TableComponent = () => {
         const players = response.data;
         const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPlayerData(sortedPlayers);
-        // setStatusOptions([...new Set(players.map(player => player.status))]);
-        // setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
-        // setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
-        // setRoleOptions([...new Set(players.map(player => player.playerRole))]);
+        setStatusOptions([...new Set(players.map(player => player.status))]);
+        setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
+        setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
+        setRoleOptions([...new Set(players.map(player => player.playerRole))]);
         console.log("Player Data:", response.data);
       })
       .catch(error => {

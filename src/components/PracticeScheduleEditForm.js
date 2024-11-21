@@ -45,8 +45,16 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -65,11 +73,11 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (formData.startTime !== practiceSchedule.startTime && formData.endTime !== practiceSchedule.endTime && formData.startTime && formData.endTime) {
+    if (formData.startTime && formData.endTime) {
       const startDateTime = new Date(`1970-01-01T${formData.startTime}:00`);
       const endDateTime = new Date(`1970-01-01T${formData.endTime}:00`);
     if (startDateTime >= endDateTime) {
-      newErrors.timeRange = "End time must be after start time.";
+      newErrors.endTime = "End time must be after start time.";
     }
   }
 
@@ -267,7 +275,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
            
             />
-             {errors.timeRange && <p className="text-red-500 text-xs mt-1">{errors.timeRange}</p>}
+             {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Type</label>

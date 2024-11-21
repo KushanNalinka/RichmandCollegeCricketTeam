@@ -29,6 +29,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showImageError, setShowImageError] = useState(false);
   console.log("selected coaches: ", selectedCoaches);
 
   const convertTimeTo24Hour = (time12h) => {
@@ -112,6 +113,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
+      setShowImageError(false);
     }else if (name === "date") {
       // Handle the DatePicker value change
       setFormData({
@@ -269,13 +271,20 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       setImagePreview(url);
       setFormData({
         ...formData,
-        image: file
+        logo: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        logo: "",
+      }));
+      setIsImageAdded(true);
+      setShowImageError(false);
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setShowImageError(true);
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -560,7 +569,6 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                 name="logo" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -572,10 +580,14 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               >
                 <FaTrash/>
               </button>
-            )}
-              {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>}  
+            )} 
           </div>
-
+          {showImageError && (
+            <p className="text-red-500 text-xs px-2 col-span-2">
+              Upload a new image to replace the existing one, or it will remain unchanged.
+            </p>
+          )}
+          {errors.logo && <p className="text-red-500 text-xs">{errors.logo}</p>} 
           <div className="col-span-1 md:col-span-2 ">
             <button
               onClick={handleEdit}

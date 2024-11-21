@@ -1081,7 +1081,7 @@ const MatchDetails = () => {
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.under} - {match.teamYear}
                       </td>
-                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 flex items-center whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 items-center whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}

@@ -15,7 +15,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState([]);
-  const [imagePreview, setImagePreview] = useState();
+  const [imagePreview, setImagePreview] = useState(null);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -85,6 +85,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
   const handleChange = e => {
     const { name, value,files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name === "date") {
       setFormData({
         ...formData,
@@ -92,6 +96,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
       });
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -129,7 +137,14 @@ const FormPopup = ({  onClose, isSumitted }) => {
       // Validate selected coaches
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select at least one coach.";
-    }
+    };
+
+    if (!formData.logo && imagePreview === null) {
+      newErrors.logo = "Opponent logo is required.";
+    }else if (!/^image\//.test(formData.logo.type)) {
+      newErrors.logo = "Only image files are allowed.";
+    };
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -264,13 +279,19 @@ const FormPopup = ({  onClose, isSumitted }) => {
       setImagePreview(url);
       setFormData({
         ...formData,
-        image: file
+        logo: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        logo: "",
+      }));
+      
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setFormData({...formData, logo:null})
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -568,7 +589,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 name="logo" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -581,9 +601,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 <FaTrash/>
               </button>
             )}
-          {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>} 
           </div>
-
+          {errors.logo && <p className="text-red-500 text-xs">{errors.logo}</p>} 
           <div className="col-span-1 md:col-span-2 ">
             <button
               type="submit"

@@ -742,7 +742,7 @@ const handlePageChange = (page) => {
           </div>
         </div>
 
-      </div>
+      
           ))
         )}
 

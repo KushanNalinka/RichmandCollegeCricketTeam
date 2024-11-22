@@ -479,9 +479,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
 
   return (
     <div
-      className={`fixed inset-0 bg-gray-600 bg-opacity-75 flex md:p-10 p-3 justify-center`}
+      className={`fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto px-20 py-10 min-h-screen`}
     >
-      <div className="bg-white md:p-8 p-2 pt-5 relative rounded-3xl shadow-lg w-full">
+      <div className="bg-white md:p-8 p-2 pt-5 relative rounded-3xl shadow-lg w-full h-auto">
         <div className="flex justify-end items-center pb-4">
           <button
             onClick={onClose}
@@ -490,14 +490,14 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
             <FaTimes />
           </button>
         </div>
-        <div className=" bg-gray-200 lg:px-5 p-5 rounded-3xl shadow-lg max-h-full" 
+        <div className=" bg-gray-200 lg:px-5 p-5 rounded-3xl shadow-lg" 
             style={{ 
               backdropFilter: "blur(10px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
               border: "1px solid rgba(255, 255, 255, 0.3)",
               
             }}>
-        <div>
+        <div >
         
         <h2 className=" flex flex-wrap items-center  py-3 font-bold text-[#480D35] text-md lg:text-xl">
           Score Card - <span className="text-highlight italic text-lg md:text-2xl">{matchType} match</span> &nbsp; against &nbsp;<span className="text-highlight italic text-lg md:text-2xl">{matchOpponent}</span>&nbsp; on &nbsp;<span className="text-highlight italic ">{dayjs(date).format("YYYY-MMM-DD")}</span>
@@ -518,7 +518,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         ) 
       }
     </div>
-        <div  className="overflow-auto max-h-[50vh]">
+        <div  className="overflow-x-auto  ">
           <table className="min-w-full divide-gray-300 bg-gray-00 shadow-md">
             <thead className=" text-white lg:rounded">
               <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
@@ -538,7 +538,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
               <tr className=" h-2"></tr>
             </thead>
 
-            <tbody className="divide-y-2 divide-gray-300 max-h-full overflow-auto">
+            <tbody className="divide-y-2 divide-gray-300 max-h-full ">
               { filteredStats
                 .map((player) =>
                   <tr

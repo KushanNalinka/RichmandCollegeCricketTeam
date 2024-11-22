@@ -30,11 +30,13 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         .then(response => {
           const members = response.data;
           setSelectedPlayers(members);
-          console.log("players Data:", members);
+          console.log("members Data:", members);
         })
         .catch(error => {
           console.error("There was an error fetching the player data!", error);
         });
+        console.log("players:", players);
+        console.log("set selected players:", selectedPlayers);
   }, []);
   
 
@@ -105,13 +107,25 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    if (selectedPlayers.includes(player)) {
-      // If player is already selected, remove them
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      players: ""
+    }));
+    // if (selectedPlayers.includes(player)) {
+    //   // If player is already selected, remove them
+    //   setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    // } else {
+    //   // Otherwise, add the player to the list
+    //   setSelectedPlayers([...selectedPlayers, player]);
+    // }
+
+    const isSelected = selectedPlayers.some(p => p.playerId === player.playerId);
+    if (isSelected) {
       setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
     } else {
-      // Otherwise, add the player to the list
       setSelectedPlayers([...selectedPlayers, player]);
     }
+    console.log("selected players: ", selectedPlayers.name);
   };
 
   const clearSelectedPlayers = () => {

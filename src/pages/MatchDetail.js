@@ -660,11 +660,13 @@ const MatchDetails = () => {
   } 
 
   useEffect(() => {
+    setUploading(true);
     const fetchMatches = async () => {
       try {
 
         const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
-          // Sort matches by date in descending order so future dates come first
+        // Sort matches by date in descending order so future dates come first
+        setUploading(false);
         const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setMatches(sortedMatches);
 
@@ -676,6 +678,19 @@ const MatchDetails = () => {
         });
         setTeamOptions(uniqueTeams);
         console.log(response.data);
+
+        // setUnderOptions([...new Set(response.data.map(match => match.under))]);
+        // setYearOptions([...new Set(response.data.map(match => match.teamYear))]);
+        // const uniqueTeams = [];
+        // yearOptions.forEach(year => {
+        //   underOptions.forEach(underOption => {
+        //     uniqueTeams.push(`${underOption}-${year}`);
+        //   });
+        // });
+        // setTeamOptions(uniqueTeams);
+        // console.log(response.data);
+        // console.log(yearOptions[0]);
+        
         
         updateRowsPerPage(); // Initial setup
         window.addEventListener('resize', updateRowsPerPage);
@@ -1081,7 +1096,7 @@ const MatchDetails = () => {
                       <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
                         {match.under} - {match.teamYear}
                       </td>
-                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 flex items-center whitespace-nowrap text-sm text-gray-600">
+                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 items-center whitespace-nowrap text-sm text-gray-600">
                         <button
                           title="Edit"
                           onClick={() => handleEdit(match)}

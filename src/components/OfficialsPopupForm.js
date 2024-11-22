@@ -29,6 +29,10 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
       setFormData({
         ...formData,
         [name]: value

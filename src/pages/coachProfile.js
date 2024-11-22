@@ -37,6 +37,7 @@ const CoachProfile = () => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [teamOptions, setTeamOptions] = useState([]);
+  
 
   const typeOptions = ["Bawling Practice","Batting Practice", "Fielding Practice"]
   const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
@@ -66,8 +67,10 @@ const CoachProfile = () => {
   }, []);
 
   useEffect(() => {
+      setUploading(true);
       axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
+        setUploading(false);
         const sortedPracticeSchedule = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPracticeSchedules(sortedPracticeSchedule);
         console.log("sessions Data:", response.data);

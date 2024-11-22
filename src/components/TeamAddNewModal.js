@@ -47,7 +47,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.player = "Please select players.";
+      newErrors.players = "Please select players.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -97,6 +97,10 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      players: ""
+    }));
     if (selectedPlayers.includes(player)) {
       // If player is already selected, remove them
       setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
@@ -249,7 +253,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
                 <FaTrash/>
               </button>
             </div>
-            {errors.player && <p className="text-red-500 text-xs mt-1">{errors.player}</p>}
+            {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
             <div className="relative">
               <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (

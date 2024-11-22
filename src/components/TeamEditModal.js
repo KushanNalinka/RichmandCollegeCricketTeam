@@ -30,16 +30,22 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         .then(response => {
           const members = response.data;
           setSelectedPlayers(members);
-          console.log("players Data:", members);
+          console.log("members Data:", members);
         })
         .catch(error => {
           console.error("There was an error fetching the player data!", error);
         });
+        console.log("players:", players);
+        console.log("set selected players:", selectedPlayers);
   }, []);
   
 
   const handleChange = e => {
     const { name, value } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     setFormData({
       ...formData,
       [name]: value
@@ -50,7 +56,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.player = "Please select players.";
+      newErrors.players = "Please select players.";
     };
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -101,13 +107,25 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    if (selectedPlayers.includes(player)) {
-      // If player is already selected, remove them
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      players: ""
+    }));
+    // if (selectedPlayers.includes(player)) {
+    //   // If player is already selected, remove them
+    //   setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    // } else {
+    //   // Otherwise, add the player to the list
+    //   setSelectedPlayers([...selectedPlayers, player]);
+    // }
+
+    const isSelected = selectedPlayers.some(p => p.playerId === player.playerId);
+    if (isSelected) {
       setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
     } else {
-      // Otherwise, add the player to the list
       setSelectedPlayers([...selectedPlayers, player]);
     }
+    console.log("selected players: ", selectedPlayers.name);
   };
 
   const clearSelectedPlayers = () => {
@@ -251,7 +269,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                 <FaTrash/>
               </button>
             </div>
-            {errors.player && <p className="text-red-500 text-xs mt-1">{errors.player}</p>}
+            {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
             <div className="relative">
               <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
                 {players.map((player) => (

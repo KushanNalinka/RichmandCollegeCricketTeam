@@ -358,6 +358,7 @@ const NewsDetailPage = () => {
             </h1>
             <p className="text-gray-500 text-sm mt-2">
               Published {new Date(newsItem.dateTime).toLocaleDateString()}  • {newsItem.author}
+
             </p>
             <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
             {/* Image Carousel */}

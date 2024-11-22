@@ -35,10 +35,12 @@ const OfficialsTable = () => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    setUploading(true);
     axios
       .get(`${API_URL}officials/all`)
       .then(response => {
         const officials = response.data;
+        setUploading(false);
         const sortedOfficials = officials.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setOfficialData(sortedOfficials);
         console.log("Officials Data:", response.data);

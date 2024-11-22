@@ -15,7 +15,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState([]);
-  const [imagePreview, setImagePreview] = useState();
+  const [imagePreview, setImagePreview] = useState(null);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -85,6 +85,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
   const handleChange = e => {
     const { name, value,files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name === "date") {
       setFormData({
         ...formData,
@@ -92,6 +96,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
       });
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -107,12 +115,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
-    }else if (name === "date") {
-      // Handle the DatePicker value change
-      setFormData({
-        ...formData,
-        [name]: value ? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
-      });
     }else {
       setFormData({
         ...formData,
@@ -129,7 +131,14 @@ const FormPopup = ({  onClose, isSumitted }) => {
       // Validate selected coaches
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select at least one coach.";
-    }
+    };
+
+    if (!formData.logo && imagePreview === null) {
+      newErrors.logo = "Opponent logo is required.";
+    }else if (!/^image\//.test(formData.logo.type)) {
+      newErrors.logo = "Only image files are allowed.";
+    };
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -202,6 +211,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
   };
 
   const handleCoachSelect = coach => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      coaches: ""
+    }));
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
       setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
@@ -264,22 +277,30 @@ const FormPopup = ({  onClose, isSumitted }) => {
       setImagePreview(url);
       setFormData({
         ...formData,
-        image: file
+        logo: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        logo: "",
+      }));
+      
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setFormData({...formData, logo:null})
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
   return (
+
     <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen"}>
       <div className="flex items-center justify-center">
       <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+
         <div className="flex justify-end items-center ">
           <button
             onClick={onClose}
@@ -297,13 +318,12 @@ const FormPopup = ({  onClose, isSumitted }) => {
         >
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Date</label>
-            <DatePicker
+            <input
+              type="date"
               name="date"
-              dateFormat="yyyy-mm-dd"
-              // selected={new Date(formData.dateOfBirth)}
-              onChange={(date) => handleChange({ target: { name: 'date', value: date } })}
-              placeholder="yyyy-mm-dd"
-              className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
           </div>
@@ -455,7 +475,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.teamId}>
-                  {team.under}-{team.year}
+                  {team.under}
                 </option>
               )}
             </select>
@@ -568,7 +588,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 name="logo" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -581,9 +600,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 <FaTrash/>
               </button>
             )}
-          {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>} 
           </div>
-
+          {errors.logo && <p className="text-red-500 text-xs">{errors.logo}</p>} 
           <div className="col-span-1 md:col-span-2 ">
             <button
               type="submit"

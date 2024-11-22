@@ -649,7 +649,9 @@ const NewsCreator = () => {
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
+
     images: [],
+
     body: "",
     dateTime: "",
     createdBy:"",
@@ -697,11 +699,13 @@ const NewsCreator = () => {
       [name]: ""
     }));
     if (files) {
+
       const selectedFiles = Array.from(e.target.files);
       const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
       setImageFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
       setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
     }else {
+
       setFormData({
         ...formData,
         [name]: value,
@@ -801,6 +805,7 @@ const NewsCreator = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!validateFormAdd()) {
       message.error("Please fix validation errors before submitting");
       return;
@@ -816,7 +821,9 @@ const NewsCreator = () => {
         images: urls.map((url) => ({ imageUrl: url })),
         dateTime: currentTime,
         createdBy: user.username,
+
         createdOn: currentTime
+
       };
       console.log("formdata before submit: ", createdNews);
 
@@ -860,9 +867,11 @@ const NewsCreator = () => {
     console.log("newsId: ", news.id);
     setCurrentNewsId(news.id);
     setIsEditPressed(true);
+
     setFormData({ ...news, images:news.images.map(image =>({ imageUrl: image}))} );
     setImagePreviews((prevId) =>
       prevId === news.images ? null : news.images
+
     );
     setExistingImageURLs((prevId) =>
       prevId === news.images ? null : news.images);
@@ -980,7 +989,8 @@ const NewsCreator = () => {
   };
 
   const handleDelete = id => {
-    setNewsToDelete(id);
+    setNewsToDelete(id)
+;
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -1169,15 +1179,18 @@ const NewsCreator = () => {
                           accept="image/*"
                           onChange={handleChange}
                           multiple
+
                           className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
                         />
                         {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageUrl}</p>}
                           {imagePreviews.map((image,index)=>(
                             <div className="flex flex-col relative">
+
                             <img
                               key={index}
                               src={image}
                               alt="Preview"
+
                               className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
                           />
                              <button

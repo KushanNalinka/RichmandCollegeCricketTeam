@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import richmandLogo from "../assets/images/RLogo.png";
 import { IoIosArrowDropdown } from "react-icons/io";
 import { IoIosArrowDropup } from "react-icons/io";
+import ball from "../assets/images/CricketBall-unscreen.gif";
 import logo from "../assets/images/RLogo.png";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 
@@ -29,17 +30,20 @@ const ScoreCardPage = () => {
   const [selectedInning, setSelectedInning] = useState({}); // Tracks selected inning per Test match
   const [pressedIndex, setPressedIndex] = useState({}); 
   const [currentMatchID, setCurrentMatchID] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(matchSummary.length / rowsPerPage);
 
   useEffect(() => {
+    setUploading(true);
     axios
       .get(`${API_URL}matchSummary/all`)
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
         console.log("Match summary Data:", matchSummary);
+        setUploading(false);
       })
       .catch(error => {
         console.error("There was an error fetching the match data!", error);
@@ -408,11 +412,7 @@ const ScoreCardPage = () => {
             <GrLinkNext style={{ color: "#fff" }} />
           </button>
         </div>
-
-        </div>
-        
-        
-
+      </div>
         {/* Player Form Popup
       <PlayerFormPopup
         isOpen={isFormOpen}
@@ -421,6 +421,11 @@ const ScoreCardPage = () => {
         matchId={matchId}
       /> */}
       </div>
+      {uploading && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+          <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
+        </div>
+      )}
     </div>
     </div>
   );

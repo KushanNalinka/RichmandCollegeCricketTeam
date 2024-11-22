@@ -37,10 +37,6 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: ""
-    }));
     setFormData({
       ...formData,
       [name]: value
@@ -101,6 +97,10 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      players: ""
+    }));
     if (selectedPlayers.includes(player)) {
       // If player is already selected, remove them
       setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));

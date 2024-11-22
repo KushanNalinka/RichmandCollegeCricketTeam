@@ -141,6 +141,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   };
 
   const handleCoachSelect = (coach) => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      coaches: ""
+    }));
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
       setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));

@@ -169,13 +169,25 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   };
 
   const handleCoachSelect = (coach) => {
-    if (selectedCoaches.includes(coach)) {
-      // If player is already selected, remove them
-      setSelectedCoaches(
-        selectedCoaches.filter((p) => p.coachId !== coach.coachId)
-      );
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      coaches: ""
+    }));
+    // if (selectedCoaches.includes(coach)) {
+    //   // If player is already selected, remove them
+    //   setSelectedCoaches(
+    //     selectedCoaches.filter((p) => p.coachId !== coach.coachId)
+    //   );
+    // } else {
+    //   // Otherwise, add the player to the list
+    //   setSelectedCoaches([...selectedCoaches, coach]);
+    // }
+    // console.log("selected coaches: ", selectedCoaches.name);
+
+    const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
+    if (isSelected) {
+      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
     } else {
-      // Otherwise, add the player to the list
       setSelectedCoaches([...selectedCoaches, coach]);
     }
     console.log("selected coaches: ", selectedCoaches.name);

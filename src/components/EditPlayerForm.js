@@ -37,7 +37,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     updatedBy:user.username,
     updatedOn: new Date().toISOString(),
    });
-  const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`);
+  // const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`);
+  const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});

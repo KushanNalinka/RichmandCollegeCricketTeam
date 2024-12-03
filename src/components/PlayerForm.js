@@ -22,7 +22,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     name: "",
     dateOfBirth:"" ,
     email: "",
-    role: ["ROLE_PLAYER"], 
+    roles: ["ROLE_PLAYER"], 
     battingStyle: "",
     bowlingStyle: "",
     playerRole: "",
@@ -116,32 +116,27 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     setUploading(true);
       try {
         
-      let imageURL = formData.image;
+      // let imageURL = formData.image;
       
-      // Upload image if an image file is added
-      if (formData.image instanceof File) {
-        imageURL = await handleImageUpload(formData.image);
-      }
+      // // Upload image if an image file is added
+      // if (formData.image instanceof File) {
+      //   imageURL = await handleImageUpload(formData.image);
+      // }
+      
+      const formDataToSend = new FormData();
+      const { image, ...userData } = formData;
 
-      const playerData = {
-        ...formData,
-        image: imageURL, // Assign the uploaded image URL to formData
-      };
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
 
-      // const formDataToSend = new FormData();
-      // const { image, ...userData } = formData;
-
-      // // Append userData as a JSON string
-      // formDataToSend.append("userData", JSON.stringify(userData));
-
-      // // Append image file
-      // formDataToSend.append("image", image);
+      // Append image file
+      formDataToSend.append("image", image);
 
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          playerData , { headers: {
+          formDataToSend , { headers: {
             'Authorization': `Bearer ${accessToken}`
-          }}
+        }}
         );
         console.log("Form submitted succedded: ", response.data);
         console.log(accessToken);

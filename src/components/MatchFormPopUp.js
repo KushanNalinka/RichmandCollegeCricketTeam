@@ -30,7 +30,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
     time: "",
     venue: "",
     opposition: "",
-    logo:"",
+    logo:null,
     tier: "",
     division: "",
     umpires: "",
@@ -79,7 +79,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, 
+  []);
 
   const handleChange = e => {
     const { name, value,files } = e.target;
@@ -150,24 +151,32 @@ const FormPopup = ({  onClose, isSumitted }) => {
     };
     setUploading(true);
     try {
-      let imageURL = formData.logo;
+      // let imageURL = formData.logo;
 
-      // Upload image if an image file is added
-      if (formData.logo instanceof File) {
-        imageURL = await handleImageUpload(formData.logo);
-      }
+      // // Upload image if an image file is added
+      // if (formData.logo instanceof File) {
+      //   imageURL = await handleImageUpload(formData.logo);
+      // }
+
       const formattedDate = formatDate(formData.date); // Ensure date is formatted before submitting
+      
+      const matchData = {...formData, date: formattedDate };
 
-      const matchData = {
-        ...formData,
-        logo: imageURL, // Assign the uploaded image URL to formData
-        date: formattedDate 
-      };
+      const formDataToSend = new FormData();
+      const { logo, ...userData } = matchData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
+
+      // Append image file
+      formDataToSend.append("logo", logo);
+      // const matchData = {
+      //   ...formData,
+      //   logo: imageURL, // Assign the uploaded image URL to formData
+      //   date: formattedDate 
+      // };
       // Make a POST request to the backend API
-      const response = await axios.post(
-        `${API_URL}matches/add`,
-        matchData
-      );
+      const response = await axios.post( `${API_URL}matches/add`, formDataToSend );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -176,7 +185,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
         venue: "",
         opposition: "",
         tier: "",
-        logo:"",
+        logo: null,
         division: "",
         umpires: "",
         type: "",

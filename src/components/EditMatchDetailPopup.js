@@ -158,22 +158,32 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
     };
     setUploading(true);
     try {
-      let imageURL = formData.logo;
+      // let imageURL = formData.logo;
 
-      // Upload image if an image file is added
-      if (formData.logo instanceof File) {
-        imageURL = await handleImageUpload(formData.logo);
-      }
+      // // Upload image if an image file is added
+      // if (formData.logo instanceof File) {
+      //   imageURL = await handleImageUpload(formData.logo);
+      // }
 
-      const matchData = {
-        ...formData,
-        logo: imageURL, // Assign the uploaded image URL to formData
-      };
+      // const matchData = {
+      //   ...formData,
+      //   logo: imageURL, // Assign the uploaded image URL to formData
+      // };
+
+      const formDataToSend = new FormData();
+      const { logo, ...userData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
+
+      // Append image file
+      formDataToSend.append("logo", logo);
+
       console.log("Match Data :", matchData);
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        {...matchData}
+        formDataToSend
       );
       message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);
@@ -183,7 +193,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         venue: "",
         opposition: "",
         tier: "",
-        logo:"",
+        logo:null,
         division: "",
         umpires: "",
         type: "",

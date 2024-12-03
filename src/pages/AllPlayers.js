@@ -39,7 +39,7 @@ useEffect(() => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {

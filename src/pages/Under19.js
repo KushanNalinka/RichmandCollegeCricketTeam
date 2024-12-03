@@ -1224,6 +1224,9 @@ const summarizeStats = (type) => {
             bowlingAvg: 0,
             economyRate: 0,
             best: "0/0",
+            catches: 0,
+            stumps: 0,
+            runOuts: 0,
         };
     }
 
@@ -1246,6 +1249,9 @@ const summarizeStats = (type) => {
             acc.overs += stat.overs || 0;
             acc.wickets += stat.wickets || 0;
             acc.runsConceded += stat.runsConceded || 0;
+            acc.catches += stat.catches || 0;
+            acc.stumps += stat.stumps || 0;
+            acc.runOuts += stat.runOuts || 0; 
 
             // Calculate best bowling performance
             if (stat.wickets > acc.bestWickets || 
@@ -1275,6 +1281,9 @@ const summarizeStats = (type) => {
             bestRunsConceded: Infinity,
             economyRate: 0,
             best: "0/0",
+            catches: 0,
+            stumps: 0,
+            runOuts: 0,
         }
     );
 
@@ -1530,6 +1539,42 @@ const summarizeStats = (type) => {
                                         </tbody>
                                     </table>
                                 </div>
+
+                                 {/* Fielding Stats */}
+                                
+                                 <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Fielding Stats</h3>
+                                <div className="hover:overflow-x-auto overflow-x-hidden">
+                                    <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
+                                        <thead>
+                                            <tr className="bg-gray-100">
+                                                <th className="py-2 px-5 text-center align-middle">Format</th>
+                                                <th className="py-2 px-5 text-center align-middle">Matches</th>
+                                                <th className="py-2 px-5 text-center align-middle">Innings</th>
+                                                <th className="py-2 px-5 text-center align-middle">Catches</th>
+                                                <th className="py-2 px-5 text-center align-middle">Stumps</th>
+                                                <th className="py-2 px-5 text-center align-middle">RunOuts</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {["Test", "ODI", "T20"].map((type) => {
+                                                const summary = summarizeStats(type);
+                                                return (
+                                                    <tr key={type} className="border-b border-gray-300">
+                                                        <td className="py-2 px-5 text-center align-middle">{type}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.innings}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.catches}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.stumps}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.runOuts}</td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+
+
                             </div>
                         </div>
                     )}

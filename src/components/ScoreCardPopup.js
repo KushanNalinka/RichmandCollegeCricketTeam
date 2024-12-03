@@ -66,6 +66,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     noBalls:0,
     wides:0,
     runsConceded: 0,
+    maidens:0,
+    stumps:0,
+    catches:0,
+    runOuts:0,
     player: {
       playerId: 0,
       name: "",
@@ -89,6 +93,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     noBalls:0,
     wides:0,
     runsConceded: 0,
+    maidens:0,
+    stumps:0,
+    catches:0,
+    runOuts:0,
     player: {
       playerId: 0,
       name: "",
@@ -219,11 +227,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         ...prev,
         [mainKey]: {
           ...prev[mainKey],
-          [subKey]: positiveIntegerValue,
+          [subKey]: value,
         },
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: positiveIntegerValue }));
+      setFormData(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -303,8 +311,12 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         balls: 0,
         overs: 0,
         runsConceded: 0,
+        maidens:0,
         noBalls:0,
         wides:0,
+        stumps:0,
+        catches:0,
+        runOuts:0,
         player: {
           playerId: 0,
           name: "",
@@ -342,6 +354,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       wickets: player.wickets,
       overs: player.overs,
       runsConceded: player.runsConceded,
+      maidens:player.maidens,
       fours: player.fours,
       sixers: player.sixers,
       fifties: player.fifties,
@@ -355,6 +368,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       howOut:player.howOut,
       noBalls:player.noBalls,
       wides:player.wides,
+      stumps:player.stumps,
+      catches:player.catches,
+      runOuts:player.runOuts,
     });
     console.log("formData runs :", formData.runs);
   };
@@ -405,6 +421,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         balls: 0,
         overs: 0,
         runsConceded: 0,
+        maidens:0,
         player: {
           playerId: 0,
           name: "",
@@ -415,6 +432,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         howOut:"",
         noBalls:0,
         wides:0,
+        stumps:0,
+        catches:0,
+        runOuts:0,
       });
       setIsEditButtonPressed(false);
       setIsSubmitted(!isSubmitted);
@@ -479,7 +499,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
 
   return (
     <div
-      className={`fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto px-20 py-10 min-h-screen`}
+      className={`fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto lg:px-20 py-20 px-5 lg:py-10 min-h-screen`}
     >
       <div className="bg-white md:p-8 p-2 pt-5 relative rounded-3xl shadow-lg w-full h-auto">
         <div className="flex justify-end items-center pb-4">
@@ -499,11 +519,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
             }}>
         <div >
         
-        <h2 className=" flex flex-wrap items-center  py-3 font-bold text-[#480D35] text-md lg:text-xl">
-          Score Card - <span className="text-highlight italic text-lg md:text-2xl">{matchType} match</span> &nbsp; against &nbsp;<span className="text-highlight italic text-lg md:text-2xl">{matchOpponent}</span>&nbsp; on &nbsp;<span className="text-highlight italic ">{dayjs(date).format("YYYY-MMM-DD")}</span>
-        </h2>
+        <h2 className=" flex flex-wrap items-center font-semibold py-3 text-[#480D35] text-sm lg:text-xl">
+         <span className=" md:text-2xl font-bold text-xl">Score Card - &nbsp;</span><span className="text-highlight uppercase text-lg md:text-2xl">{matchType} match</span> &nbsp; against &nbsp;<span className="text-highlight uppercase text-lg md:text-2xl">{matchOpponent}</span>&nbsp; on &nbsp;<span className="text-highlight">{dayjs(date).format("YYYY-MMM-DD")}</span>
+        </h2> 
       {matchType === 'Test' && (
-        <div className={`flex pb-2 tracking-wider justify-start items-center mydfdsfh-1 gap-3`}>
+        <div className={`flex pb-2 tracking-wider flex-wrap justify-start items-center mydfdsfh-1 gap-3`}>
           <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
           <select
             className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#2c2e34]"
@@ -531,8 +551,12 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wickets</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Overs</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Conceded</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Maidens</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> No Balls</th>
                 <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Wide Balls</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Stumps</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Catches</th>
+                <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider"> Run Outs</th>
                 <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider"> {" "}Actions</th>
               </tr>
               <tr className=" h-2"></tr>
@@ -605,20 +629,22 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
                              <select
+                              type="text"
                               name="howOut"
                               value={editFormData.howOut}
                               onChange={handleEditInputChange}
                               placeholder="Enter Status"
                               className="border rounded p-1"
-                              required
+                          
                             >
-                              <option value="" disabled className=" text-gray-400" >Select player Out/ Nout</option>
+                              <option value="" disabled selected className=" text-gray-400" >Select player Out/ Nout</option>
                               <option value="LBW">LBW</option>
                               <option value="Catch">Catch</option>
                               <option value="Bowled">Bowled</option>
-                              <option value="Strump">Strump</option>
+                              <option value="Stump">Stump</option>
                               <option value="Run out">Run out</option>
-                              <option value="Not out">Not Out</option>
+                              <option value="Not out">Not out</option>
+                              <option value="Retired">Retired</option>
                               <option value="Did not bat">Did not bat</option>
                             </select>
                           </td>
@@ -655,6 +681,17 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               className="border rounded p-1 "
                             />
                           </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm bg-blue-50 text-gray-600">
+                            <input
+                              type="number"
+                              name="maidens"
+                              min={0}
+                              value={editFormData.maidens}
+                              onChange={handleEditInputChange}
+                              placeholder="Enter maidens"
+                              className="border rounded p-1 "
+                            />
+                          </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
                             <input
                               type="number"
@@ -672,6 +709,36 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               value={editFormData.wides}
                               onChange={handleEditInputChange}
                               placeholder="Enter wide balls"
+                              className="border rounded p-1"
+                            />
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            <input
+                              type="number"
+                              name="stumps"
+                              value={editFormData.stumps}
+                              onChange={handleEditInputChange}
+                              placeholder="Enter stumps"
+                              className="border rounded p-1"
+                            />
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            <input
+                              type="number"
+                              name="catches"
+                              value={editFormData.catches}
+                              onChange={handleEditInputChange}
+                              placeholder="Enter catches"
+                              className="border rounded p-1"
+                            />
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            <input
+                              type="number"
+                              name="runOuts"
+                              value={editFormData.runOuts}
+                              onChange={handleEditInputChange}
+                              placeholder="Enter runOuts"
                               className="border rounded p-1"
                             />
                           </td>
@@ -722,10 +789,22 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                             {player.runsConceded}
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
+                            {player.maidens}
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
                             {player.noBalls}
                           </td> 
                            <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-blue-50">
                             {player.wides}
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            {player.stumps}
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            {player.catches}
+                          </td>
+                          <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600 bg-red-50">
+                            {player.runOuts}
                           </td>
                           <td className="px-4 lg:rounded-r-lg space-x-2 h-10 whitespace-nowrap text-sm text-gray-600">
                             <button
@@ -810,19 +889,19 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                   <td className="border px-4 py-2 whitespace-nowrap text-sm text-gray-600">
                     <select
                       name="howOut"
-                      value={formData.howOut}
                       onChange={handleAddInputChange}
                       placeholder="Enter Status"
                       className="border rounded p-1 "
                       required
                     >
-                      <option value="" disabled className="text-gray-400">Select player Out/ Nout</option>
+                      <option value="" disabled selected className="text-gray-400">Select player Out/ Nout</option>
                       <option value="LBW">LBW</option>
                       <option value="Catch">Catch</option>
                       <option value="Bowled">Bowled</option>
-                      <option value="Strump">Strump</option>
+                      <option value="Stump">Stump</option>
                       <option value="Run out">Run out</option>
-                      <option value="Not out">Not Out</option>
+                      <option value="Retired">Retired</option>
+                      <option value="Not out">Not out</option>
                       <option value="Did not bat">Did not bat</option>
                     </select>
                   </td>
@@ -856,6 +935,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       className="border rounded p-1 bg-blue-50"
                     />
                   </td>
+                  <td className="border px-4 py-2 whitespace-nowrap text-sm text-gray-600">
+                    <input
+                      type="number"
+                      name="maidens"
+                      min={0}
+                      onChange={handleAddInputChange}
+                      placeholder="Enter maidens"
+                      className="border rounded p-1 bg-blue-50"
+                    />
+                  </td>
                   <td className="border px-4 py-2">
                     <input
                       type="number"
@@ -874,6 +963,36 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       onChange={handleAddInputChange}
                       placeholder="Enter wideBalls"
                       className="border rounded p-1 bg-blue-50"
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      name="stumps"
+                      min={0}
+                      onChange={handleAddInputChange}
+                      placeholder="Enter stumps"
+                      className="border rounded p-1 bg-red-50"
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      name="catches"
+                      min={0}
+                      onChange={handleAddInputChange}
+                      placeholder="Enter catches"
+                      className="border rounded p-1 bg-red-50"
+                    />
+                  </td>
+                  <td className="border px-4 py-2">
+                    <input
+                      type="number"
+                      name="runOuts"
+                      min={0}
+                      onChange={handleAddInputChange}
+                      placeholder="Enter runOuts"
+                      className="border rounded p-1 bg-red-50"
                     />
                   </td>
                   <td className="border px-4 py-2 whitespace-nowrap text-sm text-gray-600">

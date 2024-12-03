@@ -943,7 +943,7 @@ const MatchDetails = () => {
           >
             <div className="flex justify-between items-center mb-3">
               <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
+              <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 Match Details
               </h2>
               <button
@@ -970,13 +970,13 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Venue
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className=" relative py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Tier
                       <button onClick={() => setShowTierDropdown(!showTierDropdown)} className="ml-2">
                         {showTierDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTierDropdown && (
-                        <div className="absolute mt-2 bg-white border rounded shadow-lg z-50">
+                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-2 bg-white border rounded shadow-lg z-50">
                           <button onClick={() => handleFilterChange("tier", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                             All
                           </button>
@@ -996,13 +996,13 @@ const MatchDetails = () => {
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Umpire
                     </th>
-                    <th className=" py-3 px-4 text-left flex text-xs font-semibold uppercase tracking-wider">
+                    <th className=" relative py-3 px-4 text-left flex text-xs font-semibold uppercase tracking-wider">
                       Type
                       <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
                         {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTypeDropdown && (
-                        <div className="absolute mt-5 bg-white border rounded shadow-lg z-50">
+                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-5 bg-white border rounded shadow-lg z-50">
                           <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                             All
                           </button>
@@ -1018,13 +1018,13 @@ const MatchDetails = () => {
                         </div>
                       )}
                     </th>
-                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                    <th className=" relative py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Team
                       <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
                         {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                           {showTeamDropdown && (
-                      <div className="absolute mt-1 h-96 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
+                      <div className="absolute mt-1 h-[74px] hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
                         <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                           All
                         </button>
@@ -1049,7 +1049,7 @@ const MatchDetails = () => {
                 <tbody  className="divide-y-2 divide-gray-300" >
                 {paginatedData && paginatedData.length === 0 ? (
                   <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={10} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                  <td colSpan={10} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
                       There is no data available
                   </td>
                   </tr>
@@ -1154,8 +1154,8 @@ const MatchDetails = () => {
               </button>
             </div>
           {showDeleteModal &&
-            <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg p-8`}>
+            <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-2">
@@ -1212,7 +1212,8 @@ const MatchDetails = () => {
 
           {/* Popup for Adding Form  */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />}
+            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />
+          }
           {
             isPopupOpen &&
             <MatchStatPopup

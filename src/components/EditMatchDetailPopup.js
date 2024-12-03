@@ -83,19 +83,27 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "team.under") {
+    console.log("Field Name:", name);
+    console.log("Field Value:", value);
+
+    console.log("Selected Team Value:", value);
+    console.log("Teams Array:", teams);
+    if (name === "team.teamId") {
       // Find the selected team based on the 'under' value
-      const selectedTeam = teams.find(team => team.under === value);
+      const selectedTeam = teams.find(team => team.teamId === Number(value));
       const selectedTeamId = selectedTeam ? selectedTeam.teamId : "";
-  
+      const selectedTeamUnder = selectedTeam ? selectedTeam.under : "";
       setFormData({
         ...formData,
         team: {
           ...formData.team,
-          under: value,
+          under: selectedTeamUnder,
           teamId: selectedTeamId // Update teamId based on selected team
         }
       });
+      console.log("SelectedTeam:", selectedTeam);
+      console.log("Selected selectedTeamUnder:", selectedTeamUnder);
+      console.log("SelectedTeamId:", selectedTeamId);
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
@@ -297,7 +305,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto py-10 min-h-screen">
       <div className='flex items-center justify-center'>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -453,17 +461,17 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             </select>
           </div>
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="team.under">Team</label>
+            <label className="block text-black text-sm font-semibold" htmlFor="team.teamId">Team</label>
             <select
-              id="team.under"
-              name="team.under"
-              value={formData.team.under}
+              id="team.teamId"
+              name="team.teamId"
+              value={formData.team?.teamId}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select team</option>
               {teams.map(team =>
-                <option key={team.teamId} value={team.under}>
+                <option key={team.teamId} value={team.teamId}>
                   {team.under}-{team.year}
                 </option>
               )}

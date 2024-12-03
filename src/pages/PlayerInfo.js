@@ -14,6 +14,7 @@ import logo from "../assets/images/RLogo.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
 
+
 const TableComponent = () => {
   const [playerData, setPlayerData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,7 +40,7 @@ const TableComponent = () => {
   const [battingOptions, setBattingOptions] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
   const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingStyle: '', playerRole: '' });
-
+  
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
   // const statusOptions = ["Active", "Inactive"];
@@ -130,7 +131,7 @@ const TableComponent = () => {
     setIsEditFormOpen(true);
   };
 
- // Sort players by status before slicing for pagination
+// Sort players by status before slicing for pagination
 // const sortedPlayerData = [...playerData].sort((a, b) => {
 //   // Move "Active" players to the top
 //   if (a.status === "Active" && b.status !== "Active") return -1;
@@ -139,8 +140,7 @@ const TableComponent = () => {
 // });
 
   const handleDelete = id => {
-    setPlayerToDelete(id)
-;
+    setPlayerToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -181,16 +181,10 @@ const TableComponent = () => {
 
   const handleAddFormClose = () => {
     setIsFormOpen(false);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
 
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
 
   return (
@@ -223,7 +217,7 @@ const TableComponent = () => {
           >
             <div className="flex justify-between items-center content-center mb-3" >
               <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
+              <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 Player Details
               </h2>
               <button
@@ -239,13 +233,13 @@ const TableComponent = () => {
               <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">
                 <thead className=" text-white">
                   <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                    <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="relative px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
                       Status
                       <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
                         {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showStatusDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {statusOptions.map(status => (
                             <button
@@ -271,13 +265,13 @@ const TableComponent = () => {
                     <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Contact No
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className=" relative px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Batting Style
                       <button onClick={() => setShowBattingDropdown(!showBattingDropdown)} className="ml-2">
                       {showBattingDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showBattingDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-1 bg-white border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("battingStyle", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {battingOptions.map(style => (
                             <button
@@ -291,13 +285,13 @@ const TableComponent = () => {
                         </div>
                       )}
                     </th>
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="relative px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Bowling Style
                       <button onClick={() => setShowBowlingDropdown(!showBowlingDropdown)} className="ml-2">
                         {showBowlingDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showBowlingDropdown && (
-                        <div className="absolute mt-1 bg-white h-96 hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("bowlingStyle", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {bowlingOptions.map(style => (
                             <button
@@ -312,13 +306,13 @@ const TableComponent = () => {
                       )}
                     </th>
                     {/* { <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Image</th> /} */}
-                    <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
+                    <th className="relative px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Role
                       <button onClick={() => setShowRoleDropdown(!showRoleDropdown)} className="ml-2">
                         {showRoleDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showRoleDropdown && (
-                        <div className="absolute mt-1 bg-white border rounded shadow-lg">
+                        <div className="absolute mt-1 h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden bg-white border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("playerRole", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {roleOptions.map(role => (
                             <button
@@ -341,7 +335,7 @@ const TableComponent = () => {
                 <tbody className=" divide-y-2 divide-gray-300 ">
                 {paginatedData && paginatedData.length === 0 ? (
                   <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={9} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                  <td colSpan={9} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
                       There is no data available
                   </td>
                   </tr>
@@ -362,6 +356,7 @@ const TableComponent = () => {
                         <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                           <div className="flex items-center justify-start gap-2 ">
                             <img
+                              // src={`http://rcc.dockyardsoftware.com/images/${ item.image ? item.image.split('/').pop() : 'default.jpg'}`}
                               src={item.image}
                               alt={item.name}
                               className="h-12 w-12 rounded-full object-cover border border-gray-300"
@@ -377,6 +372,7 @@ const TableComponent = () => {
                         </td>
                         <td className="px-4 py-4 h-14 whitespace-nowrap text-sm " >
                           {item.email}
+                          {/* {`http://rcc.dockyardsoftware.com/${ item.image ? item.image.split('/').pop() : 'default.jpg'}`} */}
                         </td>
                         <td className="px-4 py-4 h-14 whitespace-nowrap text-sm ">
                           {item.contactNo}
@@ -410,8 +406,7 @@ const TableComponent = () => {
                         </td>
                       </tr>
                     )
-                  )}
-                  
+                  )}  
                 </tbody>
               </table>
             </div>
@@ -440,8 +435,8 @@ const TableComponent = () => {
               </button>
           </div>
           {showDeleteModal && (
-              <div className={`fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75`}>
-                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg p-8`}>
+              <div className={`fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75`}>
+                <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                   <p>Are you sure you want to delete this player?</p>
                   <div className="flex justify-end mt-4 space-x-2">

@@ -1106,8 +1106,11 @@ const NewsCreator = () => {
           >
             <div className="flex justify-between items-center content-center mb-3">
               <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
+              <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 News Creator
+              </h2>
+              <h2 className="md:text-2xl text-xl w-14 font-bold text-center font-popins text-[#480D35]">
+               
               </h2>
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
@@ -1353,8 +1356,8 @@ const NewsCreator = () => {
         </div>
       </div>
       {showDeleteModal && (
-          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-            <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-lg shadow-lg p-6`}>
+          <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+            <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this news?</p>
               <div className="flex justify-end mt-4 space-x-2">

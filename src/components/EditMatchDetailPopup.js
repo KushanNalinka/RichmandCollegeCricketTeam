@@ -41,7 +41,17 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   };
 
   const [formData, setFormData] = useState({
-    ...match,
+    date: match.date,
+    time: match.time,
+    venue: match.venue,
+    opposition: match.opposition,
+    tier: match.tier,
+    logo:match.logo,
+    division: match.division,
+    umpires: match.umpires,
+    type: match.type,
+    matchCaptain: match.matchCaptain,
+    matchViceCaptain: match.matchViceCaptain,
     team:{
       teamId:match.teamId,
       under:match.under,
@@ -83,11 +93,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    console.log("Field Name:", name);
-    console.log("Field Value:", value);
 
-    console.log("Selected Team Value:", value);
-    console.log("Teams Array:", teams);
     if (name === "team.teamId") {
       // Find the selected team based on the 'under' value
       const selectedTeam = teams.find(team => team.teamId === Number(value));
@@ -102,7 +108,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         }
       });
       console.log("SelectedTeam:", selectedTeam);
-      console.log("Selected selectedTeamUnder:", selectedTeamUnder);
+      // console.log("Selected selectedTeamUnder:", selectedTeamUnder);
       console.log("SelectedTeamId:", selectedTeamId);
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
@@ -122,6 +128,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       });
       setIsImageAdded(true);
       setShowImageError(false);
+
     }else if (name === "date") {
       // Handle the DatePicker value change
       setFormData({
@@ -157,6 +164,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       return;
     };
     setUploading(true);
+    console.log("formdata before submit:", formData);
     try {
       // let imageURL = formData.logo;
 
@@ -198,6 +206,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         umpires: "",
         type: "",
         matchCaptain: "",
+        matchViceCaptain: "",
         team:{
           under:"",
           teamId:""

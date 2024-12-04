@@ -66,7 +66,7 @@ const NewsPreview = ({ news, onClose }) => {
                   <img
                     src={news.images[currentImageIndex]}
                     alt={`Slide ${currentImageIndex + 1}`}
-                    className="w-full max-h-[60vh] object-cover rounded-xl"
+                    className="w-full max-h-[60vh] object-contain rounded-xl"
                   />
                   <button
                     onClick={handlePrevImage}

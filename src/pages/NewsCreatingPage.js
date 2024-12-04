@@ -649,9 +649,7 @@ const NewsCreator = () => {
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
-
     images: [],
-
     body: "",
     dateTime: "",
     createdBy:"",
@@ -810,26 +808,44 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
+
     const currentTime = new Date().toISOString();
     setUploading(true);
+    console.log("data before submit: ", formData);
     try {
       console.log("formdata1: ",formData.images[0]);
       console.log("formdata2: ",formData.images[2]);
-      const urls = await uploadImagesToFirebase();
-      const createdNews = {
-        ...formData,
-        images: urls.map((url) => ({ imageUrl: url })),
+      // const urls = await uploadImagesToFirebase();
+      // const createdNews = {
+      //   ...formData,
+      //   images: urls.map((url) => ({ imageUrl: url })),
+      //   dateTime: currentTime,
+      //   createdBy: user.username,
+      //   createdOn: currentTime
+      // };
+
+      setFormData(prevData => ({
+        ...prevData,
+        images:imageFiles,
         dateTime: currentTime,
         createdBy: user.username,
-
         createdOn: currentTime
+      }));
 
-      };
-      console.log("formdata before submit: ", createdNews);
+      const formDataToSend = new FormData();
+      const { images, ...newsData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("newsData", JSON.stringify(newsData));
+
+      // Append image file
+      formDataToSend.append("images", images);
+
+      // console.log("formdata before submit: ", createdNews);
 
       const response = await axios.post(
         `${API_URL}news`,
-        createdNews
+        formDataToSend
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("News Creation Successfull!");
@@ -916,24 +932,35 @@ const NewsCreator = () => {
       : [];
 
     // Upload new images, if any
-    const uploadedUrls = await uploadImagesToFirebase();
+    // const uploadedUrls = await uploadImagesToFirebase();
     
     // Merge existing URLs with newly uploaded ones
-    const allImageUrls = [...existingImageUrls, ...uploadedUrls];
+    // const allImageUrls = [...existingImageUrls, ...imagePreviews];
+    const allImageUrls = [...existingImageUrls, ...imagePreviews];
       
-      const editedNewsData = {
+      setFormData({
         ...formData,
         images:  allImageUrls.map((url) => ({ imageUrl: url })),
         dateTime: currentTime,
         updatedBy: user.username,
         updatedOn: currentTime
-      };
+      });
 
-      console.log("formdate before edit submit: ", editedNewsData);
+      const formDataToSend = new FormData();
+
+      const { images, ...newsData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("newsData", JSON.stringify(newsData));
+
+      // Append image file
+      formDataToSend.append("images", images);
+
+      //console.log("formdate before edit submit: ", editedNewsData);
       
       const response = await axios.put(
         `${API_URL}news/${currentNewsId}`,
-        editedNewsData
+        formDataToSend
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfully Updated!");
@@ -1301,7 +1328,7 @@ const NewsCreator = () => {
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  src={news.images[0]}
+                                  
                                 />
                               </div>
                               <div className="mr-2 py-2 w-full">

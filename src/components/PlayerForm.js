@@ -22,7 +22,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     name: "",
     dateOfBirth:"" ,
     email: "",
-    roles: ["ROLE_PLAYER"], 
+    role: ["ROLE_PLAYER"], 
     battingStyle: "",
     bowlingStyle: "",
     playerRole: "",
@@ -136,7 +136,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           `${API_URL}auth/signupPlayer`,
           formDataToSend , { headers: {
             'Authorization': `Bearer ${accessToken}`
-        }}
+          }}
         );
         console.log("Form submitted succedded: ", response.data);
         console.log(accessToken);

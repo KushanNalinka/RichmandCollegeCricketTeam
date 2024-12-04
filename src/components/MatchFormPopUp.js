@@ -160,13 +160,18 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
       const formattedDate = formatDate(formData.date); // Ensure date is formatted before submitting
       
-      const matchData = {...formData, date: formattedDate };
+      // Update the formData state with the formatted date
+      setFormData(prevData => ({
+        ...prevData,
+        date: formattedDate,
+      }));
 
       const formDataToSend = new FormData();
-      const { logo, ...userData } = matchData;
+
+      const { logo, ...matchData } = formData;
 
       // Append userData as a JSON string
-      formDataToSend.append("userData", JSON.stringify(userData));
+      formDataToSend.append("matchData", JSON.stringify(matchData));
 
       // Append image file
       formDataToSend.append("logo", logo);
@@ -226,7 +231,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
     if (isSelected) {
       setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
     } else {
-      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }]);
+      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, name: coach.name }]);
     }
   };
 
@@ -237,7 +242,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   useEffect(() => {
     setFormData(prevData => ({
       ...prevData,
-      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId, coachName: coach.coachName }))
+      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId, name: coach.name }))
     }));
   }, [selectedCoaches]);
 
@@ -493,7 +498,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <input
                 type="text"
                 className="py-1 px-3 w-[88%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
+                value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 required
                 placeholder='Choose coaches from the list...'

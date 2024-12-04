@@ -171,15 +171,15 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       // };
 
       const formDataToSend = new FormData();
-      const { logo, ...userData } = formData;
+      const { logo, ...matchData } = formData;
 
       // Append userData as a JSON string
-      formDataToSend.append("userData", JSON.stringify(userData));
+      formDataToSend.append("matchData", JSON.stringify(matchData));
 
       // Append image file
       formDataToSend.append("logo", logo);
 
-      console.log("Match Data :", matchData);
+      // console.log("Match Data :", matchData);
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,

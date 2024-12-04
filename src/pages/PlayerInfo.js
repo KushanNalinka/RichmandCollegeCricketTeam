@@ -357,7 +357,7 @@ const TableComponent = () => {
                           <div className="flex items-center justify-start gap-2 ">
                             <img
                               // src={`http://rcc.dockyardsoftware.com/images/${ item.image ? item.image.split('/').pop() : 'default.jpg'}`}
-                              src={item.image}
+                              src={`${item.image}?cacheBust=${Date.now()}`}
                               alt={item.name}
                               className="h-12 w-12 rounded-full object-cover border border-gray-300"
                             />

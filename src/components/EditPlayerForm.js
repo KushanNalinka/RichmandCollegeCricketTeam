@@ -211,6 +211,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           `${API_URL}admin/players/update/${player.playerId}`,
           formDataToSend 
         );
+        const updatedPlayer = response.data;
+
+        // Add a timestamp to the edited image URL
+        updatedPlayer.image = `${updatedPlayer.image}?t=${new Date().getTime()}`;
+
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
@@ -240,9 +245,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         isSubmitted();
         setImagePreview();
         setUploading(false);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 
@@ -254,6 +256,9 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       } finally {
         setUploading(false);
         onClose();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       }
     
   };

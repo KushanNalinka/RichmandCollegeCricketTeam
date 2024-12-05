@@ -409,6 +409,7 @@
 
 // export default PlayerProfile;
 
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import backgroundImage from '../assets/images/flag.png';
@@ -827,8 +828,9 @@ const summarizeStats = (type) => {
                                 </div>
 
                                  {/* Fielding Stats */}
-                                 <br/>
+                      <br/>
                                  <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Fielding Stats</h3>
+
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
                                         <thead>
@@ -873,4 +875,3 @@ const summarizeStats = (type) => {
 };
 
 export default PlayerProfile;
-

@@ -417,4 +417,4 @@ const summarizeStats = (type) => {
     );
 };
 
-export default PlayerProfile;
+export default PlayerProfile

@@ -536,9 +536,11 @@ import Footer from '../components/Footer';
 import videoSrc from '../assets/images/new.mp4';
 import videoSrc1 from '../assets/images/MP5.mp4';
 import Highlights from '../components/Highlights';
+
 import bgImg from '../assets/images/Frame 152.png';
  import RCCRIC from '../assets/images/groundback.png';
  import CroppedImage from '../assets/images/Heroes_BacK_Image.png';
+
 
 
 const HomePage = () => {
@@ -552,6 +554,7 @@ const HomePage = () => {
   return (
     <>
       <Navbar />
+
 
       {/*Background  */}
       <div
@@ -575,6 +578,7 @@ const HomePage = () => {
     Richmond
   </motion.h1>
   {/* Background for the two players */}
+
       <div
         className="absolute w-full h-[80%] z-[10] flex items-center justify-center mt-14"
         style={{
@@ -598,7 +602,6 @@ const HomePage = () => {
       </div>
     </div>
 
-    
       {/* Other Components */}
       <div className="w-full">
         <ScoreCard onMatchId={handleMatchId} />
@@ -619,3 +622,33 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+
+{/* <div className="relative w-full h-screen md:h-[75vh] lg:h-[100vh]">
+<video
+  className="absolute inset-0 w-full h-full object-cover hidden md:block" // Visible only on medium screens and up
+  autoPlay
+  loop={false}
+  muted
+  style={{ zIndex: -1 }}
+>
+  <source src={videoSrc} type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+</div>
+
+{/* Video Background for mobile screens 
+<div className="">
+<video
+  className="absolute inset-0 w-full h-full object-cover block md:hidden" // Visible only on small screens
+  autoPlay
+  loop={false}
+  muted
+  style={{ zIndex: -1 }}
+>
+  <source src={videoSrc1} type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+</div> */}

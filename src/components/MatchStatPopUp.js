@@ -238,7 +238,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
       <div className="flex items-center justify-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className='flex justify-end '>
           <button 
               onClick={handleClose} 

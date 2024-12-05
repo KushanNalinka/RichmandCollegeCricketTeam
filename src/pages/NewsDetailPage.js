@@ -686,8 +686,8 @@ const NewsDetailPage = () => {
             }}
           >
             <img
-              src={newsItem.images[currentImageIndex]}
-              // src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+              // src={newsItem.images[currentImageIndex]}
+              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
               alt={`Slide ${currentImageIndex + 1}`}
               className="w-full h-full"
               style={{

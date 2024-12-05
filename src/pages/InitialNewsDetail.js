@@ -37,21 +37,42 @@ const InitialNewsDetail = () => {
       fetchNewsDetail();
     }, [id]);
   
-    const handleNextImage = () => {
-      setZoomLevel(1); 
-      setPosition({ x: 0, y: 0 }); 
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
-      );
-    };
+    // const handleNextImage = () => {
+    //   setZoomLevel(1); 
+    //   setPosition({ x: 0, y: 0 }); 
+    //   setCurrentImageIndex((prevIndex) =>
+    //     prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
+    //   );
+    // };
   
-    const handlePrevImage = () => {
-      setZoomLevel(1); 
-      setPosition({ x: 0, y: 0 }); 
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
-      );
+    // const handlePrevImage = () => {
+    //   setZoomLevel(1); 
+    //   setPosition({ x: 0, y: 0 }); 
+    //   setCurrentImageIndex((prevIndex) =>
+    //     prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
+    //   );
+    // };
+
+    const handleNextImage = () => {
+      if (newsItem && newsItem.images && newsItem.images.length > 0) {
+        setZoomLevel(1);
+        setPosition({ x: 0, y: 0 });
+        setCurrentImageIndex((prevIndex) =>
+          prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
+        );
+      }
     };
+    
+    const handlePrevImage = () => {
+      if (newsItem && newsItem.images && newsItem.images.length > 0) {
+        setZoomLevel(1);
+        setPosition({ x: 0, y: 0 });
+        setCurrentImageIndex((prevIndex) =>
+          prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
+        );
+      }
+    };
+    
   
     const handleZoomIn = () => setZoomLevel((prevZoom) => Math.min(prevZoom + 0.2, 3));
     const handleZoomOut = () => {

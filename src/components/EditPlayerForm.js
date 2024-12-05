@@ -46,13 +46,22 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showImageError, setShowImageError] = useState(false);
   console.log("player to be edited: ", player);
   console.log("foemdata DOB: ", formData.dateOfBirth);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       if (name === "membership.startDate") {
         // Handle the DatePicker value change
         setFormData({
@@ -87,6 +96,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
+      setIsImageAdded(true);
+      setShowImageError(false);
     } else if (name === "dateOfBirth") {
       // Handle the DatePicker value change
       setFormData({
@@ -151,11 +162,10 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     // Membership dates validation
     if (formData.membership.startDate !== player.membershipStartDate || formData.membership.endDate !== player.membershipEndDate) {
       if (new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
-        newErrors.membershipEndDate = "End date must be after start date.";
+        newErrors.endDate = "End date must be after start date.";
       }
     }
-  
-    // Image type validation
+
     if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
       newErrors.image = "Only image files are allowed.";
     }
@@ -289,11 +299,18 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: "",
+      }));
+      setIsImageAdded(true);
+      setShowImageError(false);
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setShowImageError(true);
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -514,7 +531,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               required
               isClearable={false} 
             />
-            {errors.membershipEndDate && <p className="text-red-500 text-xs mt-1">{errors.membershipEndDate}</p>}
+            {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
           </div>
           <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
@@ -582,6 +599,12 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               </button>
             )}
           </div>
+          {showImageError && (
+            <p className="text-red-500 text-xs px-2 col-span-2">
+              Upload a new image to replace the existing one, or it will remain unchanged.
+            </p>
+          )}
+          {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}
           <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"

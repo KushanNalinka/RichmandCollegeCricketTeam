@@ -603,21 +603,25 @@ const NewsDetailPage = () => {
   }, [id]);
 
   const handleNextImage = () => {
-    setZoomLevel(1); 
-    setPosition({ x: 0, y: 0 }); 
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
-    );
+    if (newsItem && newsItem.images && newsItem.images.length > 0) {
+      setZoomLevel(1);
+      setPosition({ x: 0, y: 0 });
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
+      );
+    }
   };
-
+  
   const handlePrevImage = () => {
-    setZoomLevel(1); 
-    setPosition({ x: 0, y: 0 }); 
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
-    );
+    if (newsItem && newsItem.images && newsItem.images.length > 0) {
+      setZoomLevel(1);
+      setPosition({ x: 0, y: 0 });
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
+      );
+    }
   };
-
+  
   const handleZoomIn = () => setZoomLevel((prevZoom) => Math.min(prevZoom + 0.2, 3));
   const handleZoomOut = () => {
     setZoomLevel((prevZoom) => Math.max(prevZoom - 0.2, 1));
@@ -682,8 +686,8 @@ const NewsDetailPage = () => {
             }}
           >
             <img
-              // src={newsItem.images[currentImageIndex]}
-              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+              src={newsItem.images[currentImageIndex]}
+              // src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
               alt={`Slide ${currentImageIndex + 1}`}
               className="w-full h-full"
               style={{

@@ -1497,7 +1497,7 @@ const summarizeStats = (type) => {
                             <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
                                 {/* Batting Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Batting and Fielding Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Batting and Fielding Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
                                         <thead>
@@ -1539,7 +1539,7 @@ const summarizeStats = (type) => {
                                 </div>
 
                                 {/* Bowling Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Bowling Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">
                                         <thead>
@@ -1577,8 +1577,8 @@ const summarizeStats = (type) => {
                                 </div>
 
                                  {/* Fielding Stats */}
-                                
-                                 <h3 className="text-lg font-bold mb-4 bg-blue-500 text-white p-2">Fielding Stats</h3>
+                                 <br/>
+                                 <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Fielding Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
                                         <thead>

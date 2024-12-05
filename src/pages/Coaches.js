@@ -1227,12 +1227,12 @@ const CoachesProfile = () => {
                                 <img
                                     src={selectedCoach?.image || coachPlaceholderImage}
                                     alt={selectedCoach?.name}
-                                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
                                 />
                             </div>
-                            <div className="text-center md:text-left">
-                                <h1 className="text-2xl md:text-5xl font-bold">{selectedCoach?.name}</h1>
-                                <p className="text-gray-400 text-base md:text-xl">
+                            <div className="text-center md:text-left md:ml-8">
+                            <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">{selectedCoach?.name}</h1>
+                            <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
                                 Date of Birth:{" "}
                                 {new Date(selectedCoach.dateOfBirth).toLocaleDateString()}  
                                 </p>

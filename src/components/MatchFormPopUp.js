@@ -15,7 +15,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState([]);
-  const [imagePreview, setImagePreview] = useState();
+  const [imagePreview, setImagePreview] = useState(null);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -30,7 +30,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
     time: "",
     venue: "",
     opposition: "",
-    logo:"",
+    logo:null,
     tier: "",
     division: "",
     umpires: "",
@@ -39,8 +39,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
     matchViceCaptain:"",
     team: {
       teamId: "",
-    
-
     },
     coaches: [],
     createdBy:user.username,
@@ -81,10 +79,15 @@ const FormPopup = ({  onClose, isSumitted }) => {
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, 
+  []);
 
   const handleChange = e => {
     const { name, value,files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name === "date") {
       setFormData({
         ...formData,
@@ -92,6 +95,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
       });
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -123,7 +130,14 @@ const FormPopup = ({  onClose, isSumitted }) => {
       // Validate selected coaches
     if (selectedCoaches.length === 0) {
       newErrors.coaches = "Please select at least one coach.";
-    }
+    };
+
+    if (!formData.logo && imagePreview === null) {
+      newErrors.logo = "Opponent logo is required.";
+    }else if (!/^image\//.test(formData.logo.type)) {
+      newErrors.logo = "Only image files are allowed.";
+    };
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -137,24 +151,37 @@ const FormPopup = ({  onClose, isSumitted }) => {
     };
     setUploading(true);
     try {
-      let imageURL = formData.logo;
+      // let imageURL = formData.logo;
 
-      // Upload image if an image file is added
-      if (formData.logo instanceof File) {
-        imageURL = await handleImageUpload(formData.logo);
-      }
+      // // Upload image if an image file is added
+      // if (formData.logo instanceof File) {
+      //   imageURL = await handleImageUpload(formData.logo);
+      // }
+
       const formattedDate = formatDate(formData.date); // Ensure date is formatted before submitting
+      
+      // Update the formData state with the formatted date
+      setFormData(prevData => ({
+        ...prevData,
+        date: formattedDate,
+      }));
 
-      const matchData = {
-        ...formData,
-        logo: imageURL, // Assign the uploaded image URL to formData
-        date: formattedDate 
-      };
+      const formDataToSend = new FormData();
+
+      const { logo, ...matchData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("matchData", JSON.stringify(matchData));
+
+      // Append image file
+      formDataToSend.append("logo", logo);
+      // const matchData = {
+      //   ...formData,
+      //   logo: imageURL, // Assign the uploaded image URL to formData
+      //   date: formattedDate 
+      // };
       // Make a POST request to the backend API
-      const response = await axios.post(
-        `${API_URL}matches/add`,
-        matchData
-      );
+      const response = await axios.post( `${API_URL}matches/add`, formDataToSend );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -163,7 +190,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
         venue: "",
         opposition: "",
         tier: "",
-        logo:"",
+        logo: null,
         division: "",
         umpires: "",
         type: "",
@@ -196,11 +223,15 @@ const FormPopup = ({  onClose, isSumitted }) => {
   };
 
   const handleCoachSelect = coach => {
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      coaches: ""
+    }));
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
       setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
     } else {
-      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }]);
+      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, name: coach.name }]);
     }
   };
 
@@ -211,7 +242,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   useEffect(() => {
     setFormData(prevData => ({
       ...prevData,
-      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId, coachName: coach.coachName }))
+      coaches: selectedCoaches.map(coach => ({ coachId: coach.coachId, name: coach.name }))
     }));
   }, [selectedCoaches]);
 
@@ -258,13 +289,19 @@ const FormPopup = ({  onClose, isSumitted }) => {
       setImagePreview(url);
       setFormData({
         ...formData,
-        image: file
+        logo: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        logo: "",
+      }));
+      
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setFormData({...formData, logo:null})
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -274,7 +311,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
 
     <div className={"fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen"}>
       <div className="flex items-center justify-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
 
         <div className="flex justify-end items-center ">
           <button
@@ -450,7 +487,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="">Select team</option>
               {teams.map(team =>
                 <option key={team.teamId} value={team.teamId}>
-                  {team.under}
+                  {team.under}-{team.year}
                 </option>
               )}
             </select>
@@ -461,7 +498,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <input
                 type="text"
                 className="py-1 px-3 w-[88%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                value={selectedCoaches.map(coach => coach.coachName).join(", ")} // Show selected coach names, joined by commas
+                value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
                 readOnly
                 required
                 placeholder='Choose coaches from the list...'
@@ -563,7 +600,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 name="logo" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -576,9 +612,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
                 <FaTrash/>
               </button>
             )}
-          {errors.logo && <p className="text-red-500 text-xs mt-1">{errors.logo}</p>} 
           </div>
-
+          {errors.logo && <p className="text-red-500 text-xs">{errors.logo}</p>} 
           <div className="col-span-1 md:col-span-2 ">
             <button
               type="submit"

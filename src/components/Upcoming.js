@@ -287,6 +287,7 @@
 // }
 
 import React, { useState, useEffect } from 'react';
+import Footer from '../components/Footer';
 
 // Helper functions for date formatting and upcoming match check
 const formatDate = (dateString) => {
@@ -354,7 +355,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
     <div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7 px-4">
         {currentMatches.length === 0 ? (
-          <p className="text-white text-center col-span-2">No upcoming matches available.</p>
+          <p className="text-black text-center col-span-2">No upcoming matches available.</p>
         ) : (
           currentMatches.map((matchData, index) => (
             <div
@@ -375,12 +376,12 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
                   <p className="text-xxs mt-2 sm:text-xs">Upcoming</p>
                 </div>
               </div>
-              {/* {/ VS Section /} */}
-              <div className="flex flex-col items-center justify-center">
-                <div className="h-6 w-px bg-gradient-to-b from-transparent via-white to-transparent sm:h-12" />
-                <span className="text-[#012D5E] text-sm sm:text-sm my-2">VS</span>
-                <div className="h-6 w-px bg-gradient-to-t from-transparent via-white to-transparent sm:h-12" />
-              </div>
+            
+          <div className="flex flex-col justify-center items-center w-[10%]">
+                      <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
+                      <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-lg text-lg font-bold text-[#480D35]">S</span></p>
+                      <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
+                    </div>
               {/* {/ Opposition Info /} */}
               <div className="flex flex-col items-center space-y-2 w-1/4">
                 <img
@@ -443,6 +444,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
     »
   </button>
 </div>
+<Footer/>
 </div>
 
   );

@@ -162,7 +162,8 @@ const NewsPage = () => {
                           onClick={() => goToFullArticle(news.id)}
                         >
                           <img
-                            src={news.imageUrl}
+                            // src={news.imageUrl}
+                            src={`${`http://rcc.dockyardsoftware.com/images/${ news.imageUrl ? news.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                             alt={news.title}
                             className="w-full h-full object-cover rounded-lg"
                           />
@@ -177,7 +178,7 @@ const NewsPage = () => {
                           <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
                             {getFirstTwoSentences(news.body)}
                             <span
-                              className="text-blue-500 cursor-pointer"
+                              className="text-[#012D5E] cursor-pointer"
                               onClick={() => goToFullArticle(news.id)}
                             >
                               ...Read more

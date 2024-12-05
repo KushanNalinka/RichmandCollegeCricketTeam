@@ -641,4 +641,4 @@ const MatchDetails = () => {
   );
 };
 
-export default MatchDetail
+export default MatchDetails;

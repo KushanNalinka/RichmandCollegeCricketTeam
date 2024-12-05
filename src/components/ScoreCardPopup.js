@@ -206,10 +206,6 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
 
   const handleAddInputChange = e => {
     const { name, value } = e.target;
-  
-    // Allow only positive integers or zero
-    const positiveIntegerValue = Math.max(0, parseInt(value) || 0);
-  
     if (name === "player.playerId") {
       const selectedPlayer = state.players.find(
         player => player.playerId === parseInt(value)
@@ -235,8 +231,8 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+    
   };
-
 
   const handleEditInputChange = e => {
     const { name, value } = e.target;

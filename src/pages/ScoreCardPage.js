@@ -182,7 +182,7 @@ const ScoreCardPage = () => {
           >
             <div className="flex justify-between items-center content-center mb-3" >
               <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-lg font-bold text-center font-popins text-[#480D35]">
+              <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 Match Updates
               </h2>
               <h2 className="md:text-2xl text-xl w-14 font-bold text-center font-popins text-[#480D35]">
@@ -190,7 +190,7 @@ const ScoreCardPage = () => {
               </h2>
             </div>
           <div
-            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col gap-2 lg:py-2 lg:p-2 rounded-lg shadow-lg"
+            className=" relative min-w-full divide-y divide-gray-300 max-h-full bg-gray-300 flex flex-col gap-2 lg:py-2 lg:p-2 rounded-lg shadow-lg overflow-auto"
             style={{
               backdropFilter: "blur(5px)",
               boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
@@ -241,13 +241,13 @@ const ScoreCardPage = () => {
                         </div>
                         ) 
                       }
-                      <div className="w-36 lg:flex flex-col justify-right items-end hidden ">
+                      <div className="w-36 flex flex-col justify-right items-end ">
                         <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })} </p>
-                        <p className="lg:flex hidden text-xs font-semibold">{match.venue} </p>
+                        <p className="flex text-xs font-semibold">{match.venue} </p>
                       </div>
                     </div>
                     <button

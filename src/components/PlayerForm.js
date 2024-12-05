@@ -18,11 +18,11 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const [formData, setFormData] = useState({
-    image: "",
+    image: null,
     name: "",
     dateOfBirth:"" ,
     email: "",
-    roles: ["ROLE_PLAYER"], 
+    role: ["ROLE_PLAYER"], 
     battingStyle: "",
     bowlingStyle: "",
     playerRole: "",
@@ -84,11 +84,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       }; 
     }else if (files && files[0]) {
       const file = files[0];
+      console.log("file in handleChange: ", file);
       setImagePreview(URL.createObjectURL(file));
       setFormData({
         ...formData,
         [name]: file
       });
+      console.log("file in formData image: ", formData.image);
     }else if (name === "dateOfBirth") {
       // Handle the DatePicker value change
       setFormData({
@@ -113,28 +115,34 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     };
     setUploading(true);
       try {
-        let imageURL = formData.image;
+        
+      // let imageURL = formData.image;
       
-      // Upload image if an image file is added
-      if (formData.image instanceof File) {
-        imageURL = await handleImageUpload(formData.image);
-      }
+      // // Upload image if an image file is added
+      // if (formData.image instanceof File) {
+      //   imageURL = await handleImageUpload(formData.image);
+      // }
+      
+      const formDataToSend = new FormData();
+      const { image, ...userData } = formData;
 
-      const playerData = {
-        ...formData,
-        image: imageURL, // Assign the uploaded image URL to formData
-      };
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
+
+      // Append image file
+      formDataToSend.append("image", image);
+
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          playerData , { headers: {
+          formDataToSend , { headers: {
             'Authorization': `Bearer ${accessToken}`
-        }}
+          }}
         );
         console.log("Form submitted succedded: ", response.data);
         console.log(accessToken);
         message.success("Successfull!");
         setFormData({
-          image: "",
+          image: null,
           name: "",
           dateOfBirth: "",
           email: "",
@@ -264,14 +272,53 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   //         setUploading(false);
   //         resolve(data.fileUrl); // Adjust based on the server's response
   //       })
-            /* if server not responds with the uploaded url then the code should be 
-              .then(() => {
-                // Construct the file URL based on the file name and upload path
-                const fileUrl = `http://your-server-url/uploads/players/${file.name}`;
-                setUploading(false);
-                resolve(fileUrl);
-              })
-                */
+  //           /* if server not responds with the uploaded url then the code should be 
+  //             .then(() => {
+  //               // Construct the file URL based on the file name and upload path
+  //               const fileUrl = `http://your-server-url/uploads/players/${file.name}`;
+  //               setUploading(false);
+  //               resolve(fileUrl);
+  //             })
+  //               */
+  //       .catch((error) => {
+  //         console.error('Image upload failed:', error);
+  //         setUploading(false);
+  //         reject(error);
+  //       });
+  //   });
+  // };
+  
+
+  // const handleImageUpload = (file) => {
+  //   return new Promise((resolve, reject) => {
+  //     const formData = new FormData();
+  //     formData.append('file', file);
+  
+  //     setUploading(true);
+  
+  //     fetch('http://rcc.dockyardsoftware.com/upload', {
+  //       method: 'POST',
+  //       body: formData,
+  //     })
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error(`Server responded with status ${response.status}`);
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((data) => {
+  //         // If backend responds with the uploaded URL, use it
+  //         if (data.fileUrl) {
+  //           setUploading(false);
+  //           resolve(data.fileUrl);
+  //         } else {
+  //           // If backend doesn't return the URL, construct it manually
+  //           // const fileUrl = `http://rcc.dockyardsoftware.com/uploads/players/${file.name}`;
+  //           reject(new Error('File upload failed: No file URL returned'));
+  //           setUploading(false);
+  //           resolve(data.fileUrl);
+  //         }
+  //       })
   //       .catch((error) => {
   //         console.error('Image upload failed:', error);
   //         setUploading(false);
@@ -320,7 +367,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   return (
     <div className="fixed inset-0  bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
       <div className="flex items-center justify-center">
-      <div className={`bg-white  ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white  ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -331,10 +378,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Player Details</h2>
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 "
-        >
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-3 ">
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
@@ -569,15 +613,16 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                     className="h-60 w-60 object-cover border border-gray-300"
                   />
                 ) : (
-                  <p className="text-gray-500 text-sm">
-                    {isDragging
-                      ? "Drop the image here"
-                      : <div className="flex">
-                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
-                            click here
-                            <GiClick className="ml-1 text-lg" />
-                          </span>&nbsp; to upload images
-                        </div>}
+                  <p className="text-gray-500 text-xs md:text-sm">
+                    {isDragging ? (
+                      "Drop the image here"
+                    ) : (
+                      <span className="inline-flex items-center">
+                        Drag and drop an image, or&nbsp;
+                        <GiClick className="ml-1 text-lg" />
+                        &nbsp;to upload images
+                      </span>
+                    )}
                   </p>
                 )}
               <input

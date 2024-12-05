@@ -91,7 +91,7 @@ const ScorecardData = () => {
                   </div>
                   <div className="flex flex-col text-right">
                     <p className="text-xxxs md:text-xxs text-white">{match.result}</p>
-                    <p className="text-xxs md:text-xxs mt-1 text-gray-400 mt-2">{match.tossResult}</p>
+                    <p className="text-xxs md:text-xxs  text-gray-400 mt-2">{match.tossResult}</p>
                   </div>
                 </div>
               </div>

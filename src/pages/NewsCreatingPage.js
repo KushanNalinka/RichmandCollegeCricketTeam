@@ -246,7 +246,7 @@ const NewsCreator = () => {
       // console.log("formdata before submit: ", createdNews);
 
       const response = await axios.post(
-        `${API_URL}news/`,
+        `${API_URL}news/create`,
         formDataToSend,
         {
           headers: {
@@ -433,8 +433,7 @@ const NewsCreator = () => {
   };
 
   const handleDelete = id => {
-    setNewsToDelete(id)
-;
+    setNewsToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 

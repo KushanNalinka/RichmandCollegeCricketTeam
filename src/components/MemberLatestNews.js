@@ -285,75 +285,71 @@
 //             </div>
 //           </div>
 
-    //       {/* Desktop News Carousel */}
-    //       <div className="hidden md:block">
-    //         <div className="overflow-hidden w-full">
-    //           <div
-    //             className="flex transition-transform duration-300"
-    //             style={{ transform: `translateX(-${currentSlide * 33.33}%)` }} // Show 3 items at a time
-    //           >
-    //             {newsItems.map((item, index) => (
-    //               <div
-    //                 key={index}
-    //                 className="w-[100%] md:w-[40%] p-4 flex-shrink-0 rounded-lg overflow-hidden shadow-lg"
-    //               >
-    //                 <img
-    //                   src={item.image}
-    //                   alt={item.title}
-    //                   className="w-full h-[250px] md:h-[500px] object-cover rounded-lg"
-    //                 />
-    //                 <div className="p-4">
-    //                   <p className="font-semibold text-gray-700 text-sm md:text-base">{item.title}</p>
-    //                 </div>
-    //               </div>
-    //             ))}
-    //           </div>
-    //         </div>
 
-    //         {/* Arrow buttons for desktop carousel */}
-    //         <div className="flex justify-center mt-4 space-x-4 md:space-x-8">
-    //           <button
-    //             onClick={prevSlide}
-    //             className={`text-2xl md:text-4xl font-bold focus:outline-none p-2 md:p-4 rounded-full border-2 border-[#4A0D34] ${
-    //               currentSlide === 0 ? "text-[#CBECFF]" : "text-[#4A0D34] hover:text-[#00175F]"
-    //             }`}
-    //             disabled={newsItems.length <= 1} // Disable if only one news item
-    //           >
-    //             &#8592;
-    //           </button>
+//           {/* Desktop News Carousel */}
+//           <div className="hidden md:block">
+//             <div className="overflow-hidden w-full">
+//               <div
+//                 className="flex transition-transform duration-300"
+//                 style={{ transform: `translateX(-${currentSlide * 33.33}%)` }} // Show 3 items at a time
+//               >
+//                 {newsItems.map((item, index) => (
+//                   <div
+//                     key={index}
+//                     className="w-[100%] md:w-[40%] p-4 flex-shrink-0 rounded-lg overflow-hidden shadow-lg"
+//                   >
+//                     <img
+//                       src={item.image}
+//                       alt={item.title}
+//                       className="w-full h-[250px] md:h-[500px] object-cover rounded-lg"
+//                     />
+//                     <div className="p-4">
+//                       <p className="font-semibold text-gray-700 text-sm md:text-base">{item.title}</p>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
 
-    //           <button
-    //             onClick={nextSlide}
-    //             className={`text-2xl md:text-4xl font-bold focus:outline-none p-2 md:p-4 rounded-full border-2 border-[#4A0D34] ${
-    //               currentSlide >= newsItems.length - 1 ? "text-[#CBECFF]" : "text-[#4A0D34] hover:text-[#00175F]"
-    //             }`}
-    //             disabled={newsItems.length <= 1} // Disable if only one news item
-    //           >
-    //             &#8594;
-    //           </button>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </section>
-//   );
-// };
+//             {/* Arrow buttons for desktop carousel */}
+//             <div className="flex justify-center mt-4 space-x-4 md:space-x-8">
+//               <button
+//                 onClick={prevSlide}
+//                 className={`text-2xl md:text-4xl font-bold focus:outline-none p-2 md:p-4 rounded-full border-2 border-[#4A0D34] ${
+//                   currentSlide === 0 ? "text-[#CBECFF]" : "text-[#4A0D34] hover:text-[#00175F]"
+//                 }`}
+//                 disabled={newsItems.length <= 1} // Disable if only one news item
+//               >
+//                 &#8592;
+//               </button>
 
-// export default LatestNews;
+//               <button
+//                 onClick={nextSlide}
+//                 className={`text-2xl md:text-4xl font-bold focus:outline-none p-2 md:p-4 rounded-full border-2 border-[#4A0D34] ${
+//                   currentSlide >= newsItems.length - 1 ? "text-[#CBECFF]" : "text-[#4A0D34] hover:text-[#00175F]"
+//                 }`}
+//                 disabled={newsItems.length <= 1} // Disable if only one news item
+//               >
+//                 &#8594;
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </section>
+
 
 
 
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // Import axios for making the API request
 import { useNavigate } from 'react-router-dom';
-
 const LatestNews = () => {
   const [newsItems, setNewsItems] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const visibleNews = 1; // Show 1 news item at a time on mobile
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
-
   // useEffect(() => {
   //   // Function to fetch news items from the API
   //   const fetchNews = async () => {
@@ -370,22 +366,19 @@ const LatestNews = () => {
   //       console.error("Error fetching news:", error);
   //     }
   //   };
-
   //   fetchNews(); // Call the function to fetch news on component mount
   // }, []);
-
-
   useEffect(() => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(`${API_URL}news`);
         const data = response.data;
-
         const topFiveNews = data.slice(0, 5).map((newsItem) => ({
           title: newsItem.heading,
           image: newsItem.imageUrl,
         }));
         setNewsItems(topFiveNews);
+
 
        // Filter news items that are today or earlier, then sort and slice to get the latest 5
         const today = new Date();
@@ -414,12 +407,10 @@ const LatestNews = () => {
 
 
         setNewsItems(filteredNews);
-
       } catch (error) {
         console.error("Error fetching news:", error);
       }
     };
-
     fetchNews();
   }, []);
   const nextSlide = () => {
@@ -429,7 +420,6 @@ const LatestNews = () => {
       setCurrentSlide(0); // Loop back to the first slide
     }
   };
-
   const prevSlide = () => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
@@ -437,13 +427,12 @@ const LatestNews = () => {
       setCurrentSlide(newsItems.length - 1); // Loop to the last slide
     }
   };
-
   const handleButtonClick = () => {
-    navigate('/news'); // Replace with your target page
+    navigate('/initial-news'); // Replace with your target page
   };
-
   return (
     <section className="bg-white py-12">
+
     <div className="flex flex-col md:flex-row gap-0">
       {/* Left Heading Section */}
       <div className="w-full md:w-[50%] mt-8 md:mt-24 md:ml-20 px-4 md:px-6">
@@ -515,7 +504,7 @@ const LatestNews = () => {
           </div>
         </div>
   
-       
+    
           {/* Desktop News Carousel */}
           <div className="hidden md:block">
             <div className="overflow-hidden w-full">
@@ -540,7 +529,6 @@ const LatestNews = () => {
                 ))}
               </div>
             </div>
-
             {/* Arrow buttons for desktop carousel */}
             <div className="flex justify-center mt-4 space-x-4 md:space-x-8">
               <button
@@ -552,7 +540,6 @@ const LatestNews = () => {
               >
                 &#8592;
               </button>
-
               <button
                 onClick={nextSlide}
                 className={`text-2xl md:text-4xl font-bold focus:outline-none p-2 md:p-4 rounded-full border-2 border-[#4A0D34] ${
@@ -569,5 +556,4 @@ const LatestNews = () => {
     </section>
   );
 };
-
 export default LatestNews;

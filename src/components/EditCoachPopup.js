@@ -299,11 +299,20 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [showImageError, setShowImageError] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -319,6 +328,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         [name]: file
       });
       setIsImageAdded(true);
+      setShowImageError(false);
     } else if (name === "dateOfBirth") {
       // Handle the DatePicker value change
       setFormData({
@@ -488,11 +498,18 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: "",
+      }));
+      setIsImageAdded(true);
+      setShowImageError(false);
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setShowImageError(true);
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -682,7 +699,6 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
                 name="image" 
                 accept="image/*" 
                 onChange={handleChange}
-                required
                 className="hidden"
               />
             </div>
@@ -695,9 +711,13 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
                 <FaTrash/>
               </button>
             )}
-
-            {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           </div>
+          {showImageError && (
+            <p className="text-red-500 text-xs px-2 col-span-2">
+              Upload a new image to replace the existing one, or it will remain unchanged.
+            </p>
+          )}
+          {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
           <div className="col-span-1 md:col-span-2">
             <button
               type="submit"

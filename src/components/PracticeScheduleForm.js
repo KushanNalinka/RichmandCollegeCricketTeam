@@ -59,8 +59,16 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        [subKey]: ""
+      }));
       setFormData({
         ...formData,
         [mainKey]: {
@@ -90,7 +98,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
       const startDateTime = new Date(`1970-01-01T${formData.startTime}:00`);
       const endDateTime = new Date(`1970-01-01T${formData.endTime}:00`);
     if (startDateTime >= endDateTime) {
-      newErrors.timeRange = "End time must be after start time.";
+      newErrors.endTime = "End time must be after start time.";
     }
   }
 
@@ -161,13 +169,25 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   };
 
   const handleCoachSelect = (coach) => {
-    if (selectedCoaches.includes(coach)) {
-      // If player is already selected, remove them
-      setSelectedCoaches(
-        selectedCoaches.filter((p) => p.coachId !== coach.coachId)
-      );
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      coaches: ""
+    }));
+    // if (selectedCoaches.includes(coach)) {
+    //   // If player is already selected, remove them
+    //   setSelectedCoaches(
+    //     selectedCoaches.filter((p) => p.coachId !== coach.coachId)
+    //   );
+    // } else {
+    //   // Otherwise, add the player to the list
+    //   setSelectedCoaches([...selectedCoaches, coach]);
+    // }
+    // console.log("selected coaches: ", selectedCoaches.name);
+
+    const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
+    if (isSelected) {
+      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
     } else {
-      // Otherwise, add the player to the list
       setSelectedCoaches([...selectedCoaches, coach]);
     }
     console.log("selected coaches: ", selectedCoaches.name);
@@ -274,7 +294,7 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
-            {errors.timeRange && <p className="text-red-500 text-xs mt-1">{errors.timeRange}</p>}
+            {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
           </div>
           <div className="col-span-1">
           <label

@@ -162,8 +162,8 @@ const NewsPage = () => {
                           onClick={() => goToFullArticle(news.id)}
                         >
                           <img
-                            // src={news.imageUrl}
-                            src={`${`http://rcc.dockyardsoftware.com/images/${ news.imageUrl ? news.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+                            src={news.images && news.images[0]?.imageUrl}
+                            // src={`${`http://rcc.dockyardsoftware.com/images/${ news.imageUrls ? news.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                             alt={news.title}
                             className="w-full h-full object-cover rounded-lg"
                           />

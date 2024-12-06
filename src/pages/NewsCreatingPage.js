@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -49,7 +48,6 @@ const NewsCreator = () => {
     author: "",
     images: [],
     body: "",
-    dateTime: "",
     createdBy:"",
     createdOn: "",
     updatedBy:"",
@@ -95,7 +93,6 @@ const NewsCreator = () => {
       [name]: ""
     }));
     if (files) {
-
       const selectedFiles = Array.from(e.target.files);
       const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
       setImageFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
@@ -115,28 +112,25 @@ const NewsCreator = () => {
     if (index < existingImageURLs.length) {
       // Removing an existing image (this is from the 'existingImageURLs' and 'formData.images')
       const updatedExistingImages = existingImageURLs.filter((_, i) => i !== index);
-      const updatedFormDataImages = formData.images.filter((_, i) => i !== index);
-  
+      // const updatedFormDataImages = formData.images.filter((_, i) => i !== index);
       // Update state for existing images
       setExistingImageURLs(updatedExistingImages);
-      setFormData({ ...formData, images: updatedFormDataImages });
-  
+      // setFormData({ ...formData, images: updatedFormDataImages });
       // Log to check
       console.log("Updated formData after removing existing image: ", formData);
       console.log("Updated existingImageURLs after removing existing image: ", updatedExistingImages);
-  
-    } else {
+    } else{
+    
       // Removing a newly added image
       const newIndex = index - existingImageURLs.length;  // Adjust index for new images
       // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
       const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
       setImageFiles(updatedImageFiles);
-      
-    }
-  
-    // Update previews for both new and existing images
-    const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
-    setImagePreviews(updatedImagePreviews);
+
+      // Update previews for both new and existing images
+      const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
+      setImagePreviews(updatedImagePreviews);
+    }  
 
     // Log to confirm changes
     console.log("Updated existingImageURLs:", existingImageURLs);
@@ -161,9 +155,9 @@ const NewsCreator = () => {
     }
 
     // Body validation
-    if (formData.body.length < 50) {
-      newErrors.body = "Body should be at least 50 characters.";
-    };
+    // if (formData.body.length < 10) {
+    //   newErrors.body = "Body should be at least 50 characters.";
+    // };
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -173,9 +167,9 @@ const NewsCreator = () => {
     const newErrors = {};
 
     // Heading validation
-    if (formData.heading.length > 100) {
-      newErrors.heading = "Heading should be under 100 characters.";
-    };  
+    // if (formData.heading.length > 100) {
+    //   newErrors.heading = "Heading should be under 100 characters.";
+    // };  
 
     // Image URL validation
     if (formData.imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/i.test(formData.imageUrl)) {
@@ -226,7 +220,6 @@ const NewsCreator = () => {
       setFormData(prevData => ({
         ...prevData,
         images:imageFiles,
-        dateTime: currentTime.toLocaleDateString,
         createdBy: user.username,
         createdOn: currentTime.toLocaleDateString
       }));
@@ -260,7 +253,6 @@ const NewsCreator = () => {
         images: [],
         author: "",
         heading: "",
-        dateTime: "",
         body: "",
         createdBy:"",
         createdOn: "",
@@ -294,20 +286,25 @@ const NewsCreator = () => {
     setFormData({ 
       author: news.author,
       heading: news.heading,
-      dateTime: news.dateTime,
       body: news.body,
       createdBy: news.createdBy,
       createdOn: news.createdOn,
-      images:news.imageUrls.map(image =>({ imageUrl: image}))} 
+      images:news.images.map(image =>({ imageUrl: image.imageUrl}))} 
     );
     
-    setImagePreviews((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls
+    // setImagePreviews((prevId) =>
+    //   prevId === (news.images && news.images?.imageUrl) ? null : news.images && news.images?.imageUrl
+    
+    // );
+    // setExistingImageURLs((prevId) =>
+    //   prevId === (news.images && news.images.imageUrl) ? null : news.images.imageUrl);
+    //   //setImagePreviews(news.images.map((img) => img.imageUrl));
+    // Extract image URLs for previews
+    const imageUrls = news.images.map((img) => img.imageUrl);
+    setImagePreviews(imageUrls); // Update image previews with URLs
 
-    );
-    setExistingImageURLs((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls);
-    //setImagePreviews(news.images.map((img) => img.imageUrl));
+    // Keep track of existing image URLs
+    setExistingImageURLs(imageUrls);
     setImageFiles([]); 
   };
 
@@ -317,7 +314,6 @@ const NewsCreator = () => {
       images: [],
       author: "",
       heading: "",
-      dateTime: "",
       body: "",
       createdBy:"",
       createdOn: "",
@@ -344,21 +340,19 @@ const NewsCreator = () => {
       // if (formData.imageUrl instanceof File) {
       //   imageURL = await handleImageUpload(formData.imageUrl);
       // }
-      const existingImageUrls = formData.images
-      ? formData.images.map((img) => img.imageUrl)
-      : [];
+      // const existingImageUrls = formData.images
+      // ? formData.images.map((img) => img.imageUrl)
+      // : [];
 
     // Upload new images, if any
     // const uploadedUrls = await uploadImagesToFirebase();
     
     // Merge existing URLs with newly uploaded ones
-    // const allImageUrls = [...existingImageUrls, ...imagePreviews];
-    const allImageUrls = [...existingImageUrls, ...imagePreviews];
+    //const allImageUrls = [...existingImageUrls, ...imagePreviews];
       
       setFormData({
         ...formData,
-        images:  allImageUrls.map((url) => ({ imageUrl: url })),
-        dateTime: currentTime,
+        images: imageFiles,
         updatedBy: user.username,
         updatedOn: currentTime
       });
@@ -371,7 +365,9 @@ const NewsCreator = () => {
       formDataToSend.append("newsData", JSON.stringify(newsData));
 
       // Append image file
-      formDataToSend.append("images", images);
+      imageFiles.forEach((file) => {
+        formDataToSend.append("images", file);
+      });
 
       //console.log("formdate before edit submit: ", editedNewsData);
       
@@ -385,7 +381,6 @@ const NewsCreator = () => {
         images: [],
         author: "",
         heading: "",
-        dateTime: "",
         body: "",
         createdBy:"",
         createdOn: "",
@@ -748,7 +743,7 @@ const NewsCreator = () => {
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  src={news.imageUrls[0]}
+                                  src={news.images && news.images[0]?.imageUrl}
                                 />
                               </div>
                               <div className="mr-2 py-2 w-full">

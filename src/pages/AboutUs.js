@@ -225,6 +225,111 @@
 
 // export default AboutUs;
 
+// import React from 'react';
+// import Navbar from '../components/MemberNavbar';
+// import Footer from '../components/Footer';
+// import '../index.css';
+// import topImageDesktop from '../assets/images/IMG5.png'; // Desktop image
+// import topImageMobile from '../assets/images/MB1.png'; // Mobile image
+// // SVG for the star shape
+// const StarLogo = () => (
+//   <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+//     <path d="M12 2L13.09 8.26L19 8.27L14.63 11.5L15.9 17.74L12 14.6L8.09 17.74L9.37 11.5L5 8.27L10.91 8.26L12 2Z" fill="white"/>
+//   </svg>
+// );
+// const AboutUs = () => {
+//   return (
+//     <div>
+//       {/* Navbar */}
+//       <Navbar />
+//       {/* Top Image Section */}
+//       {/* Mobile Image (visible only on small screens) */}
+//       <div
+//         className="bg-cover bg-center bg-fixed h-[100vh] md:hidden flex items-center justify-center"
+//         style={{
+//           backgroundImage: `url(${topImageMobile})`,
+//         }}
+//       >
+//       </div>
+//       {/* Desktop Image (visible only on medium and larger screens) */}
+//       <div
+//         className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
+//         style={{
+//           backgroundImage: `url(${topImageDesktop})`,
+//         }}
+//       >
+//       </div>
+//     {/* Top Section */}
+// <div className="bg-gradient-to-b to-[#00175F] from-[#4A0D34] text-white py-20 md:py-40">
+//   <div className="max-w-screen-lg w-full mx-auto text-center px-6 sm:px-4">
+//     <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-snug sm:leading-tight">
+//     A Legacy   <span className="italic">of Excellence</span><br />
+
+//       <span className="italic">The Proud History of Richmond College Cricket</span>
+//     </h1>
+//     <div className="flex justify-center mt-4 sm:mt-6">
+//       <StarLogo />
+//     </div>
+//     <p className="text-xs sm:text-sm lg:text-base mt-4 sm:mt-6 max-w-2xl mx-auto">
+//     For over a century, Richmond College has cultivated a deep passion for cricket, building a heritage of remarkable achievements, spirited rivalries, and celebrated players who have left an indelible mark on Sri Lankan cricket.
+//     </p>
+//   </div>
+// </div>
+//     {/* New Heading Section */}
+// <div className="bg-[#F9F9F7] py-10 sm:py-12 md:py-16 text-center">
+//   <p className="text-gray-500 text-base sm:text-lg mb-2 sm:mb-4">
+//     The Vision and Mission
+//   </p>
+//   <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1C1C1C]">
+//   To nurture a legacy of cricketing excellence at Richmond College,  <span>inspiring generations of sportsmanship, integrity, </span><br />
+//     <span className="italic"> and leadership on and off the field</span>
+//   </h2>
+// </div>
+//       {/* Benefits Section */}
+//       <div className="bg-light-gray py-20">
+//       <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+//   <div className="bg-[#00175F] text-white p-6 sm:p-8 rounded-[30px] sm:rounded-[50px] shadow-lg min-h-[300px] sm:min-h-[400px] flex flex-col">
+//     <h3 className="text-xl sm:text-2xl font-bold mb-4">Founding Years and First Victories</h3>
+//     <p className="text-sm sm:text-base flex-grow">
+//     Richmond College cricket began in 1888, with the first recorded match against All Saints’ College.
+//      By 1899, Richmond achieved its first victory, and the game quickly became integral to school life.
+//       Early match logs reveal memorable encounters, such as the celebrated win over Wesley College in 1901, when camaraderie and competitive spirit took root.
+
+//        This period also saw the establishment of the Richmond–Mahinda rivalry in 1905, a fixture now affectionately known as the “Lovers' Quarrel.”
+// h
+//        These formative years were marked by Richmond’s passion for cricket and the development of match traditions that continue today.
+//     </p>
+//   </div>
+//   <div className="bg-[#00175F] text-white p-6 sm:p-8 rounded-[30px] sm:rounded-[50px] shadow-lg min-h-[300px] sm:min-h-[400px] flex flex-col">
+//     <h3 className="text-xl sm:text-2xl font-bold mb-4">The Development of Tradition and Rivalries</h3>
+//     <p className="text-sm sm:text-base flex-grow">
+//     Over the decades, Richmond College cricket matches became cornerstone events.
+
+//      The annual Richmond–Mahinda match became Southern Sri Lanka’s biggest sporting event, evolving from one-day games to full-day fixtures, eventually transitioning to two-day games in 1930. Similarly, the Richmond–Wesley series, established in 1901, became formalized with the E.R. de Silva Trophy in 1973.
+//      These rivalries grew in popularity, drawing crowds and capturing the college spirit, and have endured to this day as essential annual highlights.
+
+//     </p>
+//   </div>
+//   <div className="bg-[#00175F] text-white p-6 sm:p-8 rounded-[30px] sm:rounded-[50px] shadow-lg min-h-[300px] sm:min-h-[400px] flex flex-col">
+//     <h3 className="text-xl sm:text-2xl font-bold mb-4">Notable Figures and Legacy</h3>
+//     <p className="text-sm sm:text-base flex-grow">
+//     Richmond College has produced influential cricketers who have left their mark on the sport both locally and nationally.
+//      Pioneers like E.M. Karunaratne and P.S. Thuduwewatta, known for his record 100-wicket season, as well as R.M.M. De Silva, who played for All Ceylon, laid a foundation of excellence.
+//       Generations of Richmond alumni have gone on to represent regional and national teams, contributing to Sri Lanka’s cricket heritage.
+//        Today, Richmond College cricket remains a proud legacy, fostering talent and a deep love for the game among its students.
+
+//     </p>
+//   </div>
+// </div>
+//       {/* Footer */}
+//       <Footer />
+//     </div>
+//     </div>
+//   );
+// };
+// export default AboutUs;
+
+
 import React from 'react';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
@@ -253,12 +358,15 @@ const AboutUs = () => {
       </div>
       {/* Desktop Image (visible only on medium and larger screens) */}
       <div
-        className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
-        style={{
-          backgroundImage: `url(${topImageDesktop})`,
-        }}
-      >
-      </div>
+  className="bg-cover bg-center h-[100vh] flex items-center justify-center"
+  style={{
+    backgroundImage: `url(${topImageMobile})`,
+    backgroundSize: "cover",
+    backgroundAttachment: "scroll",
+    backgroundPosition: "center",
+  }}
+></div>
+
     {/* Top Section */}
 <div className="bg-gradient-to-b to-[#00175F] from-[#4A0D34] text-white py-20 md:py-40">
   <div className="max-w-screen-lg w-full mx-auto text-center px-6 sm:px-4">
@@ -328,4 +436,5 @@ h
   );
 };
 export default AboutUs;
+
 

@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.bg-fixed {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+
+@media screen and (max-width: 768px) {
+  .bg-fixed {
+    background-attachment: scroll; /* iOS sometimes struggles with fixed backgrounds */
+    background-size: cover;
+  }
+}
+@supports (-webkit-touch-callout: none) {
+  .bg-fixed {
+    background-attachment: scroll; /* Overrides fixed on iOS */
+    background-size: cover;
+  }
+}
+
+body {
+  -webkit-transform: translate3d(0, 0, 0); /* Forces GPU redraw */
+}

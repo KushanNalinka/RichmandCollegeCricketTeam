@@ -13,13 +13,13 @@ const NewsPreview = ({ news, onClose }) => {
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === news.imageUrls.length - 1 ? 0 : prevIndex + 1
+      prevIndex === news.images.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? news.imageUrls.length - 1 : prevIndex - 1
+      prevIndex === 0 ? news.images.length - 1 : prevIndex - 1
     );
   };
 
@@ -61,10 +61,10 @@ const NewsPreview = ({ news, onClose }) => {
 
           {/* Full Image Display */}
           <div className="relative w-full flex justify-center items-center mt-4">
-              {news.imageUrls && news.imageUrls.length > 0 && (
+              {news.images && news.images.length > 0 && (
                 <>
                   <img
-                    src={`http://rcc.dockyardsoftware.com/images/${ news.imageUrls[currentImageIndex] ? news.imageUrls[currentImageIndex].split('/').pop() : 'default.jpg'}`}
+                    src={news.images[currentImageIndex]?.imageUrl}
                     alt={`Slide ${currentImageIndex + 1}`}
                     className="w-full max-h-[60vh] object-contain rounded-xl"
                   />

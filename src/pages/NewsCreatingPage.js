@@ -1122,16 +1122,22 @@ const NewsCreator = () => {
       body: news.body,
       createdBy: news.createdBy,
       createdOn: news.createdOn,
-      images:news.imageUrls.map(image =>({ imageUrl: image}))} 
+      images:news.images.map(image =>({ imageUrl: image.imageUrl}))} 
     );
     
-    setImagePreviews((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls
+    // setImagePreviews((prevId) =>
+    //   prevId === (news.images && news.images?.imageUrl) ? null : news.images && news.images?.imageUrl
+    
+    // );
+    // setExistingImageURLs((prevId) =>
+    //   prevId === (news.images && news.images.imageUrl) ? null : news.images.imageUrl);
+    //   //setImagePreviews(news.images.map((img) => img.imageUrl));
+    // Extract image URLs for previews
+    const imageUrls = news.images.map((img) => img.imageUrl);
+    setImagePreviews(imageUrls); // Update image previews with URLs
 
-    );
-    setExistingImageURLs((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls);
-    //setImagePreviews(news.images.map((img) => img.imageUrl));
+    // Keep track of existing image URLs
+    setExistingImageURLs(imageUrls);
     setImageFiles([]); 
   };
 
@@ -1570,7 +1576,7 @@ const NewsCreator = () => {
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  src={news.imageUrls[0]}
+                                  src={news.images && news.images[0]?.imageUrl}
                                 />
                               </div>
                               <div className="mr-2 py-2 w-full">

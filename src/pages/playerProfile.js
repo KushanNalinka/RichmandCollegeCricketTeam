@@ -99,6 +99,19 @@ const PlayerProfile = () => {
     return summary;
   };
 
+  const calculateAge = (dob) => {
+    console.log("dob:", dob);
+    const birthDate = new Date(dob); // Parses the YYYY-MM-DD format
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+  
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1;
+    }
+    return age;
+  };
 
   return (
     <>
@@ -135,10 +148,9 @@ const PlayerProfile = () => {
                 <div className="relative top-10 rounded-full w-full h-full flex items-center justify-center">
                   <div className=" -top-5 -left-5 absolute flex flex-col ">
                     <h1 className="lg:text-4xl font-bold">{playerProfile?.name}</h1>
-                    <p className="lg:text-xl">
-                      {playerProfile?.careerStart} -{" "}
-                      {playerProfile?.careerEnd || "Present"}
-                    </p>
+                    {playerProfile?.dateOfBirth && (
+                      <p className="lg:text-xl text-sm">{calculateAge(playerProfile.dateOfBirth)} years old</p>
+                    )}
                   </div>
                   <img
                     src={playerProfile?.image || image}

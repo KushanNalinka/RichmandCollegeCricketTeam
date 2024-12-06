@@ -180,6 +180,15 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const validateForm = () => {
     const newErrors = {};
 
+    //name validation
+    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
+      newErrors.name = "Name must be between 4 and 25 characters long.";
+    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters, spaces, and periods.";
+    } else if (/^\s|\s$/.test(formData.name)) {
+      newErrors.name = "Name cannot start or end with a space.";
+    }
+
     //username validation
     if (formData.username.length < 4 || formData.username.length > 20) {
       newErrors.username = "Username must be between 4 and 20 characters.";
@@ -389,6 +398,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required   
             />
+             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm  font-semibold">DOB</label>
@@ -599,14 +609,14 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               } */}
               <div
                 className={`w-full px-3 py-4 border rounded-md ${
-                  isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
+                  isDragging? "border-[#00175f] bg-blue-50" : "border-gray-300"
                 } flex flex-col items-center justify-center cursor-pointer`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onClick={handleClick}
               >
-                {imagePreview ? (
+                {imagePreview? (
                   <img
                     src={imagePreview}
                     alt="Preview"

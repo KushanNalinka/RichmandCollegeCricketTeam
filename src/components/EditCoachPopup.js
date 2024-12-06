@@ -291,7 +291,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
     updatedOn:new Date().toISOString(),
     updatedBy:user.username,
   });
-  const [imagePreview, setImagePreview] = useState(coach.image);
+  const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -345,6 +345,14 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
 
   const validateForm = () => {
     const newErrors = {};
+    //name validation
+    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
+      newErrors.name = "Name must be between 4 and 25 characters long.";
+    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters, spaces, and periods.";
+    } else if (/^\s|\s$/.test(formData.name)) {
+      newErrors.name = "Name cannot start or end with a space.";
+    }
     //username validation
     if (formData.user.username !== coach.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
       newErrors.username = "Username must be between 4 and 20 characters.";
@@ -552,6 +560,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>

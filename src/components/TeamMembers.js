@@ -36,7 +36,7 @@ const TeamMembers = ({teamId, onClose}) => {
             <div className=" bg-gray-100 rounded-3xl px-5 py-5">
             {members && members.map((member) => (
                 <ul key={member.playerId} className="flex items-center mb-2 ">
-                <li className="flex items-center justify-center gap-3"><img className="w-10 h-10 rounded-full border border-gray-300 bg-white " alt={member.name} src={member.image}/>{member.name}</li>
+                <li className="flex items-center justify-center gap-3"><img className="w-10 h-10 rounded-full border border-gray-300 bg-white " alt={member.name} src={`http://rcc.dockyardsoftware.com/images/${ member.image ? member.image.split('/').pop() : 'default.jpg'}`}/>{member.name}</li>
                 </ul>
                 ))}
             </div>

@@ -117,6 +117,15 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
       return true; // No validation needed as no changes detected
     }
 
+    //name validation
+    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
+      newErrors.name = "Name must be between 4 and 25 characters long.";
+    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters, spaces, and periods.";
+    } else if (/^\s|\s$/.test(formData.name)) {
+      newErrors.name = "Name cannot start or end with a space.";
+    }
+
      //username validatio
      if (formData.user.username !== official.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
       newErrors.username = "Username must be between 4 and 20 characters.";
@@ -175,6 +184,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Username</label>

@@ -236,7 +236,7 @@ html {
 
 
 
-/* Animated text styles */
+
 .effect {
   font-family:  "Josefin Sans", sans-serif;
   font-weight: 700;
@@ -258,7 +258,7 @@ html {
   background: linear-gradient(180deg,  #4A0D34, #B01F7C);
   -webkit-background-clip: text;
   text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
-  
+
 }
 /* Media queries for responsiveness */
 @media (min-width: 1280px) {
@@ -300,4 +300,6 @@ html {
     font-size: 17vw;
     margin-top: 0.1vh;
   }
+
 }
+

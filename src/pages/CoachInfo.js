@@ -65,7 +65,7 @@ const CoachTable = () => {
     const screenHeight = window.innerHeight;
 
     if (screenWidth >= 1440 && screenHeight >= 900) {
-      setRowsPerPage(12); // Desktop screens
+      setRowsPerPage(10); // Desktop screens
     } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
       setRowsPerPage(8); // Laptop screens
     } else {
@@ -193,7 +193,7 @@ const CoachTable = () => {
         >
           <div className="flex justify-between items-center content-center mb-3">
             <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-lg font-bold font-popins text-[#480D35]">
+              <h2 className="md:text-2xl text-xl font-bold font-popins text-[#480D35]">
                 Coach Details
               </h2>
             <button
@@ -206,16 +206,16 @@ const CoachTable = () => {
             </button>
           </div>
           <div className="flex overflow-x-auto">
-            <table className="min-w-full divide-gray-30 bg-gray-200 shadow-md">
+            <table className=" min-w-full divide-gray-30 bg-gray-200 shadow-md">
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="pl-4 py-3 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="pl-4 py-3 relative lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     STATUS
                     <button onClick={() => setShowStatusDropdown(!showStatusDropdown)} className="ml-2">
                     {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
                     </button>
                     {showStatusDropdown && (
-                      <div className="absolute mt-1 z-50 bg-white border rounded shadow-lg">
+                      <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-1 z-50 bg-white border rounded shadow-lg">
                         <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">All</button>
                         <button onClick={() => handleFilterChange("status", "Active")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Active</button>
                         <button onClick={() => handleFilterChange("status", "Inactive")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Inactive</button>
@@ -249,7 +249,7 @@ const CoachTable = () => {
               <tbody className=" divide-y-2 divide-gray-300">
               {paginatedData && paginatedData.length === 0 ? (
                   <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={8} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                  <td colSpan={8} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
                       There is no data available
                   </td>
                   </tr>
@@ -343,8 +343,8 @@ const CoachTable = () => {
             </button>
           </div>
         {showDeleteModal && (
-          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="fixed inset-0 flex justify-center p-5 items-center bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-3xl shadow-lg lg:p-8 p-5">
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this coach?</p>
               <div className="flex justify-end mt-4 space-x-2">

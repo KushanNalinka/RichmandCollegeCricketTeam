@@ -206,7 +206,7 @@ const TableComponent = () => {
         >
           <div className="flex justify-between items-center mb-3">
             <NavbarToggleMenu/>
-            <h2 className="md:text-2xl text-lg font-bold  text-center text-[#480D35] ">Team Details</h2>
+            <h2 className="md:text-2xl text-xl font-bold text-center text-[#480D35] ">Team Details</h2>
             <button
               onClick={() => setIsModalOpen(true)}
               className=" right-4 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 transition-colors rounded-full p-1"
@@ -219,7 +219,7 @@ const TableComponent = () => {
             <table className="min-w-full min-h-full divide-gray-300 bg-gray-200 shadow-md">
               <thead className=" text-white">
                 <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className="relative py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
                     Under
                     <button
                         onClick={() => setShowUnderDropdown(!showUnderDropdown)}
@@ -228,7 +228,7 @@ const TableComponent = () => {
                         {showUnderDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showUnderDropdown && (
-                        <div className="absolute mt-1 bg-white h-80 hover:overflow-y-auto custom-scrollbar overflow-y-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-y-auto custom-scrollbar overflow-y-hidden border rounded shadow-lg">
                            <button
                             onClick={() => handleFilterChange("under", "")}
                             className="block px-4 py-2 text-sm text-start text-gray-700 w-full hover:bg-gray-200"
@@ -247,7 +247,7 @@ const TableComponent = () => {
                         </div>
                       )}
                   </th>
-                  <th className="py-3 px-4 flex text-left text-xs font-semibold uppercase tracking-wider">
+                  <th className=" relative py-3 px-4 flex text-left text-xs font-semibold uppercase tracking-wider">
                     Year
                     <button
                         onClick={() => setShowYearDropdown(!showYearDropdown)}
@@ -256,7 +256,7 @@ const TableComponent = () => {
                         {showYearDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showYearDropdown && (
-                        <div className="absolute mt-5 bg-white border h-80 hover:overflow-y-auto custom-scrollbar overflow-y-hidden rounded shadow-lg">
+                        <div className="absolute mt-5 bg-white border h-[74px] hover:overflow-y-auto custom-scrollbar overflow-y-hidden rounded shadow-lg">
                           <button
                             onClick={() => handleFilterChange("year", "")}
                             className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
@@ -291,7 +291,7 @@ const TableComponent = () => {
               <tbody className=" divide-y-2 divide-gray-300">
               {paginatedData && paginatedData.length === 0 ? (
                   <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={5} className="px-4 py-4 h-14 lg:rounded-lg text-center  whitespace-nowrap text-sm">
+                  <td colSpan={5} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
                       There is no data available
                   </td>
                   </tr>
@@ -368,8 +368,8 @@ const TableComponent = () => {
          {/* Modal for adding new item */}
 
         {showDeleteModal && (
-          <div className="fixed inset-0 flex justify-center items-center bg-gray-600 bg-opacity-75">
-            <div className="bg-white rounded-3xl shadow-lg p-8">
+          <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+            <div className="bg-white rounded-3xl shadow-lg lg:p-8 p-5">
               <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
               <p>Are you sure you want to delete this team?</p>
               <div className="flex justify-end mt-4 space-x-2">

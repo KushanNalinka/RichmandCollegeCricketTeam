@@ -398,22 +398,31 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
       return;
     };
     setUploading(true);
-      try {
-        let imageURL = formData.image;
+    try {
+      //   let imageURL = formData.image;
       
-      // Upload image if an image file is added
-      if (formData.image instanceof File) {
-        imageURL = await handleImageUpload(formData.image);
-      }
+      // // Upload image if an image file is added
+      // if (formData.image instanceof File) {
+      //   imageURL = await handleImageUpload(formData.image);
+      // }
 
-      const coachData = {
-        ...formData,
-        image: imageURL, // Assign the uploaded image URL to formData
-      };
-      console.log("edited coaches: ", coachData);
+      // const coachData = {
+      //   ...formData,
+      //   image: imageURL, // Assign the uploaded image URL to formData
+      // };
+      const formDataToSend = new FormData();
+      const { image, ...userData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
+
+      // Append image file
+      formDataToSend.append("image", image);
+
+      // console.log("edited coaches: ", coachData);
         const response = await axios.put(
           `${API_URL}coaches/${coach.coachId}`,
-            coachData 
+            formDataToSend 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
@@ -518,7 +527,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   return (
     <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">
       <div className=" flex items-center justify-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}

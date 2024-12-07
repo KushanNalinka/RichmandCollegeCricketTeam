@@ -857,6 +857,7 @@ const NewsCreator = () => {
   const [createdNews, setCreatedNews] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageIds, setImageIds] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
@@ -870,8 +871,10 @@ const NewsCreator = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageDeleteModal, setShowImageDeleteModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [newsToDelete, setNewsToDelete] = useState(null);
+  const [imageToDelete, setImageToDelete] = useState(null);
   const [existingImageURLs, setExistingImageURLs] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
   const fileInputRef = useRef(null);
@@ -937,38 +940,6 @@ const NewsCreator = () => {
         [name]: value,
       });
     }
-  };
-
-  const handleImageRemove = (index) => {
-    console.log("index removed: ", index);
-    console.log("existing image urls: ", existingImageURLs);
-    if (index < existingImageURLs.length) {
-      // Removing an existing image (this is from the 'existingImageURLs' and 'formData.images')
-      const updatedExistingImages = existingImageURLs.filter((_, i) => i !== index);
-      // const updatedFormDataImages = formData.images.filter((_, i) => i !== index);
-      // Update state for existing images
-      setExistingImageURLs(updatedExistingImages);
-      // setFormData({ ...formData, images: updatedFormDataImages });
-      // Log to check
-      console.log("Updated formData after removing existing image: ", formData);
-      console.log("Updated existingImageURLs after removing existing image: ", updatedExistingImages);
-    } else{
-    
-      // Removing a newly added image
-      const newIndex = index - existingImageURLs.length;  // Adjust index for new images
-      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
-      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
-      setImageFiles(updatedImageFiles);
-
-      // Update previews for both new and existing images
-      const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
-      setImagePreviews(updatedImagePreviews);
-    }  
-
-    // Log to confirm changes
-    console.log("Updated existingImageURLs:", existingImageURLs);
-    console.log("Updated imageFiles:", imageFiles);
-    console.log("Updated imagePreviews:", imagePreviews);
   };
 
   const validateFormAdd = () => {
@@ -1054,7 +1025,7 @@ const NewsCreator = () => {
         ...prevData,
         images:imageFiles,
         createdBy: user.username,
-        createdOn: currentTime.toLocaleDateString
+        createdOn: new Date().toISOString
       }));
 
       const formDataToSend = new FormData();
@@ -1135,9 +1106,11 @@ const NewsCreator = () => {
     // Extract image URLs for previews
     const imageUrls = news.images.map((img) => img.imageUrl);
     setImagePreviews(imageUrls); // Update image previews with URLs
-
     // Keep track of existing image URLs
     setExistingImageURLs(imageUrls);
+
+    const imageIds = news.images.map((img) => img.imageId);
+    setImageIds(imageIds);
     setImageFiles([]); 
   };
 
@@ -1163,7 +1136,7 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
-    const currentTime = new Date().toLocaleString;
+    const currentTime = new Date().toLocaleTimeString;
     setUploading(true);
     console.log("Data before edit submit :", formData);
     try {
@@ -1289,6 +1262,57 @@ const NewsCreator = () => {
       setUploading(false);
     }
   };
+
+  const handleImageRemove = async(index) => {
+    console.log("index removed: ", index);
+    console.log("existing image urls: ", existingImageURLs);
+
+    if (index < existingImageURLs.length) {
+      setShowImageDeleteModal(true);
+      setImageToDelete(index);
+    } else{
+      // Removing a newly added image
+      const newIndex = index - existingImageURLs.length;  // Adjust index for new images
+      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
+      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
+      setImageFiles(updatedImageFiles);
+
+      // Update previews for both new and existing images
+      const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
+      setImagePreviews(updatedImagePreviews);
+    }  
+
+    // Log to confirm changes
+    console.log("Updated existingImageURLs:", existingImageURLs);
+    console.log("Updated imageFiles:", imageFiles);
+    console.log("Updated imagePreviews:", imagePreviews);
+  };
+
+  const confirmImageDelete = async() =>{
+    const imageId = imageIds[imageToDelete];
+
+    try {
+      const deleteImage = await axios.delete(
+        `${API_URL}news/deleteImage/${imageId}`
+      );
+      const updatedExistingImages = existingImageURLs.filter((_, i) => i !== imageToDelete);
+      setExistingImageURLs(updatedExistingImages);
+      setImagePreviews(updatedExistingImages);
+      message.success("Successfully Deleted!");
+      setShowImageDeleteModal(false);
+      loadNews();
+      
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const toggleView = (news) => {
     setCurrentNews(news);
@@ -1644,6 +1668,28 @@ const NewsCreator = () => {
                 </button>
                 <button
                   onClick={confirmDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showImageDeleteModal && (
+          <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+            <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+              <p>Are you sure you want to delete this existing image?</p>
+              <div className="flex justify-end mt-4 space-x-2">
+                <button
+                  onClick={() => setShowImageDeleteModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmImageDelete}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
                 >
                   Confirm

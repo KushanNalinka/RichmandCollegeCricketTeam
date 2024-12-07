@@ -844,7 +844,7 @@ const LatestNews = () => {
                     className="w-full flex-shrink-0 p-4 rounded-lg overflow-hidden shadow-lg"
                   >
                     <img
-                      src={item.image}
+                      src={`${`http://rcc.dockyardsoftware.com/images/${ item.image ? item.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                       alt={item.title}
                       className="w-full h-[250px] object-cover rounded-lg"
                     />
@@ -893,7 +893,7 @@ const LatestNews = () => {
                     className="w-[100%] md:w-[40%] p-4 flex-shrink-0 rounded-lg overflow-hidden shadow-lg"
                   >
                     <img
-                      src={item.image}
+                      src={`${`http://rcc.dockyardsoftware.com/images/${ item.image ? item.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                       alt={item.title}
                       className="w-full h-[250px] md:h-[500px] object-cover rounded-lg"
                     />

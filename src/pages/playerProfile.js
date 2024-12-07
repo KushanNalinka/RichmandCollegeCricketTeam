@@ -153,7 +153,7 @@ const PlayerProfile = () => {
                     )}
                   </div>
                   <img
-                    src={playerProfile?.image || image}
+                    src={`${`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                     alt={playerProfile?.name}
                     className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                   />

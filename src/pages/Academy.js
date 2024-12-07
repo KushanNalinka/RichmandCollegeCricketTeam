@@ -187,7 +187,7 @@ const summarizeStats = (type) => {
                         className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
                         onClick={() => { setSelectedPlayer(player); setShowPlayerList(false); }} // Close list when a player is selected
                     >
-                        <img src={player.image || playerPlaceholderImage} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                         {player.name}
                     </li>
                 ))}
@@ -209,7 +209,7 @@ const summarizeStats = (type) => {
             {/* Profile Image Container */}
             <div className="relative flex-shrink-0 mb-4 md:mb-0">
                 <img
-                    src={selectedPlayer?.image || playerPlaceholderImage}
+                    src={`${`http://rcc.dockyardsoftware.com/images/${ selectedPlayer?.image ? selectedPlayer?.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                     alt={selectedPlayer?.name}
                     className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
                 />
@@ -238,7 +238,7 @@ const summarizeStats = (type) => {
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {players.map((player) => (
                                     <li key={player.playerId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedPlayer(player)}>
-                                        <img src={player.image || playerPlaceholderImage} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {player.name}
                                     </li>
                                 ))}

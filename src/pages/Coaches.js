@@ -1205,7 +1205,7 @@ const CoachesProfile = () => {
                                         className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
                                         onClick={() => { setSelectedCoach(coach); setShowCoachList(false); }}
                                     >
-                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {coach.name}
                                     </li>
                                 ))}
@@ -1225,7 +1225,7 @@ const CoachesProfile = () => {
                             {/* Profile Image Container */}
                             <div className="relative flex-shrink-0 mb-4 md:mb-0">
                                 <img
-                                    src={selectedCoach?.image || coachPlaceholderImage}
+                                    src={`${`http://rcc.dockyardsoftware.com/images/${ selectedCoach?.image ? selectedCoach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                     alt={selectedCoach?.name}
                                     className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
                                 />
@@ -1251,7 +1251,7 @@ const CoachesProfile = () => {
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {coachesData.map((coach) => (
                                     <li key={coach.coachId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedCoach(coach)}>
-                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {coach.name}
                                     </li>
                                 ))}

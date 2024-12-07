@@ -64,7 +64,8 @@ const NewsPreview = ({ news, onClose }) => {
               {news.images && news.images.length > 0 && (
                 <>
                   <img
-                    src={news.images[currentImageIndex]?.imageUrl}
+                    //src={news.images[currentImageIndex]?.imageUrl}
+                    src={`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[currentImageIndex]?.imageUrl.split('/').pop() : 'default.jpg'}`}
                     alt={`Slide ${currentImageIndex + 1}`}
                     className="w-full max-h-[60vh] object-contain rounded-xl"
                   />

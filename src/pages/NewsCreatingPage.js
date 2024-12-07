@@ -885,9 +885,7 @@ const NewsCreator = () => {
     images: [],
     body: "",
     createdBy:"",
-    createdOn: "",
     updatedBy:"",
-    updatedOn: "",
   });
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
@@ -903,11 +901,11 @@ const NewsCreator = () => {
       .get(`${API_URL}news`)
       .then((response) => {
         const createdNews = response.data;
-        const sortedNews = createdNews.sort(
-          (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
-        );
-        setCreatedNews(sortedNews);
-        console.log("Created News:", sortedNews);
+        // const sortedNews = createdNews.sort(
+        //   (a, b) => new Date(b.createdOn) - new Date(a.createdOn)
+        // );
+        setCreatedNews(createdNews);
+        console.log("Created News:", createdNews);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -1005,8 +1003,8 @@ const NewsCreator = () => {
       return;
     };
 
-    const currentTime = new Date();
-    const formattedDateTime = currentTime.toISOString(); 
+    // const currentTime = new Date();
+    // const formattedDateTime = currentTime.toISOString(); 
     setUploading(true);
     console.log("data before submit: ", formData);
     try {
@@ -1025,7 +1023,6 @@ const NewsCreator = () => {
         ...prevData,
         images:imageFiles,
         createdBy: user.username,
-        createdOn: new Date().toISOString
       }));
 
       const formDataToSend = new FormData();
@@ -1041,7 +1038,8 @@ const NewsCreator = () => {
       });
 
       // console.log("formdata before submit: ", createdNews);
-
+      console.log("Data before edit submit :", formData);
+      console.log("FormDataToSend before edit submit :", formDataToSend);
       const response = await axios.post(
         `${API_URL}news/create`,
         formDataToSend,
@@ -1059,9 +1057,7 @@ const NewsCreator = () => {
         heading: "",
         body: "",
         createdBy:"",
-        createdOn: "",
         updatedBy: "",
-        updatedOn: "",
       });
       setImagePreviews([]);
       setImageFiles([]);
@@ -1092,7 +1088,6 @@ const NewsCreator = () => {
       heading: news.heading,
       body: news.body,
       createdBy: news.createdBy,
-      createdOn: news.createdOn,
       images:news.images.map(image =>({ imageUrl: image.imageUrl}))} 
     );
     
@@ -1104,7 +1099,10 @@ const NewsCreator = () => {
     //   prevId === (news.images && news.images.imageUrl) ? null : news.images.imageUrl);
     //   //setImagePreviews(news.images.map((img) => img.imageUrl));
     // Extract image URLs for previews
-    const imageUrls = news.images.map((img) => img.imageUrl);
+    //const imageUrls = news.images.map((img) => img.imageUrl);
+    const imageUrls = news.images.map(
+      (img) => `http://rcc.dockyardsoftware.com/images/${img.imageUrl ? img.imageUrl.split('/').pop() : 'default.jpg'}`
+    );
     setImagePreviews(imageUrls); // Update image previews with URLs
     // Keep track of existing image URLs
     setExistingImageURLs(imageUrls);
@@ -1122,9 +1120,7 @@ const NewsCreator = () => {
       heading: "",
       body: "",
       createdBy:"",
-      createdOn: "",
       updatedBy: "",
-      updatedOn: "",
     });
     setImagePreviews([]);
     setCurrentNewsId(null);
@@ -1136,9 +1132,11 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
-    const currentTime = new Date().toLocaleTimeString;
+    
+    // const currentTime = new Date();
+    // const formattedDateTime = currentTime.toISOString(); 
+
     setUploading(true);
-    console.log("Data before edit submit :", formData);
     try {
       // let imageURL = formData.imageUrl;
       // console.log("image1:", formData.imageUrl);
@@ -1160,7 +1158,7 @@ const NewsCreator = () => {
         ...formData,
         images: imageFiles,
         updatedBy: user.username,
-        updatedOn: currentTime
+        
       });
 
       const formDataToSend = new FormData();
@@ -1176,7 +1174,8 @@ const NewsCreator = () => {
       });
 
       //console.log("formdate before edit submit: ", editedNewsData);
-      
+      console.log("Data before edit submit :", formData);
+      console.log("FormDataToSend before edit submit :", formDataToSend);
       const response = await axios.put(
         `${API_URL}news/${currentNewsId}`,
         formDataToSend
@@ -1189,9 +1188,7 @@ const NewsCreator = () => {
         heading: "",
         body: "",
         createdBy:"",
-        createdOn: "",
         updatedBy: "",
-        updatedOn: "",
       });
       setImagePreviews([]);
       setImageFiles([]);
@@ -1600,7 +1597,8 @@ const NewsCreator = () => {
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  src={news.images && news.images[0]?.imageUrl}
+                                  //src={news.images && news.images[0]?.imageUrl}
+                                  src={`${`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                 />
                               </div>
                               <div className="mr-2 py-2 w-full">
@@ -1612,10 +1610,10 @@ const NewsCreator = () => {
                                 </p>
                                 <div className=" mt-3 flex justify-between text-xxs">
                                   <p className="text-gray-600 ">
-                                    {dayjs(news.dateTime).format("YYYY-MMM-DD")}
+                                    {dayjs(news.createdOn).format("YYYY-MMM-DD")}
                                   </p>
                                   <p className="text-gray-600 before:content-['•'] before:mx-2">
-                                    {dayjs(news.dateTime).fromNow()}
+                                    {dayjs(news.createdOn).fromNow()}
                                   </p>
                                   <p className="text-gray-600 before:content-['•'] before:mx-2">
                                     {news.author}

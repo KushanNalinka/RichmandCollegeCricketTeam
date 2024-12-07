@@ -677,9 +677,15 @@ const NewsDetailPage = () => {
               transition: 'transform 0.3s ease-in-out',
             }}
           >
-            <img
+            {/* <img
                src={newsItem.images[currentImageIndex]?.imageUrl}
-              // src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+              
+            /> */}
+
+
+            <img
+              //  src={newsItem.images[currentImageIndex]?.imageUrl}
+              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
               alt={`Slide ${currentImageIndex + 1}`}
               className="w-full h-full"
               style={{

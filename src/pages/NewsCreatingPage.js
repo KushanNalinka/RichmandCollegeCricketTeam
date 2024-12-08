@@ -893,10 +893,40 @@ const NewsCreator = () => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+  
     loadNews();
+  
+    const leftSection = document.getElementById("left-section");
+    const rightSection = document.getElementById("right-section");
+  
+    // Helper function to update right section height
+    const updateRightSectionHeight = () => {
+      if (leftSection && rightSection) {
+        const leftHeight = leftSection.offsetHeight;
+        rightSection.style.height = `${leftHeight}px`;
+      }
+    };
+  
+    // ResizeObserver to detect changes in left section height
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(updateRightSectionHeight); // Debounce using requestAnimationFrame
+    });
+  
+    if (leftSection) {
+      observer.observe(leftSection);
+    }
+  
+    // Initial height adjustment
+    updateRightSectionHeight();
+  
+    return () => {
+      observer.disconnect(); // Clean up observer on unmount
+    };
   }, []);
+  
 
   const loadNews = async() => {
+    setUploading(true);
     axios
       .get(`${API_URL}news`)
       .then((response) => {
@@ -906,6 +936,7 @@ const NewsCreator = () => {
         // );
         setCreatedNews(createdNews);
         console.log("Created News:", createdNews);
+        setUploading(false);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -1410,7 +1441,7 @@ const NewsCreator = () => {
               </h2>
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
-              <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
+              <div id="left-section" className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
                 <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 w-full md:p-8 ">
                  
                       <div className=" col-span-1">
@@ -1534,26 +1565,27 @@ const NewsCreator = () => {
                             className="hidden"
                           />
                         </div>
-                        {imagePreviews && (
-                           imagePreviews.map((image,index)=>(
-                            <div className="flex flex-col relative">
-                              <img
-                                key={index}
-                                src={image}
-                                alt="Preview"
-                                className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
-                              />
-                              <button
-                                type="button"
-                                title="Remove"
-                                onClick={() => handleImageRemove(index)}
-                                className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-red-500 hover:text-red-600"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          )))}
-                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {imagePreviews && (
+                            imagePreviews.map((image,index)=>(
+                              <div className="relative flex flex-col items-center">
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt="Preview"
+                                  className=" object-fill border border-gray-300 rounded-md"
+                                />
+                                <button
+                                  type="button"
+                                  title="Remove"
+                                  onClick={() => handleImageRemove(index)}
+                                  className="absolute bottom-2 right-2 text-red-500 hover:text-red-600"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            )))}
+                        </div>    
                       </div>
                     </div>
                     {errors.imageUrl && <p className="text-red-500 text-xs">{errors.imageUrl}</p>} 
@@ -1576,18 +1608,14 @@ const NewsCreator = () => {
                       </div>
                 </form>
               </div>
-              <div className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
+              <div id="right-section" className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-5 md:px-6 py-2 ">
                   <h1 className="text-[#00175f] font-bold font-mono md:text-2xl text-lg py-3">
                     Recent News
                   </h1>
 
                   <div
-                    className={`flex flex-col custom-scrollbar h-[60vh] ${
-                      isShowmorePressed
-                        ? " hover:overflow-auto overflow-hidden"
-                        : " overflow-hidden"
-                    } `}
+                    className={`flex flex-col custom-scrollbar`}
                   >
                     {createdNews &&
                       createdNews.map((news) => (
@@ -1636,7 +1664,7 @@ const NewsCreator = () => {
                         </React.Fragment>
                       ))}
                   </div>
-                  <div className="my-3">
+                  {/* <div className="my-3">
                     <button
                       type="button"
                       onClick={toggleShowmore}
@@ -1644,7 +1672,7 @@ const NewsCreator = () => {
                     >
                       {!isShowmorePressed ? "Show More" : "Show Less"}
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

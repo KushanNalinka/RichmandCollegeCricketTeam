@@ -18,7 +18,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState(match.coaches || []);
-  const [imagePreview, setImagePreview] = useState(match.logo);
+  const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);

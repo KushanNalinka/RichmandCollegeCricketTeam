@@ -468,7 +468,8 @@ const MatchDetails = () => {
                       <td className="gap-4 px-4 lg:rounded-l-lg py-2 h-16 items-center text-wrap justify-start text-sm font-bold text-gray-900">
                         <div className="flex items-center justify-start gap-2 ">
                           <img
-                            src={`${match.logo}?cacheBust=${Date.now()}`}
+                            //src={`${match.logo}?cacheBust=${Date.now()}`}
+                            src={`${`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                             alt={match.matchId}
                             className="h-12 w-12 rounded-full object-cover border border-gray-300"
                           />

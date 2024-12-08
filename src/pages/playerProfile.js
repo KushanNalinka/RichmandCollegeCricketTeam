@@ -99,6 +99,19 @@ const PlayerProfile = () => {
     return summary;
   };
 
+  const calculateAge = (dob) => {
+    console.log("dob:", dob);
+    const birthDate = new Date(dob); // Parses the YYYY-MM-DD format
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+  
+    // Adjust if the birthday hasn't occurred yet this year
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1;
+    }
+    return age;
+  };
 
   return (
     <>
@@ -135,13 +148,12 @@ const PlayerProfile = () => {
                 <div className="relative top-10 rounded-full w-full h-full flex items-center justify-center">
                   <div className=" -top-5 -left-5 absolute flex flex-col ">
                     <h1 className="lg:text-4xl font-bold">{playerProfile?.name}</h1>
-                    <p className="lg:text-xl">
-                      {playerProfile?.careerStart} -{" "}
-                      {playerProfile?.careerEnd || "Present"}
-                    </p>
+                    {playerProfile?.dateOfBirth && (
+                      <p className="lg:text-xl text-sm">{calculateAge(playerProfile.dateOfBirth)} years old</p>
+                    )}
                   </div>
                   <img
-                    src={playerProfile?.image || image}
+                    src={`${`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                     alt={playerProfile?.name}
                     className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                   />
@@ -200,8 +212,8 @@ const PlayerProfile = () => {
                   Player Statistics
                 </h2>
                 {/* Batting Stats */}
-                <h3 className="text-md text-gray-700 font-bold mb-4">
-                  Batting and Fielding Stats
+                <h3 className="text-md text-white bg-[#00175f] p-2 font-bold mb-3">
+                  Batting Stats
                 </h3>
                 {/* Assuming the data structure of selectedPlayer.stats */}
                 <div className="flex hover:overflow-x-auto overflow-x-hidden" >
@@ -290,9 +302,9 @@ const PlayerProfile = () => {
                 </table>
               </div>
 
-              <h3 className="text-md font-bold text-gray-700 mb-4">Bowling Stats</h3>
+              <h3 className="text-md font-bold w-full p-2 bg-[#00175f] text-white mb-3">Bowling Stats</h3>
               <div className="flex hover:overflow-x-auto overflow-x-hidden" >
-                <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg">
+                <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg mb-6">
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
@@ -364,6 +376,64 @@ const PlayerProfile = () => {
                   </tbody>
                 </table>
                 </div>
+
+                <h3 className="text-md font-bold w-full bg-[#00175f] p-2 text-white mb-3">Fielding Stats</h3>
+                <div className="flex hover:overflow-x-auto overflow-x-hidden" >
+                  <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          Format
+                        </th>
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          Matches
+                        </th>
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          Innings
+                        </th>
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          Catches
+                        </th>
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          Stumps
+                        </th>
+                        <th className="py-2 px-5 text-center align-middle whitespace-nowrap">
+                          RunOuts
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {["Test", "ODI", "T20"].map((type) => {
+                        const summary = summarizeStats(type);
+                        return (
+                          <tr
+                            key={type}
+                            className="border-b bg-white border-gray-300"
+                          >
+                            <td className="py-2 px-5 text-center align-middle">
+                              {type}
+                            </td>
+                            <td className="py-2 px-5 text-center align-middle">
+                              {summary.matches}
+                            </td>
+                            <td className="py-2 px-5 text-center align-middle">
+                              {summary.innings}
+                            </td>
+                            <td className="py-2 px-5 text-center align-middle">
+                              {summary.catches}
+                            </td>
+                            <td className="py-2 px-5 text-center align-middle">
+                              {summary.stumps}
+                            </td>
+                            <td className="py-2 px-5 text-center align-middle">
+                              {summary.runOuts}
+                            </td>
+                          </tr>
+                        )})}
+                    </tbody>
+                  </table>
+                </div>
+
               </div>
              
             </div>

@@ -1,4 +1,5 @@
 
+
 // import React, { useState, useEffect, useRef } from "react";
 // import axios from "axios";
 // import Navbar from "../components/Navbar";
@@ -936,7 +937,9 @@ const NewsCreator = () => {
         // );
         setCreatedNews(createdNews);
         console.log("Created News:", createdNews);
+
         setUploading(false);
+
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);

@@ -795,4 +795,8 @@ const summarizeStats = (type) => {
     );
 };
 
+
+
+
 export default PlayerProfile;
+

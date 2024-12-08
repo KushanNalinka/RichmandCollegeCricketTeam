@@ -1568,18 +1568,18 @@ const NewsCreator = () => {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           {imagePreviews && (
                             imagePreviews.map((image,index)=>(
-                              <div className="relative flex flex-col items-center">
+                              <div className=" flex flex-col relative items-center rounded-md">
                                 <img
                                   key={index}
                                   src={image}
                                   alt="Preview"
-                                  className=" object-fill border border-gray-300 rounded-md"
+                                  className=" object-fill rounded-md  border border-gray-300"
                                 />
                                 <button
                                   type="button"
                                   title="Remove"
                                   onClick={() => handleImageRemove(index)}
-                                  className="absolute bottom-2 right-2 text-red-500 hover:text-red-600"
+                                  className="absolute top-2 right-2 text-red-500 hover:text-red-600"
                                 >
                                   <FaTrash />
                                 </button>
@@ -1608,15 +1608,14 @@ const NewsCreator = () => {
                       </div>
                 </form>
               </div>
-              <div id="right-section" className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
-                <div className="px-5 md:px-6 py-2 ">
-                  <h1 className="text-[#00175f] font-bold font-mono md:text-2xl text-lg py-3">
-                    Recent News
-                  </h1>
-
-                  <div
-                    className={`flex flex-col custom-scrollbar`}
-                  >
+              <div id="right-section" className=" relative lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden w-full custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
+                <div className="px-5 md:px-3 py-2 ">
+                  <div className="sticky top-0 z-50 rounded-t-lg bg-gradient-to-r from-[#00175f] to-[#480D35] ">
+                    <h1 className="text-white  rounded-t-lg font-bold font-mono md:text-xl text-lg py-1 px-3">
+                      All News
+                    </h1>
+                  </div>
+                  <div className={`flex flex-col custom-scrollbar`}>
                     {createdNews &&
                       createdNews.map((news) => (
                         <React.Fragment key={news.id}>
@@ -1629,7 +1628,7 @@ const NewsCreator = () => {
                                   src={`${`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                 />
                               </div>
-                              <div className="mr-2 py-2 w-full">
+                              <div className="mr-2 pt-2 w-full">
                                 <h1 className="font-bold text-[black] text-base">
                                   {news.heading}
                                 </h1>
@@ -1649,7 +1648,7 @@ const NewsCreator = () => {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex justify-end space-x-2 text-[#00175f] p-1">
+                            <div className="flex justify-end space-x-2 text-[#00175f] p-1 px-3">
                               <button onClick={() => toggleView(news)} className=" items-center justify-center text-blue-500 hover:text-blue-600 rounded-lg">
                                 {<FaEye />}
                               </button>

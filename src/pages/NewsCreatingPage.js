@@ -857,6 +857,7 @@ const NewsCreator = () => {
   const [createdNews, setCreatedNews] = useState([]);
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
+  const [imageIds, setImageIds] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
@@ -870,8 +871,10 @@ const NewsCreator = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showImageDeleteModal, setShowImageDeleteModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [newsToDelete, setNewsToDelete] = useState(null);
+  const [imageToDelete, setImageToDelete] = useState(null);
   const [existingImageURLs, setExistingImageURLs] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
   const fileInputRef = useRef(null);
@@ -882,9 +885,7 @@ const NewsCreator = () => {
     images: [],
     body: "",
     createdBy:"",
-    createdOn: "",
     updatedBy:"",
-    updatedOn: "",
   });
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
@@ -892,19 +893,50 @@ const NewsCreator = () => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+  
     loadNews();
+  
+    const leftSection = document.getElementById("left-section");
+    const rightSection = document.getElementById("right-section");
+  
+    // Helper function to update right section height
+    const updateRightSectionHeight = () => {
+      if (leftSection && rightSection) {
+        const leftHeight = leftSection.offsetHeight;
+        rightSection.style.height = `${leftHeight}px`;
+      }
+    };
+  
+    // ResizeObserver to detect changes in left section height
+    const observer = new ResizeObserver(() => {
+      requestAnimationFrame(updateRightSectionHeight); // Debounce using requestAnimationFrame
+    });
+  
+    if (leftSection) {
+      observer.observe(leftSection);
+    }
+  
+    // Initial height adjustment
+    updateRightSectionHeight();
+  
+    return () => {
+      observer.disconnect(); // Clean up observer on unmount
+    };
   }, []);
+  
 
   const loadNews = async() => {
+    setUploading(true);
     axios
       .get(`${API_URL}news`)
       .then((response) => {
         const createdNews = response.data;
-        const sortedNews = createdNews.sort(
-          (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
-        );
-        setCreatedNews(sortedNews);
-        console.log("Created News:", sortedNews);
+        // const sortedNews = createdNews.sort(
+        //   (a, b) => new Date(b.createdOn) - new Date(a.createdOn)
+        // );
+        setCreatedNews(createdNews);
+        console.log("Created News:", createdNews);
+        setUploading(false);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -937,38 +969,6 @@ const NewsCreator = () => {
         [name]: value,
       });
     }
-  };
-
-  const handleImageRemove = (index) => {
-    console.log("index removed: ", index);
-    console.log("existing image urls: ", existingImageURLs);
-    if (index < existingImageURLs.length) {
-      // Removing an existing image (this is from the 'existingImageURLs' and 'formData.images')
-      const updatedExistingImages = existingImageURLs.filter((_, i) => i !== index);
-      // const updatedFormDataImages = formData.images.filter((_, i) => i !== index);
-      // Update state for existing images
-      setExistingImageURLs(updatedExistingImages);
-      // setFormData({ ...formData, images: updatedFormDataImages });
-      // Log to check
-      console.log("Updated formData after removing existing image: ", formData);
-      console.log("Updated existingImageURLs after removing existing image: ", updatedExistingImages);
-    } else{
-    
-      // Removing a newly added image
-      const newIndex = index - existingImageURLs.length;  // Adjust index for new images
-      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
-      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
-      setImageFiles(updatedImageFiles);
-
-      // Update previews for both new and existing images
-      const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
-      setImagePreviews(updatedImagePreviews);
-    }  
-
-    // Log to confirm changes
-    console.log("Updated existingImageURLs:", existingImageURLs);
-    console.log("Updated imageFiles:", imageFiles);
-    console.log("Updated imagePreviews:", imagePreviews);
   };
 
   const validateFormAdd = () => {
@@ -1034,8 +1034,8 @@ const NewsCreator = () => {
       return;
     };
 
-    const currentTime = new Date();
-    const formattedDateTime = currentTime.toISOString(); 
+    // const currentTime = new Date();
+    // const formattedDateTime = currentTime.toISOString(); 
     setUploading(true);
     console.log("data before submit: ", formData);
     try {
@@ -1054,7 +1054,6 @@ const NewsCreator = () => {
         ...prevData,
         images:imageFiles,
         createdBy: user.username,
-        createdOn: currentTime.toLocaleDateString
       }));
 
       const formDataToSend = new FormData();
@@ -1070,7 +1069,8 @@ const NewsCreator = () => {
       });
 
       // console.log("formdata before submit: ", createdNews);
-
+      console.log("Data before edit submit :", formData);
+      console.log("FormDataToSend before edit submit :", formDataToSend);
       const response = await axios.post(
         `${API_URL}news/create`,
         formDataToSend,
@@ -1088,9 +1088,7 @@ const NewsCreator = () => {
         heading: "",
         body: "",
         createdBy:"",
-        createdOn: "",
         updatedBy: "",
-        updatedOn: "",
       });
       setImagePreviews([]);
       setImageFiles([]);
@@ -1121,17 +1119,27 @@ const NewsCreator = () => {
       heading: news.heading,
       body: news.body,
       createdBy: news.createdBy,
-      createdOn: news.createdOn,
-      images:news.imageUrls.map(image =>({ imageUrl: image}))} 
+      images:news.images.map(image =>({ imageUrl: image.imageUrl}))} 
     );
     
-    setImagePreviews((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls
-
+    // setImagePreviews((prevId) =>
+    //   prevId === (news.images && news.images?.imageUrl) ? null : news.images && news.images?.imageUrl
+    
+    // );
+    // setExistingImageURLs((prevId) =>
+    //   prevId === (news.images && news.images.imageUrl) ? null : news.images.imageUrl);
+    //   //setImagePreviews(news.images.map((img) => img.imageUrl));
+    // Extract image URLs for previews
+    //const imageUrls = news.images.map((img) => img.imageUrl);
+    const imageUrls = news.images.map(
+      (img) => `http://rcc.dockyardsoftware.com/images/${img.imageUrl ? img.imageUrl.split('/').pop() : 'default.jpg'}`
     );
-    setExistingImageURLs((prevId) =>
-      prevId === news.imageUrls ? null : news.imageUrls);
-    //setImagePreviews(news.images.map((img) => img.imageUrl));
+    setImagePreviews(imageUrls); // Update image previews with URLs
+    // Keep track of existing image URLs
+    setExistingImageURLs(imageUrls);
+
+    const imageIds = news.images.map((img) => img.imageId);
+    setImageIds(imageIds);
     setImageFiles([]); 
   };
 
@@ -1143,9 +1151,7 @@ const NewsCreator = () => {
       heading: "",
       body: "",
       createdBy:"",
-      createdOn: "",
       updatedBy: "",
-      updatedOn: "",
     });
     setImagePreviews([]);
     setCurrentNewsId(null);
@@ -1157,9 +1163,11 @@ const NewsCreator = () => {
       message.error("Please fix validation errors before submitting");
       return;
     };
-    const currentTime = new Date().toLocaleString;
+    
+    // const currentTime = new Date();
+    // const formattedDateTime = currentTime.toISOString(); 
+
     setUploading(true);
-    console.log("Data before edit submit :", formData);
     try {
       // let imageURL = formData.imageUrl;
       // console.log("image1:", formData.imageUrl);
@@ -1181,7 +1189,7 @@ const NewsCreator = () => {
         ...formData,
         images: imageFiles,
         updatedBy: user.username,
-        updatedOn: currentTime
+        
       });
 
       const formDataToSend = new FormData();
@@ -1197,7 +1205,8 @@ const NewsCreator = () => {
       });
 
       //console.log("formdate before edit submit: ", editedNewsData);
-      
+      console.log("Data before edit submit :", formData);
+      console.log("FormDataToSend before edit submit :", formDataToSend);
       const response = await axios.put(
         `${API_URL}news/${currentNewsId}`,
         formDataToSend
@@ -1210,9 +1219,7 @@ const NewsCreator = () => {
         heading: "",
         body: "",
         createdBy:"",
-        createdOn: "",
         updatedBy: "",
-        updatedOn: "",
       });
       setImagePreviews([]);
       setImageFiles([]);
@@ -1283,6 +1290,57 @@ const NewsCreator = () => {
       setUploading(false);
     }
   };
+
+  const handleImageRemove = async(index) => {
+    console.log("index removed: ", index);
+    console.log("existing image urls: ", existingImageURLs);
+
+    if (index < existingImageURLs.length) {
+      setShowImageDeleteModal(true);
+      setImageToDelete(index);
+    } else{
+      // Removing a newly added image
+      const newIndex = index - existingImageURLs.length;  // Adjust index for new images
+      // setImageFiles((prevFiles) => prevFiles.filter((_, i) => i !== newIndex));
+      const updatedImageFiles = imageFiles.filter((_, i) => i !== newIndex);
+      setImageFiles(updatedImageFiles);
+
+      // Update previews for both new and existing images
+      const updatedImagePreviews = imagePreviews.filter((_, i) => i !== index);
+      setImagePreviews(updatedImagePreviews);
+    }  
+
+    // Log to confirm changes
+    console.log("Updated existingImageURLs:", existingImageURLs);
+    console.log("Updated imageFiles:", imageFiles);
+    console.log("Updated imagePreviews:", imagePreviews);
+  };
+
+  const confirmImageDelete = async() =>{
+    const imageId = imageIds[imageToDelete];
+
+    try {
+      const deleteImage = await axios.delete(
+        `${API_URL}news/deleteImage/${imageId}`
+      );
+      const updatedExistingImages = existingImageURLs.filter((_, i) => i !== imageToDelete);
+      setExistingImageURLs(updatedExistingImages);
+      setImagePreviews(updatedExistingImages);
+      message.success("Successfully Deleted!");
+      setShowImageDeleteModal(false);
+      loadNews();
+      
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        message.error(`Failed to submit: ${error.response.data.message}`);
+      } else {
+        message.error("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setUploading(false);
+    }
+  }
 
   const toggleView = (news) => {
     setCurrentNews(news);
@@ -1383,7 +1441,7 @@ const NewsCreator = () => {
               </h2>
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
-              <div className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
+              <div id="left-section" className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
                 <form onSubmit={ isEditPressed ? handleNewsEdit : handleSubmit } className="grid grid-cols-1 md:grid-cols-2 gap-3 p-5 w-full md:p-8 ">
                  
                       <div className=" col-span-1">
@@ -1507,26 +1565,27 @@ const NewsCreator = () => {
                             className="hidden"
                           />
                         </div>
-                        {imagePreviews && (
-                           imagePreviews.map((image,index)=>(
-                            <div className="flex flex-col relative">
-                              <img
-                                key={index}
-                                src={image}
-                                alt="Preview"
-                                className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
-                              />
-                              <button
-                                type="button"
-                                title="Remove"
-                                onClick={() => handleImageRemove(index)}
-                                className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-red-500 hover:text-red-600"
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          )))}
-                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          {imagePreviews && (
+                            imagePreviews.map((image,index)=>(
+                              <div className="relative flex flex-col items-center">
+                                <img
+                                  key={index}
+                                  src={image}
+                                  alt="Preview"
+                                  className=" object-fill border border-gray-300 rounded-md"
+                                />
+                                <button
+                                  type="button"
+                                  title="Remove"
+                                  onClick={() => handleImageRemove(index)}
+                                  className="absolute bottom-2 right-2 text-red-500 hover:text-red-600"
+                                >
+                                  <FaTrash />
+                                </button>
+                              </div>
+                            )))}
+                        </div>    
                       </div>
                     </div>
                     {errors.imageUrl && <p className="text-red-500 text-xs">{errors.imageUrl}</p>} 
@@ -1549,18 +1608,14 @@ const NewsCreator = () => {
                       </div>
                 </form>
               </div>
-              <div className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
+              <div id="right-section" className=" lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-5 md:px-6 py-2 ">
                   <h1 className="text-[#00175f] font-bold font-mono md:text-2xl text-lg py-3">
                     Recent News
                   </h1>
 
                   <div
-                    className={`flex flex-col custom-scrollbar h-[60vh] ${
-                      isShowmorePressed
-                        ? " hover:overflow-auto overflow-hidden"
-                        : " overflow-hidden"
-                    } `}
+                    className={`flex flex-col custom-scrollbar`}
                   >
                     {createdNews &&
                       createdNews.map((news) => (
@@ -1570,7 +1625,8 @@ const NewsCreator = () => {
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  src={news.imageUrls[0]}
+                                  //src={news.images && news.images[0]?.imageUrl}
+                                  src={`${`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                 />
                               </div>
                               <div className="mr-2 py-2 w-full">
@@ -1582,10 +1638,10 @@ const NewsCreator = () => {
                                 </p>
                                 <div className=" mt-3 flex justify-between text-xxs">
                                   <p className="text-gray-600 ">
-                                    {dayjs(news.dateTime).format("YYYY-MMM-DD")}
+                                    {dayjs(news.createdOn).format("YYYY-MMM-DD")}
                                   </p>
                                   <p className="text-gray-600 before:content-['•'] before:mx-2">
-                                    {dayjs(news.dateTime).fromNow()}
+                                    {dayjs(news.createdOn).fromNow()}
                                   </p>
                                   <p className="text-gray-600 before:content-['•'] before:mx-2">
                                     {news.author}
@@ -1608,7 +1664,7 @@ const NewsCreator = () => {
                         </React.Fragment>
                       ))}
                   </div>
-                  <div className="my-3">
+                  {/* <div className="my-3">
                     <button
                       type="button"
                       onClick={toggleShowmore}
@@ -1616,7 +1672,7 @@ const NewsCreator = () => {
                     >
                       {!isShowmorePressed ? "Show More" : "Show Less"}
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -1638,6 +1694,28 @@ const NewsCreator = () => {
                 </button>
                 <button
                   onClick={confirmDelete}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        {showImageDeleteModal && (
+          <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+            <div className={`${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
+              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+              <p>Are you sure you want to delete this existing image?</p>
+              <div className="flex justify-end mt-4 space-x-2">
+                <button
+                  onClick={() => setShowImageDeleteModal(false)}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmImageDelete}
                   className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
                 >
                   Confirm

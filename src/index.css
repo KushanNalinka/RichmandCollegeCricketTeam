@@ -220,7 +220,10 @@ html {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #d2d2d2; /* Track background */
+  background: #ebebeb; /* Track background */
+  border-radius: 20px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -232,10 +235,6 @@ html {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #aeaeae; /* Hover color for the thumb */
 }
-
-
-
-
 
 .effect {
   font-family:  "Josefin Sans", sans-serif;

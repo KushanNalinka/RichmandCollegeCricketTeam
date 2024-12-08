@@ -153,7 +153,7 @@ const PlayerProfile = () => {
                     )}
                   </div>
                   <img
-                    src={playerProfile?.image || image}
+                    src={`${`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                     alt={playerProfile?.name}
                     className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                   />
@@ -376,6 +376,7 @@ const PlayerProfile = () => {
                   </tbody>
                 </table>
                 </div>
+
                 <h3 className="text-md font-bold w-full bg-[#00175f] p-2 text-white mb-3">Fielding Stats</h3>
                 <div className="flex hover:overflow-x-auto overflow-x-hidden" >
                   <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg">
@@ -432,6 +433,7 @@ const PlayerProfile = () => {
                     </tbody>
                   </table>
                 </div>
+
               </div>
              
             </div>

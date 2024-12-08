@@ -231,7 +231,7 @@ const CoachProfile = () => {
                     <p className="lg:text-xl text-sm">{calculateAge(coach.dateOfBirth)} years old</p>
                   )}
                   </div>
-                  {coach && <img src={coach.image} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
+                  {coach && <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                     />}
                 </div>
 

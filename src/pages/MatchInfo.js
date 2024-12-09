@@ -1082,9 +1082,11 @@ const handlePageChange = (page)  =>
       </div>
 
       <div className="flex flex-col items-center flex-grow mt-7 space-y-4 px-4">
-  {paginateMatches.length === 0 ? (
+      {showUpcoming && <Upcoming selectedAgeGroup={selectedAgeGroup} selectedMatchType={selectedMatchType} />}
+
+      {paginateMatches.length === 0 && !showUpcoming ? (
     <p className="text-black text-center col-span-2">
-      No matches available for the selected .
+      No matches available for the selected filters.
     </p>
   ) : (
     paginateMatches.map((matchData, index) => (

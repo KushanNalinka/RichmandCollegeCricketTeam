@@ -265,7 +265,7 @@ const NewsPage = () => {
                           {sidebarItem.heading}
                         </h3>
                         <span className="text-xxs sm:text-xs text-gray-500 block">
-                          {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
+                          {new Date(sidebarItem.createdOn).toLocaleDateString()} • {timeAgo(sidebarItem.createdOn)} • {sidebarItem.author}
                         </span>
                       </div>
                     </div>

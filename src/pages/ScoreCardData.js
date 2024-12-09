@@ -73,7 +73,11 @@ const ScorecardData = () => {
                   <div className="h-8 md:h-12 w-px bg-gradient-to-t from-transparent via-white to-transparent" />
                 </div>
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 " />
+                  <img src=  {`${`http://rcc.dockyardsoftware.com/images/${ teams[1].logo ? teams[1].logo .split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+
+                  alt={teams[1].name}
+                   className="w-10 h-10 " />
+
                   <div className="text-center">
                     <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[1].name.toUpperCase()}</h3>
                     <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[1].score}</p>

@@ -178,7 +178,7 @@ const InitialNewsPage = () => {
                             </span>
                           </p>
                           <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
-                            {new Date(initialnews.dateTime).toLocaleDateString()} • {timeAgo(initialnews.dateTime)} • {initialnews.author}
+                            {new Date(initialnews.createdOn).toLocaleDateString()} • {timeAgo(initialnews.createdOn)} • {initialnews.author}
                           </span>
                         </div>
                       </div>
@@ -254,7 +254,7 @@ const InitialNewsPage = () => {
                           {sidebarItem.heading}
                         </h3>
                         <span className="text-xxs sm:text-xs text-gray-500 block">
-                          {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
+                          {new Date(sidebarItem.createdOn).toLocaleDateString()} • {timeAgo(sidebarItem.createdOn)} • {sidebarItem.author}
                         </span>
                       </div>
                     </div>

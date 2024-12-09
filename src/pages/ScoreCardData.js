@@ -232,9 +232,43 @@ const ScorecardData = () => {
   </td>
 </tr>
 
+
+<tr>
+  <td colSpan="7">
+    <div className="overflow-x-auto mb-8">
+      <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+        <thead className="bg-[#4A0D34] text-white">
+          <tr>
+            <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">Fielding</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">C</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">S</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">RO</th>
+          
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {bowlingStats.map((fielding, index) => (
+            <tr key={index}>
+            <td className="px-2 py-1 text-sm font-medium text-gray-900 ">{fielding.player.name}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.catches}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.stumps}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.runOuts}</td>
+             
+            
+            </tr>
+          ))}
+         
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+
                       
         </tbody>
           </table>
+
+          
         </div>
       </div>
     </div>

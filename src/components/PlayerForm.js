@@ -143,7 +143,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       message.error("Please correct the highlighted errors.");
       console.log("Validation Errors:", errors);
       return;
-    }
+    };
     setUploading(true);
       try {
         
@@ -210,8 +210,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
   const validateForm = (name, value) => {
     const newErrors = {};
-    const startDate = formData.membership.startDate;
-    const endDate = formData.membership.endDate;
     switch(name){
       case "name":
         //name validation
@@ -262,33 +260,42 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         };
         break;
 
-        case "membership.startDate":
-          if (!value) {
-            newErrors["membership.startDate"] = "Start date is required.";
-          } else if (formData.membership.endDate && new Date(value) >= new Date(formData.membership.endDate)) {
-            newErrors["membership.startDate"] = "Start date must be before end date.";
-          }
-          break;
-        
-        case "membership.endDate":
-          if (!value) {
-            newErrors["membership.endDate"] = "End date is required.";
-          } else if (formData.membership.startDate && new Date(value) <= new Date(formData.membership.startDate)) {
-            newErrors["membership.endDate"] = "End date must be after start date.";
-          }
-          break;  
+      case "membership.startDate":
+        if (!value) {
+          newErrors["membership.startDate"] = "Start date is required.";
+        } else if (formData.membership.endDate && new Date(value) >= new Date(formData.membership.endDate)) {
+          newErrors["membership.startDate"] = "Start date must be before end date.";
+        }
+        break;
+      
+      case "membership.endDate":
+        if (!value) {
+          newErrors["membership.endDate"] = "End date is required.";
+        } else if (formData.membership.startDate && new Date(value) <= new Date(formData.membership.startDate)) {
+          newErrors["membership.endDate"] = "End date must be after start date.";
+        }
+        break;  
 
+      // case "image":
+      //   if (!value && imagePreview === null) {
+      //     newErrors.image = "Image is required.";
+      //   } else if (value && value[0].type) {
+      //   console.log("image file", value[0] );
+      //     // Check the file type for valid image MIME types
+      //     if (!/^image\/(jpeg|png|gif|bmp|webp)$/.test(value[0].type)) {
+      //       newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+      //     }
+      //   } else {
+      //     newErrors.image = "Invalid file. Please select an image file.";
+      //   }
+      //   break;
       case "image":
-          if (!value && imagePreview === null) {
+        console.log("Image validation:", value);
+        if (!value) {
             newErrors.image = "Image is required.";
-          } else if (value && value.type) {
-            // Check the file type for valid image MIME types
-            if (!/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
-              newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
-            }
-          } else {
-            newErrors.image = "Invalid file. Please select an image file.";
-          }
+        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        }
         break;
       default:
         break;  
@@ -312,9 +319,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         }
       }
     });
-    
     return errors;
-  
   };
 
   const handleImageUpload = (file) => {
@@ -362,11 +367,12 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
-      const fieldError = validateForm("image", file); // Pass file to validation
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        ...fieldError,
-      }));
+      // Validate the image and update the errors state
+      const fieldError = validateForm("image", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { image, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.image ? { ...restErrors, image: fieldError.image } : restErrors;
+      });
     }
   };
 
@@ -630,7 +636,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-60 w-60 object-cover border border-gray-300"
+                    className=" object-contain border rounded-lg border-gray-300"
                   />
                 ) : (
                   <p className="text-gray-500 text-xs md:text-sm">

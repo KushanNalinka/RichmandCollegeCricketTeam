@@ -47,11 +47,26 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.players = "Please select players.";
+      newErrors.players = "Select players.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  // const validateForm = (name) => {
+  //   const newErrors = {};
+  //   switch(name){
+  //     case "players":
+  //       //players validation
+  //       if (selectedPlayers.length === 0) {
+  //         newErrors.players = "Select players.";
+  //       }
+  //       break;
+  //     default:
+  //       break; 
+  //   }
+  //   return newErrors;
+  // }; 
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -85,8 +100,9 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     } catch (error) {
       console.error("Error submitting form:", error);
 
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
+      if (error.response && error.response.data) {
+        message.error(`Failed to submit: ${error.response.data}`);
+        console.log("error data:", error.response.data);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }
@@ -97,21 +113,29 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      players: ""
-    }));
-    if (selectedPlayers.includes(player)) {
-      // If player is already selected, remove them
-      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    let updatedPlayers;
+
+    if (selectedPlayers.some((p) => p.playerId === player.playerId)) {
+      updatedPlayers = selectedPlayers.filter((p) => p.playerId !== player.playerId);
     } else {
-      // Otherwise, add the player to the list
-      setSelectedPlayers([...selectedPlayers, player]);
+      updatedPlayers = [...selectedPlayers, player];
     }
+  
+    setSelectedPlayers(updatedPlayers);
+  
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: updatedPlayers.length === 0 ? "Select players." : "",
+    }));
+  
   };
 
   const clearSelectedPlayers = () => {
     setSelectedPlayers([]); // Clear all selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: "Select players.",
+    }));
   };
   
   useEffect(
@@ -240,6 +264,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
               <input
                 type="text"
+                name="players"
                 className="border-0 py-1 px-3 w-[90%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly

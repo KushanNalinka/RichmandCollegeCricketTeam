@@ -184,7 +184,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   
     // Validate top-level fields
     Object.keys(formData).forEach((field) => {
-      if (field === "membership") {
+      if (field === "user") {
         const usernameErrors = validateForm("user.username", formData.user.username);
         const emailErrors = validateForm("user.email", formData.user.email);
         const passwordErrors = validateForm("user.password", formData.user.password);

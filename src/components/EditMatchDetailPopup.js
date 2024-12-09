@@ -174,8 +174,8 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         console.log("Image validation:", value);
         if (!value) {
             newErrors.logo = "Image is required.";
-        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
-            newErrors.logo = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        } else if (value.type && !/^image\/(jpg|jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.logo = "Only image files (JPG,JPEG, PNG, GIF, BMP, WebP) are allowed.";
         }
         break;
       default:

@@ -646,7 +646,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               <option value="Stump">Stump</option>
                               <option value="Run out">Run out</option>
                               <option value="Not out">Not out</option>
-                              <option value="Retired">Retired</option>
+                              <option value="Retired Hurt">RetiredHurt</option>
                               <option value="Did not bat">Did not bat</option>
                             </select>
                           </td>
@@ -920,7 +920,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       <option value="Bowled">Bowled</option>
                       <option value="Stump">Stump</option>
                       <option value="Run out">Run out</option>
-                      <option value="Retired">Retired</option>
+                      <option value="Retired Hurt">Retired Hurt</option>
                       <option value="Not out">Not out</option>
                       <option value="Did not bat">Did not bat</option>
                     </select>

@@ -240,12 +240,14 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     // Validate top-level fields
     Object.keys(formData).forEach((field) => {
       if (field === "membership") {
+        const membershipErrors = validateForm("membership.startDate", formData.membership.startDate);
+        const endDateErrors = validateForm("membership.endDate", formData.membership.endDate);
+        Object.assign(errors, membershipErrors, endDateErrors);
+      }else if(field === "user"){
         const usernameErrors = validateForm("user.username", formData.user.username);
         const emailErrors = validateForm("user.email", formData.user.email);
         const passwordErrors = validateForm("user.password", formData.user.password);
-        const membershipErrors = validateForm("membership.startDate", formData.membership.startDate);
-        const endDateErrors = validateForm("membership.endDate", formData.membership.endDate);
-        Object.assign(errors, usernameErrors, passwordErrors, emailErrors, membershipErrors, endDateErrors);
+        Object.assign(errors, usernameErrors, passwordErrors, emailErrors);
       } else {
         const fieldErrors = validateForm(field, formData[field]);
         if (fieldErrors[field]) {

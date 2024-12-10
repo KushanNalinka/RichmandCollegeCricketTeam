@@ -11,6 +11,8 @@ const PlayerProfile = () => {
  // const { user } = useAuth();
   const [playerProfile, setPlayerProfile] = useState(null);
   const [playerStat, setPlayerStat] = useState(null);
+  const [filterUnder, setFilterUnder] = useState("");
+  const [filterYear, setFilterYear] = useState("");
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -31,7 +33,7 @@ const PlayerProfile = () => {
 
     const summarizeStats = (type) => {
 
-      if (!playerStat) {
+      if (!playerStat || !playerStat.length) {
         return {
           matches: 0,
           battingInnings: 0,
@@ -48,11 +50,22 @@ const PlayerProfile = () => {
           "50s": 0,
           "4s": 0,
           "6s": 0,
+          overs:0,
+          wickets:0,
+          runsConceded:0,
+          bawlingAvg:0,
+          battingAvg:0,
+          bestValue:Infinity,
+          economyRate:0,
+          bestWickets: 0,
+          bestRunsConceded: Infinity,
           
         };
       }
       const filteredStats = playerStat.filter(
-        (stat) => stat.match.type === type
+        (stat) => stat.match.type === type &&
+        (filterUnder ? stat.match.under === filterUnder : true) &&
+        (filterYear ? stat.match.year === parseInt(filterYear) : true)
       );
 
       // Calculate summaries
@@ -85,8 +98,15 @@ const PlayerProfile = () => {
         acc.sr = 
           acc.balls > 0 ? (acc.runs / acc.balls).toFixed(2) : 0; // Simplified SR calculation
         acc.bawlingAvg =
-          acc.overs > 0 ? (acc.runsConceded / acc.overs).toFixed(2) : 0;
+          acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
         acc.economyRate = acc.overs > 0 ? (acc.runsConceded / acc.overs).toFixed(2) : 0;
+        if (
+          stat.wickets > acc.bestWickets ||
+          (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)
+        ) {
+          acc.bestWickets = stat.wickets;
+          acc.bestRunsConceded = stat.runsConceded;
+        }
           
         return acc;
       },
@@ -105,6 +125,8 @@ const PlayerProfile = () => {
         bawlingAvg:0,
         battingAvg:0,
         bestValue:Infinity,
+        bestWickets: 0,
+        bestRunsConceded: Infinity,
         economyRate:0,
         catches:0,
         stumps:0,
@@ -135,6 +157,11 @@ const PlayerProfile = () => {
     return age;
   };
 
+  const resetFilters = () => {
+    setFilterUnder("");
+    setFilterYear("");
+  };
+
   return (
     <>
     
@@ -147,6 +174,46 @@ const PlayerProfile = () => {
       }}
     >
       <MemberNavbar />
+      <div
+          className="h-full w-full pt-5 rounded-lg lg:px-20 bg-[#CBECFF] shadow-md"
+          style={{
+            backdropFilter: "blur(10px)",
+            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+          }}
+        >
+          <div className="flex flex-col lg:flex-row lg:justify-center gap-4 mb-6 items-center">
+            <select
+              value={filterUnder}
+              onChange={(e) => setFilterUnder(e.target.value)}
+              className="px-4 py-2 border rounded-md w-full lg:w-auto"
+            >
+              <option value="">Select Under</option>
+              {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
+                <option key={under} value={under}>
+                  {under}
+                </option>
+              ))}
+            </select>
+            <select
+              value={filterYear}
+              onChange={(e) => setFilterYear(e.target.value)}
+              className="px-4 py-2 border rounded-md w-full lg:w-auto"
+            >
+              <option value="">Select Year</option>
+              {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 bg-[#00175F] text-white rounded-md w-full lg:w-auto"
+            >
+              Reset
+            </button>
+          </div>
             {/* Player Details */}
             <div
               className="h-full w-full p-5 rounded-lg lg:px-20 bg-white shadow-md"
@@ -459,7 +526,7 @@ const PlayerProfile = () => {
                 </div>
 
               </div>
-             
+             </div>
             </div>
            
       </div>

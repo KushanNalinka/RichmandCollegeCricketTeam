@@ -646,10 +646,7 @@ const PlayerProfile = () => {
         setFilterYear("");
       };
 
-  const resetFilters = () => {
-    setFilterUnder("");
-    setFilterYear("");
-  };
+ 
 
   return (
     <>
@@ -662,47 +659,7 @@ const PlayerProfile = () => {
         }}
       >
         <MemberNavbar />
-        <div
-          className="h-full w-full pt-5 rounded-lg lg:px-20 bg-[#CBECFF] shadow-md"
-          style={{
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-          }}
-        >
-          <div className="flex flex-col lg:flex-row lg:justify-center gap-4 mb-6 items-center">
-  <select
-    value={filterUnder}
-    onChange={(e) => setFilterUnder(e.target.value)}
-    className="px-4 py-2 border rounded-md w-full lg:w-auto"
-  >
-    <option value="">Select Under</option>
-    {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
-      <option key={under} value={under}>
-        {under}
-      </option>
-    ))}
-  </select>
-  <select
-    value={filterYear}
-    onChange={(e) => setFilterYear(e.target.value)}
-    className="px-4 py-2 border rounded-md w-full lg:w-auto"
-  >
-    <option value="">Select Year</option>
-    {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
-      <option key={year} value={year}>
-        {year}
-      </option>
-    ))}
-  </select>
-  <button
-    onClick={resetFilters}
-    className="px-4 py-2 bg-[#00175F] text-white rounded-md w-full lg:w-auto"
-  >
-    Reset
-  </button>
-</div>
-
+        
           {/* Batting, Bowling, and Fielding Stats Tables */}
 
             {/* Player Details */}
@@ -1057,7 +1014,7 @@ const PlayerProfile = () => {
            
          
         </div>
-      </div>
+      
       <Footer />
     </>
   );

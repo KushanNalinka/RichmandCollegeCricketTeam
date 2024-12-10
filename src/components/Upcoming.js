@@ -289,7 +289,9 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 
+
 // Helper functions for date formatting and upcoming match check
+const API_URL = process.env.REACT_APP_API_URL;
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
@@ -328,7 +330,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
   const itemsPerPage = 6;  // Set the limit of items per page
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/matches/all")
+    fetch(`${API_URL}/matches/all`)
       .then(response => response.json())
       .then(data => {
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);

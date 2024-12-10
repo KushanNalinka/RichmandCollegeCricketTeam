@@ -655,7 +655,7 @@ const NewsDetailPage = () => {
     <div className="p-6 text-center">
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">{newsItem.heading}</h1>
       <p className="text-gray-500 text-xs sm:text-sm mt-2">
-        Published {new Date(newsItem.dateTime).toLocaleDateString()} • {newsItem.author}
+        Published {new Date(newsItem.createdOn).toLocaleDateString()} • {newsItem.author}
       </p>
 
       <button
@@ -685,7 +685,7 @@ const NewsDetailPage = () => {
 
             <img
               //  src={newsItem.images[currentImageIndex]?.imageUrl}
-              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex].imageUrl? newsItem.images[currentImageIndex]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
               alt={`Slide ${currentImageIndex + 1}`}
               className="w-full h-full"
               style={{

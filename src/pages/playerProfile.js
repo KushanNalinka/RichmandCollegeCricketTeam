@@ -624,7 +624,7 @@ const PlayerProfile = () => {
       >
         <MemberNavbar />
         <div
-          className="h-full w-full p-5 rounded-lg lg:px-20 bg-blue-400 shadow-md"
+          className="h-full w-full pt-5 rounded-lg lg:px-20 bg-[#CBECFF] shadow-md"
           style={{
             backdropFilter: "blur(10px)",
             boxShadow: "0 4px 30px rgba(0, 0, 0, 0.5)",

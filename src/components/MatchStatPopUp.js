@@ -9,7 +9,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
-    inning: matchType === "Test" ? '' : '1',
+    inning: matchType === "Test" ? "" : "1",
     oppositionOvers: '',
     runs: '',
     wickets: '',
@@ -25,7 +25,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const [statData, setStatData] = useState(initialStatData);
   const [selectedIning, setSelectedIning] = useState(statData.inning);
   const [errors, setErrors] = useState({});
-  console.log("selected inning in stat data: ", statData.inning);
+  
 
   useEffect(() => {
     // Reset statData each time the popup is opened
@@ -70,6 +70,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           setStatData({...initialStatData, inning:selectedIning}); // Use initial statData on error
         });
         console.log("Is summary exists:", isSummaryExists);
+        console.log("stat to be edited :",statData);
   
     if (selectedIning) {
       console.log("Updated selected inning:", selectedIning);
@@ -197,9 +198,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
     console.log("add :" ,statData); // Log to verify structure before making request
 
     try {
+      let addingStatData = { ...statData };
+      if (matchType === "T20" || matchType === "ODI") {
+        addingStatData.inning = "1";
+      };
       const response = await axios.post(
         `${API_URL}matchSummary/add`,
-        statData
+        addingStatData
       );
       message.success("Successful!");
       setStatData({
@@ -219,6 +224,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
+      console.log("Success response add :" , response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -246,9 +252,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
     setUploading(true);
     console.log("update: ",statData); // Log to verify structure before making request
     try {
+     // Set inning to "1" if matchType is T20 or ODI
+      let updatedStatData = { ...statData };
+      if (matchType === "T20" || matchType === "ODI") {
+        updatedStatData.inning = "1";
+      };
+
+      console.log("add:", updatedStatData);
       const response = await axios.put(
         `${API_URL}matchSummary/update/${statData.id}`,
-        statData
+        updatedStatData
       );
       message.success("Successfully updated the match Summary!");
       setStatData({
@@ -268,6 +281,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
+      console.log("success response:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -347,9 +361,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                   <input
                      type="text"
                      name="inning"
-                     value={1}
+                     value="1"
                      onChange={handleChange}
-                     disabled
+                     readOnly
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
                   />
                   {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}

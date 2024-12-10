@@ -1202,10 +1202,10 @@ const CoachesProfile = () => {
                                 {coachesData.map((coach) => (
                                     <li 
                                         key={coach.coachId} 
-                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
+                                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-[#00175F] hover:text-white ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
                                         onClick={() => { setSelectedCoach(coach); setShowCoachList(false); }}
                                     >
-                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {coach.name}
                                     </li>
                                 ))}
@@ -1225,14 +1225,14 @@ const CoachesProfile = () => {
                             {/* Profile Image Container */}
                             <div className="relative flex-shrink-0 mb-4 md:mb-0">
                                 <img
-                                    src={selectedCoach?.image || coachPlaceholderImage}
+                                    src={`${`http://rcc.dockyardsoftware.com/images/${ selectedCoach?.image ? selectedCoach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                     alt={selectedCoach?.name}
-                                    className="h-32 w-32 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover"
+                                    className="h-24 w-24 md:h-40 md:w-40 rounded-full border-4 border-[#4A0D34] object-cover mt-0"
                                 />
                             </div>
-                            <div className="text-center md:text-left">
-                                <h1 className="text-2xl md:text-5xl font-bold">{selectedCoach?.name}</h1>
-                                <p className="text-gray-400 text-base md:text-xl">
+                            <div className="text-center md:text-left md:ml-8">
+                            <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4">{selectedCoach?.name}</h1>
+                            <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
                                 Date of Birth:{" "}
                                 {new Date(selectedCoach.dateOfBirth).toLocaleDateString()}  
                                 </p>
@@ -1250,8 +1250,8 @@ const CoachesProfile = () => {
                         <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {coachesData.map((coach) => (
-                                    <li key={coach.coachId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedCoach(coach)}>
-                                        <img src={coach.image || coachPlaceholderImage} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
+                                    <li key={coach.coachId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-[#00175F] hover:text-white ${coach.coachId === selectedCoach?.coachId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedCoach(coach)}>
+                                        <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {coach.name}
                                     </li>
                                 ))}

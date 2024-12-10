@@ -67,10 +67,12 @@ const CoachProfile = () => {
   }, []);
 
   useEffect(() => {
+
       setUploading(true);
       axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
       .then(response => {
         setUploading(false);
+
         const sortedPracticeSchedule = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPracticeSchedules(sortedPracticeSchedule);
         console.log("sessions Data:", response.data);
@@ -229,7 +231,7 @@ const CoachProfile = () => {
                     <p className="lg:text-xl text-sm">{calculateAge(coach.dateOfBirth)} years old</p>
                   )}
                   </div>
-                  {coach && <img src={coach.image} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
+                  {coach && <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                     />}
                 </div>
 

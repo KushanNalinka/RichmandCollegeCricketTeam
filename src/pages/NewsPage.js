@@ -58,6 +58,8 @@ const NewsPage = () => {
     const fetchNews = async () => {
       try {
         const response = await axios.get(`${API_URL}news`);
+        
+        console.log('Fetched News Data:', response.data); // Log the fetched data
         // setNewsData(response.data);
         // setLoading(false);
         // const response = await axios.get(`${API_URL}news`);
@@ -162,7 +164,8 @@ const NewsPage = () => {
                           onClick={() => goToFullArticle(news.id)}
                         >
                           <img
-                            src={news.imageUrl}
+                            // src={news.images && news.images[0]?.imageUrl}
+                            src={`${`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                             alt={news.title}
                             className="w-full h-full object-cover rounded-lg"
                           />
@@ -177,14 +180,14 @@ const NewsPage = () => {
                           <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
                             {getFirstTwoSentences(news.body)}
                             <span
-                              className="text-blue-500 cursor-pointer"
+                              className="text-[#012D5E] cursor-pointer"
                               onClick={() => goToFullArticle(news.id)}
                             >
                               ...Read more
                             </span>
                           </p>
                           <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
-                            {new Date(news.dateTime).toLocaleDateString()} • {timeAgo(news.dateTime)} • {news.author}
+                            {new Date(news.createdOn).toLocaleDateString()} • {timeAgo(news.createdOn)} • {news.author}
                           </span>
                         </div>
                       </div>
@@ -247,7 +250,10 @@ const NewsPage = () => {
                   <div key={sidebarItem.id} className="mb-4">
                     <div className="flex cursor-pointer" onClick={() => goToFullArticle(sidebarItem.id)}>
                       <img
-                        src={sidebarItem.imageUrl}
+                        // src={sidebarItem.images && sidebarItem.images[0]?.imageUrl}
+                        src={`${`http://rcc.dockyardsoftware.com/images/${ sidebarItem.images? sidebarItem.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+
+
                         alt={sidebarItem.title}
                         className="w-16 h-16 object-cover rounded-lg mr-4"
                       />

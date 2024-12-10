@@ -785,7 +785,7 @@ const HomeNavbar = () => {
         isNavbarVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="flex items-center justify-between w-full lg:w-fit bg-transparent backdrop-blur-md shadow-lg px-6 py-2">
+      <div className="flex items-center justify-between w-full lg:w-fit bg-transparent backdrop-blur-md rounded-full shadow-lg px-6 py-2">
         {/* Logo on the left */}
         <div className="flex items-center">
           <Link to="/member">
@@ -804,7 +804,7 @@ const HomeNavbar = () => {
             <div className="cursor-pointer hover:text-yellow-300 transition-all duration-300 ease-in-out">
               Overview
             </div>
-            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+            <ul className="absolute left-0 top-full mt-2 bg-gray-800 shadow-lg w-40 opacity-0 invisible group-hover:visible  group-hover:opacity-100 transition-all duration-300 ease-in-out">
               <li>
                 <button
                   className="block w-full text-left px-4 py-2 hover:bg-yellow-500 hover:text-black transition-all duration-300 ease-in-out"

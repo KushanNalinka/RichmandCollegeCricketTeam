@@ -41,6 +41,14 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
 
   const validateForm = () => {
     const newErrors = {};
+    //name validation
+    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
+      newErrors.name = "Name must be between 4 and 25 characters long.";
+    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters, spaces, and periods.";
+    } else if (/^\s|\s$/.test(formData.name)) {
+      newErrors.name = "Name cannot start or end with a space.";
+    }
 
     //username validation
     if (formData.username.length < 4 || formData.username.length > 20) {
@@ -142,6 +150,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               placeholder="Jhon Doe"
               required
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Username</label>

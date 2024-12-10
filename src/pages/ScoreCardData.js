@@ -91,7 +91,7 @@ const ScorecardData = () => {
                   </div>
                   <div className="flex flex-col text-right">
                     <p className="text-xxxs md:text-xxs text-white">{match.result}</p>
-                    <p className="text-xxs md:text-xxs mt-1 text-gray-400 mt-2">{match.tossResult}</p>
+                    <p className="text-xxs md:text-xxs  text-gray-400 mt-2">{match.tossResult}</p>
                   </div>
                 </div>
               </div>
@@ -143,6 +143,8 @@ const ScorecardData = () => {
         <thead className="bg-[#4A0D34] text-white">
           <tr>
             <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BATTING</th>
+          
+           
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">B</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">4s</th>
@@ -153,38 +155,28 @@ const ScorecardData = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {battingStats.map((batsman, index) => {
-            const strikeRate = batsman.balls > 0 ? ((batsman.runs / batsman.balls) * 100).toFixed(2) : 0; // Calculate Strike Rate
-            return (
-              <tr key={index}>
-                 <td className="px-2 py-1 text-sm font-medium text-gray-900">
-          {batsman.player.name}
-          <div className="text-xs text-gray-500 mt-1">{batsman.howOut}</div> {/* Display 'howOut' below the player's name */}
+  {battingStats.map((batsman, index) => {
+    const strikeRate = batsman.balls > 0 ? ((batsman.runs / batsman.balls) * 100).toFixed(2) : 0; // Calculate Strike Rate
+    return (
+      <tr key={index}>
+        <td className="px-2 py-1 text-sm font-medium text-gray-900 text-left">
+          <span className="font-medium">{batsman.player.name}</span>
+          {batsman.howOut && (
+            <span className="text-gray-500 text-xxs ml-2">({batsman.howOut})</span>
+          )}
         </td>
-               
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.runs}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.balls}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fours}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.sixers}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fifties}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.centuries}</td>
-                <td className="px-2 py-1 text-sm text-center text-gray-500">{strikeRate}</td> {/* Strike Rate Cell */}
-              </tr>
-            );
-          })}
-          {/* Total Runs Row */}
-          <tr className="bg-gray-100">
-            <td className="px-2 py-1 text-sm font-bold text-gray-900">Total</td>
-            <td className="px-2 py-1 text-sm font-bold text-center text-gray-900">{totalRuns}</td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            <td className="px-2 py-1 text-sm text-center text-gray-900"></td>
-            
-          </tr>
-        </tbody>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.runs}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.balls}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fours}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.sixers}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.fifties}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{batsman.centuries}</td>
+        <td className="px-2 py-1 text-sm text-center text-gray-500">{strikeRate}</td>
+      </tr>
+    );
+  })}
+</tbody>
+
       </table>
     </div>
   </td>
@@ -196,13 +188,13 @@ const ScorecardData = () => {
   <td colSpan="7">
     <div className="overflow-x-auto mb-8">
       <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
-        <thead className="bg-[#4A0D34] text-white">
+        <thead className="bg-[#012D5E] text-white">
           <tr>
             <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">BOWLING</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">O</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">R</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">W</th>
-         
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">M</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Nb</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Wb</th>
           </tr>
@@ -210,16 +202,17 @@ const ScorecardData = () => {
         <tbody className="bg-white divide-y divide-gray-200">
           {bowlingStats.map((bowler, index) => (
             <tr key={index}>
-              <td className="px-2 py-1 text-sm font-medium text-gray-900">{bowler.player.name}</td>
+              <td className="px-2 py-1 text-sm font-medium text-gray-900 ">{bowler.player.name}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.overs}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.runsConceded}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wickets}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.maidens}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.noBalls}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wides}</td>
             
             </tr>
           ))}
-          {/* Total Wickets Row */}
+          {/* Total Wickets Row
           <tr className="bg-gray-100">
             <td className="px-2 py-1 text-sm font-bold text-gray-900">Total</td>
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
@@ -228,7 +221,7 @@ const ScorecardData = () => {
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
            
             <td className="px-2 py-1 text-sm font-bold text-center text-gray-900"></td>
-          </tr>
+          </tr> */}
         </tbody>
       </table>
     </div>

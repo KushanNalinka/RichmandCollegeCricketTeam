@@ -448,7 +448,7 @@ const Login = () => {
                 value={inputs.username}
                 className={`text-sm mt-1 w-full px-4 py-2 border ${
                   validationError.username ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012D5E]`}
               />
               {validationError.username && <p className="text-sm text-red-500">{validationError.username}</p>}
             </div>
@@ -466,7 +466,7 @@ const Login = () => {
                 value={inputs.password}
                 className={`mt-1 w-full px-4 py-2 border ${
                   validationError.password ? "border-red-500" : "border-gray-300"
-                } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500`}
+                } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#012D5E]`}
               />
               {validationError.password && <p className="text-sm text-red-500">{validationError.password}</p>}
             </div>
@@ -488,7 +488,7 @@ const Login = () => {
             </div>
             <button
               type="submit"
-              className="w-full px-4 py-2 mt-6 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-2 mt-6 bg-[#012D5E] text-white font-semibold rounded-lg hover:bg-[#012D5E] focus:outline-none focus:ring-2 focus:ring-[#012D5E]"
             >
               Login
             </button>

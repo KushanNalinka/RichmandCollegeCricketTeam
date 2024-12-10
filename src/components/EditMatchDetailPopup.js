@@ -18,7 +18,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const [teams, setTeams] = useState([]);
   const [selectedCoachNames, setSelectedCoachNames] = useState([]);
   const [selectedCoaches, setSelectedCoaches] = useState(match.coaches || []);
-  const [imagePreview, setImagePreview] = useState(match.logo);
+  const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [players, setPlayers] = useState([]);
@@ -41,7 +41,17 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   };
 
   const [formData, setFormData] = useState({
-    ...match,
+    date: match.date,
+    time: match.time,
+    venue: match.venue,
+    opposition: match.opposition,
+    tier: match.tier,
+    logo:match.logo,
+    division: match.division,
+    umpires: match.umpires,
+    type: match.type,
+    matchCaptain: match.matchCaptain,
+    matchViceCaptain: match.matchViceCaptain,
     team:{
       teamId:match.teamId,
       under:match.under,
@@ -83,19 +93,23 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === "team.under") {
+
+    if (name === "team.teamId") {
       // Find the selected team based on the 'under' value
-      const selectedTeam = teams.find(team => team.under === value);
+      const selectedTeam = teams.find(team => team.teamId === Number(value));
       const selectedTeamId = selectedTeam ? selectedTeam.teamId : "";
-  
+      const selectedTeamUnder = selectedTeam ? selectedTeam.under : "";
       setFormData({
         ...formData,
         team: {
           ...formData.team,
-          under: value,
+          under: selectedTeamUnder,
           teamId: selectedTeamId // Update teamId based on selected team
         }
       });
+      console.log("SelectedTeam:", selectedTeam);
+      // console.log("Selected selectedTeamUnder:", selectedTeamUnder);
+      console.log("SelectedTeamId:", selectedTeamId);
     } else if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setFormData({
@@ -114,6 +128,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       });
       setIsImageAdded(true);
       setShowImageError(false);
+
     }else if (name === "date") {
       // Handle the DatePicker value change
       setFormData({
@@ -149,23 +164,34 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       return;
     };
     setUploading(true);
+    console.log("formdata before submit:", formData);
     try {
-      let imageURL = formData.logo;
+      // let imageURL = formData.logo;
 
-      // Upload image if an image file is added
-      if (formData.logo instanceof File) {
-        imageURL = await handleImageUpload(formData.logo);
-      }
+      // // Upload image if an image file is added
+      // if (formData.logo instanceof File) {
+      //   imageURL = await handleImageUpload(formData.logo);
+      // }
 
-      const matchData = {
-        ...formData,
-        logo: imageURL, // Assign the uploaded image URL to formData
-      };
-      console.log("Match Data :", matchData);
+      // const matchData = {
+      //   ...formData,
+      //   logo: imageURL, // Assign the uploaded image URL to formData
+      // };
+
+      const formDataToSend = new FormData();
+      const { logo, ...matchData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("matchData", JSON.stringify(matchData));
+
+      // Append image file
+      formDataToSend.append("logo", logo);
+
+      // console.log("Match Data :", matchData);
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        {...matchData}
+        formDataToSend
       );
       message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);
@@ -175,11 +201,12 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         venue: "",
         opposition: "",
         tier: "",
-        logo:"",
+        logo:null,
         division: "",
         umpires: "",
         type: "",
         matchCaptain: "",
+        matchViceCaptain: "",
         team:{
           under:"",
           teamId:""
@@ -297,7 +324,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto py-10 min-h-screen">
       <div className='flex items-center justify-center'>
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end items-center">
           <button
             onClick={onClose}
@@ -453,17 +480,17 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             </select>
           </div>
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="team.under">Team</label>
+            <label className="block text-black text-sm font-semibold" htmlFor="team.teamId">Team</label>
             <select
-              id="team.under"
-              name="team.under"
-              value={formData.team.under}
+              id="team.teamId"
+              name="team.teamId"
+              value={formData.team?.teamId}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select team</option>
               {teams.map(team =>
-                <option key={team.teamId} value={team.under}>
+                <option key={team.teamId} value={team.teamId}>
                   {team.under}-{team.year}
                 </option>
               )}

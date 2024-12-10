@@ -18,7 +18,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     image: player.image,
     name: player.name,
     dateOfBirth:  player.dateOfBirth ? new Date(player.dateOfBirth) : null,
-    roles: ["ROLE_PLAYER"], 
+    role: ["ROLE_PLAYER"], 
     battingStyle: player.battingStyle,
     bowlingStyle: player.bowlingStyle,
     playerRole: player.playerRole,
@@ -37,7 +37,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     updatedBy:user.username,
     updatedOn: new Date().toISOString(),
    });
-  const [imagePreview, setImagePreview] = useState(player.image);
+  const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`);
+  //const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -127,6 +128,15 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       return true; // No validation needed as no changes detected
     }
 
+    //name validation
+    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
+      newErrors.name = "Name must be between 4 and 25 characters long.";
+    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
+      newErrors.name = "Name can only contain letters, spaces, and periods.";
+    } else if (/^\s|\s$/.test(formData.name)) {
+      newErrors.name = "Name cannot start or end with a space.";
+    }
+
      //username validation
      if (formData.user.username !== player.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
       newErrors.username = "Username must be between 4 and 20 characters.";
@@ -183,25 +193,42 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     }
     setUploading(true);
       try {
-        let imageURL = formData.image;
+      //   let imageURL = formData.image;
 
-      // Upload image if an image file is added
-      if (formData.image instanceof File) {
-        imageURL = await handleImageUpload(formData.image);
-      }
+      // // Upload image if an image file is added
+      // if (formData.image instanceof File) {
+      //   imageURL = await handleImageUpload(formData.image);
+      // }
 
-      const playerData = {
-        ...formData,
-        image: imageURL, // Assign the uploaded image URL to formData
-      };
+      const formDataToSend = new FormData();
+      const { image, role, ...userData } = formData;
+
+      // Append userData as a JSON string
+      formDataToSend.append("userData", JSON.stringify(userData));
+
+      // Append image file
+      formDataToSend.append("image", image);
+
+       // Ensure role is sent as a single string
+      formDataToSend.append("role", role[0]);
+
+      // const playerData = {
+      //   ...formData,
+      //   image: imageURL, // Assign the uploaded image URL to formData
+      // };
         const response = await axios.put(
           `${API_URL}admin/players/update/${player.playerId}`,
-          playerData 
+          formDataToSend 
         );
+        const updatedPlayer = response.data;
+
+        // Add a timestamp to the edited image URL
+        updatedPlayer.image = `${updatedPlayer.image}?t=${new Date().getTime()}`;
+
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
-          image: "",
+          image: null,
           name: "",
           dateOfBirth: "",
           age: "",
@@ -227,9 +254,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         isSubmitted();
         setImagePreview();
         setUploading(false);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 
@@ -241,6 +265,9 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       } finally {
         setUploading(false);
         onClose();
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
       }
     
   };
@@ -319,7 +346,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
       <div className="flex items-center justify-center">
-      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 rounded-3xl shadow-lg max-w-xl w-full relative`}>
+      <div className={`bg-white ${uploading? "opacity-80": "bg-opacity-100"} p-8 m-5 rounded-3xl shadow-lg max-w-xl w-full relative`}>
         <div className="flex justify-end ">
           <button
             onClick={onClose}
@@ -344,6 +371,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">DOB</label>

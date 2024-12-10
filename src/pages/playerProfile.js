@@ -174,11 +174,13 @@ const PlayerProfile = () => {
                       <p className="lg:text-xl text-sm">{calculateAge(playerProfile.dateOfBirth)} years old</p>
                     )}
                   </div>
-                  <img
+                  {playerProfile && <img
                     src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
                     alt={playerProfile?.name}
                     className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                   />
+                   }
+                  
                 </div>
                 
               </div>

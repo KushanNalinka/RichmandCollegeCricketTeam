@@ -289,7 +289,9 @@
 import React, { useState, useEffect } from 'react';
 import Footer from '../components/Footer';
 
+
 // Helper functions for date formatting and upcoming match check
+const API_URL = process.env.REACT_APP_API_URL;
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
@@ -328,7 +330,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
   const itemsPerPage = 6;  // Set the limit of items per page
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/matches/all")
+    fetch(`${API_URL}/matches/all`)
       .then(response => response.json())
       .then(data => {
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);
@@ -385,7 +387,7 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
               {/* {/ Opposition Info /} */}
               <div className="flex flex-col items-center space-y-2 w-1/4">
                 <img
-                  src={matchData.logo}
+                   src={`${`http://rcc.dockyardsoftware.com/images/${ matchData.logo ? matchData.logo .split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                   alt={matchData.opposition ? matchData.opposition.toUpperCase() : "UNKNOWN OPPONENT"}
                   className="w-10 h-10 sm:w-10 sm:h-10 rounded-full"
                 />

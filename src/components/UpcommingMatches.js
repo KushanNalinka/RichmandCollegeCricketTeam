@@ -386,9 +386,7 @@ const MatchTable = () => {
           team2: match.opposition, // Opposition is the other team
           venue: match.venue,
           team1Logo: richLogo, // Placeholder logo
-          team2Logo: `http://rcc.dockyardsoftware.com/images/${
-            match.logo ? match.logo.split("/").pop() : "default.jpg"
-          }?cacheBust=${Date.now()}` // Placeholder logo for now
+          team2Logo: `http://rcc.dockyardsoftware.com/images/${match.logo ? match.logo.split("/").pop() : "default.jpg"}?cacheBust=${Date.now()}` // Placeholder logo for now
         }));
 
         setMatches(mappedMatches);

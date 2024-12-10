@@ -887,7 +887,7 @@ const ScoreCard = ({ onMatchId }) => {
           </div>
 
           <div className="flex items-center space-x-2 mt-4 md:mt-0">
-            <img src={matchData.logo} alt={`${matchData.opposition} Badge`} className="w-20 h-20 md:w-36 md:h-36" />
+            <img src={`${`http://rcc.dockyardsoftware.com/images/${ matchData.logo ? matchData.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={`${matchData.opposition} Badge`} className="w-20 h-20 md:w-36 md:h-36" />
           </div>
         </div>
       </div>

@@ -155,7 +155,8 @@ const InitialNewsPage = () => {
                           onClick={() => goToFullArticle(initialnews.id)}
                         >
                           <img
-                            src={initialnews.imageUrl}
+                           src={`${`http://rcc.dockyardsoftware.com/images/${initialnews.images? initialnews.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+                            // src={initialnews.images && initialnews.images[0]?.imageUrl}
                             alt={initialnews.title}
                             className="w-full h-full object-cover rounded-lg"
                           />
@@ -177,7 +178,7 @@ const InitialNewsPage = () => {
                             </span>
                           </p>
                           <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
-                            {new Date(initialnews.dateTime).toLocaleDateString()} • {timeAgo(initialnews.dateTime)} • {initialnews.author}
+                            {new Date(initialnews.createdOn).toLocaleDateString()} • {timeAgo(initialnews.createdOn)} • {initialnews.author}
                           </span>
                         </div>
                       </div>
@@ -240,7 +241,8 @@ const InitialNewsPage = () => {
                   <div key={sidebarItem.id} className="mb-4">
                     <div className="flex cursor-pointer" onClick={() => goToFullArticle(sidebarItem.id)}>
                       <img
-                        src={sidebarItem.imageUrl}
+                        // src={sidebarItem.images && sidebarItem.images[0]?.imageUrl}
+                         src={`${`http://rcc.dockyardsoftware.com/images/${ sidebarItem.images? sidebarItem.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                         alt={sidebarItem.title}
                         className="w-16 h-16 object-cover rounded-lg mr-4"
                       />
@@ -252,7 +254,7 @@ const InitialNewsPage = () => {
                           {sidebarItem.heading}
                         </h3>
                         <span className="text-xxs sm:text-xs text-gray-500 block">
-                          {new Date(sidebarItem.dateTime).toLocaleDateString()} • {timeAgo(sidebarItem.dateTime)} • {sidebarItem.author}
+                          {new Date(sidebarItem.createdOn).toLocaleDateString()} • {timeAgo(sidebarItem.createdOn)} • {sidebarItem.author}
                         </span>
                       </div>
                     </div>

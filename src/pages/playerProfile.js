@@ -492,53 +492,61 @@ const PlayerProfile = () => {
       const playerData = await axios.get(`${API_URL}admin/players/${user.playerId}`);
       setPlayerProfile(playerData.data);
 
-      const playerStat = await axios.get(`${API_URL}playerStats/all-stats/${user.playerId}`);
-      setPlayerStat(playerStat.data);
-    };
 
-    fetchData();
-  }, [API_URL, user.playerId]);
+    const playerStat = await axios.get( `${API_URL}playerStats/all-stats/${user.playerId}`);
+    setPlayerStat(playerStat.data);
+    console.log("player stats", playerStat);
+    console.log("player profile", playerProfile);
+  };
 
-  const summarizeStats = (type) => {
-    if (!playerStat || !playerStat.length) {
-      return {
-        matches: 0,
-        innings: 0,
-        runs: 0,
-        highestScore: 0,
-        avg: 0,
-        sr: 0,
-        "100s": 0,
-        "50s": 0,
-        "4s": 0,
-        "6s": 0,
-        overs: 0,
-        wickets: 0,
-        runsConceded: 0,
-        bowlingAvg: 0,
-        economyRate: 0,
-        best: "0/0",
-        catches: 0,
-        stumps: 0,
-        runOuts: 0,
-      };
-    }
+  fetchData();
 
-    const filteredStats = playerStat.filter(
-      (stat) =>
-        stat.match.type === type &&
+  }, []);
+
+    const summarizeStats = (type) => {
+
+      if (!playerStat || !playerStat.length) {
+        return {
+          matches: 0,
+          battingInnings: 0,
+          bawlingInnings: 0,
+          runs: 0,
+          highestScore: 0,
+          avg: 0,
+          sr: 0,
+          catches:0,
+          stumps:0,
+          runOuts:0,
+          balls:0,
+          "100s": 0,
+          "50s": 0,
+          "4s": 0,
+          "6s": 0,
+          overs:0,
+          wickets:0,
+          runsConceded:0,
+          bawlingAvg:0,
+          battingAvg:0,
+          bestValue:Infinity,
+          economyRate:0,
+          bestWickets: 0,
+          bestRunsConceded: Infinity,
+          
+        };
+      }
+      const filteredStats = playerStat.filter(
+        (stat) => stat.match.type === type &&
         (filterUnder ? stat.match.under === filterUnder : true) &&
         (filterYear ? stat.match.year === parseInt(filterYear) : true)
-    );
+      );
+
 
     const summary = filteredStats.reduce(
       (acc, stat) => {
         acc.matches += 1;
-        acc.innings += parseInt(stat.inning, 10) || 0;
-        acc.runs += stat.runs || 0;
-        acc.highestScore = Math.max(acc.highestScore, stat.runs);
-        acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
-        acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0;
+
+        acc.balls += stat.balls || 0;
+
         acc["100s"] += stat.centuries || 0;
         acc["50s"] += stat.fifties || 0;
         acc["4s"] += stat.fours || 0;
@@ -549,6 +557,23 @@ const PlayerProfile = () => {
         acc.catches += stat.catches || 0;
         acc.stumps += stat.stumps || 0;
         acc.runOuts += stat.runOuts || 0;
+
+        acc.bawlingInnings += Number(stat.inning) || 0;
+        acc.runs += stat.runs || 0;
+
+        const excludedHowOuts = ["Not out", "Retired Hurt", "Did not bat"];
+        if (!excludedHowOuts.includes(stat.howOut)) {
+          acc.battingInnings += 1; // Increment batting innings count
+        };
+        acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
+
+        const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
+        acc.bestValue = Math.min(acc.bestValue, currentAverage).toFixed(2); 
+        
+        acc.battingAvg =  acc.battingInnings > 0 ? (acc.runs / acc.battingInnings).toFixed(2) : 0;
+        acc.sr = acc.balls > 0 ? (acc.runs / acc.balls).toFixed(2) : 0; // Simplified SR calculation
+        acc.bawlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
+        acc.economyRate = acc.overs > 0 ? (acc.runsConceded / acc.overs).toFixed(2) : 0;
 
         if (
           stat.wickets > acc.bestWickets ||
@@ -562,26 +587,35 @@ const PlayerProfile = () => {
       },
       {
         matches: 0,
-        innings: 0,
+        balls: 0,
+        battingInnings: 0,
+        bawlingInnings:0,
         runs: 0,
         highestScore: 0,
         avg: 0,
         sr: 0,
-        overs: 0,
+
+        overs:0,
+        wickets:0,
+        runsConceded:0,
+        bawlingAvg:0,
+        battingAvg:0,
+        bestValue:Infinity,
+        bestWickets: 0,
+        bestRunsConceded: Infinity,
+        economyRate:0,
+        catches:0,
+        stumps:0,
+        runOuts:0,
+        balls:0,
+
         "100s": 0,
         "50s": 0,
         "4s": 0,
         "6s": 0,
-        wickets: 0,
-        runsConceded: 0,
-        bowlingAvg: 0,
-        bestWickets: 0,
-        bestRunsConceded: Infinity,
-        economyRate: 0,
-        best: "0/0",
-        catches: 0,
-        stumps: 0,
-        runOuts: 0,
+
+
+
       }
     );
 
@@ -611,6 +645,11 @@ const PlayerProfile = () => {
         setFilterUnder("");
         setFilterYear("");
       };
+
+  const resetFilters = () => {
+    setFilterUnder("");
+    setFilterYear("");
+  };
 
   return (
     <>
@@ -693,14 +732,15 @@ const PlayerProfile = () => {
                       <p className="lg:text-xl text-sm text-white">{calculateAge(playerProfile.dateOfBirth)} years old</p>
                     )}
                   </div>
-                  <img
-                    
-                    src={`http://rcc.dockyardsoftware.com/images/${
-                      playerProfile?.image ? playerProfile.image.split('/').pop() : 'default.jpg'
-                    }?cacheBust=${Date.now()}`}
-                    alt={playerProfile?.name || 'Player'}
+
+                  {playerProfile && <img
+                    src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
+                    alt={playerProfile?.name}
+
                     className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
                   />
+                   }
+                  
                 </div>
                 
               </div>
@@ -755,6 +795,38 @@ const PlayerProfile = () => {
                 <h2 className="text-xl font-bold mb-4 text-center">
                   Player Statistics
                 </h2>
+                <div className="flex flex-col lg:flex-row lg:justify-center gap-4 mb-6 items-center">
+                  <select
+                    value={filterUnder}
+                    onChange={(e) => setFilterUnder(e.target.value)}
+                    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+                  >
+                    <option value="">Select Under</option>
+                    {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
+                      <option key={under} value={under}>
+                        {under}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={filterYear}
+                    onChange={(e) => setFilterYear(e.target.value)}
+                    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+                  >
+                    <option value="">Select Year</option>
+                    {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={resetFilters}
+                    className="px-4 py-2 bg-[#00175F] text-white rounded-md w-full lg:w-auto"
+                  >
+                    Reset
+                  </button>
+                </div>
                 {/* Batting Stats */}
                 <h3 className="text-md text-white bg-[#00175f] p-2 font-bold mb-3">
                   Batting Stats
@@ -814,7 +886,7 @@ const PlayerProfile = () => {
                             {summary.matches}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
-                            {summary.innings}
+                            {summary.bawlingInnings}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
                             {summary.runs}
@@ -892,7 +964,7 @@ const PlayerProfile = () => {
                             {type}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
-                            {summary.innings}
+                            {summary.bawlingInnings}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
                             {summary.overs}
@@ -910,7 +982,9 @@ const PlayerProfile = () => {
                             {summary.best}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
-                            {summary.bowlingAvg}
+
+                            {summary.bawlingAvg}
+
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
                             {summary.economyRate}
@@ -961,7 +1035,7 @@ const PlayerProfile = () => {
                               {summary.matches}
                             </td>
                             <td className="py-2 px-5 text-center align-middle">
-                              {summary.innings}
+                              {summary.bawlingInnings}
                             </td>
                             <td className="py-2 px-5 text-center align-middle">
                               {summary.catches}
@@ -979,8 +1053,7 @@ const PlayerProfile = () => {
                 </div>
 
               </div>
-             
-            </div>
+             </div>
            
          
         </div>

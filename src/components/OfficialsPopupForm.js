@@ -33,55 +33,94 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
       ...prevErrors,
       [name]: ""
     }));
-      setFormData({
-        ...formData,
-        [name]: value
-      });
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
-    }
+    switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+      case "username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors.username = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+        };
+        break;
+      
+      case "email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors.email = "Please enter a valid email address";
+        };
+        break;
+      
+      case "password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordPattern.test(value)) {
+          newErrors.password = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+      default:
+        break;  
+    }  
+    return newErrors;
+  };
 
-    //username validation
-    if (formData.username.length < 4 || formData.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
-
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    };
-
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (!passwordPattern.test(formData.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    };
-
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (!sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX' and exactly 10 or 12 digits";
-    };
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      const fieldErrors = validateForm(field, formData[field]);
+      if (fieldErrors[field]) {
+        errors[field] = fieldErrors[field];
+      }
+    });
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const errors = validateFormData(formData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
     setUploading(true);

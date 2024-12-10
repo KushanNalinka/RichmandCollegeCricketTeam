@@ -200,7 +200,7 @@ const summarizeStats = (type) => {
                 {players.map((player) => (
                     <li 
                         key={player.playerId} 
-                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-gray-700 ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
+                        className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-[#00175F] hover:text-white ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} 
                         onClick={() => { setSelectedPlayer(player); setShowPlayerList(false); }} // Close list when a player is selected
                     >
                         <img src={`${`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
@@ -285,7 +285,7 @@ const summarizeStats = (type) => {
 </p>
                             <ul className="space-y-3 text-black" style={{ paddingRight: '10px' }}>
                                 {players.map((player) => (
-                                    <li key={player.playerId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-blue-500 hover:text-white ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedPlayer(player)}>
+                                    <li key={player.playerId} className={`cursor-pointer flex items-center p-3 rounded-lg transition duration-300 ease-in-out hover:bg-[#00175F] hover:text-white ${player.playerId === selectedPlayer?.playerId ? 'bg-gray-100 font-bold' : 'bg-gray-100'}`} onClick={() => setSelectedPlayer(player)}>
                                         <img src={`${`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={player.name} className="h-10 w-10 rounded-full mr-3 object-cover" />
                                         {player.name}
                                     </li>

@@ -631,38 +631,38 @@ const PlayerProfile = () => {
             border: "1px solid rgba(255, 255, 255, 0.3)",
           }}
         >
-          <div className="flex gap-4 mb-6">
-            <select
-              value={filterUnder}
-              onChange={(e) => setFilterUnder(e.target.value)}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">Select Under</option>
-              {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
-                <option key={under} value={under}>
-                  {under}
-                </option>
-              ))}
-            </select>
-            <select
-              value={filterYear}
-              onChange={(e) => setFilterYear(e.target.value)}
-              className="px-4 py-2 border rounded-md"
-            >
-              <option value="">Select Year</option>
-              {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 bg-red-500 text-white rounded-md"
-            >
-              Reset
-            </button>
-          </div>
+          <div className="flex flex-col lg:flex-row lg:justify-center gap-4 mb-6 items-center">
+  <select
+    value={filterUnder}
+    onChange={(e) => setFilterUnder(e.target.value)}
+    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+  >
+    <option value="">Select Under</option>
+    {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
+      <option key={under} value={under}>
+        {under}
+      </option>
+    ))}
+  </select>
+  <select
+    value={filterYear}
+    onChange={(e) => setFilterYear(e.target.value)}
+    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+  >
+    <option value="">Select Year</option>
+    {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
+      <option key={year} value={year}>
+        {year}
+      </option>
+    ))}
+  </select>
+  <button
+    onClick={resetFilters}
+    className="px-4 py-2 bg-[#00175F] text-white rounded-md w-full lg:w-auto"
+  >
+    Reset
+  </button>
+</div>
 
           {/* Batting, Bowling, and Fielding Stats Tables */}
 
@@ -675,9 +675,9 @@ const PlayerProfile = () => {
                 border: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
-              <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
+             {/* <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
                 Player Profile
-              </h1>
+              </h1>*/} 
               <div
                 className="flex justify-center items-center w-full rounded-xl h-36 px-10 mb-6"
                 style={{
@@ -688,9 +688,9 @@ const PlayerProfile = () => {
               >
                 <div className="relative top-10 rounded-full w-full h-full flex items-center justify-center">
                   <div className=" -top-5 -left-5 absolute flex flex-col ">
-                    <h1 className="lg:text-4xl font-bold">{playerProfile?.name}</h1>
+                    <h1 className="lg:text-4xl font-bold text-white">{playerProfile?.name}</h1>
                     {playerProfile?.dateOfBirth && (
-                      <p className="lg:text-xl text-sm">{calculateAge(playerProfile.dateOfBirth)} years old</p>
+                      <p className="lg:text-xl text-sm text-white">{calculateAge(playerProfile.dateOfBirth)} years old</p>
                     )}
                   </div>
                   <img

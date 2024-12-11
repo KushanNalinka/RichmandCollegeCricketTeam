@@ -83,97 +83,220 @@ const PlayerProfile = () => {
 
    
     // Function to summarize player stats for display in the table
-const summarizeStats = (type) => {
-    if (!playerStat || !playerStat.length) {
-        return {
-            matches: 0,
-            innings: 0,
-            runs: 0,
-            highestScore: 0,
-            avg: 0,
-            sr: 0,
-            "100s": 0,
-            "50s": 0,
-            "4s": 0,
-            "6s": 0,
-            overs: 0,
-            wickets: 0,
-            runsConceded: 0,
-            bowlingAvg: 0,
-            economyRate: 0,
-            best: "0/0",
-            catches: 0,
-            stumps: 0,
-            runOuts: 0,
-        };
-    }
+// const summarizeStats = (type) => {
+//     if (!playerStat || !playerStat.length) {
+//         return {
+//             matches: 0,
+//             innings: 0,
+//             runs: 0,
+//             highestScore: 0,
+//             avg: 0,
+//             sr: 0,
+//             "100s": 0,
+//             "50s": 0,
+//             "4s": 0,
+//             "6s": 0,
+//             overs: 0,
+//             wickets: 0,
+//             runsConceded: 0,
+//             bowlingAvg: 0,
+//             economyRate: 0,
+//             best: "0/0",
+//             catches: 0,
+//             stumps: 0,
+//             runOuts: 0,
+//         };
+//     }
 
-    const filteredStats = playerStat.filter(
-        (stat) => stat.match.type === type
-    );
+//     const filteredStats = playerStat.filter(
+//         (stat) => stat.match.type === type
+//     );
 
-    const summary = filteredStats.reduce(
-        (acc, stat) => {
-            acc.matches += 1; // Each stat is from a separate match
-            acc.innings += parseInt(stat.inning, 10) || 0;
-            acc.runs += stat.runs || 0;
-            acc.highestScore = Math.max(acc.highestScore, stat.runs);
-            acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
-            acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate
-            acc["100s"] += stat.centuries || 0;
-            acc["50s"] += stat.fifties || 0;
-            acc["4s"] += stat.fours || 0;
-            acc["6s"] += stat.sixers || 0;
-            acc.overs += stat.overs || 0;
-            acc.wickets += stat.wickets || 0;
-            acc.runsConceded += stat.runsConceded || 0;
-            acc.catches += stat.catches || 0;
-            acc.stumps += stat.stumps || 0;
-            acc.runOuts += stat.runOuts || 0; 
+//     const summary = filteredStats.reduce(
+//         (acc, stat) => {
+//             acc.matches += 1; // Each stat is from a separate match
+//             acc.innings += parseInt(stat.inning, 10) || 0;
+//             acc.runs += stat.runs || 0;
+//             acc.highestScore = Math.max(acc.highestScore, stat.runs);
+//             acc.battingAvg = acc.innings > 0 ? (acc.runs / acc.innings).toFixed(2) : 0;
+//             acc.sr = stat.balls > 0 ? ((stat.runs / stat.balls) * 100).toFixed(2) : 0; // Strike rate
+//             acc["100s"] += stat.centuries || 0;
+//             acc["50s"] += stat.fifties || 0;
+//             acc["4s"] += stat.fours || 0;
+//             acc["6s"] += stat.sixers || 0;
+//             acc.overs += stat.overs || 0;
+//             acc.wickets += stat.wickets || 0;
+//             acc.runsConceded += stat.runsConceded || 0;
+//             acc.catches += stat.catches || 0;
+//             acc.stumps += stat.stumps || 0;
+//             acc.runOuts += stat.runOuts || 0; 
 
-            // Calculate best bowling performance
-            if (stat.wickets > acc.bestWickets || 
-                (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)) {
-                acc.bestWickets = stat.wickets;
-                acc.bestRunsConceded = stat.runsConceded;
-            }
+//             // Calculate best bowling performance
+//             if (stat.wickets > acc.bestWickets || 
+//                 (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)) {
+//                 acc.bestWickets = stat.wickets;
+//                 acc.bestRunsConceded = stat.runsConceded;
+//             }
 
-            return acc;
-        },
-        {
-            matches: 0,
-            innings: 0,
-            runs: 0,
-            highestScore: 0,
-            avg: 0,
-            sr: 0,
-            overs: 0,
-            "100s": 0,
-            "50s": 0,
-            "4s": 0,
-            "6s": 0,
-            wickets: 0,
-            runsConceded: 0,
-            bowlingAvg: 0,
-            bestWickets: 0,
-            bestRunsConceded: Infinity,
-            economyRate: 0,
-            best: "0/0",
-            catches: 0,
-            stumps: 0,
-            runOuts: 0,
-        }
-    );
+//             return acc;
+//         },
+//         {
+//             matches: 0,
+//             innings: 0,
+//             runs: 0,
+//             highestScore: 0,
+//             avg: 0,
+//             sr: 0,
+//             overs: 0,
+//             "100s": 0,
+//             "50s": 0,
+//             "4s": 0,
+//             "6s": 0,
+//             wickets: 0,
+//             runsConceded: 0,
+//             bowlingAvg: 0,
+//             bestWickets: 0,
+//             bestRunsConceded: Infinity,
+//             economyRate: 0,
+//             best: "0/0",
+//             catches: 0,
+//             stumps: 0,
+//             runOuts: 0,
+//         }
+//     );
 
-    // Calculate economy rate
-    summary.economyRate = summary.overs > 0 ? (summary.runsConceded / summary.overs).toFixed(2) : 0;
-    // Calculate bowling average
-    summary.bowlingAvg = summary.wickets > 0 ? (summary.runsConceded / summary.wickets).toFixed(2) : 0;
-    // Set the best bowling performance
-    summary.best = `${summary.bestWickets}/${summary.bestRunsConceded !== Infinity ? summary.bestRunsConceded : 0}`;
+//     // Calculate economy rate
+//     summary.economyRate = summary.overs > 0 ? (summary.runsConceded / summary.overs).toFixed(2) : 0;
+//     // Calculate bowling average
+//     summary.bowlingAvg = summary.wickets > 0 ? (summary.runsConceded / summary.wickets).toFixed(2) : 0;
+//     // Set the best bowling performance
+//     summary.best = `${summary.bestWickets}/${summary.bestRunsConceded !== Infinity ? summary.bestRunsConceded : 0}`;
     
-    return summary;
+//     return summary;
+// };
+
+const summarizeStats = (type) => {
+
+    if (!playerStat || !playerStat.length) {
+      return {
+        matches: 0,
+        battingInnings: 0,
+        bawlingInnings: 0,
+        runs: 0,
+        highestScore: 0,
+        avg: 0,
+        sr: 0,
+        catches:0,
+        stumps:0,
+        runOuts:0,
+        balls:0,
+        "100s": 0,
+        "50s": 0,
+        "4s": 0,
+        "6s": 0,
+        overs:0,
+        wickets:0,
+        runsConceded:0,
+        bawlingAvg:0,
+        battingAvg:0,
+        bestValue:Infinity,
+        economyRate:0,
+        bestWickets: 0,
+        bestRunsConceded: Infinity,
+        
+      };
+    }
+    const filteredStats = playerStat.filter(
+      (stat) => stat.match.type === type 
+    );
+
+
+  const summary = filteredStats.reduce(
+    (acc, stat) => {
+      acc.matches += 1;
+
+      acc.balls += stat.balls || 0;
+
+      acc["100s"] += stat.centuries || 0;
+      acc["50s"] += stat.fifties || 0;
+      acc["4s"] += stat.fours || 0;
+      acc["6s"] += stat.sixers || 0;
+      acc.overs += stat.overs || 0;
+      acc.wickets += stat.wickets || 0;
+      acc.runsConceded += stat.runsConceded || 0;
+      acc.catches += stat.catches || 0;
+      acc.stumps += stat.stumps || 0;
+      acc.runOuts += stat.runOuts || 0;
+
+      acc.bawlingInnings += Number(stat.inning) || 0;
+      acc.runs += stat.runs || 0;
+
+      const excludedHowOuts = ["Not out", "Retired Hurt", "Did not bat"];
+      if (!excludedHowOuts.includes(stat.howOut)) {
+        acc.battingInnings += 1; // Increment batting innings count
+      };
+      acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
+
+      const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
+      acc.bestValue = Math.min(acc.bestValue, currentAverage).toFixed(2); 
+      
+      acc.battingAvg =  acc.battingInnings > 0 ? (acc.runs / acc.battingInnings).toFixed(2) : 0;
+      acc.sr = acc.balls > 0 ? (acc.runs / acc.balls).toFixed(2) : 0; // Simplified SR calculation
+      acc.bawlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
+      acc.economyRate = acc.overs > 0 ? (acc.runsConceded / acc.overs).toFixed(2) : 0;
+
+      if (
+        stat.wickets > acc.bestWickets ||
+        (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)
+      ) {
+        acc.bestWickets = stat.wickets;
+        acc.bestRunsConceded = stat.runsConceded;
+      }
+
+      return acc;
+    },
+    {
+      matches: 0,
+      balls: 0,
+      battingInnings: 0,
+      bawlingInnings:0,
+      runs: 0,
+      highestScore: 0,
+      avg: 0,
+      sr: 0,
+
+      overs:0,
+      wickets:0,
+      runsConceded:0,
+      bawlingAvg:0,
+      battingAvg:0,
+      bestValue:Infinity,
+      bestWickets: 0,
+      bestRunsConceded: Infinity,
+      economyRate:0,
+      catches:0,
+      stumps:0,
+      runOuts:0,
+      balls:0,
+
+      "100s": 0,
+      "50s": 0,
+      "4s": 0,
+      "6s": 0,
+
+
+
+    }
+  );
+
+  summary.economyRate = summary.overs > 0 ? (summary.runsConceded / summary.overs).toFixed(2) : 0;
+  summary.bowlingAvg = summary.wickets > 0 ? (summary.runsConceded / summary.wickets).toFixed(2) : 0;
+  summary.best = `${summary.bestWickets}/${summary.bestRunsConceded !== Infinity ? summary.bestRunsConceded : 0}`;
+
+  return summary;
 };
+
+
 
 
 
@@ -364,7 +487,7 @@ const summarizeStats = (type) => {
                                                     <tr key={type} className="border-b border-gray-300">
                                                         <td className="py-2 px-5 text-center align-middle">{type}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.innings}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.runs}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.highestScore}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.battingAvg}</td>
@@ -387,9 +510,10 @@ const summarizeStats = (type) => {
                                         <thead>
                                             <tr className="bg-gray-100">
                                                 <th className="py-2 px-5 text-center align-middle">Format</th>
+                                                <th className="py-2 px-5 text-center align-middle">Matches</th>
                                                 <th className="py-2 px-5 text-center align-middle">Inns</th>
                                                 <th className="py-2 px-5 text-center align-middle">Overs</th>
-                                                <th className="py-2 px-5 text-center align-middle">Matches</th>
+                                              
                                                 <th className="py-2 px-5 text-center align-middle">Wickets</th>
                                                 <th className="py-2 px-5 text-center align-middle">Runs Conceded</th>
                                                 <th className="py-2 px-5 text-center align-middle">Best</th>
@@ -403,7 +527,7 @@ const summarizeStats = (type) => {
                                                 return (
                                                     <tr key={type} className="border-b bg-white border-gray-300">
                                                         <td className="py-2 px-5 text-center align-middle">{type}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.innings}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.overs}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.wickets}</td>
@@ -443,7 +567,7 @@ const summarizeStats = (type) => {
                                                     <tr key={type} className="border-b border-gray-300">
                                                         <td className="py-2 px-5 text-center align-middle">{type}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.innings}</td>
+                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.catches}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.stumps}</td>
                                                         <td className="py-2 px-5 text-center align-middle">{summary.runOuts}</td>

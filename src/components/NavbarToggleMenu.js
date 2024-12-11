@@ -13,6 +13,8 @@ import { MdOutlineNewspaper } from "react-icons/md";
 
 const NavbarToggleMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const username = localStorage.getItem("username");
+    
     const toggleButton = () => {
         setIsMenuOpen(!isMenuOpen);
       };
@@ -55,6 +57,11 @@ const NavbarToggleMenu = () => {
               <Link to={"/admin-news"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                 {" "}<MdOutlineNewspaper className="text-[#00175F]"/> News
               </Link>
+              {(username == "admin01") ?
+
+<Link to={"/admin-control"} className=" flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
+  {" "}<MdOutlineNewspaper className="text-[#00175F]"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Admin Control</span>
+</Link> : null}
             </ul>
           </div> 
         </>

@@ -208,6 +208,7 @@ const PlayerProfile = () => {
     setFilterYear("");
   };
 
+
   return (
     <>
       <div
@@ -219,6 +220,7 @@ const PlayerProfile = () => {
         }}
       >
         <MemberNavbar />
+
           {/* Batting, Bowling, and Fielding Stats Tables */}
 
             {/* Player Details */}
@@ -605,10 +607,11 @@ const PlayerProfile = () => {
                 </div>
               </div>
              </div>
-           
+
           </div>
        <Footer />
        </>
+
   );
 };
 

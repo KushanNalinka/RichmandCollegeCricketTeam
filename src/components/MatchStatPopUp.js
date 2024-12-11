@@ -380,6 +380,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={120}
                 value={statData.overs}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 120) value = 120; // Ensure maximum value is 120
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -394,6 +401,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={1000}
                 value={statData.runs}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 1000) value = 1000; // Ensure maximum value is 1000
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -408,6 +422,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={10}
                 value={statData.wickets}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 10) value = 10; // Ensure maximum value is 10
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
@@ -423,6 +444,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={120}
                 value={statData.oppositionOvers}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 120) value = 120; // Ensure maximum value is 120
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -437,6 +465,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={1000}
                 value={statData.oppositionRuns}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 1000) value = 1000; // Ensure maximum value is 1000
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -451,6 +486,13 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 max={10}
                 value={statData.oppositionWickets}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 10) value = 10; // Ensure maximum value is 10
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />

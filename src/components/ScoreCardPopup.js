@@ -184,7 +184,9 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   
     if (formData.remarks && formData.remarks.length > 200) {
       errors.remarks = "Remarks length must not exceed 200 characters.";
-    }
+    } else if (formData.remarks && !/^[a-zA-Z0-9\s.,!?'"-&*$#@%+_:;/<>|{}^]*$/.test(formData.remarks)) {
+      errors.remarks = " Remarks contain invalid characters.";
+    };
   
     return errors;
   };
@@ -454,7 +456,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     };
     try {
       // Validate all fields
-      const allErrors = validateAllPlayerStats(formData);
+      const allErrors = validateAllPlayerStats(editFormData);
 
       if (Object.keys(allErrors).length > 0) {
         // Generate a list of error messages
@@ -695,7 +697,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               onInput={(e) => {
                                 let value = e.target.value;
                                 if (value < 0) value = 0; // Ensure minimum value is 0
-                                if (value > 50) value = 50; // Ensure maximum value is 400
+                                if (value > 50) value = 50; // Ensure maximum value is 50
                                 e.target.value = value;
                                 handleEditInputChange(e); // Update the form data
                               }}
@@ -751,6 +753,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={10}
                               value={editFormData.wickets}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 10) value = 10; // Ensure maximum value is 10
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="W"
                               className="border rounded p-1 w-16"
                             />
@@ -763,6 +772,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={60}
                               value={editFormData.overs}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 60) value = 60; // Ensure maximum value is 60
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="O"
                               className="border rounded p-1 w-16"
                             />
@@ -775,6 +791,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={200}
                               value={editFormData.runsConceded}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 200) value = 200; // Ensure maximum value is 200
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="RC"
                               className="border rounded p-1 w-16"
                             />
@@ -787,6 +810,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={30}
                               value={editFormData.maidens}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 30) value = 30; // Ensure maximum value is 30
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="M"
                               className="border rounded p-1 w-16"
                             />
@@ -799,6 +829,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={15}
                               value={editFormData.noBalls}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 15) value = 15; // Ensure maximum value is 15
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="NB"
                               className="border rounded p-1 w-16"
                             />
@@ -811,6 +848,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={20}
                               value={editFormData.wides}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 20) value = 20; // Ensure maximum value is 20
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="WB"
                               className="border rounded p-1 w-16"
                             />
@@ -823,6 +867,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={5}
                               value={editFormData.stumps}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 5) value = 5; // Ensure maximum value is 5
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="S"
                               className="border rounded p-1 w-16"
                             />
@@ -835,6 +886,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={7}
                               value={editFormData.catches}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 7) value = 7; // Ensure maximum value is 7
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="C"
                               className="border rounded p-1 w-16"
                             />
@@ -847,6 +905,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               max={5}
                               value={editFormData.runOuts}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 5) value = 5; // Ensure maximum value is 5
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="RO"
                               className="border rounded p-1 w-16"
                             />
@@ -975,6 +1040,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={400}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 400) value = 400; // Ensure maximum value is 400
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="R"
                       className="border rounded p-1 w-16"
                     />
@@ -986,6 +1058,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={700}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 700) value = 700; // Ensure maximum value is 700
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="B"
                       className="border rounded p-1 w-16"
                     />
@@ -997,6 +1076,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={50}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 50) value = 50; // Ensure maximum value is 50
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="4s"
                       className="border rounded p-1 w-16"
                     />
@@ -1008,6 +1094,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={20}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 20) value = 20; // Ensure maximum value is 20
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="6s"
                       className="border rounded p-1 w-16"
                     />
@@ -1038,6 +1131,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={10}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 10) value = 10; // Ensure maximum value is 10
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="W"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1049,6 +1149,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={60}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 60) value = 60; // Ensure maximum value is 60
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="O"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1060,6 +1167,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={200}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 200) value = 200; // Ensure maximum value is 200
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="RC"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1071,6 +1185,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={30}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 30) value = 30; // Ensure maximum value is 30
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="M"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1082,6 +1203,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={15}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 15) value = 15; // Ensure maximum value is 15
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="NB"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1093,6 +1221,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={20}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 20) value = 20; // Ensure maximum value is 20
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="WB"
                       className="border rounded p-1 bg-blue-50 w-16"
                     />
@@ -1104,6 +1239,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={5}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 5) value = 5; // Ensure maximum value is 5
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="S"
                       className="border rounded p-1 bg-red-50 w-16"
                     />
@@ -1115,6 +1257,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={7}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 7) value = 7; // Ensure maximum value is 7
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="C"
                       className="border rounded p-1 bg-red-50 w-16"
                     />
@@ -1126,6 +1275,13 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       min={0}
                       max={5}
                       onChange={handleAddInputChange}
+                      onInput={(e) => {
+                        let value = e.target.value;
+                        if (value < 0) value = 0; // Ensure minimum value is 0
+                        if (value > 5) value = 5; // Ensure maximum value is 5
+                        e.target.value = value;
+                        handleAddInputChange(e); // Update the form data
+                      }}
                       placeholder="RO"
                       className="border rounded p-1 bg-red-50 w-16"
                     />

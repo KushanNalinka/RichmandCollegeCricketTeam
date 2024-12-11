@@ -201,6 +201,7 @@ const ScorecardData = () => {
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">M</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Nb</th>
             <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Wb</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">ECON</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
@@ -213,7 +214,7 @@ const ScorecardData = () => {
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.maidens}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.noBalls}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{bowler.wides}</td>
-            
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{(bowler.runsConceded/bowler.overs).toFixed(2)}</td>
             </tr>
           ))}
           {/* Total Wickets Row

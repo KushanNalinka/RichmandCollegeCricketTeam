@@ -19,8 +19,9 @@ const ScoreCardPage = () => {
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [playersStats, setPlayersStats] = useState([]);
+  const [inningStats, setInningStats] = useState([]);
   const [battingPlayerStats, setBattingPlayerStats] = useState([]);
-  const [bawllingPlayerStats, setBawllingPlayerStats] = useState([]);
+  const [bawlingPlayerStats, setBawlingPlayerStats] = useState([]);
   const [inningNumber, setInningNumber] = useState(); 
   const [matchType, setMatchType] = useState(); 
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
@@ -80,19 +81,22 @@ const ScoreCardPage = () => {
         .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`)
         .then(response => {
           const playersStats = response.data;
+          setPlayersStats(playersStats);
           // Apply inning filter only for Test matches
           if (matchType === "Test") {
             const inningStats = filterInningStats(playersStats, inningNumber);
             const battingStats = inningStats.filter(stat => stat.balls > 0);
             const bawlingStats = inningStats.filter(stat => stat.overs > 0);
             setBattingPlayerStats(battingStats);
-            setBawllingPlayerStats(bawlingStats);
+            setBawlingPlayerStats(bawlingStats);
+            setInningStats(inningStats);
           } else {
             // For ODI and T20, show all stats (no inning filter needed)
             const battingStats = playersStats.filter(stat => stat.balls > 0);
             const bawlingStats = playersStats.filter(stat => stat.overs > 0);
             setBattingPlayerStats(battingStats);
-            setBawllingPlayerStats(bawlingStats);
+            setBawlingPlayerStats(bawlingStats);
+            setInningStats(playersStats);
           }
           console.log("Player stats: ", battingPlayerStats[0]);
         })
@@ -273,25 +277,25 @@ const ScoreCardPage = () => {
                             Batting
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Runs
+                            R
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Balls
+                            B
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 text-left text-xs font-semibold tracking-wider">
                             4s
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 text-left text-xs font-semibold tracking-wider">
                             6s
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            50s
+                            50
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            100s
+                            100
                           </th>
                           <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            <p>strikeRate</p>
+                            <p>SR</p>
                           </th>
                           {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                             <p>{match.runs}/{match.wickets}<span>({match.overs})</span></p>
@@ -301,10 +305,7 @@ const ScoreCardPage = () => {
 
                       <tbody className=" divide-y  divide-gray-300">
                         {battingPlayerStats && battingPlayerStats.map((player, index2) =>
-                          <tr
-                            key={index2}
-                            className=" hover:bg-gray-50 h-full align-middle"
-                          >
+                          <tr key={index2} className=" hover:bg-gray-50 h-full">
                             <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                               {player.player.name}
                             </td>
@@ -340,19 +341,25 @@ const ScoreCardPage = () => {
                           Bowling
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Overs
+                          O
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Run Conceded
+                          R
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Wickets
+                          W
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          <p>Strike Rate</p>
+                          M
                         </th>
                         <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          <p>Economy Rate</p>
+                          NB
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          WB
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          ECON
                         </th>
                         {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                           <p>{match.oppositionRuns}/{match.oppositionWickets}<span>({match.oppositionOvers})</span></p>
@@ -361,11 +368,8 @@ const ScoreCardPage = () => {
                     </thead>
 
                     <tbody className=" divide-y  divide-gray-300">
-                      {battingPlayerStats && bawllingPlayerStats.map((player, index3) =>
-                        <tr
-                          key={index3}
-                          className=" hover:bg-gray-50 h-full align-middle"
-                        >
+                      {bawlingPlayerStats && bawlingPlayerStats.map((player, index3) =>
+                        <tr key={index3} className=" hover:bg-gray-50 h-full">
                           <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
@@ -379,10 +383,77 @@ const ScoreCardPage = () => {
                             {player.wickets}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {((player.overs*6)/player.wickets).toFixed(2)}
+                            {player.maidens}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {player.noBalls}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {player.wides}
                           </td>
                           <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
                             {(player.runsConceded/player.overs).toFixed(2)}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                  <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
+                    <thead className=" bg-[#08165A] text-white rounded">
+                      <tr>
+                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                          Fielding
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          C
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          S
+                        </th>
+                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          RO
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className=" divide-y  divide-gray-300">
+                      {inningStats && inningStats.map((player, index4) =>
+                        <tr key={index4} className=" hover:bg-gray-50 h-full" >
+                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                            {player.player.name}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {player.catches}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {player.stumps}
+                          </td>
+                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            {player.runOuts}
                           </td>
                         </tr>
                       )}

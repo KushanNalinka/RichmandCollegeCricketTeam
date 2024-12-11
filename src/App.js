@@ -66,12 +66,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
-
-          <Route path ='/admin' element ={<Admin/>}/>
            {/* Protected Routes */}
            <Route path="/member"element={<MemberInitial />} />
-           <Route
-            path="/playerProfile"
+           <Route path="/playerProfile"
             element={
               
                 <PlayerProfile />
@@ -178,6 +175,7 @@ function App() {
          <Route path="/initial-about-us" element={<InitialAboutUs />} />
 
          <Route path="/admin-news" element={<NewsCreator />} />
+         <Route path="/admin-control" element={<Admin />} />
 
           
           {/* <Route

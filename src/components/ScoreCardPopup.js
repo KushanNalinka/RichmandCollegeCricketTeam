@@ -123,28 +123,70 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
     return { fifties, centuries };
   };
 
-  const validationErrors = () => {
-    const newErrors = {};
-    if (!formData.player.playerId) {
-      message.error("Please select a player before entering stats.");
-
-    } else {
-      // Check if balls is provided for runs, 4s, and 6s
-      if (
-        !formData.balls &&
-        (formData.runs || formData.fours || formData.sixers)
-      ) {
-        newErrors.balls = "Balls must be specified to enter runs, 4s, or 6s.";
-      } else {
-        // Check if overs is provided for wickets and runs conceded
-        if (!formData.overs && (formData.wickets || formData.runsConceded)) {
-          newErrors.overs = "Overs must be specified to enter wickets or runs conceded.";
-        }
-      }
+  const validateAllPlayerStats = (formData) => {
+    const errors = {};
+  
+    if (formData.runs < 0 || formData.runs > 400) {
+      errors.runs = "Runs must be between 0 and 400.";
     }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  
+    if (formData.balls < 0 || formData.balls > 700) {
+      errors.balls = "Balls must be between 0 and 700.";
+    }
+  
+    if (formData.fours < 0 || formData.fours > 50) {
+      errors.fours = "Fours must be between 0 and 50.";
+    }
+  
+    if (formData.sixers < 0 || formData.sixers > 20) {
+      errors.sixers = "Sixes must be between 0 and 20.";
+    }
+  
+    if (!formData.howOut) {
+      errors.howOut = "Dismissal type (howOut) is required.";
+    }
+  
+    if (formData.wickets < 0 || formData.wickets > 10) {
+      errors.wickets = "Wickets must be between 0 and 10.";
+    }
+  
+    if (formData.overs < 0 || formData.overs > 60) {
+      errors.overs = "Overs must be between 0 and 60.";
+    }
+  
+    if (formData.runsConceded < 0 || formData.runsConceded > 200) {
+      errors.runsConceded = "Runs conceded must be between 0 and 200.";
+    }
+  
+    if (formData.maidens < 0 || formData.maidens > 30) {
+      errors.maidens = "Maidens must be between 0 and 30.";
+    }
+  
+    if (formData.noBalls < 0 || formData.noBalls > 15) {
+      errors.noBalls = "No Balls must be between 0 and 15.";
+    }
+  
+    if (formData.wides < 0 || formData.wides > 20) {
+      errors.wides = "Wides must be between 0 and 20.";
+    }
+  
+    if (formData.stumps < 0 || formData.stumps > 5) {
+      errors.stumps = "Stumps must be between 0 and 5.";
+    }
+  
+    if (formData.catches < 0 || formData.catches > 7) {
+      errors.catches = "Catches must be between 0 and 7.";
+    }
+  
+    if (formData.runOuts < 0 || formData.runOuts > 5) {
+      errors.runOuts = "Run Outs must be between 0 and 5.";
+    }
+  
+    if (formData.remarks && formData.remarks.length > 200) {
+      errors.remarks = "Remarks length must not exceed 200 characters.";
+    }
+  
+    return errors;
   };
 
   useEffect(() => {
@@ -260,8 +302,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       }));
     } else {
       setEditFormData(prev => ({ ...prev, [name]: value }));
-    }
-    
+    };
   };
 
   // Add player stat
@@ -291,46 +332,58 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       }
     };
     try {
-      setUploading(true);
-      const {fifties, centuries} = calculateMilestones(formData.runs);
-      const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
-      console.log("submitted player stats: ", response.data);
-      dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
+      // Validate all fields
+        const allErrors = validateAllPlayerStats(formData);
 
-      // Reset the form
-      setFormData({
-        inning: "1",
-        runs: 0,
-        wickets: 0,
-        fours: 0,
-        sixers: 0,
-        fifties: 0,
-        centuries: 0,
-        balls: 0,
-        overs: 0,
-        runsConceded: 0,
-        maidens:0,
-        noBalls:0,
-        wides:0,
-        stumps:0,
-        catches:0,
-        runOuts:0,
-        player: {
-          playerId: 0,
-          name: "",
-        },
-        match: {
-          matchId: matchId,
-        },
-        howOut:"",
-        remarks:"",
-
-      });
-      setIsSubmitted(!isSubmitted);
-      message.success("Player stats added successfully!");
-      console.log("Player stats response :", response.data);
-      setIsAdding(false);
-      setIsNewScoreAdded(!isNewScoreAdded);
+        if (Object.keys(allErrors).length > 0) {
+          // Generate a list of error messages
+          const errorList = Object.values(allErrors).map((error, index) => (
+            <li key={index}>{error}</li>
+          ));
+          message.error(errorList); // State to display the error list
+        } else {
+          setUploading(true);
+          const {fifties, centuries} = calculateMilestones(formData.runs);
+          const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
+          console.log("submitted player stats: ", response.data);
+          dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
+    
+          // Reset the form
+          setFormData({
+            inning: "1",
+            runs: 0,
+            wickets: 0,
+            fours: 0,
+            sixers: 0,
+            fifties: 0,
+            centuries: 0,
+            balls: 0,
+            overs: 0,
+            runsConceded: 0,
+            maidens:0,
+            noBalls:0,
+            wides:0,
+            stumps:0,
+            catches:0,
+            runOuts:0,
+            player: {
+              playerId: 0,
+              name: "",
+            },
+            match: {
+              matchId: matchId,
+            },
+            howOut:"",
+            remarks:"",
+    
+          });
+          setIsSubmitted(!isSubmitted);
+          message.success("Player stats added successfully!");
+          console.log("Player stats response :", response.data);
+          setIsAdding(false);
+          setIsNewScoreAdded(!isNewScoreAdded);
+        };
+      
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -400,45 +453,56 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
       }
     };
     try {
-      setUploading(true);
-      const {fifties, centuries} = calculateMilestones(editFormData.runs);
-      console.log("formData edit:", editFormData);
-      const response = await axios.put(
-        `${API_URL}playerStats/update/${id}`,
-        {...editFormData, inning:(inningNumber || editFormData.inning), fifties:fifties, centuries:centuries}
-      );
-      console.log("Edit response: ", response.data);
-      message.success("Player stats updated successfully!");
-      dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
-      setEditFormData({
-        inning: "1",
-        runs: 0,
-        wickets: 0,
-        fours: 0,
-        sixers: 0,
-        fifties: 0,
-        centuries: 0,
-        balls: 0,
-        overs: 0,
-        runsConceded: 0,
-        maidens:0,
-        player: {
-          playerId: 0,
-          name: "",
-        },
-        match: {
-          matchId: matchId,
-        },
-        howOut:"",
-        remarks:"",
-        noBalls:0,
-        wides:0,
-        stumps:0,
-        catches:0,
-        runOuts:0,
-      });
-      setIsEditButtonPressed(false);
-      setIsSubmitted(!isSubmitted);
+      // Validate all fields
+      const allErrors = validateAllPlayerStats(formData);
+
+      if (Object.keys(allErrors).length > 0) {
+        // Generate a list of error messages
+        const errorList = Object.values(allErrors).map((error, index) => (
+          <li key={index}>{error}</li>
+        ));
+        message.error(errorList); // State to display the error list
+      } else {
+        setUploading(true);
+        const {fifties, centuries} = calculateMilestones(editFormData.runs);
+        console.log("formData edit:", editFormData);
+        const response = await axios.put(
+          `${API_URL}playerStats/update/${id}`,
+          {...editFormData, inning:(inningNumber || editFormData.inning), fifties:fifties, centuries:centuries}
+        );
+        console.log("Edit response: ", response.data);
+        message.success("Player stats updated successfully!");
+        dispatch({ type: "EDIT_PLAYER_STAT", payload: response.data });
+        setEditFormData({
+          inning: "1",
+          runs: 0,
+          wickets: 0,
+          fours: 0,
+          sixers: 0,
+          fifties: 0,
+          centuries: 0,
+          balls: 0,
+          overs: 0,
+          runsConceded: 0,
+          maidens:0,
+          player: {
+            playerId: 0,
+            name: "",
+          },
+          match: {
+            matchId: matchId,
+          },
+          howOut:"",
+          remarks:"",
+          noBalls:0,
+          wides:0,
+          stumps:0,
+          catches:0,
+          runOuts:0,
+        });
+        setIsEditButtonPressed(false);
+        setIsSubmitted(!isSubmitted);
+      };  
 
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -588,12 +652,17 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               name="runs"
                               value={editFormData.runs}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 400) value = 400; // Ensure maximum value is 400
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="R"
                               min={0}
+                              max={400}
                               className="border rounded p-1 w-16"
-                              disabled={
-                                !formData.player.playerId || !formData.balls
-                              }
                             />
                           </td>
                           <td className="px-4 h-10 whitespace-nowrap text-sm text-gray-600">
@@ -602,7 +671,15 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               name="balls"
                               value={editFormData.balls}
                               min={0}
+                              max={700}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 700) value = 700; // Ensure maximum value is 700
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="B"
                               className="border rounded p-1 w-16"
                             />
@@ -612,8 +689,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="fours"
                               min={0}
+                              max={50}
                               value={editFormData.fours}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 50) value = 50; // Ensure maximum value is 400
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="4s"
                               className="border rounded p-1 w-16"
                             />
@@ -623,8 +708,16 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="sixers"
                               min={0}
+                              max={20}
                               value={editFormData.sixers}
                               onChange={handleEditInputChange}
+                              onInput={(e) => {
+                                let value = e.target.value;
+                                if (value < 0) value = 0; // Ensure minimum value is 0
+                                if (value > 20) value = 20; // Ensure maximum value is 20
+                                e.target.value = value;
+                                handleEditInputChange(e); // Update the form data
+                              }}
                               placeholder="6s"
                               className="border rounded p-1 w-16"
                             />
@@ -655,6 +748,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="wickets"
                               min={0}
+                              max={10}
                               value={editFormData.wickets}
                               onChange={handleEditInputChange}
                               placeholder="W"
@@ -666,6 +760,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="overs"
                               min={0}
+                              max={60}
                               value={editFormData.overs}
                               onChange={handleEditInputChange}
                               placeholder="O"
@@ -677,6 +772,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="runsConceded"
                               min={0}
+                              max={200}
                               value={editFormData.runsConceded}
                               onChange={handleEditInputChange}
                               placeholder="RC"
@@ -688,6 +784,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="maidens"
                               min={0}
+                              max={30}
                               value={editFormData.maidens}
                               onChange={handleEditInputChange}
                               placeholder="M"
@@ -699,6 +796,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="noBalls"
                               min={0}
+                              max={15}
                               value={editFormData.noBalls}
                               onChange={handleEditInputChange}
                               placeholder="NB"
@@ -710,6 +808,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="wides"
                               min={0}
+                              max={20}
                               value={editFormData.wides}
                               onChange={handleEditInputChange}
                               placeholder="WB"
@@ -721,6 +820,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="stumps"
                               min={0}
+                              max={5}
                               value={editFormData.stumps}
                               onChange={handleEditInputChange}
                               placeholder="S"
@@ -732,6 +832,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="catches"
                               min={0}
+                              max={7}
                               value={editFormData.catches}
                               onChange={handleEditInputChange}
                               placeholder="C"
@@ -743,6 +844,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                               type="number"
                               name="runOuts"
                               min={0}
+                              max={5}
                               value={editFormData.runOuts}
                               onChange={handleEditInputChange}
                               placeholder="RO"
@@ -871,6 +973,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="runs"
                       min={0}
+                      max={400}
                       onChange={handleAddInputChange}
                       placeholder="R"
                       className="border rounded p-1 w-16"
@@ -881,6 +984,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="balls"
                       min={0}
+                      max={700}
                       onChange={handleAddInputChange}
                       placeholder="B"
                       className="border rounded p-1 w-16"
@@ -891,6 +995,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="fours"
                       min={0}
+                      max={50}
                       onChange={handleAddInputChange}
                       placeholder="4s"
                       className="border rounded p-1 w-16"
@@ -901,6 +1006,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="sixers"
                       min={0}
+                      max={20}
                       onChange={handleAddInputChange}
                       placeholder="6s"
                       className="border rounded p-1 w-16"
@@ -930,6 +1036,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="wickets"
                       min={0}
+                      max={10}
                       onChange={handleAddInputChange}
                       placeholder="W"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -940,6 +1047,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="overs"
                       min={0}
+                      max={60}
                       onChange={handleAddInputChange}
                       placeholder="O"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -950,6 +1058,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="runsConceded"
                       min={0}
+                      max={200}
                       onChange={handleAddInputChange}
                       placeholder="RC"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -960,6 +1069,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="maidens"
                       min={0}
+                      max={30}
                       onChange={handleAddInputChange}
                       placeholder="M"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -970,6 +1080,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="noBalls"
                       min={0}
+                      max={15}
                       onChange={handleAddInputChange}
                       placeholder="NB"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -980,6 +1091,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="wides"
                       min={0}
+                      max={20}
                       onChange={handleAddInputChange}
                       placeholder="WB"
                       className="border rounded p-1 bg-blue-50 w-16"
@@ -990,6 +1102,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="stumps"
                       min={0}
+                      max={5}
                       onChange={handleAddInputChange}
                       placeholder="S"
                       className="border rounded p-1 bg-red-50 w-16"
@@ -1000,6 +1113,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="catches"
                       min={0}
+                      max={7}
                       onChange={handleAddInputChange}
                       placeholder="C"
                       className="border rounded p-1 bg-red-50 w-16"
@@ -1010,6 +1124,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
                       type="number"
                       name="runOuts"
                       min={0}
+                      max={5}
                       onChange={handleAddInputChange}
                       placeholder="RO"
                       className="border rounded p-1 bg-red-50 w-16"

@@ -5,6 +5,7 @@ import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/kusal.png";
 import Footer from '../components/Footer';
+import { message } from 'antd';
 //import { useAuth } from "../hooks/UseAuth";
 
 const PlayerProfile = () => {
@@ -13,23 +14,52 @@ const PlayerProfile = () => {
   const [playerStat, setPlayerStat] = useState(null);
   const [filterUnder, setFilterUnder] = useState("");
   const [filterYear, setFilterYear] = useState("");
+  const [practiceSessions, setPracticeSessions] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const fetchData = async () => {
-    const playerData = await axios.get( `${API_URL}admin/players/${user.playerId}`);
-    setPlayerProfile(playerData.data);
+      try {
+        // Fetch player profile
+        const playerData = await axios.get(`${API_URL}admin/players/${user.playerId}`);
+        setPlayerProfile(playerData.data);
 
-    const playerStat = await axios.get( `${API_URL}playerStats/all-stats/${user.playerId}`);
-    setPlayerStat(playerStat.data);
-    console.log("player stats", playerStat);
-    console.log("player profile", playerProfile);
-  };
+        // Fetch player stats
+        const playerStatData = await axios.get(`${API_URL}playerStats/all-stats/${user.playerId}`);
+        setPlayerStat(playerStatData.data);
+
+        // Fetch practice sessions
+        const practiceSessionData = await axios.get(`${API_URL}practiseSessions/player/${user.playerId}`);
+        setPracticeSessions(practiceSessionData.data);
+
+        console.log("Player stats", playerStatData.data);
+        console.log("Player profile", playerData.data);
+      } catch (err) {
+        if (err.response) {
+          // Server responded with a status other than 200
+          console.error("Server Error:", err.response.data);
+          if (err.response.status === 404) {
+            message.error("Data not found for the given player.");
+          } else {
+            message.error("Failed to fetch data. Please try again later.");
+          }
+        } else if (err.request) {
+          // No response received
+          console.error("No response from server:", err.request);
+          message.error("No response from the server. Please check your network connection.");
+        } else {
+          // Other errors
+          console.error("Error:", err.message);
+          message.error("An unexpected error occurred.");
+        }
+      }
+      
+    };
 
   fetchData();
 
-  }, []);
+  }, [API_URL, user.playerId]);
 
     const summarizeStats = (type) => {
 
@@ -515,11 +545,46 @@ const PlayerProfile = () => {
                     </tbody>
                   </table>
                 </div>
-
+                {/* Practice Sessions Table */}
+                <div className="mt-6 bg-gray-200 w-full lg:p-6 px-2 py-4 text-black rounded-lg shadow-md">
+                  <h2 className="text-xl font-bold mb-4 text-center">Practice Sessions</h2>
+                  <div className="flex hover:overflow-x-auto overflow-x-hidden">
+                    <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="py-2 px-5 text-center">Date</th>
+                          <th className="py-2 px-5 text-center">Type</th>
+                          <th className="py-2 px-5 text-center">Start Time</th>
+                          <th className="py-2 px-5 text-center">End Time</th>
+                          <th className="py-2 px-5 text-center">Venue</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {practiceSessions.length > 0 ? (
+                          practiceSessions.map((session, index) => (
+                            <tr key={index} className="border-b border-gray-300">
+                              <td className="py-2 px-5 text-center">{session.date}</td>
+                              <td className="py-2 px-5 text-center">{session.pracType}</td>
+                              <td className="py-2 px-5 text-center">{session.startTime}</td>
+                              <td className="py-2 px-5 text-center">{session.endTime}</td>
+                              <td className="py-2 px-5 text-center">{session.venue}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="5" className="py-2 px-5 text-center text-gray-500">
+                              No practice sessions available.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
              </div>
            
-      </div>
+          </div>
        <Footer />
        </>
   );

@@ -133,7 +133,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       case "overs":  
         if (!value) {
           newErrors.overs = "Overs are required.";
-        }else if (!value || value < 0 || value > 100) newErrors.overs = "Overs must be between 0 and 100.";
+        }else if (!value || value < 0 || value > 120) newErrors.overs = "Overs must be between 0 and 120.";
         break;
       case "runs":  
         if (!value) {
@@ -148,7 +148,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
         case "oppositionOvers":  
         if (!value) {
           newErrors.oppositionOvers = "Opposition Overs are required.";
-        } else if (!value || value < 0 || value > 100) newErrors.oppositionOvers = "Opposition overs must be between 0 and 100.";
+        } else if (!value || value < 0 || value > 120) newErrors.oppositionOvers = "Opposition overs must be between 0 and 120.";
         break;
         case "oppositionRuns":
         if (!value) {
@@ -377,7 +377,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="overs"
                 min={0}
-                max={100}
+                max={120}
                 value={statData.overs}
                 onChange={handleChange}
                 required
@@ -420,7 +420,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="oppositionOvers"
                 min={0}
-                max={100}
+                max={120}
                 value={statData.oppositionOvers}
                 onChange={handleChange}
                 required

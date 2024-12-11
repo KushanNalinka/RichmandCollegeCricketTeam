@@ -201,30 +201,35 @@ const ScoreCardPage = () => {
               border: "1px solid rgba(255, 255, 255, 0.3)"
             }}
           >
-            {paginatedData.map((match) =>
-  
+            {paginatedData.map((match) =>{
+
+              const currentStats =
+              inningNumber && match.matchId === currentMatchID
+                ? matchSummary.find(
+                    (item) =>
+                      item.matchId === match.matchId && item.inning === inningNumber
+                  ) || match // Fall back to match if no inning is selected
+                : match;
+              return(
               <div key={match.matchId} className="relative flex-grow ">
                 <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
                   <div className="flex gap-5 items-center w-[30%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.runs}/{match.wickets}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.overs} </p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{currentStats.runs}/{currentStats.wickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{currentStats.overs} </p>
                     </div>
                     <div className="flex flex-col justify-center items-center w-[10%]">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
-                      <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-xl text-lg font-bold text-[#480D35]">S</span></p>
+                        <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-xl text-lg font-bold text-[#480D35]">S</span></p>
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-[45%]">
-
-
                       <img src={`${`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={match.matchName} className="w-8 h-8"/>
-
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.oppositionRuns}/{match.oppositionWickets}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.oppositionOvers}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{currentStats.oppositionRuns}/{currentStats.oppositionWickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{currentStats.oppositionOvers}</p>
                     </div>
                   </div>
                   <div className="w-[40%] lg:w-[40%] justify-center flex ">
@@ -399,7 +404,7 @@ const ScoreCardPage = () => {
                     </tbody>
                   </table>
                   <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
-                    <thead className=" bg-[#08165A] text-white rounded">
+                    <thead className=" bg-[#480D35] text-white rounded">
                       <tr>
                         <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
                           Fielding
@@ -459,10 +464,9 @@ const ScoreCardPage = () => {
                       )}
                     </tbody>
                   </table>
-                  </>
-                  }
-                </div>
-            )}
+                </>}
+              </div>);
+            })}
           </div>
         </div>
         <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">

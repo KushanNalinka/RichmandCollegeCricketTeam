@@ -1014,19 +1014,19 @@ const ScoreCard = ({ onMatchId }) => {
 
               {/* Score Section */}
               <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6 space-y-4 md:space-y-0">
-                <span className="text-2xl md:text-4xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+                <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
                   {isTestMatch ? `${matchData.runs}/${matchData.wickets} (1st)` : `${matchData.runs}/${matchData.wickets}`}
                 </span>
                 {isTestMatch && secondInningData && (
-                  <span className="text-2xl md:text-4xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+                  <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
                     {`${secondInningData.runs}/${secondInningData.wickets} (2nd)`}
                   </span>
                 )}
-                <span className="text-2xl md:text-4xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+                <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
                   {isTestMatch ? `${matchData.oppositionRuns}/${matchData.oppositionWickets} (1st)` : `${matchData.oppositionRuns}/${matchData.oppositionWickets}`}
                 </span>
                 {isTestMatch && secondInningData && (
-                  <span className="text-2xl md:text-4xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+                  <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
                     {`${secondInningData.oppositionRuns}/${secondInningData.oppositionWickets} (2nd)`}
                   </span>
                 )}

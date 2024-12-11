@@ -73,7 +73,11 @@ const ScorecardData = () => {
                   <div className="h-8 md:h-12 w-px bg-gradient-to-t from-transparent via-white to-transparent" />
                 </div>
                 <div className="flex flex-col items-center space-y-2 w-full md:w-1/4">
-                  <img src={teams[1].logo} alt={teams[1].name} className="w-10 h-10 " />
+                  <img src=  {`${`http://rcc.dockyardsoftware.com/images/${ teams[1].logo ? teams[1].logo .split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+
+                  alt={teams[1].name}
+                   className="w-10 h-10 " />
+
                   <div className="text-center">
                     <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[1].name.toUpperCase()}</h3>
                     <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[1].score}</p>
@@ -228,9 +232,43 @@ const ScorecardData = () => {
   </td>
 </tr>
 
+
+<tr>
+  <td colSpan="7">
+    <div className="overflow-x-auto mb-8">
+      <table className="w-full table-auto divide-y divide-gray-300 bg-white border border-gray-200">
+        <thead className="bg-[#4A0D34] text-white">
+          <tr>
+            <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">Fielding</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">C</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">S</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">RO</th>
+          
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {bowlingStats.map((fielding, index) => (
+            <tr key={index}>
+            <td className="px-2 py-1 text-sm font-medium text-gray-900 ">{fielding.player.name}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.catches}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.stumps}</td>
+              <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.runOuts}</td>
+             
+            
+            </tr>
+          ))}
+         
+        </tbody>
+      </table>
+    </div>
+  </td>
+</tr>
+
                       
         </tbody>
           </table>
+
+          
         </div>
       </div>
     </div>

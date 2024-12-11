@@ -603,23 +603,15 @@ const NewsDetailPage = () => {
   }, [id]);
 
   const handleNextImage = () => {
-    if (newsItem && newsItem.images && newsItem.images.length > 0) {
-      setZoomLevel(1);
-      setPosition({ x: 0, y: 0 });
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
-      );
-    }
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === newsItem.images.length - 1 ? 0 : prevIndex + 1
+    );
   };
-  
+
   const handlePrevImage = () => {
-    if (newsItem && newsItem.images && newsItem.images.length > 0) {
-      setZoomLevel(1);
-      setPosition({ x: 0, y: 0 });
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
-      );
-    }
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? newsItem.images.length - 1 : prevIndex - 1
+    );
   };
   
   const handleZoomIn = () => setZoomLevel((prevZoom) => Math.min(prevZoom + 0.2, 3));
@@ -663,7 +655,7 @@ const NewsDetailPage = () => {
     <div className="p-6 text-center">
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800">{newsItem.heading}</h1>
       <p className="text-gray-500 text-xs sm:text-sm mt-2">
-        Published {new Date(newsItem.dateTime).toLocaleDateString()} • {newsItem.author}
+        Published {new Date(newsItem.createdOn).toLocaleDateString()} • {newsItem.author}
       </p>
 
       <button
@@ -685,9 +677,15 @@ const NewsDetailPage = () => {
               transition: 'transform 0.3s ease-in-out',
             }}
           >
+            {/* <img
+               src={newsItem.images[currentImageIndex]?.imageUrl}
+              
+            /> */}
+
+
             <img
-              // src={newsItem.images[currentImageIndex]}
-              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex]? newsItem.images[currentImageIndex].split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
+              //  src={newsItem.images[currentImageIndex]?.imageUrl}
+              src={`${`http://rcc.dockyardsoftware.com/images/${ newsItem.images[currentImageIndex].imageUrl? newsItem.images[currentImageIndex]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
               alt={`Slide ${currentImageIndex + 1}`}
               className="w-full h-full"
               style={{

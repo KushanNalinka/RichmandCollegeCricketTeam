@@ -46,7 +46,7 @@ const OfficialsTable = () => {
         console.log("Officials Data:", response.data);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the official data!", error);
       });
   }, [isSubmitted, isDeleted]);
 

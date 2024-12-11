@@ -56,7 +56,7 @@ const CoachTable = () => {
         console.log("All coaches:", coaches);
       })
       .catch((error) => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the coach data!", error);
       });
   };
 

@@ -42,10 +42,6 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: ""
-    }));
     setFormData({
       ...formData,
       [name]: value
@@ -56,7 +52,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.players = "Please select players.";
+      newErrors.players = "Select players.";
     };
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -95,8 +91,8 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
     } catch (error) {
       console.error("Error submitting form:", error);
 
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
+      if (error.response && error.response.data) {
+        message.error(`Failed to submit: ${error.response.data}`);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }
@@ -107,29 +103,28 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      players: ""
-    }));
-    // if (selectedPlayers.includes(player)) {
-    //   // If player is already selected, remove them
-    //   setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
-    // } else {
-    //   // Otherwise, add the player to the list
-    //   setSelectedPlayers([...selectedPlayers, player]);
-    // }
-
+    let updatedPlayers;
     const isSelected = selectedPlayers.some(p => p.playerId === player.playerId);
     if (isSelected) {
-      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+      updatedPlayers = selectedPlayers.filter(p => p.playerId !== player.playerId);
     } else {
-      setSelectedPlayers([...selectedPlayers, player]);
-    }
+      updatedPlayers = [...selectedPlayers, player];
+    };
+    setSelectedPlayers(updatedPlayers);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: updatedPlayers.length === 0 ? "Select players." : "",
+    }));
+  
     console.log("selected players: ", selectedPlayers.name);
   };
 
   const clearSelectedPlayers = () => {
     setSelectedPlayers([]); // Clear all selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: "Select players.",
+    }));
   };
   
   useEffect(

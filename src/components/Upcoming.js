@@ -23,10 +23,12 @@ const filterMatches = (data, selectedAgeGroup, selectedMatchType) => {
   let filtered = data;
   
   if (selectedAgeGroup !== 'All') {
-    filtered = filtered.filter(match =>
-      match.under && match.under.toLowerCase() === selectedAgeGroup.toLowerCase()
+    filtered = filtered.filter(
+      (match) =>
+        `${match.under}-${match.teamYear}`.toLowerCase() === selectedAgeGroup.toLowerCase()
     );
   }
+
 
   if (selectedMatchType !== 'All') {
     filtered = filtered.filter(match =>
@@ -46,7 +48,9 @@ export default function Upcoming({ selectedAgeGroup, selectedMatchType }) {
     fetch(`${API_URL}/matches/all`)
       .then(response => response.json())
       .then(data => {
+        console.log("Fetched Matches:", data); // Log all fetched matches
         const upcomingMatches = filterMatches(data, selectedAgeGroup, selectedMatchType);
+        console.log("Filtered Matches:", upcomingMatches); // Log matches after applying filters
         setMatchDataList(upcomingMatches);
       })
       .catch(error => console.error('Error fetching match summaries:', error));

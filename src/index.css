@@ -260,6 +260,7 @@ html {
 
 }
 /* Media queries for responsiveness */
+/* Large screens */
 @media (min-width: 1280px) {
   #richmond-text {
     font-size: 12vw;
@@ -269,7 +270,18 @@ html {
     font-size: 12vw;
     margin-top: 30vh;
   }
+
+  /* Hide mobile background on large screens */
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: none !important;
+  }
 }
+
+/* Tablet screens (1024px and smaller) */
 @media (max-width: 1024px) {
   #richmond-text {
     font-size: 17.5vw;
@@ -279,7 +291,17 @@ html {
     font-size: 17vw;
     margin-top: 10vh;
   }
+
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: none !important;
+  }
 }
+
+/* Mobile screens (768px and smaller) */
 @media (max-width: 768px) {
   .effect {
     font-size: 4vw;
@@ -289,7 +311,19 @@ html {
     font-size: 16vw;
     margin-top: 2vh;
   }
+
+  /* This will ensure the mobile view background is hidden on non-mobile devices */
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: block !important;
+  }
+
 }
+
+/* Extra small devices (480px and smaller) */
 @media (max-width: 480px) {
   .effect {
     font-size: 9.5vw;
@@ -300,5 +334,17 @@ html {
     margin-top: 0.1vh;
   }
 
+  /* Hide desktop and tablet backgrounds */
+  .hide-on-small {
+    display: none !important;
+  }
+
+  .show-on-small {
+    display: block !important;
+  }
 }
+
+
+
+
 

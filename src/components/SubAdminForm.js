@@ -52,6 +52,16 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
   const validateForm = (name, value) => {
     const newErrors = {};
     switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
       case "username":  
         //username validation
         if (value.length < 4 || value.length > 20) {

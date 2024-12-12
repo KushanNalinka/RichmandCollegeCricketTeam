@@ -59,6 +59,10 @@ const Navbar = () => {
 
                         {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">News</span>
                     </Link>
+                    <Link to={"/admin"} className={`${getLinkClass("/admin")} group flex flex-wrap pl-4 gap-3 py-4 text-2xl cursor-pointer items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
+
+                        {" "}<MdPeople className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Admin</span>
+                    </Link>
                 </ul>
             </div>
         </>   

@@ -46,7 +46,7 @@ import AboutUs from './pages/AboutUs.js';
 import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
-import Admin from './pages/Admin.js';
+import Admin from './pages/AdminPage.js';
 
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 import PrivateRoute from './components/PrivateRoute.js';
@@ -154,6 +154,7 @@ function App() {
          <Route path="/coach" element={<Coaches />} />
          <Route path="/allplayers" element={<AllPlayers />} />
          <Route path='/official' element={<OfficialsTable/>} />
+         <Route path='/admin' element={<Admin/>} />
          <Route path='/player' element={<PlayerInfo/>} />
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />

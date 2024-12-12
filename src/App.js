@@ -48,7 +48,7 @@ import AboutUs from './pages/AboutUs.js';
 import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
-import Admin from './pages/Admin.js';
+import Admin from './pages/AdminPage.js';
 
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 
@@ -57,9 +57,10 @@ import { useAuth } from './hooks/UseAuth.js';
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 
 function App() {
-  
+
 const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
 console.log("Retrieved roles from localStorage:", storedRoles);
+
 
 if (storedRoles.includes("ROLE_PLAYER")) {
   console.log("You are authorized to send emails.");

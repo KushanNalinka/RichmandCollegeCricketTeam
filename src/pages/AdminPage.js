@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
@@ -11,25 +10,27 @@ import logo from "../assets/images/RLogo.png";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
-import OfficialForm from "../components/OfficialsPopupForm";
-import EditOfficialForm from "../components/EditOfficialForm";
+import { useNavigate } from 'react-router-dom';
+import SubAdminForm from "../components/SubAdminForm";
+import EditSubAdminsForm from "../components/EditSubAdminsForm";
+import { message } from "antd";
 
-const OfficialsTable = () => {
-  const [officialData, setOfficialData] = useState([]);
+const Admin= () => {
+  const [adminData, setadminData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
-  const [currentOfficial, setCurrentOfficial] = useState(null);
+  const [currentadmin, setCurrentadmin] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10); // Default rows per page
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [officialToDelete, setOfficialToDelete] = useState(null);
+  const [adminToDelete, setAdminToDelete] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
-
+  const navigate = useNavigate();
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
@@ -37,16 +38,16 @@ const OfficialsTable = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}officials/all`)
+      .get(`${API_URL}admin/all`)
       .then(response => {
-        const officials = response.data;
+        const admins = response.data;
         setUploading(false);
-        const sortedOfficials = officials.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-        setOfficialData(sortedOfficials);
-        console.log("Officials Data:", response.data);
+        const sortedAdmins = admins.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+        console.log('Fetched Admin Data:', response.data);
+        setadminData(sortedAdmins);
       })
       .catch(error => {
-        console.error("There was an error fetching the official data!", error);
+        console.error("There was an error fetching the admin data!", error);
       });
   }, [isSubmitted, isDeleted]);
 
@@ -69,16 +70,16 @@ const OfficialsTable = () => {
     return () => window.removeEventListener('resize', updateRowsPerPage);
   }, []);
 
-  const handleEdit = official => {
-    setCurrentOfficial(official);
+  const handleEdit = admin => {
+    setCurrentadmin(admin);
     setIsEditFormOpen(true);
   };
 
   // Calculate total pages
-  const totalPages = Math.ceil(officialData.length / rowsPerPage);
+  const totalPages = Math.ceil(adminData.length / rowsPerPage);
 
   // Slice data for current page
-  const paginatedData = officialData.slice(
+  const paginatedData = adminData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
@@ -96,40 +97,33 @@ const OfficialsTable = () => {
   };
 
   const handleDelete = id => {
-    setOfficialToDelete(id);
+    setAdminToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
     setUploading(true);
-    try{
-      console.log("Delete Official: ", officialToDelete);
-      const deleteOfficial = await axios.delete(
-        `${API_URL}officials/delete/${officialToDelete}`
-      );
-      message.success("Successfully Deleted!");
+    try {
+      console.log("Delete admins: ", adminToDelete);
+      const response = await axios.delete(`${API_URL}admin/${adminToDelete}`);
+      message.success("Successfully deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);
     } catch (error) {
-      console.error("Error deleting official:", error);
-
+      console.error("Error deleting admin:", error);
       if (error.response && error.response.data && error.response.data.message) {
         message.error(`Failed to delete: ${error.response.data.message}`);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
-      }
+      };
     } finally {
       setUploading(false);
-    }
+    
+    };
   };
-
+  
   const toggleForm = () => {
     setIsFormOpen(!isFormOpen);
-  };
-
-  const handleSaveOfficials = official => {
-    // Logic to save player information, including image upload if necessary
-    setIsFormOpen(false);
   };
 
   const toggleButton = () => {
@@ -181,7 +175,7 @@ const OfficialsTable = () => {
             <div className="flex justify-between items-center content-center mb-3" >
               <NavbarToggleMenu />
               <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
-                Official Details
+                Admin Details
               </h2>
               <button
                 onClick={() => setIsFormOpen(true)}
@@ -197,19 +191,16 @@ const OfficialsTable = () => {
                 <thead className=" text-white">
                   <tr className="bg-gradient-to-r from-[#00175f] to-[#480D35]">
                     <th className="px-4 py-3 lg:rounded-l-lg text-left text-xs font-bold uppercase tracking-wider">
-                      Name
+                     Admin
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Username
+                     Username
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Email
+                     Email
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
                       Contact No
-                    </th>
-                    <th className="px-2 py-3 text-left text-xs font-bold uppercase tracking-wider">
-                      Position
                     </th>
                     <th className="px-2 py-3 lg:rounded-r-lg text-left text-xs font-bold uppercase tracking-wider">
                       Actions
@@ -217,46 +208,45 @@ const OfficialsTable = () => {
                   </tr>
                   <tr className=" h-2"></tr>
                 </thead>
-                <tbody className=" divide-y-2 divide-gray-300 ">
-                  {paginatedData.map((item, index) =>
-                    <tr key={index}
-                      className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                      <td className="px-4  py-4 h-14  lg:rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
-                        
-                        {item.name.split(" ").slice(-2).join(" ")}
-                      </td>
-                      <td className="px-2 py-4 h-14  whitespace-nowrap text-sm ">
-                        {item.username}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm " >
-                        {item.email}
-                      </td>
-                      <td className="px-2 py-4 h-14 whitespace-nowrap text-sm ">
-                        {item.contactNo}
-                      </td>
-                      <td className="px-2 py-4 whitespace-nowrap h-14 text-sm ">
-                        {item.position}
-                      </td>
-                      <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
+                <tbody className="divide-y-2 divide-gray-300">
+                {paginatedData.map((admin, index) => (
+                    <tr
+                    key={index}
+                    className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900"
+                    >
+                    
+                    <td className="px-2 py-4 h-14 whitespace-nowrap text-sm">
+                        {admin.name}
+                    </td>
+                    <td className="px-2 py-4 h-14 whitespace-nowrap text-sm">
+                        {admin.username}
+                    </td>
+                    <td className="px-2 py-4 h-14 whitespace-nowrap text-sm">
+                        {admin.email}
+                    </td>
+                    <td className="px-2 py-4 h-14 whitespace-nowrap text-sm">
+                        {admin.contactNo}
+                    </td>
+                    <td className="px-2 py-4 lg:rounded-r-lg whitespace-nowrap h-14 text-sm space-x-2">
                         <button
-                          onClick={() => handleEdit(item)}
-                          className="text-green-500 hover:text-green-600 text-md"
-                          aria-label="Edit"
-                          title="Edit"
+                        onClick={() => handleEdit(admin)}
+                        className="text-green-500 hover:text-green-600 text-md"
+                        aria-label="Edit"
+                        title="Edit"
                         >
-                          <FaEdit />
+                        <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDelete(item.officialId)}
-                          className="text-red-500 hover:text-red-600 text-md"
-                          aria-label="Delete"
-                          title="Delete"
+                        onClick={() => handleDelete(admin.adminId)}
+                        className="text-red-500 hover:text-red-600 text-md"
+                        aria-label="Delete"
+                        title="Delete"
                         >
-                          <FaTrash />
+                        <FaTrash />
                         </button>
-                      </td>
+                    </td>
                     </tr>
-                  )}
+                ))}
                 </tbody>
               </table>
             </div>
@@ -288,7 +278,7 @@ const OfficialsTable = () => {
               <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
                 <div className="bg-white rounded-3xl shadow-lg lg:p-8 p-5">
                   <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-                  <p>Are you sure you want to delete this official?</p>
+                  <p>Are you sure you want to delete this admin?</p>
                   <div className="flex justify-end mt-4 space-x-2">
                     <button
                       onClick={() => setShowDeleteModal(false)}
@@ -306,10 +296,10 @@ const OfficialsTable = () => {
                 </div>
               </div>
             )}
-          {isFormOpen && <OfficialForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
+          {isFormOpen && <SubAdminForm onClose={handleAddFormClose} isSubmitted={()=>setIsSubmitted(!isSubmitted)}/>}
           {isEditFormOpen &&
-            <EditOfficialForm
-              official={currentOfficial}
+            <EditSubAdminsForm
+              admin={currentadmin}
               onClose={handleEditFormClose}
               isSubmitted={()=>setIsSubmitted(!isSubmitted)}
             />}
@@ -323,4 +313,4 @@ const OfficialsTable = () => {
     </div>
   );
 };
-export default OfficialsTable;
+export default Admin;

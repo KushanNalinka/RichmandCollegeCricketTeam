@@ -172,6 +172,27 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           newErrors["user.username"] = "Username must be between 4 and 20 characters.";
         } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
           newErrors["user.username"] = "Username can only contain letters, numbers, underscores, and hyphens.";
+        } else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+              if (response.data.usernameExists === true) {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  "user.username": "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.username":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
         };
         break;
       
@@ -180,7 +201,29 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors["user.email"] = "Please enter a valid email address";
-        };
+        } else {
+          // Debounced API call for email availability
+         clearTimeout(window.emailValidationTimeout);
+         window.emailValidationTimeout = setTimeout(async () => {
+           try {
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+             console.log("Email validation :", response.data);
+             if (response.data.emailExists === true) {
+               setErrors((prevErrors) => ({
+                 ...prevErrors,
+                 ["user.email"]: "This email is already in use.",
+               }));
+             } else {
+               setErrors((prevErrors) => {
+                 const { "user.email":_, ...rest } = prevErrors;
+                 return rest;
+               });
+             }
+           } catch (error) {
+             console.error("Email validation error:", error);
+           }
+         }, 500); // Delay of 500ms
+       };
         break;
       
       case "user.password":
@@ -253,7 +296,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         if (fieldErrors[field]) {
           errors[field] = fieldErrors[field];
         }
-      }
+      };
     });
     return errors;
   };
@@ -261,13 +304,15 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("editedPlayer: ", formData);
+
     const errors = validateFormData(formData);
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
       console.log("Validation Errors:", errors);
       return;
-    }
+    };
+
     setUploading(true);
       try {
       //   let imageURL = formData.image;

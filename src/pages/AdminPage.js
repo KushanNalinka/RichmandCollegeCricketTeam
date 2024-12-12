@@ -34,27 +34,6 @@ const Admin= () => {
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
-
-//    useEffect(() => {
-//       // Check if main admin is logged in
-//       const savedUserData = localStorage.getItem('userData') || sessionStorage.getItem('userData');
-//       if (!savedUserData) {
-//         navigate('/not-authorized');
-//         return;
-//       }
-//       const { username, roles, token } = JSON.parse(savedUserData);
-  
-//       if (username !== 'admin01' || !roles.includes('ROLE_ADMIN')) {
-//         navigate('/not-authorized');
-//         return;
-//       }
-  
-//       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      
-//     fetchAdmins();
-//   }, [navigate]);
-
   useEffect(() => {
     // Fetch player data for playerId 4
     setUploading(true);

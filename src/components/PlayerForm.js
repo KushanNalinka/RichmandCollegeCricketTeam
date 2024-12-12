@@ -13,9 +13,10 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('token');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  console.log("Access Tocken:", user.accessToken);
 
   const [formData, setFormData] = useState({
     image: null,

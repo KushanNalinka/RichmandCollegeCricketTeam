@@ -253,13 +253,13 @@ const ScoreCardPage = () => {
                         </div>
                         ) 
                       }
-                      <div className="w-36 flex flex-col justify-right items-end ">
-                        <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
+                      <div className="w-36 flex flex-col justify-end items-end ">
+                        <p className=" flex text-sm font-bold text-right text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })} </p>
-                        <p className="flex text-xs font-semibold">{match.venue} </p>
+                        <p className="flex text-xs justify-end  items-end text-right font-semibold">{match.venue} </p>
                       </div>
                     </div>
                     <button

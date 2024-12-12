@@ -85,7 +85,7 @@ const PlayerProfile = () => {
           runsConceded:0,
           bawlingAvg:0,
           battingAvg:0,
-          bestValue:Infinity,
+          bestValue:'N/A',
           economyRate:0,
           bestWickets: 0,
           bestRunsConceded: Infinity,
@@ -98,6 +98,9 @@ const PlayerProfile = () => {
         (filterYear ? stat.match.year === parseInt(filterYear) : true)
       );
 
+    // Track unique innings for both batting and bowling
+    const uniqueBowlingInnings = new Set();
+    const uniqueBattingInnings = new Set();
 
     const summary = filteredStats.reduce(
       (acc, stat) => {
@@ -113,29 +116,23 @@ const PlayerProfile = () => {
         acc.catches += stat.catches || 0;
         acc.stumps += stat.stumps || 0;
         acc.runOuts += stat.runOuts || 0;
-
-        const inningsSet = new Set(); 
-        // Assuming 'stat.inning' contains the inning number (1, 2, etc.)
-        if (stat.inning) {
-          inningsSet.add(Number(stat.inning)); // Add the inning to the Set
-        };
-
-        acc.bowlingInnings = inningsSet.size; // Number of unique innings
         acc.runs += stat.runs || 0;
 
-        const excludedHowOuts = ["Not out", "Retired Hurt", "Did not bat"];
-        if (!excludedHowOuts.includes(stat.howOut)) {
-          acc.battingInnings += 1; // Increment batting innings count
+         // Unique identification of bowling innings
+        if (stat.match.matchId && stat.inning) {
+          uniqueBowlingInnings.add(`${stat.match.matchId}-${stat.inning}`);
         };
+
+        // Count batting innings, excluding specific dismissals
+        const excludedHowOuts = ["Not out", "Retired Hurt", "Did not bat"];
+        if (!excludedHowOuts.includes(stat.howOut) && stat.match.matchId && stat.inning) {
+          uniqueBattingInnings.add(`${stat.match.matchId}-${stat.inning}`);
+        };
+
         acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
 
         const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
-        acc.bestValue = Math.min(acc.bestValue, currentAverage).toFixed(2); 
-        
-        acc.battingAvg =  acc.battingInnings > 0 ? (acc.runs / acc.battingInnings).toFixed(2) : 0;
-        acc.sr = acc.balls > 0 ? ((acc.runs / acc.balls)*100).toFixed(2) : 0; // Simplified SR calculation
-        acc.bawlingAvg = acc.wickets > 0 ? (acc.runsConceded / acc.wickets).toFixed(2) : 0;
-        acc.economyRate = acc.overs > 0 ? (acc.runsConceded / acc.overs).toFixed(2) : 0;
+        acc.bestValue = Math.min(acc.bestValue, currentAverage);
 
         if (
           stat.wickets > acc.bestWickets ||
@@ -180,11 +177,32 @@ const PlayerProfile = () => {
 
       }
     );
+    console.log("Unique Bowling Innings:", uniqueBowlingInnings);
+    console.log("Unique Batting Innings:", uniqueBattingInnings);
+    summary.bawlingInnings = uniqueBowlingInnings.size;
+    summary.battingInnings = uniqueBattingInnings.size;
+    summary.battingAvg =
+    summary.battingInnings > 0
+    ? (summary.runs / summary.battingInnings).toFixed(2)
+    : "N/A";
 
-    summary.economyRate = summary.overs > 0 ? (summary.runsConceded / summary.overs).toFixed(2) : 0;
-    summary.bowlingAvg = summary.wickets > 0 ? (summary.runsConceded / summary.wickets).toFixed(2) : 0;
-    summary.best = `${summary.bestWickets}/${summary.bestRunsConceded !== Infinity ? summary.bestRunsConceded : 0}`;
+    summary.sr =
+      summary.balls > 0
+        ? ((summary.runs / summary.balls) * 100).toFixed(2)
+        : "N/A";
 
+    summary.bawlingAvg =
+      summary.wickets > 0
+        ? (summary.runsConceded / summary.wickets).toFixed(2)
+        : "N/A";
+
+    summary.economyRate =
+      summary.overs > 0
+        ? (summary.runsConceded / summary.overs).toFixed(2)
+        : "N/A";
+
+    summary.bestValue =
+      summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);
     return summary;
   };
 
@@ -495,7 +513,7 @@ const PlayerProfile = () => {
                             {summary.runsConceded}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
-                            {summary.best}
+                            {summary.bestValue}
                           </td>
                           <td className="py-2 px-5 text-center align-middle">
 

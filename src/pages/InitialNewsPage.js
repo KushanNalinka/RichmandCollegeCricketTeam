@@ -171,7 +171,7 @@ const InitialNewsPage = () => {
                           <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
                             {getFirstTwoSentences(initialnews.body)}
                             <span
-                              className="text-blue-500 cursor-pointer"
+                              className="text-[#012D5E] cursor-pointer"
                               onClick={() => goToFullArticle(initialnews.id)}
                             >
                               ...Read more

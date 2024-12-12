@@ -359,6 +359,15 @@ const Login = () => {
       const res = await axios.post(`${API_URL}auth/signin`, inputs);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
       console.log("Response from API:", res.data);
+      const accessToken = res.data.accessToken;
+
+      localStorage.setItem('accessToken', accessToken);
+      
+      // Assuming res.data.roles is the roles array returned from the API response
+
+
+localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
+      
       const userData = {
         username: res.data.username,
         roles: res.data.roles,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
@@ -11,10 +10,10 @@ import logo from "../assets/images/RLogo.png";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
-
 import { useNavigate } from 'react-router-dom';
 import SubAdminForm from "../components/SubAdminForm";
 import EditSubAdminsForm from "../components/EditSubAdminsForm";
+import { message } from "antd";
 
 const Admin= () => {
   const [adminData, setadminData] = useState([]);
@@ -31,13 +30,7 @@ const Admin= () => {
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
-
-    const [admins, setAdmins] = useState([]);
-    const [newAdmin, setNewAdmin] = useState({ username: '', email: '', password: '' });
-    const [editAdminId, setEditAdminId] = useState(null);
-    const [editAdminData, setEditAdminData] = useState({ username: '', email: '', password: '' });
-    const [message, setMessage] = useState('');
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
@@ -134,7 +127,7 @@ const Admin= () => {
     try {
       console.log("Delete admins: ", adminToDelete);
       const response = await axios.delete(`${API_URL}admin/${adminToDelete}`);
-      message.success("Successfully Deleted!");
+      message.success("Successfully deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);
     } catch (error) {
@@ -146,6 +139,7 @@ const Admin= () => {
       };
     } finally {
       setUploading(false);
+    
     };
   };
   
@@ -264,7 +258,7 @@ const Admin= () => {
                         <FaEdit />
                         </button>
                         <button
-                        onClick={() => handleDelete(admin.id)}
+                        onClick={() => handleDelete(admin.adminId)}
                         className="text-red-500 hover:text-red-600 text-md"
                         aria-label="Delete"
                         title="Delete"

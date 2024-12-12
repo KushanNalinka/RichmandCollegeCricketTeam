@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
@@ -15,9 +13,9 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     name:"",
+    contactNo:"",
     username: "",
     email: "",
-    contactNo: "",
     password: "",
     roles: ["ROLE_ADMIN"],
     createdOn: new Date().toISOString()
@@ -54,19 +52,6 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
   const validateForm = (name, value) => {
     const newErrors = {};
     switch(name){
-
-      case "name":
-        //name validation
-        if (value.trim().length < 4 || value.trim().length > 25) {
-          newErrors.name = "Name must be between 4 and 25 characters long.";
-        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
-          newErrors.name = "Name can only contain letters, spaces, and periods.";
-        } else if (/^\s|\s$/.test(value)) {
-          newErrors.name = "Name cannot start or end with a space.";
-        }
-        break;
-
-
       case "username":  
         //username validation
         if (value.length < 4 || value.length > 20) {
@@ -134,14 +119,12 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
           newErrors.password = "Password must be at least 8 characters long and include a special character";
         };
         break;
-
-        case "contactNo":
+      case "contactNo":
         const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
         if (!sriLankaPattern.test(value)) {
           newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
         };
         break;
-
       default:
         break;  
     }  
@@ -174,13 +157,16 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
 
       try {
         const response = await axios.post(`${API_URL}auth/signup`, formData);
-        console.log("Form submitted succedded: ", response.data);
+        console.log("Form submitted succedded: ", response);
         message.success("Successfull!");
         setFormData({
+          name:"",
+          contactNo:"",
           username: "",
           email: "",
           password: "",
           roles: ["ROLE_ADMIN"],
+          createdOn: ""
          
         });
         isSubmitted();
@@ -216,9 +202,7 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
         </div>
         <h2 className="text-xl text-[#480D35] font-bold mb-4">Add Admin Details</h2>
         <form onSubmit={handleSubmit} className="gap-3">
-
-
-        <div className="mb-4">
+          <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
@@ -226,12 +210,11 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="name"
+              placeholder="Jhon Doe"
               required
             />
             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
-          
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
@@ -278,7 +261,6 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
               </button>
             {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
           </div>
-
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Contact No</label>
             <input

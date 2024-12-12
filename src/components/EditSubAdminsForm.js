@@ -11,9 +11,9 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const [formData, setFormData] = useState({ 
     name:admin.name,
+    contactNo:admin.contactNo,
     username: admin.username,
     email: admin.email,
-    contactNo: admin.contactNo,
     password: admin.password,
     roles: ["ROLE_ADMIN"],
     updatedOn: new Date().toISOString(),
@@ -35,6 +35,13 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
       ...formData,
       [name]: value
     });
+    if(name === "password"){
+      if(!value){
+        setShowPasswordError(true);
+      }else{
+        setShowPasswordError(false);
+      }
+    }
 
     const fieldError = validateForm(name, value);
 
@@ -60,16 +67,16 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     }
     setUploading(true);
       try {
-        const response = await axios.put(`${API_URL}admin/${admin.id}`,
+        const response = await axios.put(`${API_URL}admin/${admin.adminId}`,
           formData 
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
         setFormData({
           name:"",
+          contactNo:"",
           username: "",
           email: "",
-          contactNo: "",
           password: "",
           roles: ["ROLE_ADMIN"],
           updatedOn: "",
@@ -97,20 +104,6 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
   const validateForm = (name, value) => {
     const newErrors = {};
     switch(name){
-
-
-      case "name":
-        //name validation
-        if (value.trim().length < 4 || value.trim().length > 25) {
-          newErrors.name = "Name must be between 4 and 25 characters long.";
-        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
-          newErrors.name = "Name can only contain letters, spaces, and periods.";
-        } else if (/^\s|\s$/.test(value)) {
-          newErrors.name = "Name cannot start or end with a space.";
-        }
-        break;
-
-
       case "username":  
         //username validation
         if (value.length < 4 || value.length > 20) {
@@ -170,19 +163,18 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
          }, 500); // Delay of 500ms
        };
         break;
-
-        case "contactNo":
-          const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-          if (!sriLankaPattern.test(value)) {
-            newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-          };
-          break;
       
       case "password":
         // Password validation
         const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        if (!passwordPattern.test(value)) {
+        if (value && !passwordPattern.test(value)) {
           newErrors.password = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
         };
         break;
       default:
@@ -216,26 +208,24 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
             <FaTimes />
           </button>
         </div>
-        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Admin Details</h2>
+        <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Official Details</h2>
         <form
           onSubmit={handleEdit}
           className=" gap-3"
-
         >
-
-          <div className="mb-4">
+           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="name"
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="Jhon Doe"
+              required
             />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
           </div>
-          
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Username</label>
             <input
@@ -260,19 +250,6 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
             />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
           </div>
-
-          <div className="mb-4">
-            <label className="block text-black text-sm font-semibold">contactNo</label>
-            <input
-              type="tel"
-              name="tel"
-              value={formData.contactNo}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="+947XXXXXXXX"
-            />
-            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
-          </div>
           <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
             <input
@@ -289,7 +266,25 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {showPasswordError && (
+                <p className="text-red-500 text-xs mt-1 col-span-2">
+                  Change the password or else it will remain unchanged.
+                </p>
+              )}
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+          </div>
+          <div className="mb-4">
+            <label className="block text-black text-sm font-semibold">Contact No</label>
+            <input
+              type="tel"
+              name="contactNo"
+              value={formData.contactNo}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              placeholder="+947XXXXXXXX"
+              required
+            />
+            {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
          
           <div className="flex justify-end mt-8 col-span-2">

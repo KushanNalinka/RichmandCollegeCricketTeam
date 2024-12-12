@@ -137,3 +137,39 @@ const PlayerProfile = () => {
 };
 
 export default PlayerProfile;
+useEffect(() => {
+    fetch(`${API_URL}matchSummary/all`)
+      .then((response) => response.json())
+      .then((data) => {
+
+        if (data.length === 0) return; // If there's no match data, exit
+  
+        const lastMatchIndex = data.length - 1;
+        const lastMatch = data[lastMatchIndex]; // Get the last match data (1st inning)
+        const secondMatch = data[lastMatchIndex - 1]; // Check if the previous item is the 2nd inning of the same match
+  
+        // Check if the last match is T20 or ODI
+        if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
+          setMatchData(lastMatch); // Use only the last match data for T20 and ODI
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
+        } else if (lastMatch.type === 'Test') {
+
+          const matchId = lastMatch.matchId;
+          for(let i = 0; i < data.length; i++) {
+            if (data[i].matchId === matchId) {
+              secondMatch = data[i];
+              setSecondInningData(secondMatch); // Set the second inning data
+              console.log('Second Match:', secondMatch);
+              break;
+            }
+          }
+         
+          // For Test matches, check if the matchId is the same for both innings
+          setMatchData(lastMatch); // Set the first inning data
+         
+          onMatchId(lastMatch.matchId);  // Pass matchId back to HomePage.js
+
+        }
+      })
+      .catch((error) => console.error('Error fetching match data:', error));
+  }, [onMatchId]);

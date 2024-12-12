@@ -571,6 +571,9 @@ import axios from 'axios';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import topImage from '../assets/images/BG3.png';
+import { FaTimes } from "react-icons/fa";
+
+
 
 const NewsDetailPage = () => {
   const { id } = useParams();
@@ -585,12 +588,16 @@ const NewsDetailPage = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const API_URL = process.env.REACT_APP_API_URL;
+  const [selectedNews, setSelectedNews] = useState(null);
+
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
         const response = await axios.get(`${API_URL}news/${id}`);
-        setNewsItem(response.data);
+        const fetchedNews = response.data;
+        setNewsItem(fetchedNews);
+        setSelectedNews(fetchedNews); // Set the fetched news to selectedNews
         setLoading(false);
       } catch (error) {
         console.error('Error fetching news detail:', error);
@@ -598,9 +605,10 @@ const NewsDetailPage = () => {
         setLoading(false);
       }
     };
-
+  
     fetchNewsDetail();
   }, [id]);
+  
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -658,12 +666,22 @@ const NewsDetailPage = () => {
         Published {new Date(newsItem.createdOn).toLocaleDateString()} • {newsItem.author}
       </p>
 
-      <button
+      {/* <button
   onClick={handleClose}
-  className="absolute top-2 right-4 md:top-2 md:right-8 text-black p-2 rounded-full opacity-75 hover:opacity-100 hover:bg-gray-200"
+  className="absolute top-2 right-4 md:top-2 md:right-8 p-2 rounded-full opacity-75 hover:opacity-100 hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition ease-in-out duration-200"
 >
   ✕
-</button>
+</button> */}
+
+ 
+        <button
+         onClick={handleClose}
+          className="text-gray-500 hover:text-gray-800 transition ease-in-out duration-200 absolute top-2 right-4 md:top-2 md:right-8 p-2 rounded-full"
+          aria-label="Close"
+        >
+          <FaTimes size={24} />
+        </button>
+     
 
       <hr className="border-t-2 border-blue-500 w-24 mx-auto my-4" />
 
@@ -711,9 +729,21 @@ const NewsDetailPage = () => {
       </div>
     </div>
 
-    <div className="p-4 sm:p-6 text-gray-700 leading-relaxed text-justify">
+    {/* <div className="p-4 sm:p-6 text-gray-700 leading-relaxed text-justify">
       <p className="text-sm sm:text-base">{newsItem.body}</p>
-    </div>
+    </div> */}
+
+    
+<div className="p-4 sm:p-6 text-gray-700 leading-relaxed text-justify">
+  <span
+    dangerouslySetInnerHTML={{
+      __html: selectedNews?.body.replace(/\n/g, "<br />"),
+    }}
+    className="font-serif"
+  />
+</div>
+
+     
   </div>
 </div>
 

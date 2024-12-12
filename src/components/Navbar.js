@@ -30,6 +30,7 @@ const Navbar = () => {
       : "hover:bg-gray-300 hover:bg-opacity-10";
   };
 
+
     return (
         <>
             <div className={`flex h-full w-full flex-col justify-center items-center border border-[#00175F]`}>
@@ -77,6 +78,7 @@ const Navbar = () => {
             </div>
         </>   
     );
+
 };
 
 export default Navbar;

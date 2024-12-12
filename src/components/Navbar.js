@@ -209,6 +209,9 @@ const Navbar = () => {
             <span className="text-sm text-white transition-opacity duration-300 mt-1">
               News
             </span>
+
+
+          
           </Link>
           {username === "admin01" && (
             <Link

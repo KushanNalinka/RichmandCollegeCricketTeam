@@ -66,6 +66,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
+          <Route path="/admin" element={<Admin/>} />
            {/* Protected Routes */}
            <Route path="/member"element={<MemberInitial />} />
            <Route path="/playerProfile"

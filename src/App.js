@@ -63,12 +63,12 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
 console.log("Retrieved roles from localStorage:", storedRoles);
 
 
-if (storedRoles.includes("ROLE_PLAYER")) {
-  console.log("You are authorized to send emails.");
-} else {
-  // Proceed with sending an email
-  console.log("You are not authorized to send emails.");
-}
+// if (storedRoles.includes("ROLE_PLAYER")) {
+//   console.log("You are authorized to send emails.");
+// } else {
+//   // Proceed with sending an email
+//   console.log("You are not authorized to send emails.");
+// }
 
   return (
 
@@ -91,9 +91,9 @@ if (storedRoles.includes("ROLE_PLAYER")) {
            <Route
           path="/member"
           element={
-            <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
+           
               <MemberInitial />
-              </PrivateRoute>
+              
           }
         />
         <Route
@@ -266,9 +266,8 @@ if (storedRoles.includes("ROLE_PLAYER")) {
           }
         />
          <Route path='/player' element={
-          <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
           <PlayerInfo/>
-          </PrivateRoute>
+         
           } 
           />
          <Route

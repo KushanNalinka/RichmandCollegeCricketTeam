@@ -16,12 +16,7 @@ const PlayerProfile = () => {
 useEffect(() => {
     const fetchPlayers = async () => {
         try {
-            const response = await fetch(`${API_URL}admin/players/all`, {
-                method: "GET", // Specify the HTTP method (default is GET)
-                headers: {
-                  "Content-Type": "application/json", // Optional, depending on your API requirements
-                  Authorization: `Bearer ${accessToken}`, // Add the Authorization header
-                },});
+            const response = await fetch(`${API_URL}admin/players/all`);
             const data = await response.json();
 
             // Set all players without filtering

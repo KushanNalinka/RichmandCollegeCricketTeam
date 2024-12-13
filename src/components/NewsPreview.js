@@ -54,9 +54,9 @@ const NewsPreview = ({ news, onClose }) => {
           
           {/* Date and Time */}
           <div className="text-gray-500 flex items-center space-x-4 text-sm">
-            <span>{dayjs(news.dateTime).format('YYYY-MMM-DD')}</span>
+            <span>{dayjs(news.createdOn).format('YYYY-MMM-DD')}</span>
             <span>&#8226;</span>
-            <span>{dayjs(news.dateTime).fromNow()}</span>
+            <span>{dayjs(news.createdOn).fromNow()}</span>
           </div>
 
           {/* Full Image Display */}

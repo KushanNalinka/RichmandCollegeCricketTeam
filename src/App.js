@@ -58,6 +58,7 @@ import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 
 function App() {
 
+
 const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
 console.log("Retrieved roles from localStorage:", storedRoles);
 

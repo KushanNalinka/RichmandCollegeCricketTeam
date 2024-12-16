@@ -396,14 +396,14 @@ const TableComponent = () => {
                           >
                             <FaEdit />
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => handleDelete(item.playerId)}
                             className="text-red-500 hover:text-red-600 text-md"
                             aria-label="Delete"
                             title="Delete"
                           >
                             <FaTrash />
-                          </button>
+                          </button> */}
                         </td>
                       </tr>
                     )

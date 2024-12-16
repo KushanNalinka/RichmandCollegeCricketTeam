@@ -169,16 +169,32 @@ const NewsCreator = () => {
     };
      return newErrors;
   };
+  // const validateImageFile = (file) => {
+  //   const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  //   if (!validTypes.includes(file.type)) {
+  //     return "Invalid file type. Only jpg, png, gif, and webp are allowed.";
+  //   }
+  //   if (file.size > 5 * 1024 * 1024) { // 5MB limit
+  //     return "File size should be less than 5MB.";
+  //   }
+  //   return null; // No error
+  // };
+
   const validateImageFile = (file) => {
     const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-      return "Invalid file type. Only jpg, png, gif, and webp are allowed.";
+        return "Invalid file type. Only jpg, png, gif, and webp are allowed.";
     }
-    if (file.size > 5 * 1024 * 1024) { // 5MB limit
-      return "File size should be less than 5MB.";
+    if (file.size > 1 * 1024 * 1024 * 1024) { // 1GB limit
+        return "File size should be less than 1GB.";
     }
     return null; // No error
-  };
+};
+
+
+
+
+
 
   const validateFormDataAdd = (formData) => {
     const errors = {};

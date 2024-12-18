@@ -65,18 +65,20 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`)
       .then(response => {
         const players = response.data;
-        setPlayers(players);
+        const filteredPlayers = players.filter((player) => ( player.status === "Active"));
+        setPlayers(filteredPlayers);
         console.log("players Data:", players);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
-      setCoaches(coaches);
+      const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+      setCoaches(filteredCoaches);
       console.log("Coaches Data:", coaches);
     });
     axios
@@ -87,9 +89,9 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         console.log("Teams Data:", teams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
-  }, []);
+  }, [formData.team.teamId]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -503,6 +505,23 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <option value="T20">T20</option>
             </select>
           </div>
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-black text-sm font-semibold" htmlFor="team.teamId">Team</label>
+            <select
+              id="team.teamId"
+              name="team.teamId"
+              value={formData.team?.teamId}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select team</option>
+              {teams.map(team =>
+                <option key={team.teamId} value={team.teamId}>
+                  {team.under}-{team.year}
+                </option>
+              )}
+            </select>
+          </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
             <select
@@ -534,23 +553,6 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               {players.map(player =>
                 <option key={player.playerId} value={player.name}>
                   {player.name}
-                </option>
-              )}
-            </select>
-          </div>
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-black text-sm font-semibold" htmlFor="team.teamId">Team</label>
-            <select
-              id="team.teamId"
-              name="team.teamId"
-              value={formData.team?.teamId}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            >
-              <option value="">Select team</option>
-              {teams.map(team =>
-                <option key={team.teamId} value={team.teamId}>
-                  {team.under}-{team.year}
                 </option>
               )}
             </select>

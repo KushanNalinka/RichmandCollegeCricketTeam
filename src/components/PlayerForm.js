@@ -16,7 +16,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const accessToken = localStorage.getItem('token');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  console.log("Access Tocken:", user.accessToken);
+  console.log("Access Tocken1:", user.accessToken);
+  console.log("Access Tocken2:", accessToken);
 
   const [formData, setFormData] = useState({
     image: null,
@@ -166,7 +167,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          formDataToSend , { headers: {
+          formDataToSend , { 
+            headers: {
             'Authorization': `Bearer ${accessToken}`
           }}
         );

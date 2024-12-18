@@ -55,19 +55,21 @@ const FormPopup = ({  onClose, isSumitted }) => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`)
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        const filteredPlayers = players.filter((player) => ( player.status === "Active"));
+        setPlayers(filteredPlayers);
+        console.log("players Data:", filteredPlayers);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
     axios.get(`${API_URL}coaches/all`).then(response => {
       const coaches = response.data;
-      setCoaches(coaches);
-      console.log("Coaches Data:", coaches);
+      const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+      setCoaches(filteredCoaches);
+      console.log("Coaches Data:", filteredCoaches);
     });
     axios
       .get(`${API_URL}teams/all`)
@@ -77,10 +79,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
         console.log("Teams Data:", teams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
   }, 
-  []);
+  [formData.team.teamId]);
 
   const handleChange = e => {
     const { name, value,files } = e.target;
@@ -492,6 +494,23 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="T20">T20</option>
             </select>
           </div>
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-black text-sm font-semibold">Team</label>
+            <select
+              name="team.teamId"
+              value={formData.team.teamId}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select team</option>
+              {teams.map(team =>
+                <option key={team.teamId} value={team.teamId}>
+                  {team.under}-{team.year}
+                </option>
+              )}
+            </select>
+          </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
             <select
@@ -504,7 +523,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
             >
               <option value="">Select Captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}
@@ -522,25 +541,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
             >
               <option value="">Select Vice-captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
-                </option>
-              )}
-            </select>
-          </div>
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-black text-sm font-semibold">Team</label>
-            <select
-              name="team.teamId"
-              value={formData.team.teamId}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="">Select team</option>
-              {teams.map(team =>
-                <option key={team.teamId} value={team.teamId}>
-                  {team.under}-{team.year}
                 </option>
               )}
             </select>

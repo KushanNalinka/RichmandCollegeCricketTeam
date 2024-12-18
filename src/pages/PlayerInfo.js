@@ -13,6 +13,7 @@ import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
 import MainNavbarToggle from "../components/MainNavBarToggle";
+import { IoIosSearch } from "react-icons/io";
 
 
 const TableComponent = () => {
@@ -30,6 +31,8 @@ const TableComponent = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const divRef = useRef(null);
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('token');
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showBowlingDropdown, setShowBowlingDropdown] = useState(false);
@@ -40,7 +43,8 @@ const TableComponent = () => {
   const [battingOptions, setBattingOptions] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
   const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingStyle: '', playerRole: '' });
-  
+  const [searchingPlayer, setSearchingPlayer] = useState();
+  console.log("accessTocken :", accessToken);
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
   // const statusOptions = ["Active", "Inactive"];
@@ -52,7 +56,12 @@ const TableComponent = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/players/all` , { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            // 'Content-Type': 'application/json',
+            // 'Accept': 'application/json',
+      }})
       .then(response => {
         setUploading(false);
         const players = response.data;
@@ -186,6 +195,28 @@ const TableComponent = () => {
   const handleEditFormClose = () => {
     setIsEditFormOpen(false);
   };
+  // const handleSearchChange =() =>{
+  //   const filtered = playerData.filter(player => 
+  //     player.name.toLowerCase().includes(searchingPlayer.toLowerCase())
+  //   );
+  //   setFilteredPlayers(filtered);
+
+  // };
+    // Debounced search logic
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        if (searchingPlayer) {
+          const filtered = playerData.filter((player) =>
+            player.name.toLowerCase().includes(searchingPlayer.toLowerCase())
+          );
+          setFilteredPlayers(filtered);
+        } else {
+          setFilteredPlayers(playerData); // Show all players if search query is empty
+        }
+      }, 300); // 300ms debounce delay
+  
+      return () => clearTimeout(timeout); // Cleanup timeout
+    }, [searchingPlayer, playerData]);
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
@@ -215,19 +246,53 @@ const TableComponent = () => {
             }}
             
           >
-            <div className="flex justify-between items-center content-center mb-3" >
+            <div className="flex justify-between items-center content-center md:mb-3" >
               <NavbarToggleMenu />
               <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 Player Details
               </h2>
-              <button
-                onClick={() => setIsFormOpen(true)}
-                className="bg-green-500 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
-                aria-label="Add"
-                title="Add New"
-              >
-                <FaPlus />
-              </button>
+                <div className="flex gap-2">
+                  <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                    <input
+                      type="text"
+                      onChange={(e)=>setSearchingPlayer(e.target.value)}
+                      className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                      placeholder='Choose a player'
+                    />
+                    <button
+                      type="button"
+                      className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                      //onClick={handleSearchChange}
+                      >
+                      <IoIosSearch />
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => setIsFormOpen(true)}
+                    className="bg-green-500 hover hover:bg-green-600 text-white rounded-full p-1 lg:text-2xl text-lg"
+                    aria-label="Add"
+                    title="Add New"
+                  > <FaPlus />
+                  </button>
+                 
+                </div>
+            </div>
+            <div className="flex md:hidden justify-center items-center content-center mb-3" >
+              <div className="flex text-gray-600 border bg-white border-gray-300 px-1 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                <input
+                  type="text"
+                  onChange={(e)=>setSearchingPlayer(e.target.value)}
+                  className="border-0 py-1 px-5 w-[90%]  cursor-pointer rounded-3xl focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                  placeholder='Choose a player'
+                />
+                <button
+                  type="button"
+                  className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                  //onClick={handleSearchChange}
+                  >
+                  <IoIosSearch />
+                </button>
+              </div>
             </div>
             <div className="flex overflow-x-auto" >
               <table className="min-w-full divide-gray-300 bg-gray-200  shadow-md">

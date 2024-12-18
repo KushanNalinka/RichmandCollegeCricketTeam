@@ -84,7 +84,7 @@ const ScoreCardPage = () => {
           setPlayersStats(playersStats);
           // Apply inning filter only for Test matches
           if (matchType === "Test") {
-            const inningStats = filterInningStats(playersStats, inningNumber);
+            const inningStats = filterInningStats(playersStats, selectedInning[currentMatchID]);
             const battingStats = inningStats.filter(stat => stat.balls > 0);
             const bawlingStats = inningStats.filter(stat => stat.overs > 0);
             setBattingPlayerStats(battingStats);
@@ -104,7 +104,7 @@ const ScoreCardPage = () => {
           console.error("There was an error fetching the player stats data!", error);
         });
       }  
-  }, [currentMatchID, inningNumber, matchType]);
+  }, [currentMatchID, selectedInning[currentMatchID], matchType]);
 
   // Slice data for current page
   const paginatedData = sortedMatches.slice(
@@ -133,9 +133,14 @@ const ScoreCardPage = () => {
   };
   
   // Function to handle inning selection for a specific match
-  const handleInningChange = ( e) => {
-    setInningNumber(e.target.value);
-    setPlayersStats(filterInningStats(playersStats, inningNumber));
+  const handleInningChange = ( e, matchId) => {
+    // setInningNumber(e.target.value);
+    // setPlayersStats(filterInningStats(playersStats, inningNumber));
+    const newInning = e.target.value; // Get the selected inning
+    setSelectedInning((prev) => ({
+      ...prev,
+      [matchId]: newInning, // Update inning for the specific match
+    }));
   };
 
   // Function to toggle dropdown visibility for each match
@@ -151,6 +156,11 @@ const ScoreCardPage = () => {
     } else {
       setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
       setMatchType(match.type);
+      const inning = selectedInning[match.matchId];
+      if (match.type === 'Test' && inning) {
+        const inningStats = filterInningStats(playersStats, inning);
+        setPlayersStats(inningStats);
+      }
     }
    
   };
@@ -204,10 +214,10 @@ const ScoreCardPage = () => {
             {paginatedData.map((match) =>{
 
               const currentStats =
-              inningNumber && match.matchId === currentMatchID
+          selectedInning[currentMatchID] && match.matchId === currentMatchID
                 ? matchSummary.find(
                     (item) =>
-                      item.matchId === match.matchId && item.inning === inningNumber
+                      item.matchId === match.matchId && item.inning === selectedInning[currentMatchID]
                   ) || match // Fall back to match if no inning is selected
                 : match;
               return(
@@ -243,10 +253,10 @@ const ScoreCardPage = () => {
                           <select
                             className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm rounded text-gray-700 px-5 py-1 uppercase"
                             id="inning"
-                            value={inningNumber}
-                            onChange={handleInningChange}
+                            value={selectedInning[match.matchId] || ''}
+                            onChange={(e) => handleInningChange(e, match.matchId)}
                           >
-                            <option value={0} selected disabled className="text-xs text-gray-700 px-3 ">Select Inning</option>
+                            <option value="" selected disabled className="text-xs text-gray-700 px-3 ">Select Inning</option>
                             <option value={1} className="text-xs text-gray-700 px-3 ">Inning 1</option>
                             <option value={2} className=" text-xs text-gray-700 px-3 ">Inning 2</option>
                           </select>
@@ -278,28 +288,28 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] items-stretch lg:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
-                          <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                             Batting
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                             R
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                             B
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold tracking-wider">
                             4s
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold tracking-wider">
                             6s
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                             50
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                             100
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                             <p>SR</p>
                           </th>
                           {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
@@ -311,28 +321,28 @@ const ScoreCardPage = () => {
                       <tbody className=" divide-y  divide-gray-300">
                         {battingPlayerStats && battingPlayerStats.map((player, index2) =>
                           <tr key={index2} className=" hover:bg-gray-50 h-full">
-                            <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                            <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
                               {player.player.name}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.runs}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.balls}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.fours}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.sixers}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.fifties}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.centuries}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {(player.runs/player.balls*100).toFixed(2)}
                             </td>
                           </tr>
@@ -342,28 +352,28 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
-                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                           Bowling
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           O
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           R
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           W
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           M
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           NB
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           WB
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           ECON
                         </th>
                         {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
@@ -375,28 +385,28 @@ const ScoreCardPage = () => {
                     <tbody className=" divide-y  divide-gray-300">
                       {bawlingPlayerStats && bawlingPlayerStats.map((player, index3) =>
                         <tr key={index3} className=" hover:bg-gray-50 h-full">
-                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.overs}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.runsConceded}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.wickets}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.maidens}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.noBalls}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.wides}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {(player.runsConceded/player.overs).toFixed(2)}
                           </td>
                         </tr>
@@ -406,28 +416,28 @@ const ScoreCardPage = () => {
                   <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#480D35] text-white rounded">
                       <tr>
-                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                           Fielding
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           C
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           S
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
                           RO
                         </th>
                       </tr>
@@ -436,28 +446,28 @@ const ScoreCardPage = () => {
                     <tbody className=" divide-y  divide-gray-300">
                       {inningStats && inningStats.map((player, index4) =>
                         <tr key={index4} className=" hover:bg-gray-50 h-full" >
-                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                           
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                           
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.catches}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.stumps}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.runOuts}
                           </td>
                         </tr>

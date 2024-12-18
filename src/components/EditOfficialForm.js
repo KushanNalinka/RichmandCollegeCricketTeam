@@ -218,6 +218,15 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
           newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
         };
         break;
+        case "position":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.position = "Position must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.position = "Position can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.position = "Position cannot start or end with a space.";
+        };
       default:
         break;  
     }  
@@ -343,6 +352,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Teacher"
             />
+             {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
           </div>
           <div className="flex justify-end mt-8 col-span-2">
             <button

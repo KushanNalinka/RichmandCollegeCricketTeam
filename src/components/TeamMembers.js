@@ -9,8 +9,9 @@ const TeamMembers = ({teamId, onClose}) => {
     const fetchTeams = async () => {
       try {
         const response = await axios.get(`${API_URL}teams/${teamId}/players`); // Update with your API endpoint
-        setMembers(response.data);
-        console.log("players in team: ",response);
+        const activeMembers = response.data.filter((player) => player.status === "Active");
+        setMembers(activeMembers);
+        console.log("players in team: ",response.data);
       } catch (error) {
         console.error("Error fetching matches:", error);
       }

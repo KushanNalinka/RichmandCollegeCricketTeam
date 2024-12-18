@@ -843,6 +843,7 @@ const PlayerProfile = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
     const API_URL = process.env.REACT_APP_API_URL;
     const accessToken = localStorage.getItem('accessToken');
+    console.log("My Access Token for Route Unlocked", accessToken);
   
     // Fetch all players from the API when the component mounts or selectedYear changes
     useEffect(() => {
@@ -851,10 +852,11 @@ const PlayerProfile = () => {
                 const response = await fetch(`${API_URL}admin/players/all`, {
                     method: "GET", // Specify the HTTP method (default is GET)
                     headers: {
-                      "Content-Type": "application/json", // Optional, depending on your API requirements
+                      //"Content-Type": "application/json", // Optional, depending on your API requirements
                       Authorization: `Bearer ${accessToken}`, // Add the Authorization header
                     },});
                 const data = await response.json();
+                console.log("Fetched Data to display in the frontend:", data);
 
                 // Filter players who are part of "Under 13" in the selected year
                 const under13Players = data.filter((player) =>
@@ -886,7 +888,12 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`, {
+                        method: "GET", // Specify the HTTP method (default is GET)
+                        headers: {
+                          //"Content-Type": "application/json", // Optional, depending on your API requirements
+                          Authorization: `Bearer ${accessToken}`, // Add the Authorization header
+                        },});
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {

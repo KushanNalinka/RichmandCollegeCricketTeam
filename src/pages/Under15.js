@@ -22,7 +22,12 @@ const PlayerProfile = () => {
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`${API_URL}admin/players/all`);
+                const response = await fetch(`${API_URL}admin/players/all`,{
+                    headers: {
+                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                }, });
                 const data = await response.json();
 
                 // Filter players who are part of "Under 13" in the selected year

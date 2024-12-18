@@ -220,7 +220,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         });
   
         dispatch({ type: "SET_PLAYERS", payload: availablePlayers });
-
+        console.log("available players:", availablePlayers);
         // Apply inning filter only for Test matches
         if (matchType === "Test") {
           const inningStats = filterInningStats(allStats, inningNumber);

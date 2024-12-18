@@ -7,7 +7,7 @@ import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
-import { message, Alert, Button, Layout, Input } from "antd";
+import { message, Alert, Button, Layout, Input, DatePicker } from "antd";
 import { storage } from "../config/firebaseConfig"; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaEye } from "react-icons/fa";
@@ -15,7 +15,7 @@ import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GiClick } from "react-icons/gi";
-
+import { IoIosSearch } from "react-icons/io";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
@@ -47,6 +47,8 @@ const NewsCreator = () => {
   const [existingImageURLs, setExistingImageURLs] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
   const fileInputRef = useRef(null);
+  const [searchHeading, setSearchHeading] = useState(""); // State for heading search
+  const [searchDate, setSearchDate] = useState(""); // State for date search
   const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     heading: "",
@@ -567,6 +569,17 @@ const NewsCreator = () => {
     return dayjs(date).format("YYYY-MM-DD HH:mm:ss"); // Adjust format if needed
   };
 
+    // Filter news based on search inputs
+  const filteredNews = createdNews.filter((news) => {
+    const matchesHeading = news.heading
+      .toLowerCase()
+      .includes(searchHeading.toLowerCase());
+    const matchesDate = searchDate
+      ? dayjs(news.createdAt).isSame(searchDate, "day")
+      : true;
+    return matchesHeading && matchesDate;
+  });
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center w-full items-stretch min-h-screen">
@@ -597,14 +610,47 @@ const NewsCreator = () => {
               border: "1px solid rgba(255, 255, 255, 0.3)",
             }}
           >
-            <div className="flex justify-between items-center content-center mb-3">
+            <div className="flex justify-between items-center content-center md:mb-3">
               <NavbarToggleMenu />
               <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 News Creator
               </h2>
-              <h2 className="md:text-2xl text-xl w-14 font-bold text-center font-popins text-[#480D35]">
-               
+              <h2 className="flex md:hidden md:text-2xl text-xl w-10 font-bold text-center font-popins text-[#480D35]">
+                
               </h2>
+              {/* <div className="flex gap-3"> */}
+              <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                <input
+                  type="text"
+                  onChange={(e)=>setSearchHeading(e.target.value)}
+                  className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                  placeholder='Search by heading'
+                />
+                <button
+                  type="button"
+                  className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                  // onClick={handleSearchChange}
+                  >
+                  <IoIosSearch />
+                </button>
+              </div>
+            </div>
+            <div className="flex md:hidden justify-center items-center mb-3 content-center">
+              <div className="flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                <input
+                  type="text"
+                  onChange={(e)=>setSearchHeading(e.target.value)}
+                  className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                  placeholder='Search by heading'
+                />
+                <button
+                  type="button"
+                  className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                  // onClick={handleSearchChange}
+                  >
+                  <IoIosSearch />
+                </button>
+              </div>
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
               <div id="left-section" className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">
@@ -776,14 +822,15 @@ const NewsCreator = () => {
               </div>
               <div id="right-section" className=" relative lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden w-full custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-5 md:px-3 py-2 ">
-                  <div className="sticky top-0 z-50 rounded-t-lg bg-gradient-to-r from-[#00175f] to-[#480D35] ">
+                  <div className="sticky top-0 z-40 rounded-t-lg bg-gradient-to-r from-[#00175f] to-[#480D35] ">
                     <h1 className="text-white  rounded-t-lg font-bold font-mono md:text-xl text-lg py-1 px-3">
                       All News
                     </h1>
                   </div>
+
                   <div className={`flex flex-col custom-scrollbar`}>
-                    {createdNews &&
-                      createdNews.map((news) => (
+                    {filteredNews &&
+                      filteredNews.map((news) => (
                         <React.Fragment key={news.id}>
                           <div className="focus:bg-opacity-50 w-full rounded mb-1 shadow-md hover:bg-gray-50 ">
                             <div className="flex items-center justify-start p-2 gap-2 bg-grey-200">

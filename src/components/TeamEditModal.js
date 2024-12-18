@@ -13,14 +13,78 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [captain, setCaptain] = useState();
+  const [viceCaptain, setViceCaptain] = useState(players.filter(player => (player.playerId === formData.viceCaptain)));
   console.log("teams:", team);
   useEffect(() => {
+    const getAgeRange = (teamCategory) => {
+      if (teamCategory.includes("Under")) {
+        const ageMatch = teamCategory.match(/\d+/); // Extract the upper limit for "Under"
+        const maxAge = parseInt(ageMatch[0], 10);
+        const minAge = null; // Set a 2-year window for age range
+        return { minAge, maxAge };
+      } else if (teamCategory.includes("Over")) {
+        const ageMatch = teamCategory.match(/\d+/); // Extract the minimum age for "Over"
+        const minAge = parseInt(ageMatch[0], 10);
+        return { minAge, maxAge: null };
+      } else if (teamCategory === "Old Boys") {
+        return { minAge: 20, maxAge: null }; // Players older than 19
+      }
+      return null; // No range needed for unhandled categories
+    };
+    const getAgeFromDOB = (dob) => {
+      const birthDate = new Date(dob);
+      const currentDate = new Date();
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const isBeforeBirthday =
+        currentDate.getMonth() < birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() &&
+          currentDate.getDate() < birthDate.getDate());
+      if (isBeforeBirthday) age -= 1;
+      return age;
+    };
+
     axios
       .get(`${API_URL}admin/players/all`)
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        console.log("All players: ", players);
+        // Check if a specific team category is selected
+        // const captain = players.find(player => formData.captain === player.playerId);
+        // if (captain) {
+        //   setCaptain(captain.name);
+        //   console.log("playerId: ", captain.playerId);
+        //   console.log("captain: ", captain);
+        // } else {
+        //   console.log("No captain found with the specified playerId.");
+        // }
+        if (!formData.under) {
+          console.log("form Under: ", formData.under);
+          // Display all active players by default
+          const activePlayers = players.filter((player) => player.status === "Active");
+          setPlayers(activePlayers);
+          console.log("All Active Players:", activePlayers);
+        } else {
+          // Filter players based on the selected team category
+          const ageRange = getAgeRange(formData.under);
+
+          if (!ageRange) {
+            console.error("Invalid team category selected");
+            return;
+          }
+
+          const filteredPlayers = players.filter((player) => {
+            const age = getAgeFromDOB(player.dateOfBirth);
+
+            // Handle Old Boys or age-based filtering
+            const withinMinAge = ageRange.minAge ? age >= ageRange.minAge : true;
+            const withinMaxAge = ageRange.maxAge ? age < ageRange.maxAge : true;
+            return player.status === "Active" && withinMinAge && withinMaxAge;
+          });
+
+          setPlayers(filteredPlayers);
+          console.log("Filtered Players Data:", filteredPlayers);
+        }
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
@@ -37,7 +101,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         });
         console.log("players:", players);
         console.log("set selected players:", selectedPlayers);
-  }, []);
+  }, [formData.under]);
   
 
   const handleChange = e => {
@@ -220,7 +284,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
             >
               <option value="">Select Captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}
@@ -238,7 +302,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
             >
               <option value="">Select Vice Captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}

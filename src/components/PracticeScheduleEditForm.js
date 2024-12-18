@@ -21,8 +21,9 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
       .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
-        setCoaches(coaches);
-        console.log("coaches Data:", response.data);
+        const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+        setCoaches(filteredCoaches);
+        console.log("coaches Data:", filteredCoaches);
         console.log("coaches1:", coaches);})
         .catch((error) => {
             console.error("There was an error fetching the player data!", error);

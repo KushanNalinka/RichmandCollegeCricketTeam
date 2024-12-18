@@ -178,7 +178,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
               const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
-              if (response.data.usernameExists === true) {
+              if ((value !== player.username) && response.data.usernameExists === true) {
                 setErrors((prevErrors) => ({
                   ...prevErrors,
                   "user.username": "This username is already taken.",
@@ -208,7 +208,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
            try {
              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
              console.log("Email validation :", response.data);
-             if (response.data.emailExists === true) {
+             if ((value !== player.email) && response.data.emailExists === true) {
                setErrors((prevErrors) => ({
                  ...prevErrors,
                  ["user.email"]: "This email is already in use.",

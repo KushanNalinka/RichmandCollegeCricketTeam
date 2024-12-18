@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash, FaPlus, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { message } from "antd";
@@ -20,6 +20,7 @@ import ScoreCardPopup from "../components/ScoreCardPopup.js";
 import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
 import ScoreCardAIModel from "../components/ScoreCardAIModel.js";
+import { IoIosSearch } from "react-icons/io";
 
 const MatchDetails = () => {
   const [matches, setMatches] = useState([]);
@@ -50,8 +51,12 @@ const MatchDetails = () => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTierDropdown, setShowTierDropdown] = useState(false);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
+  const [searchingTeams, setSearchingTeams] = useState();
   const [teamOptions, setTeamOptions] = useState([]);
+  const [underOptions, setUnderOptions] = useState([]);
+  const [yearOptions, setYearOptions] = useState([]);
   const [filters, setFilters] = useState({ type: '', team: '' });
+  const [filteredTeamOptions, setFilteredTeamOptions] = useState([]);
 
   const typeOptions = ["Test", "T20", "ODI"]
 
@@ -63,7 +68,8 @@ const MatchDetails = () => {
   const currentYear = new Date().getFullYear();
   for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
-  } 
+  };
+
 
   useEffect(() => {
     setUploading(true);
@@ -76,26 +82,17 @@ const MatchDetails = () => {
         const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setMatches(sortedMatches);
 
-        const uniqueTeams = [];
-        years.forEach(year => {
-          teamUnder.forEach(team => {
-            uniqueTeams.push(`${team}-${year}`);
-          });
-        });
-        setTeamOptions(uniqueTeams);
-        console.log(response.data);
-
-        // setUnderOptions([...new Set(response.data.map(match => match.under))]);
-        // setYearOptions([...new Set(response.data.map(match => match.teamYear))]);
         // const uniqueTeams = [];
-        // yearOptions.forEach(year => {
-        //   underOptions.forEach(underOption => {
-        //     uniqueTeams.push(`${underOption}-${year}`);
+        // years.forEach(year => {
+        //   teamUnder.forEach(team => {
+        //     uniqueTeams.push(`${team}-${year}`);
         //   });
         // });
         // setTeamOptions(uniqueTeams);
         // console.log(response.data);
-        // console.log(yearOptions[0]);
+
+        setUnderOptions([...new Set(response.data.map(match => match.under))]);
+        setYearOptions([...new Set(response.data.map(match => match.teamYear))]);
         
         
         updateRowsPerPage(); // Initial setup
@@ -109,7 +106,23 @@ const MatchDetails = () => {
   
     fetchMatches();
 
-  }, [isSubmitted, isDeleted]);
+  }, [isSubmitted, isDeleted, API_URL]);
+
+   // Generate Team Options with useMemo to avoid redundant calculations
+   const uniqueTeams = useMemo(() => {
+    const teams = [];
+    yearOptions.forEach(year => {
+      underOptions.forEach(under => {
+        teams.push(`${under}-${year}`);
+      });
+    });
+
+    return Array.from(new Set(teams)).sort((a, b) => {
+      const yearA = parseInt(a.split("-").pop(), 10);
+      const yearB = parseInt(b.split("-").pop(), 10);
+      return yearA - yearB;
+    });
+  }, [yearOptions, underOptions]);
 
   const updateRowsPerPage = () => {
     const screenWidth = window.innerWidth;
@@ -319,6 +332,29 @@ const MatchDetails = () => {
     return `${hour}:${minutes} ${period}`;
   };
 
+    // Update Team Options
+    useEffect(() => {
+      setTeamOptions(uniqueTeams);
+      setFilteredTeamOptions(uniqueTeams); // Initialize filtered options
+    }, [uniqueTeams]);
+  
+    // Debounce Search Logic
+    useEffect(() => {
+      const timeout = setTimeout(() => {
+        if (searchingTeams) {
+          setFilteredTeamOptions(
+            teamOptions.filter(option =>
+              option.toLowerCase().includes(searchingTeams.toLowerCase())
+            )
+          );
+        } else {
+          setFilteredTeamOptions(teamOptions);
+        }
+      }, 300);
+  
+      return () => clearTimeout(timeout); // Cleanup timeout
+    }, [searchingTeams, teamOptions]);
+
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
       <div className=" flex relative justify-center items-stretch min-h-screen w-full">
@@ -347,18 +383,86 @@ const MatchDetails = () => {
               border: "1px solid rgba(255, 255, 255, 0.3)"
             }}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center md:mb-3">
               <NavbarToggleMenu />
               <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
                 Match Details
               </h2>
-              <button
+              <div className="flex gap-3">
+                <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                  <input
+                    type="text"
+                    onChange={(e)=>setSearchingTeams(e.target.value)}
+                    className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                    placeholder='Choose a team'
+                    onClick={() => setShowTeamDropdown(!showTeamDropdown)} 
+                  />
+                  <button
+                    type="button"
+                    className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                    //onClick={handleSearchChange}
+                    >
+                    <IoIosSearch />
+                  </button>
+                      {showTeamDropdown && (
+                  <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
+                    <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                      All
+                    </button>
+                    {filteredTeamOptions.map(team => ( // Use 'team' as the map parameter here
+                      <button
+                        key={team}
+                        onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                        className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                      >
+                        {team}
+                      </button>
+                    ))}
+                  </div>
+                  )}
+                </div>
+                <button
                 title="Add New"
                 onClick={() => setIsFormPopupOpen(true)}
                 className="bg-green-500 hover:bg-green-600 rounded-full p-1 text-white text-lg lg:text-2xl"
-              >
-                <FaPlus />
-              </button>
+                >
+                  <FaPlus />
+                </button>
+              </div>
+            </div>
+            <div className=" flex md:hidden justify-center items-center mb-3 ">
+              <div className="flex text-gray-600 border bg-white border-gray-300 px-1 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                <input
+                  type="text"
+                  onChange={(e)=>setSearchingTeams(e.target.value)}
+                  className="border-0 py-1 px-5 w-[90%]  cursor-pointer rounded-3xl focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                  placeholder='Choose a team'
+                  onClick={() => setShowTeamDropdown(!showTeamDropdown)} 
+                />
+                <button
+                  type="button"
+                  className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                  //onClick={handleSearchChange}
+                  >
+                  <IoIosSearch />
+                </button>
+                    {showTeamDropdown && (
+                <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
+                  <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                    All
+                  </button>
+                  {filteredTeamOptions.map(team => ( // Use 'team' as the map parameter here
+                    <button
+                      key={team}
+                      onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                      className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                    >
+                      {team}
+                    </button>
+                  ))}
+                </div>
+                )}
+              </div>
             </div>
             <div className="flex overflow-x-auto">
               <table className="min-w-full divide-gray-300 bg-gray-200 shadow-md">
@@ -426,25 +530,6 @@ const MatchDetails = () => {
                     </th>
                     <th className=" relative py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Team
-                      <button onClick={() => setShowTeamDropdown(!showTeamDropdown)} className="ml-2">
-                        {showTeamDropdown?<FaChevronUp />:<FaChevronDown />}
-                      </button>
-                          {showTeamDropdown && (
-                      <div className="absolute mt-1 h-[74px] hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
-                        <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                          All
-                        </button>
-                        {teamOptions.map(team => ( // Use 'team' as the map parameter here
-                          <button
-                            key={team}
-                            onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
-                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
-                          >
-                            {team}
-                          </button>
-                        ))}
-                      </div>
-                      )}
                   </th>
                     <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions

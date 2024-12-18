@@ -40,7 +40,8 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
       .get(`${API_URL}coaches/all`)
       .then((response) => {
         const coaches = response.data;
-        setCoaches(coaches);
+        const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+        setCoaches(filteredCoaches);
         console.log("coaches Data:", response.data);
         console.log("coaches1:", coaches);})
         .catch((error) => {

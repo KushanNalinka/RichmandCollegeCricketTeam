@@ -7,8 +7,18 @@ import InitialNavbar from "../components/InitialNavbar";
 
 import topImage from '../assets/images/BG3.png';
 import Footer from '../components/Footer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 const itemsPerPage = 4;
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+  const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+  return `${year}/${month}/${day}`;
+};
 
 const timeAgo = (dateTime) => {
   const now = new Date();
@@ -54,6 +64,8 @@ const InitialNewsPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const API_URL = process.env.REACT_APP_API_URL;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredNews, setFilteredNews] = useState([]);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -80,12 +92,31 @@ const InitialNewsPage = () => {
     };
     fetchNews();
   }, []);
+
+   useEffect(() => {
+      const filterNews = () => {
+        const lowerCaseQuery = searchQuery.toLowerCase();
+        const filtered = newsData.filter((news) =>
+          news.heading.toLowerCase().includes(lowerCaseQuery) ||
+           formatDate(news.createdOn).includes(lowerCaseQuery)||
+           news.author.toLowerCase().includes(lowerCaseQuery)
+        );
+        setFilteredNews(filtered);
+      };
+    
+      if (searchQuery.trim() === '') {
+        setFilteredNews(newsData);
+      } else {
+        filterNews();
+      }
+    }, [searchQuery, newsData]);
   
-  // Pagination logic
-  const totalPages = Math.ceil(newsData.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const initialcurrentNews = newsData.slice(indexOfFirstItem, indexOfLastItem);
+   // Pagination logic
+   const totalPages = Math.ceil(filteredNews.length / itemsPerPage); // Adjust pagination logic
+   const indexOfLastItem = currentPage * itemsPerPage;
+   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+   const initialcurrentNews = filteredNews.slice(indexOfFirstItem, indexOfLastItem); // Use filteredNews here
+ 
   useEffect(() => {
     const interval = setInterval(() => {
       setNewsData([...newsData]);
@@ -138,22 +169,36 @@ const InitialNewsPage = () => {
         <div className="relative">
           <div className="container mx-auto p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {/* Main News Section */}
-            <div className="lg:col-span-3 md:col-span-2 sm:col-span-1 col-span-1 flex flex-col">
-              <div className="border border-gray-300 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-xxs">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-6">Richmond Cricket News</h1>
-
-                {loading ? (
-                  <p>Loading...</p>
-                ) : error ? (
-                  <p>{error}</p>
-                ) : (
-                  initialcurrentNews.map((initialnews, index) => (
-                    <div key={initialnews.id} className="mb-4 sm:mb-6">
-                      <div className="flex flex-col sm:flex-row mb-4">
-                        <div
-                          className="w-full sm:w-40 h-28 mb-4 sm:mb-0 sm:mr-4 cursor-pointer"
-                          onClick={() => goToFullArticle(initialnews.id)}
-                        >
+                       <div className="lg:col-span-3 md:col-span-2 sm:col-span-1 col-span-1 flex flex-col">
+                         <div className="border border-gray-300 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-xxs">
+                           <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+                             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-0">Richmond Cricket News</h1>
+                             <div className="relative w-full sm:w-52 md:w-60 lg:w-72">
+                               <input
+                                 type="text"
+                                 placeholder="Search News..."
+                                 value={searchQuery}
+                                 onChange={(e) => setSearchQuery(e.target.value)}
+                                 className="w-full px-2 py-1 border border-gray-300 rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2"
+                               />
+                               <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                 <FontAwesomeIcon icon={faSearch} size="sm" />
+                               </button>
+                             </div>
+                           </div>
+           
+                           {loading ? (
+                             <p>Loading...</p>
+                           ) : error ? (
+                             <p>{error}</p>
+                           ) : (
+                             initialcurrentNews.map((initialnews, index) => (
+                               <div key={initialnews.id} className="mb-4 sm:mb-6">
+                                 <div className="flex flex-col sm:flex-row mb-4">
+                                   <div
+                                     className="w-full sm:w-40 h-28 mb-4 sm:mb-0 sm:mr-4 cursor-pointer"
+                                     onClick={() => goToFullArticle(initialnews.id)}
+                                   >
                           <img
                            src={`${`http://rcc.dockyardsoftware.com/images/${initialnews.images? initialnews.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                             // src={initialnews.images && initialnews.images[0]?.imageUrl}

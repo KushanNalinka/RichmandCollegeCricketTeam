@@ -304,14 +304,14 @@ const CoachTable = () => {
                       >
                         <FaEdit />
                       </button>
-                      <button
+                      {/* <button
                         onClick={() => handleDelete(item.coachId)}
                         className="text-red-500 hover:text-red-600 text-md"
                         aria-label="Delete"
                         title="Delete"
                       >
                         <FaTrash />
-                      </button>
+                      </button> */}
                     </td>
                   </tr>
                 ))}

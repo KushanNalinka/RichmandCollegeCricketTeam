@@ -465,13 +465,13 @@ import { useAuth } from './hooks/UseAuth.js';
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 function App() {
 const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
-console.log("Retrieved roles from localStorage:", storedRoles);
-if (storedRoles.includes("ROLE_PLAYER")) {
-  console.log("You are authorized to send emails.");
-} else {
-  // Proceed with sending an email
-  console.log("You are not authorized to send emails.");
-}
+// console.log("Retrieved roles from localStorage:", storedRoles);
+// if (storedRoles.includes("ROLE_PLAYER")) {
+//   console.log("You are authorized to send emails.");
+// } else {
+//   // Proceed with sending an email
+//   console.log("You are not authorized to send emails.");
+// }
   return (
       <BrowserRouter>
         <Routes>

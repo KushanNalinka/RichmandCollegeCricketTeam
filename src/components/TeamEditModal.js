@@ -14,35 +14,10 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const [captain, setCaptain] = useState();
-  const [viceCaptain, setViceCaptain] = useState(players.filter(player => (player.playerId === formData.viceCaptain)));
+  const [viceCaptain, setViceCaptain] = useState();
   console.log("teams:", team);
+
   useEffect(() => {
-    const getAgeRange = (teamCategory) => {
-      if (teamCategory.includes("Under")) {
-        const ageMatch = teamCategory.match(/\d+/); // Extract the upper limit for "Under"
-        const maxAge = parseInt(ageMatch[0], 10);
-        const minAge = null; // Set a 2-year window for age range
-        return { minAge, maxAge };
-      } else if (teamCategory.includes("Over")) {
-        const ageMatch = teamCategory.match(/\d+/); // Extract the minimum age for "Over"
-        const minAge = parseInt(ageMatch[0], 10);
-        return { minAge, maxAge: null };
-      } else if (teamCategory === "Old Boys") {
-        return { minAge: 20, maxAge: null }; // Players older than 19
-      }
-      return null; // No range needed for unhandled categories
-    };
-    const getAgeFromDOB = (dob) => {
-      const birthDate = new Date(dob);
-      const currentDate = new Date();
-      let age = currentDate.getFullYear() - birthDate.getFullYear();
-      const isBeforeBirthday =
-        currentDate.getMonth() < birthDate.getMonth() ||
-        (currentDate.getMonth() === birthDate.getMonth() &&
-          currentDate.getDate() < birthDate.getDate());
-      if (isBeforeBirthday) age -= 1;
-      return age;
-    };
 
     axios
       .get(`${API_URL}admin/players/all`)
@@ -58,33 +33,25 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         // } else {
         //   console.log("No captain found with the specified playerId.");
         // }
-        if (!formData.under) {
-          console.log("form Under: ", formData.under);
-          // Display all active players by default
-          const activePlayers = players.filter((player) => player.status === "Active");
-          setPlayers(activePlayers);
-          console.log("All Active Players:", activePlayers);
-        } else {
-          // Filter players based on the selected team category
-          const ageRange = getAgeRange(formData.under);
+        // Display all active players by default
+        const activePlayers = players.filter((player) => player.status === "Active");
+        setPlayers(activePlayers);
+        console.log("All Active Players:", activePlayers);
 
-          if (!ageRange) {
-            console.error("Invalid team category selected");
-            return;
-          }
+        if(activePlayers){
+          const categorizedPlayers = categorizePlayers(activePlayers);
+          setPlayers(categorizedPlayers);
+          console.log("Categorized players: ", players);
+        };
+         // Team captain and vice-captain names to their player IDs
+          const captainPlayer = formData.players.find((player) => player.name === team.captain);
+          const viceCaptainPlayer = formData.players.find((player) => player.name === team.viceCaptain);
 
-          const filteredPlayers = players.filter((player) => {
-            const age = getAgeFromDOB(player.dateOfBirth);
-
-            // Handle Old Boys or age-based filtering
-            const withinMinAge = ageRange.minAge ? age >= ageRange.minAge : true;
-            const withinMaxAge = ageRange.maxAge ? age < ageRange.maxAge : true;
-            return player.status === "Active" && withinMinAge && withinMaxAge;
-          });
-
-          setPlayers(filteredPlayers);
-          console.log("Filtered Players Data:", filteredPlayers);
-        }
+          setFormData((prev) => ({
+            ...prev,
+            captain: captainPlayer ? captainPlayer.playerId : '',
+            viceCaptain: viceCaptainPlayer ? viceCaptainPlayer.playerId : '',
+          }));
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
@@ -101,8 +68,74 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         });
         console.log("players:", players);
         console.log("set selected players:", selectedPlayers);
-  }, [formData.under]);
+  }, [API_URL]);
+
+  const getAgeFromDOB = (dob) => {
+    const birthDate = new Date(dob);
+    const currentDate = new Date();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const isBeforeBirthday =
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate());
+    if (isBeforeBirthday) age -= 1;
+    return age;
+  };
   
+  const categorizePlayers = (players) => {
+    const categories = {
+      "Under 9": [],
+      "Under 11": [],
+      "Under 13": [],
+      "Under 15": [],
+      "Under 17": [],
+      "Under 19": [],
+      "Richmond Legend Over 40": [],
+      "Richmond Legend Over 50": [],
+      "Old Boys": []
+    };
+  
+    // Group players by age category
+    players.forEach(player => {
+      const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+  
+      if (age < 9) {
+        categories["Under 9"].push(player);
+        //categories["Academy Under 9"].push(player);
+      }
+      if (age >= 9 && age < 11) {
+        categories["Under 11"].push(player);
+        //categories["Academy Under 11"].push(player);
+      }
+      if (age >= 11 && age < 13) {
+        categories["Under 13"].push(player);
+        //categories["Academy Under 13"].push(player);
+      }
+      if (age >= 13 && age < 15) {
+        categories["Under 15"].push(player);
+        //categories["Academy Under 15"].push(player);
+      }
+      if (age >= 15 && age < 17) {
+        categories["Under 17"].push(player);
+        //categories["Academy Under 17"].push(player);
+      }
+      if (age >= 17 && age < 19) {
+        categories["Under 19"].push(player);
+        //categories["Academy Under 19"].push(player);
+      }
+      if (age >= 40 && age < 50) {
+        categories["Richmond Legend Over 40"].push(player);
+      }
+      if (age >= 50) {
+        categories["Richmond Legend Over 50"].push(player);
+      }
+      if (age >= 40) {
+        categories["Old Boys"].push(player);
+      }
+    });
+  
+    return categories;
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -283,11 +316,22 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select Captain</option>
-              {players.map(player =>
+              {/* {players.map(player =>
                 <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+               {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-2">
@@ -301,11 +345,22 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
               required
             >
               <option value="">Select Vice Captain</option>
-              {players.map(player =>
+              {/* {players.map(player =>
                 <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+               {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-4">
@@ -331,7 +386,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
             {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
             <div className="relative">
               <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
-                {players.map((player) => (
+                {/* {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input
                       type="checkbox"
@@ -344,7 +399,28 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                       {player.name}
                     </label>
                   </div>
-                ))}
+                ))} */}
+                {Object.entries(players).map(([category, categoryPlayers]) => {
+                  return categoryPlayers.length > 0 ? (
+                    <div key={category}>
+                      <h4 className="font-bold text-md mt-2">{category}</h4> {/* Category or Topic Header */}
+                      {categoryPlayers.map(player => (
+                        <div key={player.playerId} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`player-${player.playerId}`}
+                            className="mr-2"
+                            checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                            onChange={() => handlePlayerSelect(player)}
+                          />
+                          <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
+                            {player.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null; // Only display categories with players
+                })}
               </div>
             </div>
           </div>

@@ -238,6 +238,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
         umpires: "",
         type: "",
         matchCaptain: "",
+        matchViceCaptain: "",
         team: {
           teamId: ""
         },

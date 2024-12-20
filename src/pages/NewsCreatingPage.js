@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -48,7 +46,7 @@ const NewsCreator = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const fileInputRef = useRef(null);
   const [searchHeading, setSearchHeading] = useState(""); // State for heading search
-  const [searchDate, setSearchDate] = useState(""); // State for date search
+  const [searchDate,setSearchDate] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
     heading: "",
@@ -195,6 +193,7 @@ const NewsCreator = () => {
     }
     return errors;
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -538,7 +537,6 @@ const NewsCreator = () => {
   
     // Ensure that dropped files are iterable
     const droppedFiles = Array.from(e.dataTransfer.files || []);
-
     const validationErrors = droppedFiles.map(file => validateImageFile(file)).filter(Boolean);
 
     if (validationErrors.length > 0) {
@@ -569,16 +567,20 @@ const NewsCreator = () => {
     return dayjs(date).format("YYYY-MM-DD HH:mm:ss"); // Adjust format if needed
   };
 
-    // Filter news based on search inputs
+  // Filter news based on search inputs
   const filteredNews = createdNews.filter((news) => {
     const matchesHeading = news.heading
       .toLowerCase()
       .includes(searchHeading.toLowerCase());
+    const matchesAuthor = news.author
+      .toLowerCase()
+      .includes(searchHeading.toLowerCase());
     const matchesDate = searchDate
-      ? dayjs(news.createdAt).isSame(searchDate, "day")
+      ? dayjs(news.createdOn).isSame(searchDate, "day")
       : true;
-    return matchesHeading && matchesDate;
+    return (matchesHeading || matchesAuthor) && matchesDate;
   });
+  
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
@@ -619,21 +621,33 @@ const NewsCreator = () => {
                 
               </h2>
               {/* <div className="flex gap-3"> */}
-              <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
-                <input
-                  type="text"
-                  onChange={(e)=>setSearchHeading(e.target.value)}
-                  className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                  placeholder='Search by heading'
+              <div className=" flex justify-between gap-2">
+                <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+                  <input
+                    type="text"
+                    onChange={(e)=>setSearchHeading(e.target.value)}
+                    className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                    placeholder='Search by heading'
+                  />
+                  <button
+                    type="button"
+                    className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
+                    // onClick={handleSearchChange}
+                    >
+                    <IoIosSearch />
+                  </button>
+                </div>
+                <DatePicker
+                  name="date"
+                  dateFormat="yyyy-mm-dd"
+                  // selected={new Date(formData.dateOfBirth)}
+                  onChange={(date) => setSearchDate(date)}
+                  placeholder="yyyy-mm-dd"
+                  className=" px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+                  allowClear
                 />
-                <button
-                  type="button"
-                  className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
-                  // onClick={handleSearchChange}
-                  >
-                  <IoIosSearch />
-                </button>
               </div>
+              
             </div>
             <div className="flex md:hidden justify-center items-center mb-3 content-center">
               <div className="flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
@@ -651,6 +665,15 @@ const NewsCreator = () => {
                   <IoIosSearch />
                 </button>
               </div>
+              <DatePicker
+                name="searchDate"
+                dateFormat="yyyy-mm-dd"
+                // selected={new Date(formData.dateOfBirth)}
+                onChange={(searchDate) => handleChange({ target: { name: 'searchDate', value: searchDate } })}
+                placeholder="yyyy-mm-dd"
+                className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
+                required
+              />
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
               <div id="left-section" className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">

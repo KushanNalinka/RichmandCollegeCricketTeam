@@ -32,7 +32,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
           const activePlayers = players.filter((player) => player.status === "Active");
           setPlayers(activePlayers);
           console.log("All Active Players:", activePlayers);
-          const categorizedPlayers = categorizePlayers(players);
+          const categorizedPlayers = categorizePlayers(activePlayers);
           setPlayers(categorizedPlayers);
       })
       .catch(error => {

@@ -8,7 +8,10 @@ import InitialNavbar from "../components/InitialNavbar";
 import topImage from '../assets/images/BG3.png';
 import Footer from '../components/Footer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch ,faCalendar } from '@fortawesome/free-solid-svg-icons';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 const itemsPerPage = 4;
 
@@ -19,6 +22,7 @@ const formatDate = (dateString) => {
   const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
   return `${year}/${month}/${day}`;
 };
+
 
 const timeAgo = (dateTime) => {
   const now = new Date();
@@ -66,6 +70,7 @@ const InitialNewsPage = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNews, setFilteredNews] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(null); 
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -93,24 +98,35 @@ const InitialNewsPage = () => {
     fetchNews();
   }, []);
 
-   useEffect(() => {
-      const filterNews = () => {
-        const lowerCaseQuery = searchQuery.toLowerCase();
-        const filtered = newsData.filter((news) =>
-          news.heading.toLowerCase().includes(lowerCaseQuery) ||
-           formatDate(news.createdOn).includes(lowerCaseQuery)||
-           news.author.toLowerCase().includes(lowerCaseQuery)
-        );
-        setFilteredNews(filtered);
-      };
-    
-      if (searchQuery.trim() === '') {
-        setFilteredNews(newsData);
-      } else {
-        filterNews();
-      }
-    }, [searchQuery, newsData]);
+  useEffect(() => {
+    const filterNews = () => {
+      const lowerCaseQuery = searchQuery.toLowerCase();
+      const filtered = newsData.filter((news) => {
+        const matchesQuery =
+          (news.heading?.toLowerCase().includes(lowerCaseQuery) || '') ||
+          (news.author?.toLowerCase().includes(lowerCaseQuery) || '');
   
+        const matchesDate = selectedDate
+          ? new Date(news.createdOn).toDateString() === selectedDate.toDateString()
+          : true;
+  
+        return matchesQuery && matchesDate;
+      });
+  
+      setFilteredNews(filtered);
+    };
+  
+    if (!searchQuery.trim() && !selectedDate) {
+      setFilteredNews(newsData);
+    } else {
+      filterNews();
+    }
+  }, [searchQuery, selectedDate, newsData]);
+  
+    
+    
+    
+   
    // Pagination logic
    const totalPages = Math.ceil(filteredNews.length / itemsPerPage); // Adjust pagination logic
    const indexOfLastItem = currentPage * itemsPerPage;
@@ -173,20 +189,57 @@ const InitialNewsPage = () => {
                          <div className="border border-gray-300 p-4 sm:p-6 lg:p-8 rounded-lg bg-white shadow-xxs">
                            <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
                              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-0">Richmond Cricket News</h1>
-                             <div className="relative w-full sm:w-52 md:w-60 lg:w-72">
-                               <input
-                                 type="text"
-                                 placeholder="Search News..."
-                                 value={searchQuery}
-                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                 className="w-full px-2 py-1 border border-gray-300 rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2"
-                               />
-                               <button className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                 <FontAwesomeIcon icon={faSearch} size="sm" />
-                               </button>
+                             <div className="flex items-center space-x-4">
+                               {/* Search Input */}
+                               <div className="relative">
+                                 <input
+                                   type="text"
+                                   placeholder="Search News..."
+                                   value={searchQuery}
+                                   onChange={(e) => setSearchQuery(e.target.value)}
+                                   className="w-full px-2 py-1 border border-gray-300 rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2"
+                                 />
+                                 <FontAwesomeIcon
+                                   icon={faSearch}
+                                   size="sm"
+                                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                                 />
+                               </div>
+                             
+                               {/* Date Picker with Reset Button */}
+                               <div className="flex items-center space-x-2">
+                                 <div className="relative inline-block">
+                                   <FontAwesomeIcon
+                                     icon={faCalendar} // Calendar icon
+                                     size="sm"
+                                     className="text-gray-400 hover:text-gray-600 cursor-pointer"
+                                     onClick={() => document.getElementById('datepicker-trigger').focus()}
+                                   />
+                                   <DatePicker
+                                     id="datepicker-trigger"
+                                     selected={selectedDate}
+                                     onChange={(date) => setSelectedDate(date)}
+                                     dateFormat="yyyy/MM/dd"
+                                     className="opacity-0 w-6 h-6 cursor-pointer"
+                                     placeholderText="Select a date"
+                                   />
+                                 </div>
+                             
+                                 {/* Reset Button */}
+                                 {selectedDate && (
+                                   <button
+                                     onClick={() => setSelectedDate(null)} // Reset selectedDate
+                                     className="px-2 py-1 bg-[#012D5E]  text-white rounded-xl text-xs  focus:outline-none"
+                                   >
+                                     Refresh
+                                   </button>
+                                 )}
+                               </div>
                              </div>
-                           </div>
-           
+                             
+                             
+                                             </div>
+                             
                            {loading ? (
                              <p>Loading...</p>
                            ) : error ? (
@@ -223,8 +276,8 @@ const InitialNewsPage = () => {
                             </span>
                           </p>
                           <span className="text-xxs sm:text-xs text-gray-500 mt-2 block">
-                            {new Date(initialnews.createdOn).toLocaleDateString()} • {timeAgo(initialnews.createdOn)} • {initialnews.author}
-                          </span>
+  {formatDate(initialnews.createdOn)} • {timeAgo(initialnews.createdOn)} • {initialnews.author}
+</span>
                         </div>
                       </div>
                       {index < initialcurrentNews.length - 1 && <hr className="border-gray-300 my-4" />}
@@ -299,8 +352,9 @@ const InitialNewsPage = () => {
                           {sidebarItem.heading}
                         </h3>
                         <span className="text-xxs sm:text-xs text-gray-500 block">
-                          {new Date(sidebarItem.createdOn).toLocaleDateString()} • {timeAgo(sidebarItem.createdOn)} • {sidebarItem.author}
-                        </span>
+  {formatDate(sidebarItem.createdOn)} • {timeAgo(sidebarItem.createdOn)} • {sidebarItem.author}
+</span>
+
                       </div>
                     </div>
                     {index < latestFiveNews.length - 1 && <hr className="my-4 border-gray-300" />}

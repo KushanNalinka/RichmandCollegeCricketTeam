@@ -389,18 +389,18 @@ const NewsPage = () => {
       const lowerCaseQuery = searchQuery.toLowerCase();
       const filtered = newsData.filter((news) => {
         const matchesQuery =
-          news.heading.toLowerCase().includes(lowerCaseQuery) ||
-          news.author.toLowerCase().includes(lowerCaseQuery);
-
+          (news.heading?.toLowerCase().includes(lowerCaseQuery) || '') ||
+          (news.author?.toLowerCase().includes(lowerCaseQuery) || '');
+    
         const matchesDate = selectedDate
           ? formatDate(news.createdOn) === formatDate(selectedDate)
           : true;
-
+    
         return matchesQuery && matchesDate;
       });
       setFilteredNews(filtered);
     };
-
+    
     if (searchQuery.trim() === '' && !selectedDate) {
       setFilteredNews(newsData);
     } else {

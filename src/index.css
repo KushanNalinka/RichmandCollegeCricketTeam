@@ -258,7 +258,68 @@ html {
   -webkit-background-clip: text;
   text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 
+};
+
+/* Completely remove border and shadow */
+.custom-datepicker {
+  border: none !important; /* Ensures no border */
+  box-shadow: none !important; /* Removes any shadow */
+  outline: none !important; /* Removes focus outline */
+  background-color: transparent !important; /* Transparent background */
+  cursor: pointer !important;
+  font-size: medium;
 }
+.custom-datepicker.hidden-input-datepicker {
+  border: none !important; /* Ensures no border */
+  box-shadow: none !important; /* Removes any shadow */
+  outline: none !important; /* Removes focus outline */
+  background-color: transparent !important; /* Transparent background */
+}
+
+/* Prevent hover effects */
+.custom-datepicker.hidden-input-datepicker:hover,
+.custom-datepicker.hidden-input-datepicker:focus {
+  box-shadow: #00175f !important;
+  border-bottom: #00175f solid 1px !important;
+}
+
+/* Customize the calendar icon (optional styling) */
+.custom-calendar-icon {
+  color: #575656; /* Set desired icon color */
+  font-size: 1rem; /* Adjust icon size */
+  cursor: pointer !important; /* Makes the icon clickable */
+  padding-right: 20px !important;
+  font-size: medium;
+}
+
+
+.custom-calendar-icon:hover {
+  font-weight: 900;
+  color: #4A0D34 !important;
+  box-shadow: #00175f !important;
+  border-bottom: #00175f solid 1px !important;
+  cursor: pointer !important; /* Makes the icon clickable */
+ 
+}
+
+/* Additional styles for input field inside DatePicker */
+.custom-datepicker.hidden-input-datepicker .ant-picker-input > input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+  width: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove visible border in case of overriding styles */
+.custom-datepicker.hidden-input-datepicker .ant-picker {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+
 /* Media queries for responsiveness */
 /* Large screens */
 @media (min-width: 1280px) {

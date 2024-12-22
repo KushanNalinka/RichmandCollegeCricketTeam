@@ -15,6 +15,7 @@ import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GiClick } from "react-icons/gi";
 import { IoIosSearch } from "react-icons/io";
 import dayjs from "dayjs";
+import { CalendarOutlined } from "@ant-design/icons";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
 import MainNavbarToggle from "../components/MainNavBarToggle";
@@ -612,22 +613,22 @@ const NewsCreator = () => {
               border: "1px solid rgba(255, 255, 255, 0.3)",
             }}
           >
-            <div className="flex justify-between items-center content-center md:mb-3">
+            <div className="flex lg:grid lg:grid-flow-col-1 lg:grid-cols-3 gap-5 justify-between items-center content-center md:mb-3">
               <NavbarToggleMenu />
-              <h2 className="md:text-2xl text-xl font-bold text-center font-popins text-[#480D35]">
+              <h2 className="md:text-2xl lg:col-span-2 text-xl font-bold text-center font-popins text-[#480D35]">
                 News Creator
               </h2>
               <h2 className="flex md:hidden md:text-2xl text-xl w-10 font-bold text-center font-popins text-[#480D35]">
                 
               </h2>
               {/* <div className="flex gap-3"> */}
-              <div className=" flex justify-between gap-2">
-                <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
+              <div className="hidden md:flex lg:col-span-1 justify-between gap-2">
+                <div className=" flex w-full text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
                   <input
                     type="text"
                     onChange={(e)=>setSearchHeading(e.target.value)}
                     className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                    placeholder='Search by heading'
+                    placeholder='Search by heading or author'
                   />
                   <button
                     type="button"
@@ -640,10 +641,11 @@ const NewsCreator = () => {
                 <DatePicker
                   name="date"
                   dateFormat="yyyy-mm-dd"
-                  // selected={new Date(formData.dateOfBirth)}
                   onChange={(date) => setSearchDate(date)}
+                  suffixIcon={<CalendarOutlined className="custom-calendar-icon"/>}
+                  inputReadOnly
+                  className="custom-datepicker hidden-input-datepicker w-10 pr-2 bg-transparent border-none text-[black] font-bold"
                   placeholder="yyyy-mm-dd"
-                  className=" px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
                   allowClear
                 />
               </div>
@@ -655,7 +657,7 @@ const NewsCreator = () => {
                   type="text"
                   onChange={(e)=>setSearchHeading(e.target.value)}
                   className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                  placeholder='Search by heading'
+                  placeholder='Search by heading or author'
                 />
                 <button
                   type="button"
@@ -666,14 +668,15 @@ const NewsCreator = () => {
                 </button>
               </div>
               <DatePicker
-                name="searchDate"
-                dateFormat="yyyy-mm-dd"
-                // selected={new Date(formData.dateOfBirth)}
-                onChange={(searchDate) => handleChange({ target: { name: 'searchDate', value: searchDate } })}
-                placeholder="yyyy-mm-dd"
-                className="w-full px-3 py-1 hover:border-gray-300 border text-gray-600 border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
-                required
-              />
+                  name="date"
+                  dateFormat="yyyy-mm-dd"
+                  onChange={(date) => setSearchDate(date)}
+                  suffixIcon={<CalendarOutlined className="custom-calendar-icon"/>}
+                  inputReadOnly
+                  className="custom-datepicker hidden-input-datepicker w-10 pr-2 bg-transparent border-none text-[black] font-bold"
+                  placeholder="yyyy-mm-dd"
+                  allowClear
+                />
             </div>
             <div className={`${uploading? "opacity-80": "bg-opacity-100"} grid grid-flow-col-1 lg:grid-cols-3 gap-5`}>
               <div id="left-section" className=" lg:col-span-2 w-full col-start-1 row-start-2 lg:col-start-1 lg:row-start-1 bg-white rounded-lg">

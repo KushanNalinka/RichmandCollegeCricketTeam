@@ -20,11 +20,20 @@ const InitialNewsDetail = () => {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const API_URL = process.env.REACT_APP_API_URL;
     const [selectedNews, setSelectedNews] = useState(null);
+    const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
-        const response = await axios.get(`${API_URL}news/${id}`);
+        const response = await axios.get(`${API_URL}news/${id}`
+          ,{
+            method: 'GET',
+            headers: {
+                 'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+        }, }
+        );
         const fetchedNews = response.data;
         setNewsItem(fetchedNews);
         setSelectedNews(fetchedNews); // Set the fetched news to selectedNews

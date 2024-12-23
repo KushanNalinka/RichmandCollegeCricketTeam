@@ -10,10 +10,19 @@ const ScorecardData = () => {
   const [playerStats, setPlayerStats] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
   const [selectedInning, setSelectedInning] = useState('1st');
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     if (match) {
-      fetch(`${API_URL}playerStats/match/player-stats?matchId=${match.matchId}`)
+      fetch(`${API_URL}playerStats/match/player-stats?matchId=${match.matchId}`
+        ,{
+          method: 'GET',
+          headers: {
+               'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, }
+      )
 
         .then((response) => response.json())
         .then((data) => {

@@ -27,6 +27,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showImageError, setShowImageError] = useState(false);
@@ -66,7 +67,12 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
     // Fetch player data for playerId 4
     console.log("formdata :", formData);
     axios
-      .get(`${API_URL}teams/${formData.team.teamId}/players`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
         const filteredPlayers = players.filter((player) => ( player.status === "Active"));
@@ -87,14 +93,24 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       .catch(error => {
         console.error("There was an error fetching the match data!", error);
       });
-    axios.get(`${API_URL}coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }}).then(response => {
       const coaches = response.data;
       const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
       setCoaches(filteredCoaches);
       console.log("Coaches Data:", coaches);
     });
     axios
-      .get(`${API_URL}teams/all`)
+      .get(`${API_URL}teams/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const teams = response.data;
         setTeams(teams);
@@ -320,7 +336,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        formDataToSend
+        formDataToSend, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
       );
       message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);

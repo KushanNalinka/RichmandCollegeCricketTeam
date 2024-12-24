@@ -271,6 +271,7 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube } from 'react-icons/fa';
 import schoolLogo from '../assets/images/FooterLogo.png'; // Adjust the path for the logo image file
 import { FiPhone, FiMail } from 'react-icons/fi';
 import { HiOutlineLocationMarker } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
 
@@ -381,7 +382,9 @@ const Footer = () => {
               Send
             </button>
             
+            
           </div>
+          
           
           <div className="w-full h-full">
             <iframe
@@ -428,6 +431,28 @@ const Footer = () => {
             <div className="text-center text-gray-600 text-sm mt-4">
               <p>© 2024 Richmond College</p>
             </div>
+
+            <div className="flex items-center -mt-10">
+  <a 
+    href="https://slsca.batsman.com/live" 
+    target="_blank" 
+    rel="noopener noreferrer"
+  >
+    <button className="bg-[#10164C] text-white px-6 py-2 rounded-lg hover:bg-[#0c113a]">
+      SLCSA ↗
+    </button>
+  </a>
+  <a 
+    href="/role" 
+    className="ml-5"
+  >
+    <button className="bg-[#4A0D34] text-white px-6 py-2 rounded-lg hover:bg-[#3a0b2a]">
+      Sponsored By
+    </button>
+  </a>
+</div>
+
+
           </div>
         </div>
       </div>

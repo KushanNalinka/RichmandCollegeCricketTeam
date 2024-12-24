@@ -172,13 +172,17 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           newErrors["user.username"] = "Username must be between 4 and 20 characters.";
         } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
           newErrors["user.username"] = "Username can only contain letters, numbers, underscores, and hyphens.";
+        
+        
         } else {
           // Debounced API call for username availability
           clearTimeout(window.usernameValidationTimeout);
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
               const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+
               if ((value !== player.username) && response.data.usernameExists === true) {
+
                 setErrors((prevErrors) => ({
                   ...prevErrors,
                   "user.username": "This username is already taken.",
@@ -201,14 +205,18 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors["user.email"] = "Please enter a valid email address";
-        } else {
+           
+           
+             } else {
           // Debounced API call for email availability
          clearTimeout(window.emailValidationTimeout);
          window.emailValidationTimeout = setTimeout(async () => {
            try {
              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
              console.log("Email validation :", response.data);
+
              if ((value !== player.email) && response.data.emailExists === true) {
+
                setErrors((prevErrors) => ({
                  ...prevErrors,
                  ["user.email"]: "This email is already in use.",

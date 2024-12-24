@@ -120,28 +120,29 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
           newErrors.username = "Username must be between 4 and 20 characters.";
         } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
           newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-        } else {
-          // Debounced API call for username availability
-          clearTimeout(window.usernameValidationTimeout);
-          window.usernameValidationTimeout = setTimeout(async () => {
-            try {
-              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
-              if (response.data.usernameExists === true) {
-                setErrors((prevErrors) => ({
-                  ...prevErrors,
-                  username: "This username is already taken.",
-                }));
-              } else {
-                setErrors((prevErrors) => {
-                  const { username, ...rest } = prevErrors;
-                  return rest;
-                });
-              }
-            } catch (error) {
-              console.error("Username validation error:", error);
-            }
-          }, 500); // Delay of 500ms
-        };
+        } 
+        // else {
+        //   // Debounced API call for username availability
+        //   clearTimeout(window.usernameValidationTimeout);
+        //   window.usernameValidationTimeout = setTimeout(async () => {
+        //     try {
+        //       const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+        //       if (response.data.usernameExists === true) {
+        //         setErrors((prevErrors) => ({
+        //           ...prevErrors,
+        //           username: "This username is already taken.",
+        //         }));
+        //       } else {
+        //         setErrors((prevErrors) => {
+        //           const { username, ...rest } = prevErrors;
+        //           return rest;
+        //         });
+        //       }
+        //     } catch (error) {
+        //       console.error("Username validation error:", error);
+        //     }
+        //   }, 500); // Delay of 500ms
+        // };
         break;
       
       case "email":
@@ -149,29 +150,30 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors.email = "Please enter a valid email address";
-        } else {
-          // Debounced API call for email availability
-         clearTimeout(window.emailValidationTimeout);
-         window.emailValidationTimeout = setTimeout(async () => {
-           try {
-             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
-             console.log("Email validation :", response.data);
-             if (response.data.emailExists === true) {
-               setErrors((prevErrors) => ({
-                 ...prevErrors,
-                 email: "This email is already in use.",
-               }));
-             } else {
-               setErrors((prevErrors) => {
-                 const { email, ...rest } = prevErrors;
-                 return rest;
-               });
-             }
-           } catch (error) {
-             console.error("Email validation error:", error);
-           }
-         }, 500); // Delay of 500ms
-       };
+        } 
+      //   else {
+      //     // Debounced API call for email availability
+      //    clearTimeout(window.emailValidationTimeout);
+      //    window.emailValidationTimeout = setTimeout(async () => {
+      //      try {
+      //        const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+      //        console.log("Email validation :", response.data);
+      //        if (response.data.emailExists === true) {
+      //          setErrors((prevErrors) => ({
+      //            ...prevErrors,
+      //            email: "This email is already in use.",
+      //          }));
+      //        } else {
+      //          setErrors((prevErrors) => {
+      //            const { email, ...rest } = prevErrors;
+      //            return rest;
+      //          });
+      //        }
+      //      } catch (error) {
+      //        console.error("Email validation error:", error);
+      //      }
+      //    }, 500); // Delay of 500ms
+      //  };
         break;
       
       case "password":

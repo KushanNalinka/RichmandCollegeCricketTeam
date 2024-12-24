@@ -241,9 +241,9 @@ const ScorecardData = () => {
         <thead className="bg-[#4A0D34] text-white">
           <tr>
             <th className="px-2 py-1 text-left text-xs font-medium uppercase tracking-wider">Fielding</th>
-            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">C</th>
-            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">S</th>
-            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">RO</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Catches</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">Stumps</th>
+            <th className="px-2 py-1 text-center text-xs font-medium uppercase tracking-wider">RunOuts</th>
           
           </tr>
         </thead>

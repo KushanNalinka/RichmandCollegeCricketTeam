@@ -138,6 +138,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
           newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
         };
         break;
+
       case "position":
         //name validation
         if (value.trim().length < 4 || value.trim().length > 25) {
@@ -147,6 +148,7 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
         } else if (/^\s|\s$/.test(value)) {
           newErrors.position = "Position cannot start or end with a space.";
         };
+
       default:
         break;  
     }  
@@ -323,7 +325,9 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               required
               placeholder="Teacher"
             />
+
              {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
+
           </div>
           <div className="flex mt-8 justify-end col-span-2">
             <button

@@ -19,6 +19,9 @@ import { CalendarOutlined } from "@ant-design/icons";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
 import MainNavbarToggle from "../components/MainNavBarToggle";
+import ReactQuill from "react-quill"; // Import the rich-text editor
+import "react-quill/dist/quill.snow.css"; // Import Quill styles
+import { Color } from "antd/es/color-picker";
 dayjs.extend(relativeTime);
 
 const NewsCreator = () => {
@@ -58,6 +61,7 @@ const NewsCreator = () => {
     updatedBy:"",
   });
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const divRef = useRef(null);
   console.log("logged user in news: ", user);
 
@@ -98,7 +102,12 @@ const NewsCreator = () => {
   const loadNews = async() => {
     setUploading(true);
     axios
-      .get(`${API_URL}news`)
+      .get(`${API_URL}news`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then((response) => {
         const createdNews = response.data;
         setCreatedNews(createdNews);
@@ -146,6 +155,10 @@ const NewsCreator = () => {
     setErrors((prevErrors) => ({ ...prevErrors, ...fieldError }));
   };
 
+  const handleQuillChange = (content) => {
+    setFormData((prev) => ({ ...prev, body: content }));
+  };
+
   const validateFormAdd = (name, value) => {
     const newErrors = {};
     switch(name){
@@ -189,7 +202,7 @@ const NewsCreator = () => {
         errors[field] = fieldErrors[field];
       }
     });
-    if (imageFiles.length === 0) {
+    if (imagePreviews.length === 0 ) {
       errors.imageUrl = "At least one image is required.";
     }
     return errors;
@@ -238,7 +251,9 @@ const NewsCreator = () => {
         formDataToSend,
         {
           headers: {
-              "Content-Type": "multipart/form-data",
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -348,7 +363,10 @@ const NewsCreator = () => {
       console.log("FormDataToSend before edit submit :", formDataToSend);
       const response = await axios.put(
         `${API_URL}news/${currentNewsId}`,
-        formDataToSend
+        formDataToSend, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfully Updated!");
@@ -368,6 +386,7 @@ const NewsCreator = () => {
     } catch (error) {
       console.error("Error submitting form:", error);
       if (error.response && error.response.data && error.response.data.message) {
+        console.log("error message: ", error.response.data.message);
         message.error(`Failed to submit: ${error.response.data.message}`);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
@@ -406,7 +425,12 @@ const NewsCreator = () => {
     setUploading(true);
     try {
       const deleteMatch = await axios.delete(
-        `${API_URL}news/${newsToDelete}`
+        `${API_URL}news/${newsToDelete}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
@@ -473,7 +497,12 @@ const NewsCreator = () => {
 
     try {
       const deleteImage = await axios.delete(
-        `${API_URL}news/deleteImage/${imageId}`
+        `${API_URL}news/deleteImage/${imageId}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       const updatedExistingImages = existingImageURLs.filter((_, i) => i !== imageToDelete);
       setExistingImageURLs(updatedExistingImages);
@@ -725,7 +754,33 @@ const NewsCreator = () => {
                       </div>
                       <div className="col-span-1 md:col-span-2">
                       <label htmlFor="body" className="block text-black text-sm font-semibold">Content</label>
-                      <textarea
+                       <ReactQuill
+                        id="body"
+                        value={formData.body}
+                        placeholder="......"
+                        required
+                        onChange={handleQuillChange}
+                        className="bg-gray-50 custom-quill border-gray-300 text-gray-600 text-sm block w-full mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                        modules={{
+                        toolbar: [
+                          [{ font: [] }, { size: [] }],
+                          ["bold", "italic", "underline", "strike"],
+                          [{ color: [] }, { background: [] }],
+                          [{ script: "sub" }, { script: "super" }],
+                          [{ align: [] }],
+                          [{ direction: "rtl" }], // Right-to-left
+                          [{ indent: "-1" }, { indent: "+1" }], // Indentation
+                          // Block elements
+                          [{ header: [] }], // Headers
+                          ["blockquote", "code-block"],
+                          [{ list: "ordered" }, { list: "bullet" }],
+                          ["link", "image", "video","formula", "code"],
+                          ["clean"],
+                        ],
+                      }}
+                      theme="snow"
+                    />
+                      {/* <textarea
                         type="Form"
                         id="body"
                         name="body"
@@ -735,11 +790,11 @@ const NewsCreator = () => {
                         placeholder="......"
                         height="Auto"
                         required
-                      />
+                      /> */}
                       {errors.body && <p className="text-red-500 text-xs mt-1">{errors.body}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2">
-                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Upload Images</label>
+                        <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Upload Images for carousel</label>
                         {/* <input
                           id="imageUrl"
                           type="file"
@@ -848,8 +903,8 @@ const NewsCreator = () => {
               </div>
               <div id="right-section" className=" relative lg:col-span-1 rounded-lg border border-[#480D35] bg-white overflow-hidden w-full custom-scrollbar hover:overflow-auto col-start-1 row-start-1 lg:col-start-3 lg:row-start-1 ">
                 <div className="px-5 md:px-3 py-2 ">
-                  <div className="sticky top-0 z-40 rounded-t-lg bg-gradient-to-r from-[#00175f] to-[#480D35] ">
-                    <h1 className="text-white  rounded-t-lg font-bold font-mono md:text-xl text-lg py-1 px-3">
+                  <div className="sticky top-0 z-40 rounded-t-2xl bg-gradient-to-r from-[#00175f] to-[#480D35] ">
+                    <h1 className="text-white  rounded-t-lg font-bold font-mono md:text-xl text-lg py-1 px-5">
                       All News
                     </h1>
                   </div>
@@ -871,9 +926,15 @@ const NewsCreator = () => {
                                 <h1 className="font-bold text-[black] text-base">
                                   {news.heading}
                                 </h1>
-                                <p className="text-black text-xs text-justify">
-                                  {news.body.slice(0, 100)}...
-                                </p>
+                                <div className="text-black text-xs text-justify">
+                                  <span
+                                    dangerouslySetInnerHTML={{
+                                      __html: news?.body
+                                        ? news.body.slice(0, 200).replace(/\n/g, "<br />")
+                                        : "No content available",
+                                    }}
+                                  />...
+                                </div>
                                 <div className=" mt-3 flex justify-between text-xxs">
                                   <p className="text-gray-600 ">
                                     {dayjs(news.createdOn).format("YYYY-MMM-DD")}

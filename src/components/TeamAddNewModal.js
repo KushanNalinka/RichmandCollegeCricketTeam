@@ -8,6 +8,7 @@ import { FaTimes,  FaTrash } from 'react-icons/fa';
 const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [formData, setFormData] = useState({
@@ -24,7 +25,12 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/players/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
 
@@ -152,8 +158,12 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.post(
         `${API_URL}teams/add`,
-        formData
-      );
+        formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }});
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({

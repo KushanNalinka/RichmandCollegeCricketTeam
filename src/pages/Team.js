@@ -39,12 +39,18 @@ const TableComponent = () => {
   const [underOptions, setUnderOptions] = useState([]);
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     setUploading(true);
     const fetchTeams = async () => {
       try {
-        const response = await axios.get(`${API_URL}teams/all`); // Update with your API endpoint
+        const response = await axios.get(`${API_URL}teams/all`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}); // Update with your API endpoint
         setUploading(false);
         const sortedTeams = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
 
@@ -141,7 +147,12 @@ const TableComponent = () => {
 
   const confirmDelete = async () => {
     try{
-      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`)
+      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }})
       message.success("Successfully Deleted!");
       setTimeout(() => {
         window.location.reload();

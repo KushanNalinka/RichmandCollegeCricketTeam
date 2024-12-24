@@ -6,6 +6,7 @@ import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
 const EditModal = ({ team, onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({...team, updatedBy:user.username, updatedOn:new Date().toISOString()});
@@ -20,7 +21,12 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   useEffect(() => {
 
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/players/all`,{ 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+    }})
       .then(response => {
         const players = response.data;
         console.log("All players: ", players);
@@ -52,12 +58,20 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
             captain: captainPlayer ? captainPlayer.playerId : '',
             viceCaptain: viceCaptainPlayer ? viceCaptainPlayer.playerId : '',
           }));
+          console.log("formdata captain: ", formData.captain);
+          console.log("formdata vicecaptain: ", formData.viceCaptain);
+          console.log("formdata: ", formData);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
       axios
-        .get(`${API_URL}teams/${team.teamId}/players`)
+        .get(`${API_URL}teams/${team.teamId}/players`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }})
         .then(response => {
           const members = response.data;
           setSelectedPlayers(members);
@@ -167,7 +181,12 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}teams/${team.teamId}`,
-        formData
+        formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       console.log("Form update succedded: ", response.data);
       message.success("Successfull!");

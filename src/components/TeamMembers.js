@@ -5,10 +5,16 @@ import { FaTimes } from "react-icons/fa";
 const TeamMembers = ({teamId, onClose}) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const [members, setMembers] = useState();
+  const accessToken = localStorage.getItem('accessToken');
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        const response = await axios.get(`${API_URL}teams/${teamId}/players`); // Update with your API endpoint
+        const response = await axios.get(`${API_URL}teams/${teamId}/players`,{
+          headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+          }, }); // Update with your API endpoint
         const activeMembers = response.data.filter((player) => player.status === "Active");
         setMembers(activeMembers);
         console.log("players in team: ",response.data);

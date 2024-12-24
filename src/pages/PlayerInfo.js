@@ -32,7 +32,7 @@ const TableComponent = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const divRef = useRef(null);
   const user = JSON.parse(localStorage.getItem("user"));
-  const accessToken = localStorage.getItem('token');
+  const accessToken = localStorage.getItem('accessToken');
   const [filteredPlayers, setFilteredPlayers] = useState([]);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showBowlingDropdown, setShowBowlingDropdown] = useState(false);
@@ -56,12 +56,13 @@ const TableComponent = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}admin/players/all` , { 
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            // 'Content-Type': 'application/json',
-            // 'Accept': 'application/json',
-      }})
+      .get(`${API_URL}admin/players/all`,{
+        method: 'GET',
+        headers: {
+             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+    }, })
       .then(response => {
         setUploading(false);
         const players = response.data;
@@ -157,7 +158,13 @@ const TableComponent = () => {
     setUploading(true);
     try{
       const deletePayer = await axios.delete(
-        `${API_URL}admin/players/delete/${playerToDelete}`
+        `${API_URL}admin/players/delete/${playerToDelete}`,{
+          method: 'DELETE',
+          headers: {
+               Authorization: `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, }
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

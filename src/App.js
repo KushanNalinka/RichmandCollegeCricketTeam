@@ -413,7 +413,7 @@
 // export default App;
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import PrivateRoute from "./components/PrivateRoute";
+import PrivateRoute from "./components/PrivateRoutes";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Initial from './pages/Initial.js';
@@ -482,7 +482,7 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
            {/* Protected Routes */}
-           <Route path="/member"element={<MemberInitial />} />
+           {/* <Route path="/member"element={<MemberInitial />} /> */}
            <Route path="/playerProfile"
             element={
                 <PlayerProfile />
@@ -511,6 +511,23 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
            
           }
         />
+        {/* Protected Routes */}
+        <Route
+          path="/player"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <PlayerInfo />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/member"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_COACH", "ROLE_PLAYER", "ROLE_OFFICIAL"]}>
+              <MemberInitial />
+            </PrivateRoute>
+          }
+        />
          <Route path="/under17" element={<Under17 />} />
          <Route path="/under19" element={<Under19 />} />
          <Route path="/oldboys" element={<OldBoys />} />
@@ -527,7 +544,7 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
          <Route path="/coach" element={<Coaches />} />
          <Route path="/allplayers" element={<AllPlayers />} />
          <Route path='/official' element={<OfficialsTable/>} />
-         <Route path='/player' element={<PlayerInfo/>} />
+         {/* <Route path='/player' element={<PlayerInfo/>} /> */}
          <Route path='/match' element={<MatchDetail/>} />
          <Route path="/admin-scorecard" element={<ScoreCardPage/>} />
          <Route path="/team" element={<Team />} />

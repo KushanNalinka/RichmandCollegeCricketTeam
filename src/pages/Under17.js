@@ -56,12 +56,13 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`, {
-                        method: "GET", // Specify the HTTP method (default is GET)
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
+                        method: 'GET',
                         headers: {
-                          //"Content-Type": "application/json", // Optional, depending on your API requirements
-                          Authorization: `Bearer ${accessToken}`, // Add the Authorization header
-                        },});
+                             Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                    }, });
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {
@@ -359,22 +360,22 @@ const summarizeStats = (type) => {
   summary.battingAvg =
   summary.battingInnings > 0
   ? (summary.runs / summary.battingInnings).toFixed(2)
-  : "N/A";
+  : 0;
 
   summary.sr =
     summary.balls > 0
       ? ((summary.runs / summary.balls) * 100).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.bawlingAvg =
     summary.wickets > 0
       ? (summary.runsConceded / summary.wickets).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.economyRate =
     summary.overs > 0
       ? (summary.runsConceded / summary.overs).toFixed(2)
-      : "N/A";
+      : 0;
 
 //   summary.bestValue =
 //     summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);

@@ -10,12 +10,19 @@ const PlayerProfile = () => {
     const [playerStat, setPlayerStat] = useState([]); // Stores stats for the selected player
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
     const API_URL = process.env.REACT_APP_API_URL;
+    const accessToken = localStorage.getItem('accessToken');
     
     // Fetch all players from the API when the component mounts
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`${API_URL}admin/players/all`);
+                const response = await fetch(`${API_URL}admin/players/all`,{
+                    method: 'GET',
+                    headers: {
+                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                }, });
                 const data = await response.json();
 
                 const under13Players = data.filter((player) =>
@@ -40,7 +47,13 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
+                        method: 'GET',
+                        headers: {
+                             Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                    }, });
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {

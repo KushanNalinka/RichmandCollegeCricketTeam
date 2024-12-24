@@ -18,12 +18,13 @@ const PlayerProfile = () => {
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`${API_URL}admin/players/all`, {
-                    method: "GET", // Specify the HTTP method (default is GET)
+                const response = await fetch(`${API_URL}admin/players/all`,{
+                    method: 'GET',
                     headers: {
-                      //"Content-Type": "application/json", // Optional, depending on your API requirements
-                      Authorization: `Bearer ${accessToken}`, // Add the Authorization header
-                    },});
+                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                }, });
                 const data = await response.json();
 
                 // Filter players who are part of "Under 13" in the selected year
@@ -56,12 +57,13 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`, {
-                        method: "GET", // Specify the HTTP method (default is GET)
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
+                        method: 'GET',
                         headers: {
-                          //"Content-Type": "application/json", // Optional, depending on your API requirements
-                          Authorization: `Bearer ${accessToken}`, // Add the Authorization header
-                        },});
+                             Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                    }, });
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {

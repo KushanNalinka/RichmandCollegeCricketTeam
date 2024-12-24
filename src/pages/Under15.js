@@ -59,7 +59,13 @@ const PlayerProfile = () => {
             if (selectedPlayer) {
                 try {
 
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
+                        method: 'GET',
+                        headers: {
+                             Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                    }, });
 
                     const data = await response.json();
                     console.log('Fetched player stats:', data); // Log the fetched response data
@@ -361,22 +367,22 @@ const summarizeStats = (type) => {
   summary.battingAvg =
   summary.battingInnings > 0
   ? (summary.runs / summary.battingInnings).toFixed(2)
-  : "N/A";
+  : 0;
 
   summary.sr =
     summary.balls > 0
       ? ((summary.runs / summary.balls) * 100).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.bawlingAvg =
     summary.wickets > 0
       ? (summary.runsConceded / summary.wickets).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.economyRate =
     summary.overs > 0
       ? (summary.runsConceded / summary.overs).toFixed(2)
-      : "N/A";
+      : 0;
 
 //   summary.bestValue =
 //     summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);
@@ -412,15 +418,16 @@ summary.bestWickets > 0
             <select
                 value={selectedYear}
                 onChange={handleYearChange}
-                className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
+                className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-3 px-6 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-[#00175F] focus:outline-none focus:ring-2 focus:ring-[#00175F] text-sm md:text-base mt-1"
             >
                 {getYearOptions().map((year) => (
-                    <option key={year} value={year}>
+                    <option key={year} value={year} className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
                         {year}
+                        
                     </option>
                 ))}
             </select>
-            <div className='rounded-full p-2 w-6 h-6 bg-black'>
+            <div className='rounded-full p-2 w-10 h-10 bg-black'>
                 <span className=' text-white '>{showPlayerList ? '-' : '+'}</span>
             </div>
             
@@ -500,10 +507,10 @@ summary.bestWickets > 0
                                 <select
                                     value={selectedYear}
                                     onChange={handleYearChange}
-                                    className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-2 md:px-5 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
+                                    className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-2 md:px-5 rounded-lg shadow-md hover:bg-[#000175] focus:outline-none focus:ring-2 focus:ring-[#000175] text-sm md:text-base mt-1"
                                 >
                                     {getYearOptions().map((year) => (
-                                        <option key={year} value={year}>
+                                        <option key={year} value={year} className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
                                             {year}
                                         </option>
                                     ))}

@@ -29,6 +29,7 @@ const Admin= () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const divRef = useRef(null);
   const navigate = useNavigate();
   // State to store the height
@@ -38,7 +39,11 @@ const Admin= () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}admin/all`)
+      .get(`${API_URL}admin/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }}
+      )
       .then(response => {
         const admins = response.data;
         setUploading(false);
@@ -105,7 +110,13 @@ const Admin= () => {
     setUploading(true);
     try {
       console.log("Delete admins: ", adminToDelete);
-      const response = await axios.delete(`${API_URL}admin/${adminToDelete}`);
+      const response = await axios.delete(`${API_URL}admin/${adminToDelete}`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }}
+      );
       message.success("Successfully deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);

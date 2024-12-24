@@ -22,6 +22,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showPasswordError, setShowPasswordError] = useState(false);
+  const accessToken = localStorage.getItem('accessToken');
   const API_URL = process.env.REACT_APP_API_URL;
   const [editAdminId, setEditAdminId] = useState(null);
 
@@ -58,7 +59,10 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
-    const errors = validateFormData(formData);
+
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
@@ -68,7 +72,10 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     setUploading(true);
       try {
         const response = await axios.put(`${API_URL}admin/${admin.adminId}`,
-          formData 
+          formData , { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+          }}
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
@@ -125,8 +132,13 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
           clearTimeout(window.usernameValidationTimeout);
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
-              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
-              if (response.data.usernameExists === true) {
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if ((value !== admin.username) && response.data.usernameExists === true) {
                 setErrors((prevErrors) => ({
                   ...prevErrors,
                   username: "This username is already taken.",
@@ -154,9 +166,14 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
          clearTimeout(window.emailValidationTimeout);
          window.emailValidationTimeout = setTimeout(async () => {
            try {
-             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
              console.log("Email validation :", response.data);
-             if (response.data.emailExists === true) {
+             if ( (value !== admin.email) && response.data.emailExists === true) {
                setErrors((prevErrors) => ({
                  ...prevErrors,
                  email: "This email is already in use.",
@@ -204,6 +221,44 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     });
     return errors;
   };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.username !== admin.username) && response.data.usernameExists === true) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.email !== admin.email) && response.data.emailExists === true) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
 
   return (
     <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">

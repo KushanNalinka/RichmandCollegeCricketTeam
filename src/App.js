@@ -465,7 +465,7 @@ import Admin from './pages/Admin.js';
 
 
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
-import PrivateRoute from './components/PrivateRoute.js';
+//import PrivateRoute from './components/PrivateRoutes.js';
 
 import { useAuth } from './hooks/UseAuth.js';
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
@@ -494,25 +494,23 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
 
-           {/* Protected Routes */}
-           {/* <Route path="/member"element={<MemberInitial />} /> */}
-           <Route path="/playerProfile"
+          
+          <Route path="/playerProfile"
             element={
-                <PlayerProfile />
+                <PlayerProfile />   }
+                />
 
           <Route path="/admin" element={<Admin/>} />
           <Route path ="/role" element ={<Role/>}/>
-
-            }
-          />
           <Route
             path="/coachProfile"
             element={
 
                 <CoachProfile />
+              }
+              />
 
-            }
-          />
+         
           <Route
             path="/officialProfile"
             element={

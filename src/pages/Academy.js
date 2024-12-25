@@ -293,22 +293,22 @@ const summarizeStats = (type) => {
   summary.battingAvg =
   summary.battingInnings > 0
   ? (summary.runs / summary.battingInnings).toFixed(2)
-  : "N/A";
+  : 0;
 
   summary.sr =
     summary.balls > 0
       ? ((summary.runs / summary.balls) * 100).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.bawlingAvg =
     summary.wickets > 0
       ? (summary.runsConceded / summary.wickets).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.economyRate =
     summary.overs > 0
       ? (summary.runsConceded / summary.overs).toFixed(2)
-      : "N/A";
+      : 0;
 
   summary.bestValue =
     summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);

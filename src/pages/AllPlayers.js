@@ -350,7 +350,7 @@ const summarizeStats = (type) => {
   summary.battingAvg =
   summary.battingInnings > 0
   ? (summary.runs / summary.battingInnings).toFixed(2)
-  : "N/A";
+  : 0;
 
   summary.sr =
     summary.balls > 0

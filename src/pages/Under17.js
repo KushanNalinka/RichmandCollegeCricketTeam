@@ -409,15 +409,15 @@ summary.bestWickets > 0
             <select
                 value={selectedYear}
                 onChange={handleYearChange}
-                className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
+                className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-3 px-6 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-[#000175] focus:outline-none focus:ring-2 focus:ring-[#000175] text-sm md:text-base mt-1"
             >
                 {getYearOptions().map((year) => (
-                    <option key={year} value={year}>
+                    <option key={year} value={year}  className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
                         {year}
                     </option>
                 ))}
             </select>
-            <div className='rounded-full p-2 w-6 h-6 bg-black'>
+            <div className='rounded-full p-2 w-10 h-10 bg-black'>
                 <span className=' text-white '>{showPlayerList ? '-' : '+'}</span>
             </div>
             
@@ -511,10 +511,10 @@ summary.bestWickets > 0
                                 <select
                                     value={selectedYear}
                                     onChange={handleYearChange}
-                                    className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-2 md:px-5 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 text-sm md:text-base mt-1"
+                                    className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-2 md:px-5 rounded-lg shadow-md hover:bg-[#000175] focus:outline-none focus:ring-2 focus:ring-[#000175] text-sm md:text-base mt-1"
                                 >
                                     {getYearOptions().map((year) => (
-                                        <option key={year} value={year}>
+                                        <option key={year} value={year}  className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
                                             {year}
                                         </option>
                                     ))}

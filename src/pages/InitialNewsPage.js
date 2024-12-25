@@ -71,6 +71,7 @@ const InitialNewsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNews, setFilteredNews] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null); 
+    const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -78,7 +79,16 @@ const InitialNewsPage = () => {
         // const response = await axios.get('http://localhost:8080/api/news');
         // setNewsData(response.data);
         // setLoading(false);
-        const response = await axios.get(`${API_URL}news`);
+        const response = await axios.get(`${API_URL}news`
+
+          ,{
+            method: 'GET',
+            headers: {
+                 'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+        }, }
+        );
         const newsWithFirstImage = response.data.map((news) => ({
           ...news,
           imageUrl: news.images?.[0] || '', // Set the first image URL or fallback

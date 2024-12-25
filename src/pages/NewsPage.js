@@ -358,11 +358,21 @@ const NewsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNews, setFilteredNews] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null); 
+  const accessToken = localStorage.getItem('accessToken');                                
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get(`${API_URL}news`);
+        const response = await axios.get(`${API_URL}news`
+
+          ,{
+            method: 'GET',
+            headers: {
+                 'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+        }, }
+        );
         
         console.log('Fetched News Data:', response.data); // Log the fetched data
         const newsWithFirstImage = response.data.map((news) => ({

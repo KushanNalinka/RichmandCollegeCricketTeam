@@ -8,7 +8,15 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
+  const accessToken = localStorage.getItem('accessToken');
+  const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log("user: ", user);
+  const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
+  const [editAdminId, setEditAdminId] = useState(null);
   const [formData, setFormData] = useState({ 
     name:admin.name,
     contactNo:admin.contactNo,
@@ -16,15 +24,9 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     email: admin.email,
     password: admin.password,
     roles: ["ROLE_ADMIN"],
+    updatedBy: user.username,
     updatedOn: new Date().toISOString(),
    });
-  const [errors, setErrors] = useState({});
-  const [uploading, setUploading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [showPasswordError, setShowPasswordError] = useState(false);
-  const accessToken = localStorage.getItem('accessToken');
-  const API_URL = process.env.REACT_APP_API_URL;
-  const [editAdminId, setEditAdminId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +61,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
-
+    console.log("updated date: ", formData);
     const syncErrors = validateFormData(formData);
     const asyncErrors = await validateAsyncFormData(formData);
     const errors = { ...syncErrors, ...asyncErrors };
@@ -87,6 +89,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
           password: "",
           roles: ["ROLE_ADMIN"],
           updatedOn: "",
+          updatedBy:""
         });
         setUploading(false);
         isSubmitted();

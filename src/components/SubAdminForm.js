@@ -11,6 +11,12 @@ import {  FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const SubAdminForm = ({ onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log("user in add: ", user);
+  const [errors, setErrors] = useState({});
+  const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+  const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     name:"",
     contactNo:"",
@@ -18,13 +24,9 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
     email: "",
     password: "",
     roles: ["ROLE_ADMIN"],
+    createdBy: user.username,
     createdOn: new Date().toISOString()
   });
-  const [errors, setErrors] = useState({});
-  const API_URL = process.env.REACT_APP_API_URL;
-  const accessToken = localStorage.getItem('accessToken');
-  const [uploading, setUploading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -205,7 +207,7 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("created date: ", formData);
     const syncErrors = validateFormData(formData);
     const asyncErrors = await validateAsyncFormData(formData);
     const errors = { ...syncErrors, ...asyncErrors };
@@ -222,7 +224,7 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
           headers: {
             'Authorization': `Bearer ${accessToken}`,
         }});
-        console.log("Form submitted succedded: ", response);
+        console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
           name:"",
@@ -231,7 +233,9 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
           email: "",
           password: "",
           roles: ["ROLE_ADMIN"],
-          createdOn: ""
+          createdOn: "",
+          createdBy:""
+
          
         });
         isSubmitted();

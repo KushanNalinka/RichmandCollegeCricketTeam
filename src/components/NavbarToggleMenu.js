@@ -184,7 +184,7 @@ const NavbarToggleMenu = () => {
               className="flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20"
             >
               {" "}
-              <MdPeople className="text-[#00175F]" /> Admin Control
+              <MdPeople className="text-[#00175F]" /> Admin
             </Link>
           )}
         </ul>

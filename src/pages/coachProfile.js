@@ -4,7 +4,7 @@ import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
-import playersData from "./PlayersData";
+//import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";

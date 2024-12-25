@@ -1251,6 +1251,7 @@ export default function MatchInfo() {
   const [currentPage, setCurrentPage] = useState(1);
   const matchesPerPage = 5;
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
 
   const navigate = useNavigate();
 
@@ -1272,7 +1273,15 @@ export default function MatchInfo() {
   
 
   useEffect(() => {
-    fetch(`${API_URL}matchSummary/all`)
+    fetch(`${API_URL}matchSummary/all`
+      ,{
+        method: 'GET',
+        headers: {
+             'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+    }, }
+    )
       .then((response) => response.json())
       .then((data) => {
         console.log("Fetched match summaries:", data); // Log the API data
@@ -1362,16 +1371,29 @@ export default function MatchInfo() {
     );
   
    
-   // Handle latest matches logic
-  if (latest) {
-    if (selectedMatchType === 'All') {
-      filtered = filtered.slice(0, 5); // Select the most recent 5 matches across all types
-    } else {
-      filtered = filtered.filter(
-        (match) => match.type.toLowerCase() === selectedMatchType.toLowerCase()
-      ).slice(0, 5); // Select the most recent 5 matches of the selected type
+    // Handle latest matches logic
+    if (latest) {
+      const groupedMatches = filtered.reduce((acc, match) => {
+        if (!acc[match.type]) acc[match.type] = [];
+        acc[match.type].push(match);
+        return acc;
+      }, {});
+  
+      filtered = [];
+      if (selectedMatchType === 'All') {
+        let count = 0;
+        Object.values(groupedMatches).forEach((group) => {
+          const latestMatches = group.slice(0, 5);
+          filtered = filtered.concat(latestMatches);
+          count += latestMatches.length;
+          if (count >= 5) return;
+        });
+        filtered = filtered.slice(0, 5);
+      } else if (groupedMatches[selectedMatchType]) {
+        filtered = groupedMatches[selectedMatchType].slice(0, 5);
+      }
     }
-  }
+  
     console.log("Final filtered matches: ", filtered);
     setFilteredMatches(filtered);
   };

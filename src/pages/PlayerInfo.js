@@ -56,10 +56,12 @@ const TableComponent = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
+
       .get(`${API_URL}admin/players/all` , { 
           headers: {
             'Authorization': `Bearer ${accessToken}`,
       }})
+
       .then(response => {
         setUploading(false);
         const players = response.data;
@@ -236,6 +238,7 @@ const TableComponent = () => {
     setUploading(true);
     try{
       const deletePayer = await axios.delete(
+
         `${API_URL}admin/players/delete/${playerToDelete}`, { 
           method: 'DELETE',
           headers: {
@@ -243,6 +246,7 @@ const TableComponent = () => {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }}
+
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
@@ -546,14 +550,14 @@ const TableComponent = () => {
                           >
                             <FaEdit />
                           </button>
-                          <button
+                          {/* <button
                             onClick={() => handleDelete(item.playerId)}
                             className="text-red-500 hover:text-red-600 text-md"
                             aria-label="Delete"
                             title="Delete"
                           >
                             <FaTrash />
-                          </button>
+                          </button> */}
                         </td>
                       </tr>
                     )

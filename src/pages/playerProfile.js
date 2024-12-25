@@ -23,6 +23,7 @@ const PlayerProfile = () => {
     const fetchData = async () => {
       try {
         // Fetch player profile
+
         const playerData = await axios.get(`${API_URL}admin/players/${user.playerId}`, { 
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -47,6 +48,7 @@ const PlayerProfile = () => {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }});
+
         setPracticeSessions(practiceSessionData.data);
 
         console.log("Player stats", playerStatData.data);
@@ -659,4 +661,3 @@ const PlayerProfile = () => {
   );
 };
 export default PlayerProfile;
-

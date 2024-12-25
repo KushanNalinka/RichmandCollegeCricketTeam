@@ -130,6 +130,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
           newErrors.username = "Username must be between 4 and 20 characters.";
         } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
           newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+
         } else {
           // Debounced API call for username availability
           clearTimeout(window.usernameValidationTimeout);
@@ -157,6 +158,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
             }
           }, 500); // Delay of 500ms
         };
+
         break;
       
       case "email":
@@ -164,6 +166,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors.email = "Please enter a valid email address";
+
         } else {
           // Debounced API call for email availability
          clearTimeout(window.emailValidationTimeout);
@@ -192,6 +195,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
            }
          }, 500); // Delay of 500ms
        };
+
         break;
       
       case "password":

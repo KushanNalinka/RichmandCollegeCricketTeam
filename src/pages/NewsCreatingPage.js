@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
@@ -19,9 +20,11 @@ import { CalendarOutlined } from "@ant-design/icons";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
 import MainNavbarToggle from "../components/MainNavBarToggle";
+
 import ReactQuill from "react-quill"; // Import the rich-text editor
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { Color } from "antd/es/color-picker";
+
 dayjs.extend(relativeTime);
 
 const NewsCreator = () => {
@@ -52,6 +55,12 @@ const NewsCreator = () => {
   const [searchHeading, setSearchHeading] = useState(""); // State for heading search
   const [searchDate,setSearchDate] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null); 
+    
+ 
+
+const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
+
   const [formData, setFormData] = useState({
     heading: "",
     author: "",
@@ -589,6 +598,15 @@ const NewsCreator = () => {
   };
   
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits for month
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure two digits for day
+    return `${year}/${month}/${day}`;
+  };
+  
+
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -611,6 +629,7 @@ const NewsCreator = () => {
     return (matchesHeading || matchesAuthor) && matchesDate;
   });
   
+
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
@@ -650,6 +669,7 @@ const NewsCreator = () => {
               <h2 className="flex md:hidden md:text-2xl text-xl w-10 font-bold text-center font-popins text-[#480D35]">
                 
               </h2>
+
               {/* <div className="flex gap-3"> */}
               <div className="hidden md:flex lg:col-span-1 justify-between gap-2">
                 <div className=" flex w-full text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
@@ -677,6 +697,7 @@ const NewsCreator = () => {
                   placeholder="yyyy-mm-dd"
                   allowClear
                 />
+
               </div>
               
             </div>

@@ -12,12 +12,19 @@ const PlayerProfile = () => {
     const [showPlayerList, setShowPlayerList] = useState(false); // Toggle for mobile player list
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
     const API_URL = process.env.REACT_APP_API_URL;
+    const accessToken = localStorage.getItem('accessToken');
   
     // Fetch all players from the API when the component mounts or selectedYear changes
     useEffect(() => {
         const fetchPlayers = async () => {
             try {
-                const response = await fetch(`${API_URL}admin/players/all`);
+                const response = await fetch(`${API_URL}admin/players/all`,{
+                    method: 'GET',
+                    headers: {
+                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                }, });
                 const data = await response.json();
 
                 // Filter players who are part of "Under 13" in the selected year
@@ -50,7 +57,13 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`);
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
+                        method: 'GET',
+                        headers: {
+                             Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                    }, });
                     const data = await response.json();
                     setPlayerStat(data); // No need to filter if all stats are relevant
                 } catch (error) {
@@ -108,21 +121,24 @@ const PlayerProfile = () => {
             bestValue:'N/A',
             economyRate:0,
             bestWickets: 0,
-            bestRunsConceded: Infinity,
+            bestRunsConceded: 0,
             
           };
         }
         const filteredStats = playerStat.filter(
           (stat) => stat.match.type === type 
         );
-    
+        const uniqueMatches = new Set();
       // Track unique innings for both batting and bowling
       const uniqueBowlingInnings = new Set();
       const uniqueBattingInnings = new Set();
     
       const summary = filteredStats.reduce(
         (acc, stat) => {
-          acc.matches += 1;
+            if (stat.match.matchId) {
+                uniqueMatches.add(stat.match.matchId);
+              }
+         
           acc.balls += stat.balls || 0;
           acc["100s"] += stat.centuries || 0;
           acc["50s"] += stat.fifties || 0;
@@ -149,8 +165,8 @@ const PlayerProfile = () => {
     
           acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
     
-          const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
-          acc.bestValue = Math.min(acc.bestValue, currentAverage);
+        //   const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
+        //   acc.bestValue = Math.min(acc.bestValue, currentAverage);
     
           if (
             stat.wickets > acc.bestWickets ||
@@ -179,7 +195,7 @@ const PlayerProfile = () => {
           battingAvg:0,
           bestValue:Infinity,
           bestWickets: 0,
-          bestRunsConceded: Infinity,
+          bestRunsConceded: 0,
           economyRate:0,
           catches:0,
           stumps:0,
@@ -197,30 +213,35 @@ const PlayerProfile = () => {
       );
       console.log("Unique Bowling Innings:", uniqueBowlingInnings);
       console.log("Unique Batting Innings:", uniqueBattingInnings);
+      summary.matches = uniqueMatches.size;
       summary.bawlingInnings = uniqueBowlingInnings.size;
       summary.battingInnings = uniqueBattingInnings.size;
       summary.battingAvg =
       summary.battingInnings > 0
       ? (summary.runs / summary.battingInnings).toFixed(2)
-      : "N/A";
+      : 0;
     
       summary.sr =
         summary.balls > 0
           ? ((summary.runs / summary.balls) * 100).toFixed(2)
-          : "N/A";
+          : 0;
     
       summary.bawlingAvg =
         summary.wickets > 0
           ? (summary.runsConceded / summary.wickets).toFixed(2)
-          : "N/A";
+          : 0;
     
       summary.economyRate =
         summary.overs > 0
           ? (summary.runsConceded / summary.overs).toFixed(2)
-          : "N/A";
+          : 0;
     
-      summary.bestValue =
-        summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);
+    //   summary.bestValue =
+    //     summary.bestValue === Infinity ? "N/A" : summary.bestValue.toFixed(2);
+    summary.bestValue =
+    summary.bestWickets > 0
+      ? `${summary.bestWickets}/${summary.bestRunsConceded}`
+      : 0;
       return summary;
     };
 
@@ -239,8 +260,27 @@ const PlayerProfile = () => {
         onClick={() => setShowPlayerList(!showPlayerList)} 
         className="text-black font-bold flex justify-between items-center w-full"
     >
-        Our Players
-        <span>{showPlayerList ? '-' : '+'}</span>
+        {/* Our Players
+        <span>{showPlayerList ? '-' : '+'}</span> */}
+           Our Players
+         {/* Year Dropdown */}
+         <div className="flex md:top-8 items-center gap-2 md:right-10">
+            <select
+                value={selectedYear}
+                onChange={handleYearChange}
+                className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-3 px-6 md:py-3 md:px-8 rounded-lg shadow-md hover:bg-[#000175] focus:outline-none focus:ring-2 focus:ring-[#000175] text-sm md:text-base mt-1"
+            >
+                {getYearOptions().map((year) => (
+                    <option key={year} value={year} className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
+                        {year}
+                    </option>
+                ))}
+            </select>
+            <div className='rounded-full p-2 w-10 h-10 bg-black'>
+                <span className=' text-white '>{showPlayerList ? '-' : '+'}</span>
+            </div>
+            
+        </div>
     </button>
     {showPlayerList && (
         <div className="mt-4">
@@ -295,7 +335,7 @@ const PlayerProfile = () => {
                                 </p>
             </div>
                {/* Year Dropdown */}
-               <div className="absolute top-4 right-4 md:top-8 md:right-10">
+               {/* <div className="absolute top-4 right-4 md:top-8 md:right-10">
                 <p className="text-sm md:text-base"> Select the Year</p>
                             <select
                                 value={selectedYear}
@@ -308,7 +348,7 @@ const PlayerProfile = () => {
                                     </option>
                                 ))}
                             </select>
-                        </div>
+                        </div> */}
         </div>
     </div>
 </div>
@@ -319,8 +359,26 @@ const PlayerProfile = () => {
                     {/* Player List for desktop */}
                     <div className="md:flex hidden bg-gray-200 rounded-lg shadow-md" style={{ width: '350px', flexShrink: 0, maxHeight: '469px', flexDirection: 'column' }}>
                         {/* Fixed Heading */}
-                        <div className="p-4 border-b text-black border-gray-100">
+                        {/* <div className="p-4 border-b text-black border-gray-100">
                             <h2 className="text-xl font-bold text-gray-900 text-center">Our Players</h2>
+                        </div> */}
+                         {/* Fixed Heading */}
+                         <div className="px-5 py-4 flex justify-between items-center border-b text-black border-gray-100">
+                            <h2 className="text-xl font-bold text-gray-900 text-center">Our Players</h2>
+                             {/* Year Dropdown */}
+                            <div className="flex md:top-8 md:right-10">
+                                <select
+                                    value={selectedYear}
+                                    onChange={handleYearChange}
+                                    className=" bg-gradient-to-r from-[#000175] to-[#4A0D34] text-white font-semibold py-2 px-4 md:py-2 md:px-5 rounded-lg shadow-md hover:bg-[#000175] focus:outline-none focus:ring-2 focus:ring-[#000175] text-sm md:text-base mt-1"
+                                >
+                                    {getYearOptions().map((year) => (
+                                        <option key={year} value={year} className="bg-[#000175] text-white hover:bg-[#4A0D34] focus:bg-[#4A0D34]">
+                                            {year}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                         {/* Scrollable Player List */}
                         <div className="p-4 overflow-y-auto" style={{ flexGrow: 1, maxHeight: 'calc(500px - 64px)', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

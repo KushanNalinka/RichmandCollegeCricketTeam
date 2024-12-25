@@ -14,6 +14,7 @@ import { GiClick } from "react-icons/gi";
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({ 
     image: player.image,
     name: player.name,
@@ -179,7 +180,13 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           clearTimeout(window.usernameValidationTimeout);
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
-              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
 
               if ((value !== player.username) && response.data.usernameExists === true) {
 
@@ -212,7 +219,12 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
          clearTimeout(window.emailValidationTimeout);
          window.emailValidationTimeout = setTimeout(async () => {
            try {
-             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+              }, });
              console.log("Email validation :", response.data);
 
              if ((value !== player.email) && response.data.emailExists === true) {
@@ -309,11 +321,51 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     return errors;
   };
 
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.user.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.user.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.username !== player.username) && response.data.usernameExists === true) {
+                errors["user.username"] = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.user.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.user.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.email !== player.email) && response.data.emailExists === true) {
+                errors["user.email"]= "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
+
   const handleEdit = async e => {
     e.preventDefault();
     console.log("editedPlayer: ", formData);
 
-    const errors = validateFormData(formData);
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
@@ -348,7 +400,10 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       // };
         const response = await axios.put(
           `${API_URL}admin/players/update/${player.playerId}`,
-          formDataToSend 
+          formDataToSend,{ 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+        }}
         );
         const updatedPlayer = response.data;
 

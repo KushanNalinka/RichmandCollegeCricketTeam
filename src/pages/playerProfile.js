@@ -18,37 +18,37 @@ const PlayerProfile = () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch player profile
-        const playerData = await axios.get(`${API_URL}admin/players/${user.playerId}`,{
-          method: 'GET',
+
+        const playerData = await axios.get(`${API_URL}admin/players/${user.playerId}`, { 
           headers: {
-               Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, });
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }});
         setPlayerProfile(playerData.data);
 
         // Fetch player stats
-        const playerStatData = await axios.get(`${API_URL}playerStats/all-stats/${user.playerId}`,{
-          method: 'GET',
+        const playerStatData = await axios.get(`${API_URL}playerStats/all-stats/${user.playerId}`, { 
           headers: {
-               Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, });
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }});
         setPlayerStat(playerStatData.data);
 
         // Fetch practice sessions
-        const practiceSessionData = await axios.get(`${API_URL}practiseSessions/player/${user.playerId}`,{
-          method: 'GET',
+        const practiceSessionData = await axios.get(`${API_URL}practiseSessions/player/${user.playerId}`, { 
           headers: {
-               Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, });
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }});
+
         setPracticeSessions(practiceSessionData.data);
 
         console.log("Player stats", playerStatData.data);

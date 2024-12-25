@@ -516,8 +516,6 @@ import { useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 
-
-
 const Login = () => {
   const [inputs, setInputs] = useState({
     username: "",
@@ -528,7 +526,7 @@ const Login = () => {
 
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
-
+  const accessToken1 = localStorage.getItem('accessToken');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
@@ -631,7 +629,7 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
 
       
     } catch (err) {
-      dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+      dispatch({ type: "LOGIN_FAILURE", payload: err.response });
       // Specific error handling for incorrect username or password
       if (err.response) {
         console.error("Error response from API:", err.response);

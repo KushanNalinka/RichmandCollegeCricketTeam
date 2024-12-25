@@ -44,7 +44,7 @@ const TableComponent = () => {
   const [roleOptions, setRoleOptions] = useState([]);
   const [filters, setFilters] = useState({ status: '', bowlingStyle: '', battingStyle: '', playerRole: '' });
   const [searchingPlayer, setSearchingPlayer] = useState();
-  console.log("accessTocken :", accessToken);
+  console.log("accessTocken in player :", accessToken);
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
   // const statusOptions = ["Active", "Inactive"];
@@ -56,13 +56,12 @@ const TableComponent = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}admin/players/all`,{
-        method: 'GET',
-        headers: {
-             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-    }, })
+
+      .get(`${API_URL}admin/players/all` , { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+      }})
+
       .then(response => {
         setUploading(false);
         const players = response.data;
@@ -80,7 +79,88 @@ const TableComponent = () => {
       updateRowsPerPage(); // Initial setup
     window.addEventListener('resize', updateRowsPerPage);
     return () => window.removeEventListener('resize', updateRowsPerPage);
-  }, [isSubmitted, isDeleted]);
+  }, [ accessToken ,isSubmitted, isDeleted]);
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setUploading(true);
+  //     try {
+  //       const response = await axios.get(`${API_URL}admin/players/all`, {
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           'Content-Type': 'application/json',
+  //           'Accept': 'application/json',
+  //         },
+  //       });
+  //       setUploading(false);
+
+  //       const players = response.data;
+  //       const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+  //       setPlayerData(sortedPlayers);
+
+  //       setStatusOptions([...new Set(players.map(player => player.status))]);
+  //       setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
+  //       setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
+  //       setRoleOptions([...new Set(players.map(player => player.playerRole))]);
+
+  //       console.log("Player Data:", players);
+  //     } catch (error) {
+  //       setUploading(false);
+  //       console.error("There was an error fetching the player data!", error);
+  //     }
+  //   };
+
+  //   const handleResize = () => updateRowsPerPage();
+
+  //   // Initial fetch and setup
+  //   fetchData();
+  //   updateRowsPerPage();
+
+  //   // Add event listener for window resize
+  //   window.addEventListener('resize', handleResize);
+
+  //   return () => {
+  //       window.removeEventListener('resize', handleResize);
+  //   };
+//}, [accessToken, isSubmitted, isDeleted]);
+
+// useEffect(() => {
+//   const fetchPlayers = async () => {
+//       try {
+//         setUploading(true);
+//         const response = await fetch(`${API_URL}admin/players/all`,{
+//             headers: {
+//                 'Authorization': `Bearer ${user.accessToken}`,
+//                 'Content-Type': 'application/json',
+//                 'Accept': 'application/json',
+//         }, });
+//         const data = await response.json();
+
+//         // Set all players without filtering
+//         setUploading(false);
+
+//         const players = data;
+//         const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+//         setPlayerData(sortedPlayers);
+
+//         setStatusOptions([...new Set(players.map(player => player.status))]);
+//         setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
+//         setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
+//         setRoleOptions([...new Set(players.map(player => player.playerRole))]);
+
+//         console.log("Player Data:", players);
+
+//       } catch (error) {
+//         console.error('Error fetching player data:', error);
+//       }
+//   };
+
+//   fetchPlayers();
+//   updateRowsPerPage(); // Initial setup
+//   window.addEventListener('resize', updateRowsPerPage);
+//   return () => window.removeEventListener('resize', updateRowsPerPage);
+// }, [accessToken, isSubmitted, isDeleted]);
+
 
     const updateRowsPerPage = () => {
     const screenWidth = window.innerWidth;
@@ -158,13 +238,15 @@ const TableComponent = () => {
     setUploading(true);
     try{
       const deletePayer = await axios.delete(
-        `${API_URL}admin/players/delete/${playerToDelete}`,{
+
+        `${API_URL}admin/players/delete/${playerToDelete}`, { 
           method: 'DELETE',
           headers: {
-               Authorization: `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, }
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
+
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

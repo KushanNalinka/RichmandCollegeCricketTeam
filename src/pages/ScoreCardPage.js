@@ -16,6 +16,7 @@ import MainNavbarToggle from "../components/MainNavBarToggle";
 
 const ScoreCardPage = () => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [playersStats, setPlayersStats] = useState([]);
@@ -39,7 +40,13 @@ const ScoreCardPage = () => {
   useEffect(() => {
     setUploading(true);
     axios
-      .get(`${API_URL}matchSummary/all`)
+      .get(`${API_URL}matchSummary/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          }}
+        )
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
@@ -78,7 +85,13 @@ const ScoreCardPage = () => {
     console.log("matchID: ", currentMatchID);
     if(currentMatchID){
       axios
-        .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`)
+        .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            }}
+          )
         .then(response => {
           const playersStats = response.data;
           setPlayersStats(playersStats);
@@ -414,7 +427,7 @@ const ScoreCardPage = () => {
                     </tbody>
                   </table>
                   <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
-                    <thead className=" bg-[#480D35] text-white rounded">
+                    <thead className=" bg-[#1588b6] text-white rounded">
                       <tr>
                         <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                           Fielding

@@ -47,6 +47,7 @@ const MatchDetails = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTierDropdown, setShowTierDropdown] = useState(false);
@@ -76,7 +77,12 @@ const MatchDetails = () => {
     const fetchMatches = async () => {
       try {
 
-        const response = await axios.get(`${API_URL}matches/all`); // Update with your API endpoint
+        const response = await axios.get(`${API_URL}matches/all`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}); // Update with your API endpoint
         // Sort matches by date in descending order so future dates come first
         setUploading(false);
         const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
@@ -194,7 +200,12 @@ const MatchDetails = () => {
     setUploading(true);
     try {
       const deleteMatch = await axios.delete(
-        `${API_URL}matches/delete/${matchToDelete}`
+        `${API_URL}matches/delete/${matchToDelete}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

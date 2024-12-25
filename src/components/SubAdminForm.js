@@ -11,6 +11,12 @@ import {  FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const SubAdminForm = ({ onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log("user in add: ", user);
+  const [errors, setErrors] = useState({});
+  const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+  const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [formData, setFormData] = useState({
     name:"",
     contactNo:"",
@@ -18,12 +24,9 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
     email: "",
     password: "",
     roles: ["ROLE_ADMIN"],
+    createdBy: user.username,
     createdOn: new Date().toISOString()
   });
-  const [errors, setErrors] = useState({});
-  const API_URL = process.env.REACT_APP_API_URL;
-  const [uploading, setUploading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,7 +76,12 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
           clearTimeout(window.usernameValidationTimeout);
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
-              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
               if (response.data.usernameExists === true) {
                 setErrors((prevErrors) => ({
                   ...prevErrors,
@@ -102,7 +110,12 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
          clearTimeout(window.emailValidationTimeout);
          window.emailValidationTimeout = setTimeout(async () => {
            try {
-             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+              }, });
              console.log("Email validation :", response.data);
              if (response.data.emailExists === true) {
                setErrors((prevErrors) => ({
@@ -154,9 +167,50 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
     return errors;
   };
 
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.usernameExists) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.emailExists) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = validateFormData(formData);
+    console.log("created date: ", formData);
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
@@ -166,8 +220,11 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
     setUploading(true);
 
       try {
-        const response = await axios.post(`${API_URL}auth/signup`, formData);
-        console.log("Form submitted succedded: ", response);
+        const response = await axios.post(`${API_URL}auth/signup`, formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        }});
+        console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
           name:"",
@@ -176,7 +233,9 @@ const SubAdminForm = ({ onClose, isSubmitted }) => {
           email: "",
           password: "",
           roles: ["ROLE_ADMIN"],
-          createdOn: ""
+          createdOn: "",
+          createdBy:""
+
          
         });
         isSubmitted();

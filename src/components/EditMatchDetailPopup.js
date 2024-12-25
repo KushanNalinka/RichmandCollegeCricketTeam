@@ -27,6 +27,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showImageError, setShowImageError] = useState(false);
@@ -64,25 +65,52 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    console.log("formdata :", formData);
     axios
-      .get(`${API_URL}teams/${formData.team.teamId}/players`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
         const filteredPlayers = players.filter((player) => ( player.status === "Active"));
         setPlayers(filteredPlayers);
-        console.log("players Data:", players);
+        console.log("All Active Players:", filteredPlayers);
+        // const categorizedPlayers = categorizePlayers(filteredPlayers);
+        // setPlayers(categorizedPlayers);
+         // Match captain and vice-captain names to their player IDs
+         const captainPlayer = filteredPlayers.find((player) => player.name === formData.matchCaptain);
+         const viceCaptainPlayer = filteredPlayers.find((player) => player.name === formData.matchViceCaptain);
+
+         setFormData((prev) => ({
+           ...prev,
+           matchCaptain: captainPlayer ? captainPlayer.playerId : '',
+           matchViceCaptain: viceCaptainPlayer ? viceCaptainPlayer.playerId : '',
+         }));
       })
       .catch(error => {
         console.error("There was an error fetching the match data!", error);
       });
-    axios.get(`${API_URL}coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }}).then(response => {
       const coaches = response.data;
       const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
       setCoaches(filteredCoaches);
       console.log("Coaches Data:", coaches);
     });
     axios
-      .get(`${API_URL}teams/all`)
+      .get(`${API_URL}teams/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const teams = response.data;
         setTeams(teams);
@@ -92,6 +120,73 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         console.error("There was an error fetching the match data!", error);
       });
   }, [formData.team.teamId]);
+
+  const getAgeFromDOB = (dob) => {
+    const birthDate = new Date(dob);
+    const currentDate = new Date();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const isBeforeBirthday =
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate());
+    if (isBeforeBirthday) age -= 1;
+    return age;
+  };
+
+  const categorizePlayers = (players) => {
+    const categories = {
+      "Under 9": [],
+      "Under 11": [],
+      "Under 13": [],
+      "Under 15": [],
+      "Under 17": [],
+      "Under 19": [],
+      "Richmond Legend Over 40": [],
+      "Richmond Legend Over 50": [],
+      "Old Boys": []
+    };
+  
+    // Group players by age category
+    players.forEach(player => {
+      const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+  
+      if (age < 9) {
+        categories["Under 9"].push(player);
+        //categories["Academy Under 9"].push(player);
+      }
+      if (age >= 9 && age < 11) {
+        categories["Under 11"].push(player);
+        //categories["Academy Under 11"].push(player);
+      }
+      if (age >= 11 && age < 13) {
+        categories["Under 13"].push(player);
+        //categories["Academy Under 13"].push(player);
+      }
+      if (age >= 13 && age < 15) {
+        categories["Under 15"].push(player);
+        //categories["Academy Under 15"].push(player);
+      }
+      if (age >= 15 && age < 17) {
+        categories["Under 17"].push(player);
+        //categories["Academy Under 17"].push(player);
+      }
+      if (age >= 17 && age < 19) {
+        categories["Under 19"].push(player);
+        //categories["Academy Under 19"].push(player);
+      }
+      if (age >= 40 && age < 50) {
+        categories["Richmond Legend Over 40"].push(player);
+      }
+      if (age >= 50) {
+        categories["Richmond Legend Over 50"].push(player);
+      }
+      if (age >= 40) {
+        categories["Old Boys"].push(player);
+      }
+    });
+  
+    return categories;
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -241,7 +336,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        formDataToSend
+        formDataToSend, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
       );
       message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);
@@ -533,10 +631,21 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             >
               <option value="">Select Captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}
+              {/* {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}>
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })} */}
             </select>
           </div>
           <div className="col-span-1">
@@ -551,10 +660,21 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             >
               <option value="">Select Vice-captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}
+              {/* {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> 
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })} */}
             </select>
           </div>
           <div className="col-span-1 md:col-span-2 ">

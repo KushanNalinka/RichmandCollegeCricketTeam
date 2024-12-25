@@ -589,12 +589,17 @@ const NewsDetailPage = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const API_URL = process.env.REACT_APP_API_URL;
   const [selectedNews, setSelectedNews] = useState(null);
-
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
     const fetchNewsDetail = async () => {
       try {
-        const response = await axios.get(`${API_URL}news/${id}`);
+        const response = await axios.get(`${API_URL}news/${id}`,{
+          headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, });
         const fetchedNews = response.data;
         setNewsItem(fetchedNews);
         setSelectedNews(fetchedNews); // Set the fetched news to selectedNews
@@ -651,11 +656,6 @@ const NewsDetailPage = () => {
           zIndex: 0,
         }}
       >
-
-        
-      
-
-      
       </div>
 
     <div className="container mx-auto px-4 mb-8 max-w-6xl -mt-20 relative z-10">
@@ -734,16 +734,14 @@ const NewsDetailPage = () => {
     </div> */}
 
     
-<div className="p-4 sm:p-6 text-gray-700 leading-relaxed text-justify">
-  <span
-    dangerouslySetInnerHTML={{
-      __html: selectedNews?.body.replace(/\n/g, "<br />"),
-    }}
-    className="font-serif"
-  />
-</div>
-
-     
+  <div className="p-4 sm:p-6 text-gray-700 leading-relaxed text-justify">
+    <span
+      dangerouslySetInnerHTML={{
+        __html: selectedNews?.body.replace(/\n/g, "<br />"),
+      }}
+      className="font-serif"
+    />
+  </div>
   </div>
 </div>
 

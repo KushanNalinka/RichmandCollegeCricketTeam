@@ -16,11 +16,13 @@ import MainNavbarToggle from "../components/MainNavBarToggle";
 
 const ScoreCardPage = () => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const { matchId } = useParams(); // Extract matchId from URL parameters
   const [matchSummary, setMatchSummary] = useState([]);
   const [playersStats, setPlayersStats] = useState([]);
+  const [inningStats, setInningStats] = useState([]);
   const [battingPlayerStats, setBattingPlayerStats] = useState([]);
-  const [bawllingPlayerStats, setBawllingPlayerStats] = useState([]);
+  const [bawlingPlayerStats, setBawlingPlayerStats] = useState([]);
   const [inningNumber, setInningNumber] = useState(); 
   const [matchType, setMatchType] = useState(); 
   const [isDropDownPressed, setIsDropDownPressed] = useState(false);
@@ -38,7 +40,13 @@ const ScoreCardPage = () => {
   useEffect(() => {
     setUploading(true);
     axios
-      .get(`${API_URL}matchSummary/all`)
+      .get(`${API_URL}matchSummary/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          }}
+        )
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
@@ -77,22 +85,31 @@ const ScoreCardPage = () => {
     console.log("matchID: ", currentMatchID);
     if(currentMatchID){
       axios
-        .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`)
+        .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            }}
+          )
         .then(response => {
           const playersStats = response.data;
+          setPlayersStats(playersStats);
           // Apply inning filter only for Test matches
           if (matchType === "Test") {
-            const inningStats = filterInningStats(playersStats, inningNumber);
+            const inningStats = filterInningStats(playersStats, selectedInning[currentMatchID]);
             const battingStats = inningStats.filter(stat => stat.balls > 0);
             const bawlingStats = inningStats.filter(stat => stat.overs > 0);
             setBattingPlayerStats(battingStats);
-            setBawllingPlayerStats(bawlingStats);
+            setBawlingPlayerStats(bawlingStats);
+            setInningStats(inningStats);
           } else {
             // For ODI and T20, show all stats (no inning filter needed)
             const battingStats = playersStats.filter(stat => stat.balls > 0);
             const bawlingStats = playersStats.filter(stat => stat.overs > 0);
             setBattingPlayerStats(battingStats);
-            setBawllingPlayerStats(bawlingStats);
+            setBawlingPlayerStats(bawlingStats);
+            setInningStats(playersStats);
           }
           console.log("Player stats: ", battingPlayerStats[0]);
         })
@@ -100,7 +117,7 @@ const ScoreCardPage = () => {
           console.error("There was an error fetching the player stats data!", error);
         });
       }  
-  }, [currentMatchID, inningNumber, matchType]);
+  }, [currentMatchID, selectedInning[currentMatchID], matchType]);
 
   // Slice data for current page
   const paginatedData = sortedMatches.slice(
@@ -129,9 +146,14 @@ const ScoreCardPage = () => {
   };
   
   // Function to handle inning selection for a specific match
-  const handleInningChange = ( e) => {
-    setInningNumber(e.target.value);
-    setPlayersStats(filterInningStats(playersStats, inningNumber));
+  const handleInningChange = ( e, matchId) => {
+    // setInningNumber(e.target.value);
+    // setPlayersStats(filterInningStats(playersStats, inningNumber));
+    const newInning = e.target.value; // Get the selected inning
+    setSelectedInning((prev) => ({
+      ...prev,
+      [matchId]: newInning, // Update inning for the specific match
+    }));
   };
 
   // Function to toggle dropdown visibility for each match
@@ -147,6 +169,11 @@ const ScoreCardPage = () => {
     } else {
       setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
       setMatchType(match.type);
+      const inning = selectedInning[match.matchId];
+      if (match.type === 'Test' && inning) {
+        const inningStats = filterInningStats(playersStats, inning);
+        setPlayersStats(inningStats);
+      }
     }
    
   };
@@ -197,30 +224,35 @@ const ScoreCardPage = () => {
               border: "1px solid rgba(255, 255, 255, 0.3)"
             }}
           >
-            {paginatedData.map((match) =>
-  
+            {paginatedData.map((match) =>{
+
+              const currentStats =
+          selectedInning[currentMatchID] && match.matchId === currentMatchID
+                ? matchSummary.find(
+                    (item) =>
+                      item.matchId === match.matchId && item.inning === selectedInning[currentMatchID]
+                  ) || match // Fall back to match if no inning is selected
+                : match;
+              return(
               <div key={match.matchId} className="relative flex-grow ">
                 <div className=" flex-grow flex min-w-[1010px] items-center justify-between py-2 lg:px-5 px-3 text-lg bg-white rounded text-black">
                   <div className="flex gap-5 items-center w-[30%]">
                     <div className="flex flex-col items-center justify-center w-[45%]">
                       <img src={richmandLogo} alt={match.matchName} className="w-8 h-8"/>
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >Richmond College, Galle</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.runs}/{match.wickets}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.overs} </p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{currentStats.runs}/{currentStats.wickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{currentStats.overs} </p>
                     </div>
                     <div className="flex flex-col justify-center items-center w-[10%]">
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
-                      <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-xl text-lg font-bold text-[#480D35]">S</span></p>
+                        <p className="lg:text-sm text-xs font-serif font-semibold text-[#08165A]">V<span className="lg:text-xl text-lg font-bold text-[#480D35]">S</span></p>
                       <div className="w-[1px] h-4 bg-gradient-to-b from-transparent via-black to-transparent"></div>
                     </div>
                     <div className="flex flex-col items-center justify-center w-[45%]">
-
-
                       <img src={`${`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={match.matchName} className="w-8 h-8"/>
-
                       <p className="lg:text-xs text-xxs text-center font-semibold uppercase">{match.opposition}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{match.oppositionRuns}/{match.oppositionWickets}</p>
-                      <p className="lg:text-xs text-xxs text-center font-semibold" >{match.oppositionOvers}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold uppercase" >{currentStats.oppositionRuns}/{currentStats.oppositionWickets}</p>
+                      <p className="lg:text-xs text-xxs text-center font-semibold" >{currentStats.oppositionOvers}</p>
                     </div>
                   </div>
                   <div className="w-[40%] lg:w-[40%] justify-center flex ">
@@ -234,23 +266,23 @@ const ScoreCardPage = () => {
                           <select
                             className="text-xs border border-gray-400 hover:border-gray-600 hover:shadow-sm rounded text-gray-700 px-5 py-1 uppercase"
                             id="inning"
-                            value={inningNumber}
-                            onChange={handleInningChange}
+                            value={selectedInning[match.matchId] || ''}
+                            onChange={(e) => handleInningChange(e, match.matchId)}
                           >
-                            <option value={0} selected disabled className="text-xs text-gray-700 px-3 ">Select Inning</option>
+                            <option value="" selected disabled className="text-xs text-gray-700 px-3 ">Select Inning</option>
                             <option value={1} className="text-xs text-gray-700 px-3 ">Inning 1</option>
                             <option value={2} className=" text-xs text-gray-700 px-3 ">Inning 2</option>
                           </select>
                         </div>
                         ) 
                       }
-                      <div className="w-36 flex flex-col justify-right items-end ">
-                        <p className=" flex text-sm font-bold text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
+                      <div className="w-36 flex flex-col justify-end items-end ">
+                        <p className=" flex text-sm font-bold text-right text-[#480D35]">{new Date(match.date).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'short',
                             day: 'numeric',
                           })} </p>
-                        <p className="flex text-xs font-semibold">{match.venue} </p>
+                        <p className="flex text-xs justify-end  items-end text-right font-semibold">{match.venue} </p>
                       </div>
                     </div>
                     <button
@@ -269,29 +301,29 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] items-stretch lg:min-w-full divide-y divide-gray-300 bg-white shadow-md">
                       <thead className=" bg-[#480D35] text-white rounded">
                         <tr>
-                          <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                             Batting
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Runs
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                            R
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            Balls
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                            B
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold tracking-wider">
                             4s
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold tracking-wider">
                             6s
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            50s
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                            50
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            100s
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                            100
                           </th>
-                          <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                            <p>strikeRate</p>
+                          <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                            <p>SR</p>
                           </th>
                           {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                             <p>{match.runs}/{match.wickets}<span>({match.overs})</span></p>
@@ -301,32 +333,29 @@ const ScoreCardPage = () => {
 
                       <tbody className=" divide-y  divide-gray-300">
                         {battingPlayerStats && battingPlayerStats.map((player, index2) =>
-                          <tr
-                            key={index2}
-                            className=" hover:bg-gray-50 h-full align-middle"
-                          >
-                            <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                          <tr key={index2} className=" hover:bg-gray-50 h-full">
+                            <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
                               {player.player.name}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.runs}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.balls}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.fours}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.sixers}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.fifties}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {player.centuries}
                             </td>
-                            <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                            <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                               {(player.runs/player.balls*100).toFixed(2)}
                             </td>
                           </tr>
@@ -336,23 +365,29 @@ const ScoreCardPage = () => {
                     <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
                     <thead className=" bg-[#08165A] text-white rounded">
                       <tr>
-                        <th className="py-2 px-4 w-[25vw] text-left text-xs font-semibold uppercase tracking-wider">
+                        <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
                           Bowling
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Overs
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          O
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Run Conceded
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          R
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          Wickets
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          W
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          <p>Strike Rate</p>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          M
                         </th>
-                        <th className="py-2 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                          <p>Economy Rate</p>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          NB
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          WB
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          ECON
                         </th>
                         {/* <th className="py-2 px-4 text-right text-xs font-semibold uppercase tracking-wider">
                           <p>{match.oppositionRuns}/{match.oppositionWickets}<span>({match.oppositionOvers})</span></p>
@@ -361,37 +396,100 @@ const ScoreCardPage = () => {
                     </thead>
 
                     <tbody className=" divide-y  divide-gray-300">
-                      {battingPlayerStats && bawllingPlayerStats.map((player, index3) =>
-                        <tr
-                          key={index3}
-                          className=" hover:bg-gray-50 h-full align-middle"
-                        >
-                          <td className=" px-4 h-8 w-[25vw] whitespace-nowrap text-sm text-gray-800 font-bold">
+                      {bawlingPlayerStats && bawlingPlayerStats.map((player, index3) =>
+                        <tr key={index3} className=" hover:bg-gray-50 h-full">
+                          <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
                             {player.player.name}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.overs}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.runsConceded}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {player.wickets}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
-                            {((player.overs*6)/player.wickets).toFixed(2)}
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.maidens}
                           </td>
-                          <td className=" px-4 h-8 whitespace-nowrap text-sm text-gray-600">
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.noBalls}
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.wides}
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
                             {(player.runsConceded/player.overs).toFixed(2)}
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
-                  </>
-                  }
-                </div>
-            )}
+                  <table className="min-w-[1010px] lg:min-w-full items-stretch divide-y divide-gray-300 bg-white shadow-md">
+                    <thead className=" bg-[#1588b6] text-white rounded">
+                      <tr>
+                        <th className="py-2 px-4 w-[25%] text-left text-xs font-semibold uppercase tracking-wider">
+                          Fielding
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          C
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          S
+                        </th>
+                        <th className="py-2 px-4 w-[9%] text-left text-xs font-semibold uppercase tracking-wider">
+                          RO
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className=" divide-y  divide-gray-300">
+                      {inningStats && inningStats.map((player, index4) =>
+                        <tr key={index4} className=" hover:bg-gray-50 h-full" >
+                          <td className=" px-4 h-8 w-[25%] whitespace-nowrap text-sm text-gray-800 font-bold">
+                            {player.player.name}
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                          
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                          
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.catches}
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.stumps}
+                          </td>
+                          <td className=" px-4 h-8 w-[9%] whitespace-nowrap text-sm text-gray-600">
+                            {player.runOuts}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </>}
+              </div>);
+            })}
           </div>
         </div>
         <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">

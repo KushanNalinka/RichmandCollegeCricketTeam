@@ -14,6 +14,7 @@ import { GiClick } from "react-icons/gi";
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({ 
     image: player.image,
     name: player.name,
@@ -48,6 +49,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showImageError, setShowImageError] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
   console.log("player to be edited: ", player);
   console.log("foemdata DOB: ", formData.dateOfBirth);
 
@@ -72,6 +74,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
         }
         });
+        const fieldError = validateForm(name, value?.format('YYYY-MM-DD'));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
       }else if(name === "membership.endDate") {
         // Handle the DatePicker value change
         setFormData({
@@ -81,6 +88,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           [subKey]: value? value.format('YYYY-MM-DD') : null // Format date to 'YYYY-MM-DD'
         }
         });
+        const fieldError = validateForm(name, value?.format('YYYY-MM-DD'));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
       }else{
         setFormData({
           ...formData,
@@ -89,7 +101,19 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             [subKey]: value
           }
         });
-      }; 
+        if(name === "user.password"){
+          if(!value){
+            setShowPasswordError(true);
+          }else{
+            setShowPasswordError(false);
+          }
+        }
+      };
+      const fieldError = validateForm(name, value);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
     }else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -97,6 +121,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
+      const fieldError = validateForm(name, file); // Pass file to validation
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...fieldError,
+      }));
       setIsImageAdded(true);
       setShowImageError(false);
     } else if (name === "dateOfBirth") {
@@ -110,87 +139,240 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         [name]: value
       });
-    }
+    };
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    
-    // Compare `formData` with `player` data for validation triggers
-    const isDataModified = Object.keys(formData).some(key => {
-      if (key === "user" || key === "membership") {
-        return Object.keys(formData[key]).some(subKey => formData[key][subKey] !== player[key + subKey]);
-      }
-      return formData[key] !== player[key];
+    switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+      case "user.username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors["user.username"] = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors["user.username"] = "Username can only contain letters, numbers, underscores, and hyphens.";
+        
+        
+        } else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+
+              if ((value !== player.username) && response.data.usernameExists === true) {
+
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  "user.username": "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.username":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "user.email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors["user.email"] = "Please enter a valid email address";
+           
+           
+             } else {
+          // Debounced API call for email availability
+         clearTimeout(window.emailValidationTimeout);
+         window.emailValidationTimeout = setTimeout(async () => {
+           try {
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+              }, });
+             console.log("Email validation :", response.data);
+
+             if ((value !== player.email) && response.data.emailExists === true) {
+
+               setErrors((prevErrors) => ({
+                 ...prevErrors,
+                 ["user.email"]: "This email is already in use.",
+               }));
+             } else {
+               setErrors((prevErrors) => {
+                 const { "user.email":_, ...rest } = prevErrors;
+                 return rest;
+               });
+             }
+           } catch (error) {
+             console.error("Email validation error:", error);
+           }
+         }, 500); // Delay of 500ms
+       };
+        break;
+      
+      case "user.password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if(value && !passwordPattern.test(value)) {
+          newErrors["user.password"] = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+      case "dateOfBirth":
+        const today = new Date();
+        const selectedDate = new Date(value);
+        if (selectedDate >= today) {
+          newErrors.dateOfBirth = "Date of birth must be in the past.";
+        };
+        break;
+
+      case "membership.startDate":
+        if (!value) {
+          newErrors["membership.startDate"] = "Start date is required.";
+        } else if (formData.membership.endDate && new Date(value) >= new Date(formData.membership.endDate)) {
+          newErrors["membership.startDate"] = "Start date must be before end date.";
+        }
+        break;
+      
+      case "membership.endDate":
+        if (!value) {
+          newErrors["membership.endDate"] = "End date is required.";
+        } else if (formData.membership.startDate && new Date(value) <= new Date(formData.membership.startDate)) {
+          newErrors["membership.endDate"] = "End date must be after start date.";
+        }
+        break;  
+
+      case "image":
+        console.log("Image validation:", value);
+        if (!value) {
+            newErrors.image = "Image is required.";
+        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        }
+        break;
+      default:
+        break;  
+    }  
+    return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      if (field === "membership") {
+        const membershipErrors = validateForm("membership.startDate", formData.membership.startDate);
+        const endDateErrors = validateForm("membership.endDate", formData.membership.endDate);
+        Object.assign(errors, membershipErrors, endDateErrors);
+      }else if(field === "user"){
+        const usernameErrors = validateForm("user.username", formData.user.username);
+        const emailErrors = validateForm("user.email", formData.user.email);
+        const passwordErrors = validateForm("user.password", formData.user.password);
+        Object.assign(errors, usernameErrors, passwordErrors, emailErrors);
+      } else {
+        const fieldErrors = validateForm(field, formData[field]);
+        if (fieldErrors[field]) {
+          errors[field] = fieldErrors[field];
+        }
+      };
     });
-  
-    if (!isDataModified) {
-      return true; // No validation needed as no changes detected
+    return errors;
+  };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.user.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.user.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.username !== player.username) && response.data.usernameExists === true) {
+                errors["user.username"] = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
     }
 
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
+    // Check email availability
+    if (formData.user.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.user.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.email !== player.email) && response.data.emailExists === true) {
+                errors["user.email"]= "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
     }
 
-     //username validation
-     if (formData.user.username !== player.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
-  
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.user.email !== player.email && !emailPattern.test(formData.user.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-  
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (formData.user.password && formData.user.password !== player.password && !passwordPattern.test(formData.user.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    }
-  
-    // Contact number validation
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (formData.contactNo !== player.contactNo && !sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-    }
-  
-    // Date of birth validation
-    const today = new Date();
-    const selectedDate = new Date(formData.dateOfBirth);
-    if (formData.dateOfBirth !== player.dateOfBirth && selectedDate >= today) {
-      newErrors.dateOfBirth = "Date of birth must be in the past.";
-    }
-  
-    // Membership dates validation
-    if (formData.membership.startDate !== player.membershipStartDate || formData.membership.endDate !== player.membershipEndDate) {
-      if (new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
-        newErrors.endDate = "End date must be after start date.";
-      }
-    }
-
-    if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
-      newErrors.image = "Only image files are allowed.";
-    }
-  
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };  
+    return errors;
+};
 
   const handleEdit = async e => {
     e.preventDefault();
     console.log("editedPlayer: ", formData);
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
-    }
+    };
+
     setUploading(true);
       try {
       //   let imageURL = formData.image;
@@ -218,7 +400,10 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       // };
         const response = await axios.put(
           `${API_URL}admin/players/update/${player.playerId}`,
-          formDataToSend 
+          formDataToSend,{ 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+        }}
         );
         const updatedPlayer = response.data;
 
@@ -326,10 +511,12 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        image: "",
-      }));
+      // Validate the image and update the errors state
+      const fieldError = validateForm("image", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { image, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.image ? { ...restErrors, image: fieldError.image } : restErrors;
+      });
       setIsImageAdded(true);
       setShowImageError(false);
     }
@@ -397,7 +584,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="username"
             />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            {errors["user.username"] && <p className="text-red-500 text-xs mt-1">{errors["user.username"]}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
@@ -409,7 +596,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            {errors["user.email"]  && <p className="text-red-500 text-xs mt-1">{errors["user.email"]}</p>}
           </div>
           <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
@@ -427,7 +614,12 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {showPasswordError && (
+                <p className="text-red-500 text-xs mt-1 col-span-2">
+                  Change the password or else it will remain unchanged.
+                </p>
+              )}
+            {errors["user.password"] && <p className="text-red-500 text-xs mt-1">{errors["user.password"] }</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
@@ -544,6 +736,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               required
               isClearable={false} 
             />
+            {errors["membership.startDate"] && ( <p className="text-red-500 text-xs mt-1">{errors["membership.startDate"]}</p>)}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">
@@ -559,7 +752,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               required
               isClearable={false} 
             />
-            {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+            {errors["membership.endDate"] && ( <p className="text-red-500 text-xs mt-1">{errors["membership.endDate"]}</p>)}
           </div>
           <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
@@ -593,7 +786,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <img
                 src={imagePreview}
                 alt="Preview"
-                className="h-60 w-60 object-cover border border-gray-300"
+                className=" object-contain rounded-lg border border-gray-300"
               />
             ) : (
               <p className="text-gray-500 text-sm">

@@ -27,7 +27,7 @@ const NewsPreview = ({ news, onClose }) => {
     <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen w-full bg-gray-800 bg-opacity-75 p-5 z-50">
       <div className="flex items-center justify-center">
        <div className="bg-white w-full max-w-6xl rounded-3xl shadow-2xl relative overflow-hidden">
-      {/* Close Button */}
+      {/* {/ Close Button /} */}
       <div className="flex justify-end p-4">
         <button
           onClick={onClose}
@@ -38,13 +38,13 @@ const NewsPreview = ({ news, onClose }) => {
         </button>
       </div>
       
-      {/* Header */}
+      {/* {/ Header /} */}
       <h2 className="text-center text-2xl font-bold text-[#480D35] mb-4">News Preview</h2>
       
-      {/* Content */}
+      {/* {/ Content /} */}
       <div className="bg-gray-100 px-10 py-6 rounded-t-3xl ">
         <div className="h-full space-y-3">
-          {/* Heading and Author */}
+          {/* {/ Heading and Author /} */}
           <div>
             <h1 className="text-primary font-extrabold text-3xl leading-tight text-[#480D35]">{selectedNews.heading}</h1>
             <p className="text-gray-600 mt-1 text-sm">
@@ -52,14 +52,14 @@ const NewsPreview = ({ news, onClose }) => {
             </p>
           </div>
           
-          {/* Date and Time */}
+          {/* {/ Date and Time /} */}
           <div className="text-gray-500 flex items-center space-x-4 text-sm">
-            <span>{dayjs(news.dateTime).format('YYYY-MMM-DD')}</span>
+            <span>{dayjs(news.createdOn).format('YYYY-MMM-DD')}</span>
             <span>&#8226;</span>
-            <span>{dayjs(news.dateTime).fromNow()}</span>
+            <span>{dayjs(news.createdOn).fromNow()}</span>
           </div>
 
-          {/* Full Image Display */}
+          {/* {/ Full Image Display /} */}
           <div className="relative w-full flex justify-center items-center mt-4">
               {news.images && news.images.length > 0 && (
                 <>
@@ -84,8 +84,8 @@ const NewsPreview = ({ news, onClose }) => {
                 </>
               )}
             </div>
-
-          {/* News Body */}
+{/* 
+          {/ News Body /} */}
           <div className="text-gray-700 text-justify text-lg leading-relaxed mt-6 pb-5">
             <span
               dangerouslySetInnerHTML={{

@@ -7,9 +7,10 @@ import { GiClick } from "react-icons/gi";
 
 const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
-    inning: matchType === "Test" ? '' : '1',
+    inning: matchType === "Test" ? "" : "1",
     oppositionOvers: '',
     runs: '',
     wickets: '',
@@ -25,7 +26,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const [statData, setStatData] = useState(initialStatData);
   const [selectedIning, setSelectedIning] = useState(statData.inning);
   const [errors, setErrors] = useState({});
-  console.log("selected inning in stat data: ", statData.inning);
+  
 
   useEffect(() => {
     // Reset statData each time the popup is opened
@@ -42,7 +43,12 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   }, [onClose, matchType, matchId]);
 
   useEffect(() => {
-    axios.get(`${API_URL}matchSummary/match/${matchId}`)
+    axios.get(`${API_URL}matchSummary/match/${matchId}`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        }})
         .then(response => {
           const matchSummary = response.data;
           if (matchType === "T20" || matchType === "ODI") {
@@ -70,6 +76,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           setStatData({...initialStatData, inning:selectedIning}); // Use initial statData on error
         });
         console.log("Is summary exists:", isSummaryExists);
+        console.log("stat to be edited :",statData);
   
     if (selectedIning) {
       console.log("Updated selected inning:", selectedIning);
@@ -81,6 +88,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name.includes(".")) {
       const [mainKey, subKey] = name.split(".");
       setStatData({
@@ -102,55 +113,109 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
         ...statData,
         [name]: value
       });
-    }
+    };
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    if (matchType === "Test" && !statData.inning) {
-      newErrors.inning = "Inning is required.";
-      message.error("Please select an inning before submitting.");
-    }
-    if (!statData.overs) {
-      newErrors.overs = "Overs are required.";
-    }
-    if (!statData.runs) {
-      newErrors.runs = "Runs are required.";
-    }
-    if (!statData.wickets) {
-      newErrors.wickets = "Wickets are required.";
-    }
-    if (!statData.oppositionOvers) {
-      newErrors.oppositionOvers = "Opposition Overs are required.";
-    }
-    if (!statData.oppositionRuns) {
-      newErrors.oppositionRuns = "Opposition Runs are required.";
-    }
-    if (!statData.oppositionWickets) {
-      newErrors.oppositionWickets = "Opposition Wickets are required.";
-    }
-    if (!(matchType === "Test" && statData.inning === "1") && !statData.result) {
-      newErrors.result = "Result is required.";
-    }
+    switch(name){
+      case "inning":
+        if (matchType === "Test" && !value) {
+          newErrors.inning = "Inning is required.";
+          message.error("Please select an inning before submitting.");
+        };
+        break;
+      case "overs":  
+        if (!value) {
+          newErrors.overs = "Overs are required.";
+        }else if (!value || value < 0 || value > 120) newErrors.overs = "Overs must be between 0 and 120.";
+        break;
+      case "runs":  
+        if (!value) {
+          newErrors.runs = "Runs are required.";
+        }else if (!value || value < 0 || value > 1000) newErrors.runs = "Runs must be between 0 and 1000.";
+        break;
+        case "wickets":  
+        if (!value) {
+          newErrors.wickets = "Wickets are required.";
+        } else if (!value || value < 0 || value > 10) newErrors.wickets = "Wickets must be between 0 and 10.";
+        break;
+        case "oppositionOvers":  
+        if (!value) {
+          newErrors.oppositionOvers = "Opposition Overs are required.";
+        } else if (!value || value < 0 || value > 120) newErrors.oppositionOvers = "Opposition overs must be between 0 and 120.";
+        break;
+        case "oppositionRuns":
+        if (!value) {
+        newErrors.oppositionRuns = "Opposition Runs are required.";
+        } else if (!value || value < 0 ||value > 1000) newErrors.oppositionRuns = "Opposition runs must be between 0 and 1000.";
+        break;
+        case "oppositionWickets":
+        if (!value) {
+        newErrors.oppositionWickets = "Opposition Wickets are required.";
+        } else if (!value ||value < 0 || value > 10) newErrors.oppositionWickets = "Opposition wickets must be between 0 and 10.";
+        break;
+        case "result":  
+        if (!(matchType === "Test" && statData.inning === "1") && !value) {
+          newErrors.result = "Result is required.";
+        }
+        break;
+        default:
+          break;
+      };
+      return newErrors;
+  };
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateFormData = (statData) => {
+    const errors = {};
+    // Validate top-level fields
+    Object.keys(statData).forEach((field) => {
+        const fieldErrors = validateForm(field, statData[field]);
+        if (fieldErrors[field]) {
+          errors[field] = fieldErrors[field];
+        }
+      
+    });
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const errors = validateFormData(statData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
-      };
+    };
       
-      setUploading(true);
-      console.log("add :" ,statData); // Log to verify structure before making request
+    setUploading(true);
+    console.log("add :" ,statData); // Log to verify structure before making request
 
     try {
+      let addingStatData = { ...statData };
+      if (matchType === "T20" || matchType === "ODI") {
+        addingStatData.inning = "1";
+      };
       const response = await axios.post(
         `${API_URL}matchSummary/add`,
-        statData
+        addingStatData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }}
       );
       message.success("Successful!");
       setStatData({
@@ -170,6 +235,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
+      console.log("Success response add :" , response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -186,17 +252,29 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const errors = validateFormData(statData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
 
     setUploading(true);
     console.log("update: ",statData); // Log to verify structure before making request
     try {
+     // Set inning to "1" if matchType is T20 or ODI
+      let updatedStatData = { ...statData };
+      if (matchType === "T20" || matchType === "ODI") {
+        updatedStatData.inning = "1";
+      };
+
+      console.log("add:", updatedStatData);
       const response = await axios.put(
-        `${API_URL}matchSummary/update/${statData.id}`,
-        statData
+        `${API_URL}matchSummary/update/${statData.id}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        }}
       );
       message.success("Successfully updated the match Summary!");
       setStatData({
@@ -216,6 +294,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       // setTimeout(() => {
       //     window.location.reload();
       //   }, 1000);
+      console.log("success response:", response.data);
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -235,6 +314,26 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
     onClose();
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      const formElements = Array.from(e.target.form.elements);
+      const index = formElements.indexOf(e.target);
+      const nextIndex = e.key === "ArrowUp" ? index - 1 : index + 1;
+
+      if (formElements[nextIndex]) {
+        formElements[nextIndex].focus();
+        e.preventDefault();
+      }
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const form = e.target.form;
+      const isLastField = form.elements[form.elements.length - 1] === e.target;
+      if (isLastField) {
+        handleSubmit(e);
+      }
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
       <div className="flex items-center justify-center">
@@ -249,7 +348,7 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
           </button>
         </div>
         <h2 className="text-xl font-bold mb-6 text-[#480D35]">Add Match Stat</h2>
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onKeyDown={handleKeyDown}>
          
             {
               matchType==="Test"?(
@@ -275,9 +374,9 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                   <input
                      type="text"
                      name="inning"
-                     value={1}
+                     value="1"
                      onChange={handleChange}
-                     disabled
+                     readOnly
                      className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
                   />
                   {errors.inning && <p className="text-red-500 text-xs mt-1">{errors.inning}</p>}
@@ -291,8 +390,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="overs"
                 min={0}
+                max={120}
                 value={statData.overs}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 120) value = 120; // Ensure maximum value is 120
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -304,8 +411,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="runs"
                 min={0}
+                max={1000}
                 value={statData.runs}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 1000) value = 1000; // Ensure maximum value is 1000
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -317,8 +432,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="wickets"
                 min={0}
+                max={10}
                 value={statData.wickets}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 10) value = 10; // Ensure maximum value is 10
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f] "
               />
@@ -331,8 +454,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="oppositionOvers"
                 min={0}
+                max={120}
                 value={statData.oppositionOvers}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 120) value = 120; // Ensure maximum value is 120
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -344,8 +475,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="oppositionRuns"
                 min={0}
+                max={1000}
                 value={statData.oppositionRuns}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 1000) value = 1000; // Ensure maximum value is 1000
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />
@@ -357,8 +496,16 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
                 type="number"
                 name="oppositionWickets"
                 min={0}
+                max={10}
                 value={statData.oppositionWickets}
                 onChange={handleChange}
+                onInput={(e) => {
+                  let value = e.target.value;
+                  if (value < 0) value = 0; // Ensure minimum value is 0
+                  if (value > 10) value = 10; // Ensure maximum value is 10
+                  e.target.value = value;
+                  handleChange(e); // Update the form data
+                }}
                 required
                 className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               />

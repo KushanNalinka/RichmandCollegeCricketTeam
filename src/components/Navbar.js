@@ -1,31 +1,35 @@
 import React, { useState } from "react";
-import { IoHomeSharp } from "react-icons/io5";
-import { TbScoreboard } from "react-icons/tb";
+import { Link, useLocation } from "react-router-dom";
+import { FaHome } from "react-icons/fa";
+import { FaPeopleGroup } from "react-icons/fa6";
 import { RiTeamFill } from "react-icons/ri";
 import { BiSolidCricketBall } from "react-icons/bi";
-import { FaPeopleGroup } from "react-icons/fa6";
-import { MdPeople } from "react-icons/md";
-import { Link, useLocation } from "react-router-dom";
-import { MdDashboard } from "react-icons/md";
-import { FaPersonWalkingWithCane } from "react-icons/fa6";
-import { MdOutlineNewspaper } from "react-icons/md";
-import { FaHome } from "react-icons/fa";
+import { TbScoreboard } from "react-icons/tb";
+import { MdPeople, MdOutlineNewspaper } from "react-icons/md";
 
 const Navbar = () => {
-    const [activeLink, setActiveLink] = useState("");
-    const location = useLocation();
+  const [activeLink, setActiveLink] = useState("");
+  const location = useLocation();
+  // Safely retrieve the username from localStorage
+  const userString = localStorage.getItem("user"); // Adjust key based on your storage
+  const user = userString ? JSON.parse(userString) : null; // Declare `user` properly
+  const username = user?.username || ""; // Use optional chaining to access `username`
 
-    // Set active link based on the current location
-    React.useEffect(() => {
-        setActiveLink(location.pathname);
-    }, [location.pathname]);
+  
+  console.log("Username is : "+ username); 
 
-    // Function to apply active styles
-    const getLinkClass = (path) => {
-        return path === activeLink 
-            ? "bg-gray-300 bg-opacity-30"
-            : "hover:bg-gray-300 hover:bg-opacity-10";
-    };
+  // Set active link based on the current location
+  React.useEffect(() => {
+    setActiveLink(location.pathname);
+  }, [location.pathname]);
+
+  // Function to apply active styles
+  const getLinkClass = (path) => {
+    return path === activeLink
+      ? "bg-gray-300 bg-opacity-30"
+      : "hover:bg-gray-300 hover:bg-opacity-10";
+  };
+
 
     return (
         <>
@@ -59,9 +63,22 @@ const Navbar = () => {
 
                         {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">News</span>
                     </Link>
+                    {username === "admin01" && (
+                      <Link
+                        to={"/admin-control"}
+                        className={`${getLinkClass("/admin-control")} group flex flex-wrap pl-4 gap-3 py-4 text-2xl cursor-pointer items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
+                        {" "}
+                        <MdPeople className="text-white" />
+                        <span className="text-sm text-white transition-opacity duration-300 mt-1">
+                          Admin
+                        </span>
+                      </Link>
+                    )}
                 </ul>
             </div>
         </>   
     );
+
 };
+
 export default Navbar;

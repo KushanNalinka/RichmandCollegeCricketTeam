@@ -6,6 +6,7 @@ import { FaTimes,  FaTrash  } from 'react-icons/fa';
 
 const EditModal = ({ team, onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const API_URL = process.env.REACT_APP_API_URL;
   const [players, setPlayers] = useState([]);
   const [formData, setFormData] = useState({...team, updatedBy:user.username, updatedOn:new Date().toISOString()});
@@ -13,20 +14,64 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [captain, setCaptain] = useState();
+  const [viceCaptain, setViceCaptain] = useState();
   console.log("teams:", team);
+
   useEffect(() => {
+
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/players/all`,{ 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+    }})
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        console.log("All players: ", players);
+        // Check if a specific team category is selected
+        // const captain = players.find(player => formData.captain === player.playerId);
+        // if (captain) {
+        //   setCaptain(captain.name);
+        //   console.log("playerId: ", captain.playerId);
+        //   console.log("captain: ", captain);
+        // } else {
+        //   console.log("No captain found with the specified playerId.");
+        // }
+        // Display all active players by default
+        const activePlayers = players.filter((player) => player.status === "Active");
+        setPlayers(activePlayers);
+        console.log("All Active Players:", activePlayers);
+
+        if(activePlayers){
+          const categorizedPlayers = categorizePlayers(activePlayers);
+          setPlayers(categorizedPlayers);
+          console.log("Categorized players: ", players);
+        };
+         // Team captain and vice-captain names to their player IDs
+          const captainPlayer = formData.players.find((player) => player.name === team.captain);
+          const viceCaptainPlayer = formData.players.find((player) => player.name === team.viceCaptain);
+
+          setFormData((prev) => ({
+            ...prev,
+            captain: captainPlayer ? captainPlayer.playerId : '',
+            viceCaptain: viceCaptainPlayer ? viceCaptainPlayer.playerId : '',
+          }));
+          console.log("formdata captain: ", formData.captain);
+          console.log("formdata vicecaptain: ", formData.viceCaptain);
+          console.log("formdata: ", formData);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
       axios
-        .get(`${API_URL}teams/${team.teamId}/players`)
+        .get(`${API_URL}teams/${team.teamId}/players`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }})
         .then(response => {
           const members = response.data;
           setSelectedPlayers(members);
@@ -37,15 +82,77 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
         });
         console.log("players:", players);
         console.log("set selected players:", selectedPlayers);
-  }, []);
+  }, [API_URL]);
+
+  const getAgeFromDOB = (dob) => {
+    const birthDate = new Date(dob);
+    const currentDate = new Date();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const isBeforeBirthday =
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate());
+    if (isBeforeBirthday) age -= 1;
+    return age;
+  };
   
+  const categorizePlayers = (players) => {
+    const categories = {
+      "Under 9": [],
+      "Under 11": [],
+      "Under 13": [],
+      "Under 15": [],
+      "Under 17": [],
+      "Under 19": [],
+      "Richmond Legend Over 40": [],
+      "Richmond Legend Over 50": [],
+      "Old Boys": []
+    };
+  
+    // Group players by age category
+    players.forEach(player => {
+      const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+  
+      if (age < 9) {
+        categories["Under 9"].push(player);
+        //categories["Academy Under 9"].push(player);
+      }
+      if (age >= 9 && age < 11) {
+        categories["Under 11"].push(player);
+        //categories["Academy Under 11"].push(player);
+      }
+      if (age >= 11 && age < 13) {
+        categories["Under 13"].push(player);
+        //categories["Academy Under 13"].push(player);
+      }
+      if (age >= 13 && age < 15) {
+        categories["Under 15"].push(player);
+        //categories["Academy Under 15"].push(player);
+      }
+      if (age >= 15 && age < 17) {
+        categories["Under 17"].push(player);
+        //categories["Academy Under 17"].push(player);
+      }
+      if (age >= 17 && age < 19) {
+        categories["Under 19"].push(player);
+        //categories["Academy Under 19"].push(player);
+      }
+      if (age >= 40 && age < 50) {
+        categories["Richmond Legend Over 40"].push(player);
+      }
+      if (age >= 50) {
+        categories["Richmond Legend Over 50"].push(player);
+      }
+      if (age >= 40) {
+        categories["Old Boys"].push(player);
+      }
+    });
+  
+    return categories;
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      [name]: ""
-    }));
     setFormData({
       ...formData,
       [name]: value
@@ -56,7 +163,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.players = "Please select players.";
+      newErrors.players = "Select players.";
     };
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -74,7 +181,12 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}teams/${team.teamId}`,
-        formData
+        formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       console.log("Form update succedded: ", response.data);
       message.success("Successfull!");
@@ -95,8 +207,8 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
     } catch (error) {
       console.error("Error submitting form:", error);
 
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
+      if (error.response && error.response.data) {
+        message.error(`Failed to submit: ${error.response.data}`);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }
@@ -107,29 +219,28 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      players: ""
-    }));
-    // if (selectedPlayers.includes(player)) {
-    //   // If player is already selected, remove them
-    //   setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
-    // } else {
-    //   // Otherwise, add the player to the list
-    //   setSelectedPlayers([...selectedPlayers, player]);
-    // }
-
+    let updatedPlayers;
     const isSelected = selectedPlayers.some(p => p.playerId === player.playerId);
     if (isSelected) {
-      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+      updatedPlayers = selectedPlayers.filter(p => p.playerId !== player.playerId);
     } else {
-      setSelectedPlayers([...selectedPlayers, player]);
-    }
+      updatedPlayers = [...selectedPlayers, player];
+    };
+    setSelectedPlayers(updatedPlayers);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: updatedPlayers.length === 0 ? "Select players." : "",
+    }));
+  
     console.log("selected players: ", selectedPlayers.name);
   };
 
   const clearSelectedPlayers = () => {
     setSelectedPlayers([]); // Clear all selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: "Select players.",
+    }));
   };
   
   useEffect(
@@ -224,11 +335,22 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             >
               <option value="">Select Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+               {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-2">
@@ -242,11 +364,22 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
               required
             >
               <option value="">Select Vice Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+               {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-4">
@@ -272,7 +405,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
             {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
             <div className="relative">
               <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
-                {players.map((player) => (
+                {/* {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input
                       type="checkbox"
@@ -285,7 +418,28 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                       {player.name}
                     </label>
                   </div>
-                ))}
+                ))} */}
+                {Object.entries(players).map(([category, categoryPlayers]) => {
+                  return categoryPlayers.length > 0 ? (
+                    <div key={category}>
+                      <h4 className="font-bold text-md mt-2">{category}</h4> {/* Category or Topic Header */}
+                      {categoryPlayers.map(player => (
+                        <div key={player.playerId} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`player-${player.playerId}`}
+                            className="mr-2"
+                            checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                            onChange={() => handlePlayerSelect(player)}
+                          />
+                          <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
+                            {player.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null; // Only display categories with players
+                })}
               </div>
             </div>
           </div>

@@ -23,6 +23,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [errors, setErrors] = useState({});
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
@@ -55,32 +56,49 @@ const FormPopup = ({  onClose, isSumitted }) => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        const filteredPlayers = players.filter((player) => ( player.status === "Active"));
+        setPlayers(filteredPlayers);
+        console.log("players Data:", filteredPlayers);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
-    axios.get(`${API_URL}coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }}).then(response => {
       const coaches = response.data;
-      setCoaches(coaches);
-      console.log("Coaches Data:", coaches);
+      const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+      setCoaches(filteredCoaches);
+      console.log("Coaches Data:", filteredCoaches);
     });
     axios
-      .get(`${API_URL}teams/all`)
+      .get(`${API_URL}teams/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const teams = response.data;
         setTeams(teams);
         console.log("Teams Data:", teams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
   }, 
-  []);
+  [formData.team.teamId]);
 
   const handleChange = e => {
     const { name, value,files } = e.target;
@@ -113,42 +131,83 @@ const FormPopup = ({  onClose, isSumitted }) => {
         ...formData,
         [name]: file
       });
+      const fieldError = validateForm(name, file); // Pass file to validation
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...fieldError,
+      }));
       setIsImageAdded(true);
     }else {
       setFormData({
         ...formData,
         [name]: value
       });
-    }
+    };
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    // if (!/^image\//.test(formData.logo.type)) {
-    //   newErrors.logo = "Only image files are allowed.";
-    // };
-      // Validate selected coaches
-    if (selectedCoaches.length === 0) {
-      newErrors.coaches = "Please select at least one coach.";
-    };
+    switch(name){
+      case "coaches":
+        if (selectedCoaches.length === 0) {
+          newErrors.coaches = "Select at least one coach.";
+        };
+        break;
+      case "logo":
+        console.log("Image validation:", value);
+        if (!value) {
+            newErrors.logo = "Image is required.";
+        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.logo = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        }
+        break;
+      default:
+        break;
+    }
+    return newErrors;
+  };
 
-    if (!formData.logo && imagePreview === null) {
-      newErrors.logo = "Opponent logo is required.";
-    }else if (!/^image\//.test(formData.logo.type)) {
-      newErrors.logo = "Only image files are allowed.";
-    };
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      const fieldErrors = validateForm(field, formData[field]);
+      if (fieldErrors[field]) {
+        errors[field] = fieldErrors[field];
+      }
+    });
+    return errors;
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    // if (!validateForm()) {
+    //   message.error("Please fix validation errors before submitting");
+    //   return;
+    // };
+
+    const errors = validateFormData(formData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
-    };
+    }
+
     setUploading(true);
     try {
       // let imageURL = formData.logo;
@@ -181,7 +240,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
       //   date: formattedDate 
       // };
       // Make a POST request to the backend API
-      const response = await axios.post( `${API_URL}matches/add`, formDataToSend );
+      const response = await axios.post( `${API_URL}matches/add`, formDataToSend , { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+      }});
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -195,6 +257,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
         umpires: "",
         type: "",
         matchCaptain: "",
+        matchViceCaptain: "",
         team: {
           teamId: ""
         },
@@ -223,20 +286,26 @@ const FormPopup = ({  onClose, isSumitted }) => {
   };
 
   const handleCoachSelect = coach => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      coaches: ""
-    }));
+    let updatedCoaches;
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
-      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
+      updatedCoaches = selectedCoaches.filter(c => c.coachId !== coach.coachId);
     } else {
-      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, name: coach.name }]);
-    }
+      updatedCoaches = [...selectedCoaches, { coachId: coach.coachId, name: coach.name }];
+    };
+    setSelectedCoaches(updatedCoaches);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: updatedCoaches.length === 0 ? "Select coaches." : "",
+    }));
   };
 
   const clearSelectedCoaches = () => {
     setSelectedCoaches([]); // Clear all selected coaches
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: "Select coaches.",
+    }));
   };
 
   useEffect(() => {
@@ -291,10 +360,12 @@ const FormPopup = ({  onClose, isSumitted }) => {
         ...formData,
         logo: file
       });
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        logo: "",
-      }));
+      // Validate the image and update the errors state
+      const fieldError = validateForm("logo", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { logo, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.logo ? { ...restErrors, logo: fieldError.logo } : restErrors;
+      });
       
     }
   };
@@ -302,6 +373,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const handleRemoveImage = () => {
     setImagePreview(null);
     setFormData({...formData, logo:null})
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      logo: "Logo is required.",
+    }));
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -439,42 +514,6 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="T20">T20</option>
             </select>
           </div>
-          <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Match Captain</label>
-            <select
-              type="text"
-              name="matchCaptain"
-              value={formData.matchCaptain}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="">Select Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
-                  {player.name}
-                </option>
-              )}
-            </select>
-          </div>
-          <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
-            <select
-              type="text"
-              name="matchViceCaptain"
-              value={formData.matchViceCaptain}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="">Select Vice-captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
-                  {player.name}
-                </option>
-              )}
-            </select>
-          </div>
           <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Team</label>
             <select
@@ -492,11 +531,48 @@ const FormPopup = ({  onClose, isSumitted }) => {
               )}
             </select>
           </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Match Captain</label>
+            <select
+              type="text"
+              name="matchCaptain"
+              value={formData.matchCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )}
+            </select>
+          </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
+            <select
+              type="text"
+              name="matchViceCaptain"
+              value={formData.matchViceCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Vice-captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )}
+            </select>
+          </div>
           <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold">Coaches</label>
             <div className="flex border gap-1 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none" onClick={() => setDropdownOpen(!dropdownOpen)}>
               <input
                 type="text"
+                name="coaches"
                 className="py-1 px-3 w-[88%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
                 value={selectedCoaches.map(coach => coach.name).join(", ")} // Show selected coach names, joined by commas
                 readOnly
@@ -579,7 +655,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-32 w-32 object-cover border border-gray-300"
+                    className=" object-contain rounded-lg border border-gray-300"
                   />
                 ) : (
                   <p className="text-gray-500 text-sm">

@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { Flex, message } from "antd";
-
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-
 const OfficialForm = ({ onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -33,55 +32,198 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
       ...prevErrors,
       [name]: ""
     }));
-      setFormData({
-        ...formData,
-        [name]: value
-      });
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
+    switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+      case "username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors.username = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+        } else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if (response.data.usernameExists === true) {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  username: "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { username, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors.email = "Please enter a valid email address";
+        } else {
+          // Debounced API call for email availability
+         clearTimeout(window.emailValidationTimeout);
+         window.emailValidationTimeout = setTimeout(async () => {
+           try {
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+              }, });
+             console.log("Email validation :", response.data);
+             if (response.data.emailExists === true) {
+               setErrors((prevErrors) => ({
+                 ...prevErrors,
+                 email: "This email is already in use.",
+               }));
+             } else {
+               setErrors((prevErrors) => {
+                 const { email, ...rest } = prevErrors;
+                 return rest;
+               });
+             }
+           } catch (error) {
+             console.error("Email validation error:", error);
+           }
+         }, 500); // Delay of 500ms
+       }
+        break;
+      
+      case "password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordPattern.test(value)) {
+          newErrors.password = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+
+      case "position":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.position = "Position must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.position = "Position can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.position = "Position cannot start or end with a space.";
+        };
+
+      default:
+        break;  
+    }  
+    return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      const fieldErrors = validateForm(field, formData[field]);
+      if (fieldErrors[field]) {
+        errors[field] = fieldErrors[field];
+      }
+    });
+    return errors;
+  };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.usernameExists) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
     }
 
-    //username validation
-    if (formData.username.length < 4 || formData.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.emailExists) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
 
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    };
-
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (!passwordPattern.test(formData.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    };
-
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (!sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX' and exactly 10 or 12 digits";
-    };
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    return errors;
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
     setUploading(true);
@@ -89,8 +231,11 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
       try {
         const response = await axios.post(
           `${API_URL}auth/signupOfficial`,
-          formData 
-        );
+          formData,{
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+        }, 
+      });
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
@@ -232,6 +377,9 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               required
               placeholder="Teacher"
             />
+
+             {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
+
           </div>
           <div className="flex mt-8 justify-end col-span-2">
             <button

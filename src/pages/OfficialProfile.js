@@ -12,12 +12,18 @@ import Footer from '../components/Footer';
 
 const OfficialProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [officialProfile, setOfficialProfile] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     console.log("userId O:", user.userId);
     const fetchData = async () => {
-    const officialData = await axios.get( `${API_URL}officials/${user.officialId}`);
+    const officialData = await axios.get( `${API_URL}officials/${user.officialId}`,{
+      headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+  }, });
     setOfficialProfile(officialData.data);
     console.log("Official Data:", officialData.data);
   };

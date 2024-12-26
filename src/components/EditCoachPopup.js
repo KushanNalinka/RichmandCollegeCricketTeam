@@ -1,266 +1,3 @@
-// // src/components/EditPlayerForm.jsx
-
-// import React, { useState, useEffect } from "react";
-// import { FaTimes } from "react-icons/fa";
-// import axios from "axios";
-// import { message } from "antd";
-// import { storage } from '../config/firebaseConfig'; // Import Firebase storage
-// import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-// import { FaCamera, FaEdit,FaTrash } from 'react-icons/fa';
-
-// const EditCoachForm = ({ coach, onClose }) => {
-//   const [formData, setFormData] = useState({ 
-//     image: coach.image,
-//     name: coach.name,
-//     dateOfBirth: coach.dateOfBirth,
-//     address: coach.address,
-//     contactNo: coach.contactNo,
-//     description: coach.description,
-//     user:{
-//       email: coach.email,
-//       username: coach.username,
-//       password: coach.password,
-//     } });
-//   const [imagePreview, setImagePreview] = useState(coach.image);
-//   const [isImageAdded, setIsImageAdded] = useState(false);
-//   const [uploading, setUploading] = useState(false);
-//   const API_URL = process.env.REACT_APP_API_URL;
-
-//   const handleChange = e => {
-//     const { name, value, files } = e.target;
-//     if (name.includes(".")) {
-//       const [mainKey, subKey] = name.split(".");
-//       setFormData({
-//         ...formData,
-//         [mainKey]: {
-//           ...formData[mainKey],
-//           [subKey]: value
-//         }
-//       });
-//     }else if (files && files[0]) {
-//       const file = files[0];
-//       setImagePreview(URL.createObjectURL(file));
-//       setFormData({
-//         ...formData,
-//         [name]: file
-//       });
-//       setIsImageAdded(true);
-//     } else {
-//       setFormData({
-//         ...formData,
-//         [name]: value
-//       });
-//     }
-//   };
-
-//   const handleEdit = async e => {
-//     e.preventDefault();
-//     console.log("edited1 coaches: ", formData);
-//       try {
-//         let imageURL = formData.image;
-      
-//       // Upload image if an image file is added
-//       if (formData.image instanceof File) {
-//         imageURL = await handleImageUpload(formData.image);
-//       }
-
-//       const coachData = {
-//         ...formData,
-//         image: imageURL, // Assign the uploaded image URL to formData
-//       };
-//       console.log("edited coaches: ", coachData);
-//         const response = await axios.put(
-//           `${API_URL}coaches/${coach.coachId}`,
-//             coachData 
-//         );
-//         console.log("Form submitted succedded: ", response.data);
-//         message.success("Successfull!");
-//         setFormData({
-//             image: "",
-//             name: "",
-//             dateOfBirth: "",
-//             address: "",
-//             contactNo: "",
-//             description: "",
-//             user:{
-//               email: "",
-//               username:"",
-//               Password:""
-//             }
-//         });
-//         setImagePreview();
-//         setTimeout(() => {
-//           window.location.reload();
-//         }, 1500);
-//       } catch (error) {
-//         console.error("Error submitting form:", error);
-//         message.error("Failed!");
-//       }
-    
-//   };
-
-//   const handleImageUpload = (file) => {
-//     return new Promise((resolve, reject) => {
-//       const storageRef = ref(storage, `coaches/${file.name}`);
-//       const uploadTask = uploadBytesResumable(storageRef, file);
-
-//       setUploading(true);
-
-//       uploadTask.on(
-//         'state_changed',
-//         (snapshot) => {},
-//         (error) => {
-//           console.error('Image upload failed:', error);
-//           setUploading(false);
-//           reject(error);
-//         },
-//         () => {
-//           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-//             setUploading(false);
-//             resolve(downloadURL);
-//           });
-//         }
-//       );
-//     });
-//   };
-
-//   return (
-//     <div className="fixed inset-0 flex  items-center justify-center bg-gray-600 bg-opacity-75">
-//       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative">
-//         <div className="flex justify-end ">
-//           <button
-//             onClick={onClose}
-//             className="flex relative items-center justify-end cursor-pointer text-xl text-gray-600 hover:text-gray-800"
-//             aria-label="Close"
-//           >
-//             <FaTimes />
-//           </button>
-//         </div>
-//         <h2 className="text-xl text-[#480D35] font-bold mb-4">Edit Coach Details</h2>
-//         <form
-//           onSubmit={handleEdit}
-//           className="grid grid-cols-1 md:grid-cols-2 gap-3"
-//         >
-//           <div >
-//             <label className="block text-black text-sm font-semibold">Name</label>
-//             <input
-//               type="text"
-//               name="name"
-//               value={formData.name}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-black text-sm font-semibold">DOB</label>
-//             <input
-//               type="date"
-//               name="dateOfBirth"
-//               value={formData.dateOfBirth}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-black text-sm font-semibold">Username</label>
-//             <input
-//               type="text"
-//               name="user.username"
-//               value={formData.user.username}
-//               onChange={handleChange}
-//               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="@username"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-black text-sm font-semibold">Email</label>
-//             <input
-//               type="email"
-//               name="user.email"
-//               value={formData.user.email}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="you@example.com"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-black text-sm font-semibold">New Password</label>
-//             <input
-//               type="password"
-//               name="user.password"
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="********"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-black text-sm font-semibold">Contact No</label>
-//             <input
-//               type="text"
-//               name="contactNo"
-//               value={formData.contactNo}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="+1 (555) 123-4567"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="block text-black text-sm font-semibold">Address</label>
-//             <input
-//             type="text"
-//               name="address"
-//               value={formData.address}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="123 Street Name, City, Country"
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="block text-black text-sm font-semibold">Description</label>
-//             <textarea
-//               name="description"
-//               value={formData.description}
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//               placeholder="........."
-//             />
-//           </div>
-//           <div className="col-span-2">
-//             <label className="block text-black text-sm font-semibold">Image</label>
-//             <input
-//               id="image"
-//               type="file" 
-//               name="image" 
-//               accept="image/*" 
-//               onChange={handleChange}
-//               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-//             />
-//             {imagePreview &&
-//               <img
-//                 src={imagePreview}
-//                 alt="Preview"
-//                 className="mt-2 w-20 h-20 rounded-full object-cover border border-gray-300"
-//               />}
-//           </div>
-//           <div className="flex justify-end col-span-2">
-//             <button
-//               type="submit"
-//               className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
-//             >
-//               Save
-//             </button>
-//           </div>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default EditCoachForm;
-
-
 import React, { useRef, useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
@@ -274,6 +11,7 @@ import { GiClick } from "react-icons/gi";
 
 const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({ 
     status: coach.status,
     image: coach.image,
@@ -300,6 +38,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showImageError, setShowImageError] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -320,6 +59,18 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
           [subKey]: value
         }
       });
+      if(name === "user.password"){
+        if(!value){
+          setShowPasswordError(true);
+        }else{
+          setShowPasswordError(false);
+        }
+      }
+      const fieldError = validateForm(name, value);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
     } else if (files && files[0]) {
       const file = files[0];
       setImagePreview(URL.createObjectURL(file));
@@ -327,6 +78,11 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
+      const fieldError = validateForm(name, file); // Pass file to validation
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...fieldError,
+      }));
       setIsImageAdded(true);
       setShowImageError(false);
     } else if (name === "dateOfBirth") {
@@ -340,71 +96,228 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         ...formData,
         [name]: value
       });
-    }
+    };
+    const fieldError = validateForm(name, value);
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
-    }
-    //username validation
-    if (formData.user.username !== coach.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.user.email !== coach.email && !emailPattern.test(formData.user.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-  
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (formData.user.password && formData.user.password !== coach.password && !passwordPattern.test(formData.user.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    }
-  
-    // Contact number validation
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (formData.contactNo !== coach.contactNo && !sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-    };
+    switch (name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+        case "user.username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors["user.username"] = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors["user.username"] = "Username can only contain letters, numbers, underscores, and hyphens.";
+            
+          
+          }  else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
 
-    // Date of birth validation
-    const today = new Date();
-    const selectedDate = new Date(formData.dateOfBirth);
-    if (formData.dateOfBirth !== coach.dateOfBirth && selectedDate >= today) {
-      newErrors.dateOfBirth = "Date of birth must be in the past.";
-    };
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if ((value != coach.username) && response.data.usernameExists === true) {
 
-    //description validation
-    if (formData.description && formData.description !== coach.description && formData.description.length > 100) {
-      newErrors.description = "Description should be under 100 characters.";
-    };
-    
-    // Image type validation
-    if (isImageAdded && formData.image && !/^image\//.test(formData.image.type)) {
-      newErrors.image = "Only image files are allowed.";
-    }
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  "user.username": "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.username":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "user.email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors["user.email"] = "Please enter a valid email address";
+         
+         
+         }    else {
+          // Debounced API call for email availability
+          clearTimeout(window.emailValidationTimeout);
+          window.emailValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              console.log("Email validation :", response.data);
+
+              if ((value !== coach.email) && response.data.emailExists === true) {
+
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  ["user.email"]: "This email is already in use.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.email":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Email validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "user.password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if(value && !passwordPattern.test(value)) {
+          newErrors["user.password"] = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+      case "dateOfBirth":
+        const today = new Date();
+        const selectedDate = new Date(value);
+        if (selectedDate >= today) {
+          newErrors.dateOfBirth = "Date of birth must be in the past.";
+        };
+        break;
+      case "description":  
+        if (value.length > 100) {
+          newErrors.description = "Description should be under 100 characters.";
+        };
+        break;
+
+      case "image":
+        console.log("Image validation:", value);
+        if (!value) {
+            newErrors.image = "Image is required.";
+        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        };
+        break;
+      default:
+        break;  
+      }  
+      return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
   
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }; 
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      if (field === "user") {
+        const usernameErrors = validateForm("user.username", formData.user.username);
+        const emailErrors = validateForm("user.email", formData.user.email);
+        const passwordErrors = validateForm("user.password", formData.user.password);
+        Object.assign(errors, usernameErrors, passwordErrors, emailErrors);
+      } else {
+        const fieldErrors = validateForm(field, formData[field]);
+        if (fieldErrors[field]) {
+          errors[field] = fieldErrors[field];
+        }
+      }; 
+      
+    });
+    return errors;
+  };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.user.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.user.username}`, {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.username !== coach.username) && response.data.usernameExists === true) {
+              errors["user.username"] = "This username is already taken.";
+            }
+        } catch (error) {
+          console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.user.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.user.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.email !== coach.email) && response.data.emailExists === true) {
+                errors["user.email"] = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
+
 
   const handleEdit = async e => {
     e.preventDefault();
     console.log("edited1 coaches: ", formData);
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    // if (!validateForm()) {
+    //   message.error("Please fix validation errors before submitting");
+    //   return;
+    // };
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
+
     setUploading(true);
     try {
       //   let imageURL = formData.image;
@@ -430,8 +343,11 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
       // console.log("edited coaches: ", coachData);
         const response = await axios.put(
           `${API_URL}coaches/${coach.coachId}`,
-            formDataToSend 
-        );
+            formDataToSend ,{
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }, }
+          );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
         setFormData({
@@ -515,10 +431,12 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        image: "",
-      }));
+      // Validate the image and update the errors state
+      const fieldError = validateForm("image", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { image, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.image ? { ...restErrors, image: fieldError.image } : restErrors;
+      });
       setIsImageAdded(true);
       setShowImageError(false);
     }
@@ -585,7 +503,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="username"
             />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            {errors["user.username"] && <p className="text-red-500 text-xs mt-1">{errors["user.username"]}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Email</label>
@@ -597,7 +515,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            {errors["user.email"] && <p className="text-red-500 text-xs mt-1">{errors["user.email"]}</p>}
           </div>
           <div className="col-span-1 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
@@ -615,7 +533,12 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {showPasswordError && (
+                <p className="text-red-500 text-xs mt-1 col-span-2">
+                  Change the password or else it will remain unchanged.
+                </p>
+              )}
+            {errors["user.password"] && <p className="text-red-500 text-xs mt-1">{errors["user.password"]}</p>}
           </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Contact No</label>
@@ -696,7 +619,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-40 w-40 object-cover border border-gray-300"
+                    className=" object-contain rounded-lg border border-gray-300"
                   />
                 ) : (
                   <p className="text-gray-500 text-sm">

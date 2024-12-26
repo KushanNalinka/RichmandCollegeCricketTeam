@@ -16,6 +16,8 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  console.log("Access Tocken1:", user.accessToken);
+  console.log("Access Tocken2:", accessToken);
 
   const [formData, setFormData] = useState({
     image: null,
@@ -82,6 +84,11 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           }
         });
       }; 
+      const fieldError = validateForm(name, value?.format('YYYY-MM-DD'));
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
     }else if (files && files[0]) {
       const file = files[0];
       console.log("file in handleChange: ", file);
@@ -90,7 +97,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         ...formData,
         [name]: file
       });
+      const fieldError = validateForm(name, file); // Pass file to validation
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...fieldError,
+      }));
       console.log("file in formData image: ", formData.image);
+      
     }else if (name === "dateOfBirth") {
       // Handle the DatePicker value change
       setFormData({
@@ -102,15 +115,37 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           ...formData,
           [name]: value
       });
-    }
+    };
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
     
   };
 
   const handleSubmit = async e => {
     console.log("Form data before submit: ", formData);
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    // if (!validateForm()) {
+    //   message.error("Please fix validation errors before submitting");
+    //   return;
+    // };
+
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
     setUploading(true);
@@ -134,10 +169,10 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
 
         const response = await axios.post(
           `${API_URL}auth/signupPlayer`,
-          formDataToSend , { headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }}
-        );
+          formDataToSend , { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+        }});
         console.log("Form submitted succedded: ", response.data);
         console.log(accessToken);
         message.success("Successfull!");
@@ -177,61 +212,211 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       }
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
+    switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+      case "username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors.username = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
+        } else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if (response.data.usernameExists === true) {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  username: "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { username, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors.email = "Please enter a valid email address";
+        } else {
+           // Debounced API call for email availability
+          clearTimeout(window.emailValidationTimeout);
+          window.emailValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              console.log("Email validation :", response.data);
+              if (response.data.emailExists === true) {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  email: "This email is already in use.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { email, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Email validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        }
+        break;
+      
+      case "password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if (!passwordPattern.test(value)) {
+          newErrors.password = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+      case "dateOfBirth":
+        const today = new Date();
+        const selectedDate = new Date(value);
+        if (selectedDate >= today) {
+          newErrors.dateOfBirth = "Date of birth must be in the past.";
+        };
+        break;
 
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
+      case "membership.startDate":
+        if (!value) {
+          newErrors["membership.startDate"] = "Start date is required.";
+        } else if (formData.membership.endDate && new Date(value) >= new Date(formData.membership.endDate)) {
+          newErrors["membership.startDate"] = "Start date must be before end date.";
+        }
+        break;
+      
+      case "membership.endDate":
+        if (!value) {
+          newErrors["membership.endDate"] = "End date is required.";
+        } else if (formData.membership.startDate && new Date(value) <= new Date(formData.membership.startDate)) {
+          newErrors["membership.endDate"] = "End date must be after start date.";
+        }
+        break;  
+
+      // case "image":
+      //   if (!value && imagePreview === null) {
+      //     newErrors.image = "Image is required.";
+      //   } else if (value && value[0].type) {
+      //   console.log("image file", value[0] );
+      //     // Check the file type for valid image MIME types
+      //     if (!/^image\/(jpeg|png|gif|bmp|webp)$/.test(value[0].type)) {
+      //       newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+      //     }
+      //   } else {
+      //     newErrors.image = "Invalid file. Please select an image file.";
+      //   }
+      //   break;
+      case "image":
+        console.log("Image validation:", value);
+        if (!value) {
+            newErrors.image = "Image is required.";
+        } else if (value.type && !/^image\/(jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        }
+        break;
+      default:
+        break;  
+    }  
+    return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      if (field === "membership") {
+        const membershipErrors = validateForm("membership.startDate", formData.membership.startDate);
+        const endDateErrors = validateForm("membership.endDate", formData.membership.endDate);
+        Object.assign(errors, membershipErrors, endDateErrors);
+      } else {
+        const fieldErrors = validateForm(field, formData[field]);
+        if (fieldErrors[field]) {
+          errors[field] = fieldErrors[field];
+        }
+      }
+    });
+    return errors;
+  };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.usernameExists) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
     }
 
-    //username validation
-    if (formData.username.length < 4 || formData.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.emailExists) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
 
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
-    };
+    return errors;
+};
 
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (!passwordPattern.test(formData.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    };
-
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (!sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-    };
-    
-    const today = new Date();
-    const selectedDate = new Date(formData.dateOfBirth);
-    if (selectedDate >= today) {
-      newErrors.dateOfBirth = "Date of birth must be in the past.";
-    };
-
-    if (formData.membership.startDate && new Date(formData.membership.endDate) <= new Date(formData.membership.startDate)) {
-      newErrors.endDate = "End date must be after start date.";
-    };
-
-    if (!formData.image && imagePreview === null) {
-      newErrors.image = "Image is required.";
-    }else if (!/^image\//.test(formData.image.type)) {
-      newErrors.image = "Only image files are allowed.";
-    };
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleImageUpload = (file) => {
     return new Promise((resolve, reject) => {
@@ -258,85 +443,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     });
   };
 
-  // const handleImageUpload = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  //     formData.append('folder', 'players'); // Optional, if your server needs a folder parameter
-  
-  //     setUploading(true);
-  
-  //     fetch('http://your-server-url/upload', {
-  //       method: 'POST',
-  //       body: formData,
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error(`Server responded with status ${response.status}`);
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         // Assuming the server responds with the file's URL
-  //         setUploading(false);
-  //         resolve(data.fileUrl); // Adjust based on the server's response
-  //       })
-  //           /* if server not responds with the uploaded url then the code should be 
-  //             .then(() => {
-  //               // Construct the file URL based on the file name and upload path
-  //               const fileUrl = `http://your-server-url/uploads/players/${file.name}`;
-  //               setUploading(false);
-  //               resolve(fileUrl);
-  //             })
-  //               */
-  //       .catch((error) => {
-  //         console.error('Image upload failed:', error);
-  //         setUploading(false);
-  //         reject(error);
-  //       });
-  //   });
-  // };
-  
-
-  // const handleImageUpload = (file) => {
-  //   return new Promise((resolve, reject) => {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  
-  //     setUploading(true);
-  
-  //     fetch('http://rcc.dockyardsoftware.com/upload', {
-  //       method: 'POST',
-  //       body: formData,
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error(`Server responded with status ${response.status}`);
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         // If backend responds with the uploaded URL, use it
-  //         if (data.fileUrl) {
-  //           setUploading(false);
-  //           resolve(data.fileUrl);
-  //         } else {
-  //           // If backend doesn't return the URL, construct it manually
-  //           // const fileUrl = `http://rcc.dockyardsoftware.com/uploads/players/${file.name}`;
-  //           reject(new Error('File upload failed: No file URL returned'));
-  //           setUploading(false);
-  //           resolve(data.fileUrl);
-  //         }
-  //       })
-  //       .catch((error) => {
-  //         console.error('Image upload failed:', error);
-  //         setUploading(false);
-  //         reject(error);
-  //       });
-  //   });
-  // };
-  
-
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -357,17 +463,22 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         ...formData,
         image: file
       });
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        image: "",
-      }));
-      
+      // Validate the image and update the errors state
+      const fieldError = validateForm("image", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { image, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.image ? { ...restErrors, image: fieldError.image } : restErrors;
+      });
     }
   };
 
   const handleRemoveImage = () => {
     setImagePreview(null);
-    setFormData({...formData, image:null})
+    setFormData({...formData, image:null});
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      image: "Image is required.",
+    }));
   };
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
@@ -467,7 +578,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               value={formData.contactNo}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              placeholder="+1 (555) 123-4567"
+              placeholder="+94 XX XXX XXXX"
               required
             />
             {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
@@ -572,6 +683,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
+            {errors["membership.startDate"] && ( <p className="text-red-500 text-xs mt-1">{errors["membership.startDate"]}</p>)}
           </div>
           <div className="col-span-1">
             <label className="block  text-black text-sm  font-semibold">
@@ -586,7 +698,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               className="w-full px-3 py-1 hover:border-gray-300 border text-black border-gray-300 rounded-md focus:border-[#00175f] focus:border-[5px]"
               required
             />
-            {errors.endDate && <p className="text-red-500 text-xs">{errors.endDate}</p>}
+            {errors["membership.endDate"] && ( <p className="text-red-500 text-xs mt-1">{errors["membership.endDate"]}</p>)}
           </div>
           
           <div className="col-span-1 md:col-span-2 relative ">
@@ -620,7 +732,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-60 w-60 object-cover border border-gray-300"
+                    className=" object-contain border rounded-lg border-gray-300"
                   />
                 ) : (
                   <p className="text-gray-500 text-xs md:text-sm">

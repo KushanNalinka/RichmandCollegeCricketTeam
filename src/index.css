@@ -258,8 +258,109 @@ html {
   -webkit-background-clip: text;
   text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 
+};
+
+/* Completely remove border and shadow */
+.custom-datepicker {
+  border: none !important; /* Ensures no border */
+  box-shadow: none !important; /* Removes any shadow */
+  outline: none !important; /* Removes focus outline */
+  background-color: transparent !important; /* Transparent background */
+  cursor: pointer !important;
+  font-size: medium;
 }
+.custom-datepicker.hidden-input-datepicker {
+  border: none !important; /* Ensures no border */
+  box-shadow: none !important; /* Removes any shadow */
+  outline: none !important; /* Removes focus outline */
+  background-color: transparent !important; /* Transparent background */
+}
+
+/* Prevent hover effects */
+.custom-datepicker.hidden-input-datepicker:hover,
+.custom-datepicker.hidden-input-datepicker:focus {
+  box-shadow: #00175f !important;
+  border-bottom: #00175f solid 1px !important;
+}
+
+/* Customize the calendar icon (optional styling) */
+.custom-calendar-icon {
+  color: #575656; /* Set desired icon color */
+  font-size: 1rem; /* Adjust icon size */
+  cursor: pointer !important; /* Makes the icon clickable */
+  padding-right: 20px !important;
+  font-size: medium;
+}
+
+
+.custom-calendar-icon:hover {
+  font-weight: 900;
+  color: #4A0D34 !important;
+  box-shadow: #00175f !important;
+  border-bottom: #00175f solid 1px !important;
+  cursor: pointer !important; /* Makes the icon clickable */
+ 
+}
+
+/* Additional styles for input field inside DatePicker */
+.custom-datepicker.hidden-input-datepicker .ant-picker-input > input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background-color: transparent !important;
+  width: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove visible border in case of overriding styles */
+.custom-datepicker.hidden-input-datepicker .ant-picker {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+}
+
+/* Rounding news creating body container */
+.custom-quill {
+  border-radius: 8px; /* Adjust as needed */
+}
+
+/* Apply border radius to the ReactQuill component */
+.quill-editor {
+  border-bottom-right-radius: 8px !important; /* Adjust the value to your preference */
+  border-bottom-left-radius: 8px !important;
+  overflow: hidden; /* Ensures the content does not overflow the rounded corners */
+}
+
+/* Apply border radius to the Quill's internal container */
+.ql-container {
+  border-bottom-right-radius: 8px !important; /* Adjust the value to your preference */
+  border-bottom-left-radius: 8px !important;
+}
+
+/* Apply border radius to the Quill toolbar */
+.ql-toolbar {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+/* Highlight the ReactQuill container when it is focused */
+.quill-editor:focus-within .ql-container {
+  border: 2px solid #00175f;  /* Border color when focused */
+  box-shadow: 0 0 8px #00175f;  /* Optional: adds a glowing effect */
+  transition: border 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Optional: Highlight the Quill toolbar when it is focused */
+.quill-editor:focus-within .ql-toolbar {
+  border-top-left-radius: 12px !important;
+  border-top-right-radius: 12px !important;
+  border: 2px solid #00175f;  /* Highlight color for toolbar */
+  box-shadow: 0 0 8px #00175f;  /* Optional: glowing effect for toolbar */
+}
+
 /* Media queries for responsiveness */
+/* Large screens */
 @media (min-width: 1280px) {
   #richmond-text {
     font-size: 12vw;
@@ -269,7 +370,18 @@ html {
     font-size: 12vw;
     margin-top: 30vh;
   }
+
+  /* Hide mobile background on large screens */
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: none !important;
+  }
 }
+
+/* Tablet screens (1024px and smaller) */
 @media (max-width: 1024px) {
   #richmond-text {
     font-size: 17.5vw;
@@ -279,7 +391,17 @@ html {
     font-size: 17vw;
     margin-top: 10vh;
   }
+
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: none !important;
+  }
 }
+
+/* Mobile screens (768px and smaller) */
 @media (max-width: 768px) {
   .effect {
     font-size: 4vw;
@@ -289,7 +411,19 @@ html {
     font-size: 16vw;
     margin-top: 2vh;
   }
+
+  /* This will ensure the mobile view background is hidden on non-mobile devices */
+  .hide-on-large {
+    display: block !important;
+  }
+
+  .show-on-small {
+    display: block !important;
+  }
+
 }
+
+/* Extra small devices (480px and smaller) */
 @media (max-width: 480px) {
   .effect {
     font-size: 9.5vw;
@@ -300,5 +434,17 @@ html {
     margin-top: 0.1vh;
   }
 
+  /* Hide desktop and tablet backgrounds */
+  .hide-on-small {
+    display: none !important;
+  }
+
+  .show-on-small {
+    display: block !important;
+  }
 }
+
+
+
+
 

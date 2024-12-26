@@ -8,6 +8,7 @@ import { FaTimes,  FaTrash } from 'react-icons/fa';
 const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [formData, setFormData] = useState({
@@ -24,16 +25,94 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}admin/players/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+
+          // Display all active players by default
+          const activePlayers = players.filter((player) => player.status === "Active");
+          setPlayers(activePlayers);
+          console.log("All Active Players:", activePlayers);
+          const categorizedPlayers = categorizePlayers(activePlayers);
+          setPlayers(categorizedPlayers);
       })
       .catch(error => {
         console.error("There was an error fetching the player data!", error);
       });
-  }, []);
+  }, [API_URL]);
+
+   const getAgeFromDOB = (dob) => {
+      const birthDate = new Date(dob);
+      const currentDate = new Date();
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const isBeforeBirthday =
+        currentDate.getMonth() < birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() &&
+          currentDate.getDate() < birthDate.getDate());
+      if (isBeforeBirthday) age -= 1;
+      return age;
+    };
+
+    const categorizePlayers = (players) => {
+      const categories = {
+        "Under 9": [],
+        "Under 11": [],
+        "Under 13": [],
+        "Under 15": [],
+        "Under 17": [],
+        "Under 19": [],
+        "Richmond Legend Over 40": [],
+        "Richmond Legend Over 50": [],
+        "Old Boys": []
+      };
+    
+      // Group players by age category
+      players.forEach(player => {
+        const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+    
+        if (age < 9) {
+          categories["Under 9"].push(player);
+          //categories["Academy Under 9"].push(player);
+        }
+        if (age >= 9 && age < 11) {
+          categories["Under 11"].push(player);
+          //categories["Academy Under 11"].push(player);
+        }
+        if (age >= 11 && age < 13) {
+          categories["Under 13"].push(player);
+          //categories["Academy Under 13"].push(player);
+        }
+        if (age >= 13 && age < 15) {
+          categories["Under 15"].push(player);
+          //categories["Academy Under 15"].push(player);
+        }
+        if (age >= 15 && age < 17) {
+          categories["Under 17"].push(player);
+          //categories["Academy Under 17"].push(player);
+        }
+        if (age >= 17 && age < 19) {
+          categories["Under 19"].push(player);
+          //categories["Academy Under 19"].push(player);
+        }
+        if (age >= 40 && age < 50) {
+          categories["Richmond Legend Over 40"].push(player);
+        }
+        if (age >= 50) {
+          categories["Richmond Legend Over 50"].push(player);
+        }
+        if (age >= 40) {
+          categories["Old Boys"].push(player);
+        }
+      });
+    
+      return categories;
+    };
+    
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -47,11 +126,26 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     const newErrors = {};
       // Validate selected coaches
     if (selectedPlayers.length === 0) {
-      newErrors.players = "Please select players.";
+      newErrors.players = "Select players.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  // const validateForm = (name) => {
+  //   const newErrors = {};
+  //   switch(name){
+  //     case "players":
+  //       //players validation
+  //       if (selectedPlayers.length === 0) {
+  //         newErrors.players = "Select players.";
+  //       }
+  //       break;
+  //     default:
+  //       break; 
+  //   }
+  //   return newErrors;
+  // }; 
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -64,8 +158,12 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.post(
         `${API_URL}teams/add`,
-        formData
-      );
+        formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }});
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -85,8 +183,9 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
     } catch (error) {
       console.error("Error submitting form:", error);
 
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
+      if (error.response && error.response.data) {
+        message.error(`Failed to submit: ${error.response.data}`);
+        console.log("error data:", error.response.data);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }
@@ -97,21 +196,29 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   };
 
   const handlePlayerSelect = player => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      players: ""
-    }));
-    if (selectedPlayers.includes(player)) {
-      // If player is already selected, remove them
-      setSelectedPlayers(selectedPlayers.filter(p => p.playerId !== player.playerId));
+    let updatedPlayers;
+
+    if (selectedPlayers.some((p) => p.playerId === player.playerId)) {
+      updatedPlayers = selectedPlayers.filter((p) => p.playerId !== player.playerId);
     } else {
-      // Otherwise, add the player to the list
-      setSelectedPlayers([...selectedPlayers, player]);
+      updatedPlayers = [...selectedPlayers, player];
     }
+  
+    setSelectedPlayers(updatedPlayers);
+  
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: updatedPlayers.length === 0 ? "Select players." : "",
+    }));
+  
   };
 
   const clearSelectedPlayers = () => {
     setSelectedPlayers([]); // Clear all selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      players: "Select players.",
+    }));
   };
   
   useEffect(
@@ -130,7 +237,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   const currentYear = new Date().getFullYear();
   for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto py-10 min-h-screen">
@@ -208,11 +315,22 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
               required
             >
               <option value="">Select Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+              {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-2">
@@ -226,11 +344,22 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
               required
             >
               <option value="">Select Vice Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
-              )}
+              )} */}
+              {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
             </select>
           </div>
           <div className="mb-4">
@@ -240,6 +369,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
               <input
                 type="text"
+                name="players"
                 className="border-0 py-1 px-3 w-[90%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
                 value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
                 readOnly
@@ -256,7 +386,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
             {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
             <div className="relative">
               <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
-                {players.map((player) => (
+                {/* {players.map((player) => (
                   <div key={player.playerId} className="flex items-center mb-2">
                     <input
                       type="checkbox"
@@ -269,7 +399,28 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
                       {player.name}
                     </label>
                   </div>
-                ))}
+                ))} */}
+                 {Object.entries(players).map(([category, categoryPlayers]) => {
+                  return categoryPlayers.length > 0 ? (
+                    <div key={category}>
+                      <h4 className="font-bold text-md mt-2">{category}</h4> {/* Category or Topic Header */}
+                      {categoryPlayers.map(player => (
+                        <div key={player.playerId} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`player-${player.playerId}`}
+                            className="mr-2"
+                            checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                            onChange={() => handlePlayerSelect(player)}
+                          />
+                          <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
+                            {player.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null; // Only display categories with players
+                })}
               </div>
             </div>
           </div>

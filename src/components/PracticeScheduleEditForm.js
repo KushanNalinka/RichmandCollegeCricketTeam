@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
@@ -18,16 +19,27 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
  console.log("teamUnder: ", formData.teamUnder)
   useEffect(() => {
     axios
-      .get(`${API_URL}coaches/all`)
+      .get(`${API_URL}coaches/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then((response) => {
         const coaches = response.data;
-        setCoaches(coaches);
-        console.log("coaches Data:", response.data);
+        const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+        setCoaches(filteredCoaches);
+        console.log("coaches Data:", filteredCoaches);
         console.log("coaches1:", coaches);})
         .catch((error) => {
             console.error("There was an error fetching the player data!", error);
           });
-    axios.get(`${API_URL}teams/all`)
+    axios.get(`${API_URL}teams/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }})
       .then((response) => {
         const team = response.data;
         setTeams(team);
@@ -67,47 +79,99 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
         ...formData,
         [name]: value
       });
-    }
+    };
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
+    switch(name){
+      case "venue":
+        //venue validation
+        if (!value || value.trim() === "") {
+          newErrors.venue = "Venue is required.";
+        } else if (value.length < 3) {
+          newErrors.venue = "Venue name must be at least 3 characters.";
+        } else if (value.length > 50) {
+          newErrors.venue = "Venue name must not exceed 50 characters.";
+        } else if (!/^[a-zA-Z0-9\s,.'-]+$/.test(value)) {
+          newErrors.venue = "Venue name contains invalid characters. Only letters, numbers, spaces, commas, periods, apostrophes, and hyphens are allowed.";
+        };
+        break;
+      case "startTime":
+        if (!value) {
+          newErrors.startTime = "Start time is required.";
+        } else if (
+          formData.endTime &&
+          new Date(`1970-01-01T${value}:00`) >= new Date(`1970-01-01T${formData.endTime}:00`)
+        ) {
+          newErrors.startTime = "Start time must be before end time.";
+        }
+        break;
     
-    if (formData.startTime && formData.endTime) {
-      const startDateTime = new Date(`1970-01-01T${formData.startTime}:00`);
-      const endDateTime = new Date(`1970-01-01T${formData.endTime}:00`);
-    if (startDateTime >= endDateTime) {
-      newErrors.endTime = "End time must be after start time.";
-    }
-  }
-
-    // Validate selected coaches
-    if (selectedCoaches.length === 0) {
-      newErrors.coaches = "Please select coaches.";
-    }
-    // const today = new Date();
-    // const selectedDate = new Date(formData.date);
-    // if (selectedDate <= today) {
-    //   newErrors.date = "The date must be in the present.";
-    // };
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+      case "endTime":
+        if (!value) {
+          newErrors.endTime = "End time is required.";
+        } else if (
+          formData.startTime &&
+          new Date(`1970-01-01T${value}:00`) <= new Date(`1970-01-01T${formData.startTime}:00`)
+        ) {
+          newErrors.endTime = "End time must be after start time.";
+        }
+        break;  
+    case "coaches":
+      // Validate selected coaches
+      if (selectedCoaches.length === 0) {
+        newErrors.coaches = "Please select coaches.";
+      };
+      break;
+    default:
+      break;  
+    };
+    return newErrors;
   };
 
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      const fieldErrors = validateForm(field, formData[field]);
+      if (fieldErrors[field]) {
+        errors[field] = fieldErrors[field];
+      }
+    });
+    return errors;
+  };
 
   const handleEdit = async e => {
     e.preventDefault();
     console.log("FormData: ",formData);
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const errors = validateFormData(formData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     };
     setUploading(true);
       try {
         const response = await axios.put(
         `${API_URL}practiseSessions/update/${practiceSchedule.pracId}`,
-            formData
+            formData, { 
+              headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }}
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
@@ -141,17 +205,19 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   };
 
   const handleCoachSelect = (coach) => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      coaches: ""
-    }));
+    let updatedCoaches;
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
-      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
+      updatedCoaches = selectedCoaches.filter(c => c.coachId !== coach.coachId);
     } else {
-      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, name: coach.name }]);
+      updatedCoaches = [...selectedCoaches, { coachId: coach.coachId, name: coach.name }];
     }
     console.log("selected coaches: ", selectedCoaches.name);
+    setSelectedCoaches(updatedCoaches);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: updatedCoaches.length === 0 ? "Select coaches." : "",
+    }));
   };
 
   useEffect(() => {
@@ -163,6 +229,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
 
   const clearSelectedCoaches = () => {
     setSelectedCoaches([]); // Clear all selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: "Select coaches.",
+    }));
   };
 
   const convertTo24HourFormat = (time12h) => {
@@ -218,6 +288,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             />
+             {errors.venue && <p className="text-red-500 text-xs mt-1">{errors.venue}</p>}
           </div>
           <div className="col-span-1">
             <label
@@ -260,8 +331,8 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               value={ convertTo24HourFormat(formData.startTime)}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-             
             />
+             {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
           </div>
           <div className="col-span-1">
             <label

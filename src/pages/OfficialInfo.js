@@ -28,7 +28,11 @@ const OfficialsTable = () => {
   const [isDeleted, setIsDeleted] = useState(false);
   const [uploading, setUploading] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const divRef = useRef(null);
+  //console.log("access tocken in officials :", user.accessToken);
+  //console.log("access tocken in officials :", user.accessToken);
 
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
@@ -37,7 +41,12 @@ const OfficialsTable = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}officials/all`)
+      .get(`${API_URL}officials/all`,{
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+    }, })
       .then(response => {
         const officials = response.data;
         setUploading(false);
@@ -46,7 +55,7 @@ const OfficialsTable = () => {
         console.log("Officials Data:", response.data);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the official data!", error);
       });
   }, [isSubmitted, isDeleted]);
 
@@ -105,7 +114,10 @@ const OfficialsTable = () => {
     try{
       console.log("Delete Official: ", officialToDelete);
       const deleteOfficial = await axios.delete(
-        `${API_URL}officials/delete/${officialToDelete}`
+        `${API_URL}officials/delete/${officialToDelete}`,{
+          headers: {
+              'Authorization': `Bearer ${accessToken}`
+      }, }
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

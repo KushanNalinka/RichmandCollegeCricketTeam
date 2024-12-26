@@ -27,6 +27,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [showImageError, setShowImageError] = useState(false);
@@ -64,36 +65,135 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
 
   useEffect(() => {
     // Fetch player data for playerId 4
+    console.log("formdata :", formData);
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        const filteredPlayers = players.filter((player) => ( player.status === "Active"));
+        setPlayers(filteredPlayers);
+        console.log("All Active Players:", filteredPlayers);
+        // const categorizedPlayers = categorizePlayers(filteredPlayers);
+        // setPlayers(categorizedPlayers);
+         // Match captain and vice-captain names to their player IDs
+         const captainPlayer = filteredPlayers.find((player) => player.name === formData.matchCaptain);
+         const viceCaptainPlayer = filteredPlayers.find((player) => player.name === formData.matchViceCaptain);
+
+         setFormData((prev) => ({
+           ...prev,
+           matchCaptain: captainPlayer ? captainPlayer.playerId : '',
+           matchViceCaptain: viceCaptainPlayer ? viceCaptainPlayer.playerId : '',
+         }));
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
-    axios.get(`${API_URL}coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }}).then(response => {
       const coaches = response.data;
-      setCoaches(coaches);
+      const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+      setCoaches(filteredCoaches);
       console.log("Coaches Data:", coaches);
     });
     axios
-      .get(`${API_URL}teams/all`)
+      .get(`${API_URL}teams/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const teams = response.data;
         setTeams(teams);
         console.log("Teams Data:", teams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
-  }, []);
+  }, [formData.team.teamId]);
+
+  const getAgeFromDOB = (dob) => {
+    const birthDate = new Date(dob);
+    const currentDate = new Date();
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+    const isBeforeBirthday =
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate());
+    if (isBeforeBirthday) age -= 1;
+    return age;
+  };
+
+  const categorizePlayers = (players) => {
+    const categories = {
+      "Under 9": [],
+      "Under 11": [],
+      "Under 13": [],
+      "Under 15": [],
+      "Under 17": [],
+      "Under 19": [],
+      "Richmond Legend Over 40": [],
+      "Richmond Legend Over 50": [],
+      "Old Boys": []
+    };
+  
+    // Group players by age category
+    players.forEach(player => {
+      const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+  
+      if (age < 9) {
+        categories["Under 9"].push(player);
+        //categories["Academy Under 9"].push(player);
+      }
+      if (age >= 9 && age < 11) {
+        categories["Under 11"].push(player);
+        //categories["Academy Under 11"].push(player);
+      }
+      if (age >= 11 && age < 13) {
+        categories["Under 13"].push(player);
+        //categories["Academy Under 13"].push(player);
+      }
+      if (age >= 13 && age < 15) {
+        categories["Under 15"].push(player);
+        //categories["Academy Under 15"].push(player);
+      }
+      if (age >= 15 && age < 17) {
+        categories["Under 17"].push(player);
+        //categories["Academy Under 17"].push(player);
+      }
+      if (age >= 17 && age < 19) {
+        categories["Under 19"].push(player);
+        //categories["Academy Under 19"].push(player);
+      }
+      if (age >= 40 && age < 50) {
+        categories["Richmond Legend Over 40"].push(player);
+      }
+      if (age >= 50) {
+        categories["Richmond Legend Over 50"].push(player);
+      }
+      if (age >= 40) {
+        categories["Old Boys"].push(player);
+      }
+    });
+  
+    return categories;
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      [name]: ""
+    }));
     if (name === "team.teamId") {
       // Find the selected team based on the 'under' value
       const selectedTeam = teams.find(team => team.teamId === Number(value));
@@ -126,6 +226,11 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         ...formData,
         [name]: file
       });
+      const fieldError = validateForm(name, file); // Pass file to validation
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        ...fieldError,
+      }));
       setIsImageAdded(true);
       setShowImageError(false);
 
@@ -140,29 +245,69 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         ...formData,
         [name]: value
       });
-    }
+    };
+
+    const fieldError = validateForm(name, value);
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    if (isImageAdded && formData.logo && !/^image\//.test(formData.logo.type)) {
-      newErrors.logo = "Only image files are allowed.";
-    };
-      // Validate selected coaches
-    if (selectedCoaches.length === 0) {
-      newErrors.coaches = "Please select at least one coach.";
-    };
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    switch(name){
+      case "coaches":
+        if (selectedCoaches.length === 0) {
+          newErrors.coaches = "Select at least one coach.";
+        };
+        break;
+      case "logo":
+        console.log("Image validation:", value);
+        if (!value) {
+            newErrors.logo = "Image is required.";
+        } else if (value.type && !/^image\/(jpg|jpeg|png|gif|bmp|webp)$/.test(value.type)) {
+            newErrors.logo = "Only image files (JPG,JPEG, PNG, GIF, BMP, WebP) are allowed.";
+        }
+        break;
+      default:
+        break;
+    }
+    return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
+  
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      const fieldErrors = validateForm(field, formData[field]);
+      if (fieldErrors[field]) {
+        errors[field] = fieldErrors[field];
+      }
+    });
+    return errors;
   };
 
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds in edited foemdata;", formData.coaches);
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    // if (!validateForm()) {
+    //   message.error("Please fix validation errors before submitting");
+    //   return;
+    // };
+    const errors = validateFormData(formData);
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
-    };
+    }
     setUploading(true);
     console.log("formdata before submit:", formData);
     try {
@@ -191,7 +336,10 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
       // Make a POST request to the backend API
       const response = await axios.put(
         `${API_URL}matches/update/${match.matchId}`,
-        formDataToSend
+        formDataToSend, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
       );
       message.success("Successfully Edited the match!");
       console.log("Form submitted succedded: ", response.data);
@@ -236,20 +384,26 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
   };
 
   const handleCoachSelect = coach => {
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      coaches: ""
-    }));
+    let updatedCoaches;
     const isSelected = selectedCoaches.some(c => c.coachId === coach.coachId);
     if (isSelected) {
-      setSelectedCoaches(selectedCoaches.filter(c => c.coachId !== coach.coachId));
+      updatedCoaches = selectedCoaches.filter(c => c.coachId !== coach.coachId);
     } else {
-      setSelectedCoaches([...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }]);
-    }
+      updatedCoaches = [...selectedCoaches, { coachId: coach.coachId, coachName: coach.name }];
+    };
+    setSelectedCoaches(updatedCoaches);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: updatedCoaches.length === 0 ? "Select coaches." : "",
+    }));
   };
 
   const clearSelectedCoaches = () => {
     setSelectedCoaches([]); // Clear all selected coaches
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      coaches: "Select coaches.",
+    }));
   };
 
   useEffect(() => {
@@ -304,10 +458,14 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
         ...formData,
         logo: file
       });
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        logo: "",
-      }));
+
+      // Validate the image and update the errors state
+      const fieldError = validateForm("logo", file); // Pass the file directly for validation
+      setErrors((prevErrors) => {
+        const { logo, ...restErrors } = prevErrors; // Remove existing `image` error
+        return fieldError.logo ? { ...restErrors, logo: fieldError.logo } : restErrors;
+      });
+
       setIsImageAdded(true);
       setShowImageError(false);
     }
@@ -317,6 +475,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
     setImagePreview(null);
     setShowImageError(true);
   };
+
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
@@ -444,41 +603,6 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               <option value="T20">T20</option>
             </select>
           </div>
-          <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Match Captain</label>
-            <select
-              type="text"
-              name="matchCaptain"
-              value={formData.matchCaptain}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            >
-              <option value="">Select Captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
-                  {player.name}
-                </option>
-              )}
-            </select>
-          </div>
-          <div className="col-span-1">
-            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
-            <select
-              type="text"
-              name="matchViceCaptain"
-              value={formData.matchViceCaptain}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="">Select Vice-captain</option>
-              {players.map(player =>
-                <option key={player.playerId} value={player.name}>
-                  {player.name}
-                </option>
-              )}
-            </select>
-          </div>
           <div className="col-span-1 md:col-span-2">
             <label className="block text-black text-sm font-semibold" htmlFor="team.teamId">Team</label>
             <select
@@ -494,6 +618,63 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                   {team.under}-{team.year}
                 </option>
               )}
+            </select>
+          </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Match Captain</label>
+            <select
+              type="text"
+              name="matchCaptain"
+              value={formData.matchCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+            >
+              <option value="">Select Captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )}
+              {/* {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}>
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })} */}
+            </select>
+          </div>
+          <div className="col-span-1">
+            <label className="block text-black text-sm font-semibold">Match Vice-captain</label>
+            <select
+              type="text"
+              name="matchViceCaptain"
+              value={formData.matchViceCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Vice-captain</option>
+              {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )}
+              {/* {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> 
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })} */}
             </select>
           </div>
           <div className="col-span-1 md:col-span-2 ">
@@ -579,7 +760,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                   <img
                     src={imagePreview}
                     alt="Preview"
-                    className="h-32 w-32 object-cover border border-gray-300"
+                    className=" object-contain rounded-lg border border-gray-300"
                   />
                 ) : (
                   <p className="text-gray-500 text-sm">

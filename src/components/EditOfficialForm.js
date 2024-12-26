@@ -9,6 +9,7 @@ import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+    const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({ 
     user:{
       username: official.username,
@@ -26,7 +27,10 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
   const [errors, setErrors] = useState({});
   const [uploading, setUploading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
+  console.log("access tocken in officials edit form :", user.accessToken);
+  console.log("access tocken in officials edit form :", user.accessToken);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -47,26 +51,59 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
           [subKey]: value
         }
       });
+      if(name === "user.password"){
+        if(!value){
+          setShowPasswordError(true);
+        }else{
+          setShowPasswordError(false);
+        }
+      }
+      const fieldError = validateForm(name, value);
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          ...fieldError,
+      }));
     } else {
       setFormData({
         ...formData,
         [name]: value
       });
-    }
+    };
+
+    const fieldError = validateForm(name, value);
+
+    setErrors((prev) => {
+      // If no error for this field, remove it from the errors object
+      if (!fieldError[name]) {
+        const { [name]: _, ...rest } = prev; // Exclude the current field's error
+        return rest;
+      }
+      // Otherwise, update the error for this field
+      return { ...prev, ...fieldError };
+    });
   };
 
   const handleEdit = async e => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
+    setErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      message.error("Please correct the highlighted errors.");
+      console.log("Validation Errors:", errors);
       return;
     }
     setUploading(true);
       try {
         const response = await axios.put(
           `${API_URL}officials/update/${official.officialId}`,
-          formData 
-        );
+          formData, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+        }, });
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
         setFormData({
@@ -103,57 +140,183 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
     
   };
 
-  const validateForm = () => {
+  const validateForm = (name, value) => {
     const newErrors = {};
-    // Compare `formData` with `player` data for validation triggers
-    const isDataModified = Object.keys(formData).some(key => {
-      if (key === "user") {
-        return Object.keys(formData[key]).some(subKey => formData[key][subKey] !== official[key + subKey]);
+    switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
+        case "user.username":  
+        //username validation
+        if (value.length < 4 || value.length > 20) {
+          newErrors["user.username"] = "Username must be between 4 and 20 characters.";
+        } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+          newErrors["user.username"] = "Username can only contain letters, numbers, underscores, and hyphens.";
+        } 
+
+        else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if ((value !== official.username ) && response.data.usernameExists === true) {
+
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  "user.username": "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.username":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "user.email":
+        // Email validation
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(value)) {
+          newErrors["user.email"] = "Please enter a valid email address";
+        } 
+        else {
+          // Debounced API call for email availability
+          clearTimeout(window.emailValidationTimeout);
+          window.emailValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              console.log("Email validation :", response.data);
+
+              if ((value !== official.email ) && response.data.emailExists === true) {
+
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  ["user.email"]: "This email is already in use.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { "user.email":_, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Email validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+        break;
+      
+      case "user.password":
+        // Password validation
+        const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+        if(value && !passwordPattern.test(value)) {
+          newErrors["user.password"] = "Password must be at least 8 characters long and include a special character";
+        };
+        break;
+      
+      case "contactNo":
+        const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
+        if (!sriLankaPattern.test(value)) {
+          newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
+        };
+        break;
+
+        case "position":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.position = "Position must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.position = "Position can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.position = "Position cannot start or end with a space.";
+        };
+
+      default:
+        break;  
+    }  
+    return newErrors;
+  };
+
+  const validateFormData = (formData) => {
+    const errors = {};
+    // Validate top-level fields
+    Object.keys(formData).forEach((field) => {
+      if (field === "user") {
+        const usernameErrors = validateForm("user.username", formData.user.username);
+        const emailErrors = validateForm("user.email", formData.user.email);
+        const passwordErrors = validateForm("user.password", formData.user.password);
+        Object.assign(errors, usernameErrors, passwordErrors, emailErrors);
+      } else {
+        const fieldErrors = validateForm(field, formData[field]);
+        if (fieldErrors[field]) {
+          errors[field] = fieldErrors[field];
+        }
       }
-      return formData[key] !== official[key];
     });
-  
-    if (!isDataModified) {
-      return true; // No validation needed as no changes detected
+    return errors;
+  };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.user.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.user.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.username !== official.username) && response.data.usernameExists === true) {
+                errors["user.username"] = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
     }
 
-    //name validation
-    if (formData.name.trim().length < 4 || formData.name.trim().length > 25) {
-      newErrors.name = "Name must be between 4 and 25 characters long.";
-    } else if (!/^[a-zA-Z\s.]+$/.test(formData.name)) {
-      newErrors.name = "Name can only contain letters, spaces, and periods.";
-    } else if (/^\s|\s$/.test(formData.name)) {
-      newErrors.name = "Name cannot start or end with a space.";
+    // Check email availability
+    if (formData.user.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.user.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.user.email !== official.email) && response.data.emailExists === true) {
+                errors["user.email"] = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
     }
 
-     //username validatio
-     if (formData.user.username !== official.username && formData.user.username.length < 4 || formData.user.username.length > 20) {
-      newErrors.username = "Username must be between 4 and 20 characters.";
-    } else if (!/^[a-zA-Z0-9_-]+$/.test(formData.user.username)) {
-      newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-    };
-  
-    // Email validation
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (formData.user.email !== official.email && !emailPattern.test(formData.user.email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-  
-    // Password validation
-    const passwordPattern = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    if (formData.user.password && formData.user.password !== official.password && !passwordPattern.test(formData.user.password)) {
-      newErrors.password = "Password must be at least 8 characters long and include a special character";
-    }
-  
-    // Contact number validation
-    const sriLankaPattern = /^(?:\+94|0)7\d{8}$/;
-    if (formData.contactNo !== official.contactNo && !sriLankaPattern.test(formData.contactNo)) {
-      newErrors.contactNo = "Contact number must be in the format '+947XXXXXXXX' or '07XXXXXXXX'.";
-    }
-  
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };  
+    return errors;
+};
 
 
   return (
@@ -196,7 +359,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="username"
             />
-            {errors.username && <p className="text-red-500 text-xs mt-1">{errors.username}</p>}
+            {errors["user.username"] && <p className="text-red-500 text-xs mt-1">{errors["user.username"] }</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Email</label>
@@ -208,7 +371,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
             />
-            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          {errors["user.email"] && <p className="text-red-500 text-xs mt-1">{errors["user.email"] }</p>}
           </div>
           <div className="mb-4 relative">
             <label className="block text-black text-sm font-semibold">New Password</label>
@@ -226,7 +389,12 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               >
                 {passwordVisible ? <FaEyeSlash /> : <FaEye />}
               </button>
-            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+              {showPasswordError && (
+                <p className="text-red-500 text-xs mt-1 col-span-2">
+                  Change the password or else it will remain unchanged.
+                </p>
+              )}
+            {errors["user.password"] && <p className="text-red-500 text-xs mt-1">{errors["user.password"] }</p>}
           </div>
           <div className="mb-4">
             <label className="block text-black text-sm font-semibold">Contact No</label>
@@ -250,6 +418,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="Teacher"
             />
+             {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
           </div>
           <div className="flex justify-end mt-8 col-span-2">
             <button

@@ -1140,12 +1140,20 @@ const CoachesProfile = () => {
     const [practiceSchedulesData, setPracticeSchedulesData] = useState([]);
     const [showCoachList, setShowCoachList] = useState(false); // For mobile responsiveness
     const API_URL = process.env.REACT_APP_API_URL;
+    const accessToken = localStorage.getItem('accessToken');
+  
 
     // Fetch data from the API when the component mounts
     useEffect(() => {
         const fetchCoachesData = async () => {
             try {
-                const response = await fetch(`${API_URL}coaches/all`);
+                const response = await fetch(`${API_URL}coaches/all`,{
+                    method: 'GET',
+                    headers: {
+                         Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                }, });
                 const data = await response.json();
                 setCoachesData(data);
                 setSelectedCoach(data[0]); // Set the first coach as default
@@ -1163,7 +1171,13 @@ const CoachesProfile = () => {
             const fetchPracticeSessions = async () => {
                 try {
                     const response = await fetch(
-                        `${API_URL}practiseSessions/coach/${selectedCoach.coachId}`
+                        `${API_URL}practiseSessions/coach/${selectedCoach.coachId}`,{
+                            method: 'GET',
+                            headers: {
+                                 Authorization: `Bearer ${accessToken}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                        }, }
                     );
                     const data = await response.json();
                     setPracticeSchedulesData(data);

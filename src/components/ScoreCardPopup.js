@@ -51,7 +51,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   const [playerStats, setPlayerStats] = useState([]);
   const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({
     inning: "1",
     runs: 0,
@@ -194,11 +194,22 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   useEffect(() => {
     const fetchPlayerStat = async () => {
       try {
-        const playersResponse = await axios.get(`${API_URL}teams/${teamId}/players`);
+        const playersResponse = await axios.get(`${API_URL}teams/${teamId}/players`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          }}
+        );
         const allPlayers = playersResponse.data; 
 
         const statsResponse = await axios.get(
-          `${API_URL}playerStats/match/player-stats?matchId=${matchId}`
+          `${API_URL}playerStats/match/player-stats?matchId=${matchId}`, { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+          }}
         );
         const allStats = statsResponse.data;
 
@@ -220,7 +231,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         });
   
         dispatch({ type: "SET_PLAYERS", payload: availablePlayers });
-
+        console.log("available players:", availablePlayers);
         // Apply inning filter only for Test matches
         if (matchType === "Test") {
           const inningStats = filterInningStats(allStats, inningNumber);
@@ -346,7 +357,11 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         } else {
           setUploading(true);
           const {fifties, centuries} = calculateMilestones(formData.runs);
-          const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries});
+          const response = await axios.post(`${API_URL}playerStats/add`, {...formData, inning:(inningNumber || formData.inning), fifties:fifties, centuries:centuries}, { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }}
+          );
           console.log("submitted player stats: ", response.data);
           dispatch({ type: "ADD_PLAYER_STAT", payload: response.data });
     
@@ -470,7 +485,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         console.log("formData edit:", editFormData);
         const response = await axios.put(
           `${API_URL}playerStats/update/${id}`,
-          {...editFormData, inning:(inningNumber || editFormData.inning), fifties:fifties, centuries:centuries}
+          {...editFormData, inning:(inningNumber || editFormData.inning), fifties:fifties, centuries:centuries}, { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+          }}
         );
         console.log("Edit response: ", response.data);
         message.success("Player stats updated successfully!");
@@ -527,7 +545,10 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   const confirmDelete = async () => {
     setUploading(true);
     try {
-      await axios.delete(`${API_URL}playerStats/${scoreToDelete}`);
+      await axios.delete(`${API_URL}playerStats/${scoreToDelete}`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+      }});
       dispatch({ type: "DELETE_PLAYER_STAT", payload: scoreToDelete });
       message.success("Player stats deleted successfully!");
       setIsSubmitted(!isSubmitted);

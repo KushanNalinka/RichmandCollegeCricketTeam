@@ -85,6 +85,7 @@ import { RiTeamFill } from "react-icons/ri";
 import { BiSolidCricketBall } from "react-icons/bi";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { TbScoreboard } from "react-icons/tb";
+import { FaHome } from "react-icons/fa";
 
 const NavbarToggleMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -93,7 +94,7 @@ const NavbarToggleMenu = () => {
   const user = userString ? JSON.parse(userString) : null; // Declare `user` properly
   const username = user?.username || ""; // Use optional chaining to access `username`
 
-  console.log("Username is : "+ username); 
+ //console.log("Username is : "+ username); 
 
   const toggleButton = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -114,13 +115,20 @@ const NavbarToggleMenu = () => {
         </button>
       </div>
       <div
-        className={`absolute space-y-2 z-30 mt-80 left-5 w-[200px] mb-2 bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${
+        className={`absolute space-y-2 z-50 mt-[28rem] left-5 w-[200px] mb-10 bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${
           isMenuOpen
             ? " h-auto w-48 block justify-center items-center mb-10"
             : "hidden"
         }`}
       >
         <ul className="flex flex-col gap-1 relative w-full cursor-pointer px-1 items-start">
+          <Link
+            to={"/member"}
+            className="flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20"
+          >
+            {" "}
+            <FaHome className="text-[#00175F]" /> Home
+          </Link>
           <Link
             to={"/player"}
             className="flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20"
@@ -176,10 +184,7 @@ const NavbarToggleMenu = () => {
               className="flex gap-3 items-center cursor-pointer p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20"
             >
               {" "}
-              <MdOutlineNewspaper className="text-white" />
-              <span className="text-sm transition-opacity duration-300 mt-1">
-                Admin Control
-              </span>
+              <MdPeople className="text-[#00175F]" /> Admin
             </Link>
           )}
         </ul>

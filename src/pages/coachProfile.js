@@ -4,7 +4,7 @@ import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import backgroundImage from "../assets/images/Score_table_back_Image.png";
-import playersData from "./PlayersData";
+//import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/coach.jpg";
@@ -32,6 +32,7 @@ const CoachProfile = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10); 
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [filteredPracticeSchedule, setFilteredPracticeSchedule] = useState([]);
   const [filters, setFilters] = useState({ type: '', team: '' });
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
@@ -53,7 +54,12 @@ const CoachProfile = () => {
   useEffect(() => {
     console.log("coachId: ", user.coachId);
     axios
-      .get(`${API_URL}coaches/${user.coachId}`)
+      .get(`${API_URL}coaches/${user.coachId}`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const coach = response.data;
         setCoach(coach);
@@ -69,7 +75,12 @@ const CoachProfile = () => {
   useEffect(() => {
 
       setUploading(true);
-      axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`)
+      axios.get(`${API_URL}practiseSessions/coach/${user.coachId}`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         setUploading(false);
 
@@ -143,7 +154,12 @@ const CoachProfile = () => {
     setUploading(true);
     try{
       const deletePayer = await axios.delete(
-        `${API_URL}practiseSessions/${practiceToDelete}`
+        `${API_URL}practiseSessions/${practiceToDelete}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }}
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

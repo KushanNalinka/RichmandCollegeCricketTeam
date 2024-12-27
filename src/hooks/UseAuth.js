@@ -66,7 +66,18 @@ export const AuthProvider = ({ children }) => {
     setUser(null); // Clear user data on logout
 
     localStorage.removeItem("userData");
+    localStorage.removeItem("user");
+    localStorage.removeItem("roles");
+    localStorage.removeItem("accessToken");
     sessionStorage.removeItem("userData");
+    // Clear sessionStorage
+    sessionStorage.removeItem("userData");
+    sessionStorage.removeItem("user"); // Optionally, if 'user' exists here
+    sessionStorage.removeItem("roles"); // Optionally, if 'roles' exist here
+
+    localStorage.clear();
+    sessionStorage.clear();
+
   };
 
 

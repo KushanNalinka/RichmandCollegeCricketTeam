@@ -8,7 +8,15 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
+  const accessToken = localStorage.getItem('accessToken');
+  const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  console.log("user: ", user);
+  const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
+  const [editAdminId, setEditAdminId] = useState(null);
   const [formData, setFormData] = useState({ 
     name:admin.name,
     contactNo:admin.contactNo,
@@ -16,14 +24,9 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     email: admin.email,
     password: admin.password,
     roles: ["ROLE_ADMIN"],
+    updatedBy: user.username,
     updatedOn: new Date().toISOString(),
    });
-  const [errors, setErrors] = useState({});
-  const [uploading, setUploading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [showPasswordError, setShowPasswordError] = useState(false);
-  const API_URL = process.env.REACT_APP_API_URL;
-  const [editAdminId, setEditAdminId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +61,10 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
-    const errors = validateFormData(formData);
+    console.log("updated date: ", formData);
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
@@ -68,7 +74,10 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     setUploading(true);
       try {
         const response = await axios.put(`${API_URL}admin/${admin.adminId}`,
-          formData 
+          formData , { 
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+          }}
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfully updated!");
@@ -80,6 +89,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
           password: "",
           roles: ["ROLE_ADMIN"],
           updatedOn: "",
+          updatedBy:""
         });
         setUploading(false);
         isSubmitted();
@@ -104,35 +114,51 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
   const validateForm = (name, value) => {
     const newErrors = {};
     switch(name){
+      case "name":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.name = "Name must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.name = "Name can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.name = "Name cannot start or end with a space.";
+        }
+        break;
       case "username":  
         //username validation
         if (value.length < 4 || value.length > 20) {
           newErrors.username = "Username must be between 4 and 20 characters.";
         } else if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
           newErrors.username = "Username can only contain letters, numbers, underscores, and hyphens.";
-        } 
-        // else {
-        //   // Debounced API call for username availability
-        //   clearTimeout(window.usernameValidationTimeout);
-        //   window.usernameValidationTimeout = setTimeout(async () => {
-        //     try {
-        //       const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
-        //       if (response.data.usernameExists === true) {
-        //         setErrors((prevErrors) => ({
-        //           ...prevErrors,
-        //           username: "This username is already taken.",
-        //         }));
-        //       } else {
-        //         setErrors((prevErrors) => {
-        //           const { username, ...rest } = prevErrors;
-        //           return rest;
-        //         });
-        //       }
-        //     } catch (error) {
-        //       console.error("Username validation error:", error);
-        //     }
-        //   }, 500); // Delay of 500ms
-        // };
+
+        } else {
+          // Debounced API call for username availability
+          clearTimeout(window.usernameValidationTimeout);
+          window.usernameValidationTimeout = setTimeout(async () => {
+            try {
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+              if ((value !== admin.username) && response.data.usernameExists === true) {
+                setErrors((prevErrors) => ({
+                  ...prevErrors,
+                  username: "This username is already taken.",
+                }));
+              } else {
+                setErrors((prevErrors) => {
+                  const { username, ...rest } = prevErrors;
+                  return rest;
+                });
+              }
+            } catch (error) {
+              console.error("Username validation error:", error);
+            }
+          }, 500); // Delay of 500ms
+        };
+
         break;
       
       case "email":
@@ -140,30 +166,36 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(value)) {
           newErrors.email = "Please enter a valid email address";
-        } 
-      //   else {
-      //     // Debounced API call for email availability
-      //    clearTimeout(window.emailValidationTimeout);
-      //    window.emailValidationTimeout = setTimeout(async () => {
-      //      try {
-      //        const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
-      //        console.log("Email validation :", response.data);
-      //        if (response.data.emailExists === true) {
-      //          setErrors((prevErrors) => ({
-      //            ...prevErrors,
-      //            email: "This email is already in use.",
-      //          }));
-      //        } else {
-      //          setErrors((prevErrors) => {
-      //            const { email, ...rest } = prevErrors;
-      //            return rest;
-      //          });
-      //        }
-      //      } catch (error) {
-      //        console.error("Email validation error:", error);
-      //      }
-      //    }, 500); // Delay of 500ms
-      //  };
+
+        } else {
+          // Debounced API call for email availability
+         clearTimeout(window.emailValidationTimeout);
+         window.emailValidationTimeout = setTimeout(async () => {
+           try {
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
+             console.log("Email validation :", response.data);
+             if ( (value !== admin.email) && response.data.emailExists === true) {
+               setErrors((prevErrors) => ({
+                 ...prevErrors,
+                 email: "This email is already in use.",
+               }));
+             } else {
+               setErrors((prevErrors) => {
+                 const { email, ...rest } = prevErrors;
+                 return rest;
+               });
+             }
+           } catch (error) {
+             console.error("Email validation error:", error);
+           }
+         }, 500); // Delay of 500ms
+       };
+
         break;
       
       case "password":
@@ -196,6 +228,44 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
     });
     return errors;
   };
+
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.username !== admin.username) && response.data.usernameExists === true) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if ((formData.email !== admin.email) && response.data.emailExists === true) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
 
   return (
     <div className="fixed inset-0 overflow-y-auto py-10 min-h-screen bg-gray-600 bg-opacity-75">

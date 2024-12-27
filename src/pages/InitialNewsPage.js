@@ -277,7 +277,14 @@ const InitialNewsPage = () => {
                             {initialnews.heading}
                           </h2>
                           <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
-                            {getFirstTwoSentences(initialnews.body)}
+                            <div
+                              className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base"
+                              dangerouslySetInnerHTML={{
+                                __html: initialnews.body
+                                  ? getFirstTwoSentences(initialnews.body).replace(/\n/g, '<br />')
+                                  : 'No content available',
+                              }}
+                            ></div>
                             <span
                               className="text-[#012D5E] cursor-pointer"
                               onClick={() => goToFullArticle(initialnews.id)}

@@ -2,15 +2,19 @@ import React from 'react';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import '../index.css';
-import topImageDesktop from '../assets/images/IMG5.png'; // Desktop image
+import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
 import topImageMobile from '../assets/images/MB1.png'; // Mobile image
 import lahiru from '../assets/images/lahiru.png';
+import Asoka from '../assets/Asoka Sirimanne (2).png'
+import   Indika from '../assets/images/VICE.jpg'
+import Prasanna from '../assets/Prasanna Ramanayake.jpg'
+
 
 const SponsoredBy = () => {
   const committeeMembers = [
-    { id: 1, name: 'Asoka Sirimanne', role: 'President', image: [lahiru] },
-    { id: 2, name: 'Indika Udayanga', role: 'Secretary', image: [lahiru] },
-    { id: 3, name: 'N. P. Ramanayake', role: 'Treasurer', image: [lahiru] },
+    { id: 1, name: 'Asoka Sirimanne', role: 'President', image: [Asoka] },
+    { id: 2, name: 'Indika Udayanga', role: 'Secretary', image: [Indika] },
+    { id: 3, name: 'N. P. Ramanayake', role: 'Treasurer', image: [Prasanna] },
     { id: 4, name: 'Dilshan Amarasinghe', role: 'Vice President', image: [lahiru] },
     { id: 5, name: 'Jayamini Senevirathna', role: 'Vice President', image: [lahiru] },
     { id: 6, name: 'Bakthi Mendis', role: 'Assistant Secretary', image: [lahiru] },
@@ -46,7 +50,7 @@ const SponsoredBy = () => {
       <div
         className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
         style={{
-          backgroundImage: `url(${topImageDesktop})`,
+          backgroundImage: `url(${topImageDesktop1})`,
         }}
       ></div>
 

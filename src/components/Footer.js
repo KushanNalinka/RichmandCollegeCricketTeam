@@ -432,25 +432,25 @@ const Footer = () => {
               <p>© 2024 Richmond College</p>
             </div>
 
-            <div className="flex items-center -mt-10">
+            <div className="flex flex-col md:flex-row md:justify-start justify-center items-center space-y-4 md:space-y-0 md:space-x-5 mt-4">
   <a 
     href="https://slsca.batsman.com/live" 
     target="_blank" 
     rel="noopener noreferrer"
   >
-    <button className="bg-[#10164C] text-white px-6 py-2 rounded-lg hover:bg-[#0c113a]">
+    <button className="bg-[#10164C] text-white px-6 py-2 rounded-lg hover:bg-[#0c113a] w-full md:w-auto">
       SLCSA ↗
     </button>
   </a>
   <a 
-    href="/role" 
-    className="ml-5"
+    href="/role"
   >
-    <button className="bg-[#4A0D34] text-white px-6 py-2 rounded-lg hover:bg-[#3a0b2a]">
+    <button className="bg-[#4A0D34] text-white px-6 py-2 rounded-lg hover:bg-[#3a0b2a] w-full md:w-auto">
       Sponsored By
     </button>
   </a>
 </div>
+
 
 
           </div>

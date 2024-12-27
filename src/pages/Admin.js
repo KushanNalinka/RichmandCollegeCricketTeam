@@ -32,6 +32,7 @@ const Admin= () => {
   const accessToken = localStorage.getItem('accessToken');
   const divRef = useRef(null);
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('accessToken');
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
@@ -43,6 +44,7 @@ const Admin= () => {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }}
+
       )
       .then(response => {
         const admins = response.data;

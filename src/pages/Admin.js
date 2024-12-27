@@ -31,6 +31,7 @@ const Admin= () => {
   const API_URL = process.env.REACT_APP_API_URL;
   const divRef = useRef(null);
   const navigate = useNavigate();
+  const accessToken = localStorage.getItem('accessToken');
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 
@@ -38,7 +39,16 @@ const Admin= () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
-      .get(`${API_URL}admin/all`)
+      .get(`${API_URL}admin/all`
+        ,{
+          method: 'GET',
+          headers: {
+               'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, }
+
+      )
       .then(response => {
         const admins = response.data;
         setUploading(false);

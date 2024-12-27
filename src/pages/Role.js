@@ -5,12 +5,16 @@ import '../index.css';
 import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
 import topImageMobile from '../assets/images/MB1.png'; // Mobile image
 import lahiru from '../assets/images/lahiru.png';
+import Asoka from '../assets/Asoka Sirimanne (2).png'
+import   Indika from '../assets/images/VICE.jpg'
+import Prasanna from '../assets/Prasanna Ramanayake.jpg'
+
 
 const SponsoredBy = () => {
   const committeeMembers = [
-    { id: 1, name: 'Asoka Sirimanne', role: 'President', image: [lahiru] },
-    { id: 2, name: 'Indika Udayanga', role: 'Secretary', image: [lahiru] },
-    { id: 3, name: 'N. P. Ramanayake', role: 'Treasurer', image: [lahiru] },
+    { id: 1, name: 'Asoka Sirimanne', role: 'President', image: [Asoka] },
+    { id: 2, name: 'Indika Udayanga', role: 'Secretary', image: [Indika] },
+    { id: 3, name: 'N. P. Ramanayake', role: 'Treasurer', image: [Prasanna] },
     { id: 4, name: 'Dilshan Amarasinghe', role: 'Vice President', image: [lahiru] },
     { id: 5, name: 'Jayamini Senevirathna', role: 'Vice President', image: [lahiru] },
     { id: 6, name: 'Bakthi Mendis', role: 'Assistant Secretary', image: [lahiru] },

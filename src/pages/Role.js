@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import '../index.css';
-import topImageDesktop from '../assets/images/IMG5.png'; // Desktop image
+import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
 import topImageMobile from '../assets/images/MB1.png'; // Mobile image
 import lahiru from '../assets/images/lahiru.png';
 
@@ -46,7 +46,7 @@ const SponsoredBy = () => {
       <div
         className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
         style={{
-          backgroundImage: `url(${topImageDesktop})`,
+          backgroundImage: `url(${topImageDesktop1})`,
         }}
       ></div>
 

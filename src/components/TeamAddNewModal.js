@@ -331,6 +331,7 @@ import { FaTimes,  FaTrash } from 'react-icons/fa';
 const AddNewModal = ({  onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [players, setPlayers] = useState([]);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
   const [formData, setFormData] = useState({
@@ -345,33 +346,96 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
 
- // Calculate age from DOB
-const calculateAge = (dob) => {
-  const birthDate = new Date(dob);
-  const currentDate = new Date();
-  let age = currentDate.getFullYear() - birthDate.getFullYear();
-  const isBeforeBirthday =
-    currentDate.getMonth() < birthDate.getMonth() ||
-    (currentDate.getMonth() === birthDate.getMonth() &&
-      currentDate.getDate() < birthDate.getDate());
-  if (isBeforeBirthday) age -= 1;
-  return age;
-};
+  useEffect(() => {
+    axios
+      .get(`${API_URL}admin/players/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
+      .then(response => {
+        const players = response.data;
 
-// Fetch all players
-useEffect(() => {
-  axios
-    .get(`${API_URL}admin/players/all`)
-    .then(response => {
-      const players = response.data;
-      setPlayers(players); // Store all players, no filtering applied
-      console.log("All Players:", players);
-    })
-    .catch(error => {
-      console.error("There was an error fetching the player data!", error);
-    });
-}, []);
+          // Display all active players by default
+          const activePlayers = players.filter((player) => player.status === "Active");
+          setPlayers(activePlayers);
+          console.log("All Active Players:", activePlayers);
+          const categorizedPlayers = categorizePlayers(activePlayers);
+          setPlayers(categorizedPlayers);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the player data!", error);
+      });
+  }, [API_URL]);
 
+   const getAgeFromDOB = (dob) => {
+      const birthDate = new Date(dob);
+      const currentDate = new Date();
+      let age = currentDate.getFullYear() - birthDate.getFullYear();
+      const isBeforeBirthday =
+        currentDate.getMonth() < birthDate.getMonth() ||
+        (currentDate.getMonth() === birthDate.getMonth() &&
+          currentDate.getDate() < birthDate.getDate());
+      if (isBeforeBirthday) age -= 1;
+      return age;
+    };
+
+    const categorizePlayers = (players) => {
+      const categories = {
+        "Under 9": [],
+        "Under 11": [],
+        "Under 13": [],
+        "Under 15": [],
+        "Under 17": [],
+        "Under 19": [],
+        "Richmond Legend Over 40": [],
+        "Richmond Legend Over 50": [],
+        "Old Boys": []
+      };
+    
+      // Group players by age category
+      players.forEach(player => {
+        const age = getAgeFromDOB(player.dateOfBirth); // Calculate age from DOB
+    
+        if (age < 9) {
+          categories["Under 9"].push(player);
+          //categories["Academy Under 9"].push(player);
+        }
+        if (age >= 9 && age < 11) {
+          categories["Under 11"].push(player);
+          //categories["Academy Under 11"].push(player);
+        }
+        if (age >= 11 && age < 13) {
+          categories["Under 13"].push(player);
+          //categories["Academy Under 13"].push(player);
+        }
+        if (age >= 13 && age < 15) {
+          categories["Under 15"].push(player);
+          //categories["Academy Under 15"].push(player);
+        }
+        if (age >= 15 && age < 17) {
+          categories["Under 17"].push(player);
+          //categories["Academy Under 17"].push(player);
+        }
+        if (age >= 17 && age < 19) {
+          categories["Under 19"].push(player);
+          //categories["Academy Under 19"].push(player);
+        }
+        if (age >= 40 && age < 50) {
+          categories["Richmond Legend Over 40"].push(player);
+        }
+        if (age >= 50) {
+          categories["Richmond Legend Over 50"].push(player);
+        }
+        if (age >= 40) {
+          categories["Old Boys"].push(player);
+        }
+      });
+    
+      return categories;
+    };
+    
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -417,8 +481,12 @@ useEffect(() => {
       // Make a POST request to the backend API
       const response = await axios.post(
         `${API_URL}teams/add`,
-        formData
-      );
+        formData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }});
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -533,7 +601,7 @@ const groupedPlayers = groupPlayersByAge(players);
   const currentYear = new Date().getFullYear();
   for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
-  }
+  };
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 z-50 overflow-y-auto py-10 min-h-screen">
@@ -600,103 +668,126 @@ const groupedPlayers = groupPlayersByAge(players);
               ))}
             </select>
           </div>
-         <div className="mb-2">
-  <label className="block text-black text-sm font-semibold">Captain</label>
-  <select
-    name="captain"
-    value={formData.captain}
-    onChange={handleChange}
-    className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-    required
-  >
-    <option value="">Select Captain</option>
-    {Object.entries(groupedPlayers).map(([groupName, groupPlayers]) => (
-      groupPlayers.length > 0 && (
-        <optgroup key={groupName} label={groupName}>
-          {groupPlayers.map(player => (
-            <option key={player.playerId} value={player.playerId}>
-              {player.name}
-            </option>
-          ))}
-        </optgroup>
-      )
-    ))}
-  </select>
-</div>
-
-<div className="mb-2">
-  <label className="block text-black text-sm font-semibold">Vice Captain</label>
-  <select
-    name="viceCaptain"
-    value={formData.viceCaptain}
-    onChange={handleChange}
-    className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-    required
-  >
-    <option value="">Select Vice Captain</option>
-    {Object.entries(groupedPlayers).map(([groupName, groupPlayers]) => (
-      groupPlayers.length > 0 && (
-        <optgroup key={groupName} label={groupName}>
-          {groupPlayers.map(player => (
-            <option key={player.playerId} value={player.playerId}>
-              {player.name}
-            </option>
-          ))}
-        </optgroup>
-      )
-    ))}
-  </select>
-</div>
-
+          <div className="mb-2">
+            <label className="block text-black text-sm font-semibold">Captain</label>
+            <select
+              type="text"
+              name="captain"
+              value={formData.captain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Captain</option>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )} */}
+              {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
+            </select>
+          </div>
+          <div className="mb-2">
+            <label className="block text-black text-sm font-semibold">Vice Captain</label>
+            <select
+              type="text"
+              name="viceCaptain"
+              value={formData.viceCaptain}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select Vice Captain</option>
+              {/* {players.map(player =>
+                <option key={player.playerId} value={player.playerId}>
+                  {player.name}
+                </option>
+              )} */}
+              {Object.entries(players).map(([category, categoryPlayers]) => {
+                return categoryPlayers.length > 0 ? (
+                  <optgroup label={category} key={category}> {/* Group by category */}
+                    {categoryPlayers.map(player => (
+                      <option key={player.playerId} value={player.playerId}>
+                        {player.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ) : null;
+              })}
+            </select>
+          </div>
           <div className="mb-4">
-  <label className="block text-black text-sm font-semibold" htmlFor="year">
-    Players
-  </label>
-  <div tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
-    <input
-      type="text"
-      name="players"
-      className="border-0 py-1 px-3 w-[90%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-      value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected player names, joined by commas
-      readOnly
-      placeholder="Choose players from the list..."
-    />
-    <button
-      type="button"
-      className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-md"
-      onClick={clearSelectedPlayers}
-    >
-      <FaTrash />
-    </button>
-  </div>
-  {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
-  <div className="relative">
-  <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
-    {Object.entries(groupedPlayers).map(([groupName, groupPlayers]) => (
-      groupPlayers.length > 0 && (
-        <div key={groupName} className="mb-4">
-          <h4 className="text-[#00175f] font-bold mb-1">{groupName}</h4>
-          {groupPlayers.map((player) => (
-            <div key={player.playerId} className="flex items-center mb-2">
+            <label className="block text-black text-sm font-semibold" htmlFor="year">
+              Players
+            </label>
+            <div  tabIndex={-1} className="flex border text-gray-600 border-gray-300 rounded-md focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
               <input
-                type="checkbox"
-                id={`player-${player.playerId}`}
-                className="mr-2"
-                checked={selectedPlayers.some((p) => p.playerId === player.playerId)}
-                onChange={() => handlePlayerSelect(player)}
+                type="text"
+                name="players"
+                className="border-0 py-1 px-3 w-[90%] rounded-md cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
+                value={selectedPlayers.map(player => (player.name.split(' ').slice(-2).join(' '))).join(", ")} // Show selected coach names, joined by commas
+                readOnly
+                placeholder='Choose players from the list...'
               />
-              <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
-                {player.name} 
-              </label>
+              <button
+                type="button"
+                className="flex items-center w-[10%] justify-center text-red-600 hover:text-red-700 rounded-md"
+                onClick={clearSelectedPlayers}
+              >
+                <FaTrash/>
+              </button>
             </div>
-          ))}
-        </div>
-      )
-    ))}
-  </div>
-</div>
-
-</div>
+            {errors.players && <p className="text-red-500 text-xs mt-1">{errors.players}</p>}
+            <div className="relative">
+              <div className="border custom-scrollbar overflow-hidden hover:ring-1 hover:ring-[#00175f] hover:overflow-auto h-40 border-gray-300 rounded-md mt-2 px-3 py-1">
+                {/* {players.map((player) => (
+                  <div key={player.playerId} className="flex items-center mb-2">
+                    <input
+                      type="checkbox"
+                      id={`player-${player.playerId}`}
+                      className="mr-2"
+                      checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                      onChange={() => handlePlayerSelect(player)}
+                    />
+                    <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
+                      {player.name}
+                    </label>
+                  </div>
+                ))} */}
+                 {Object.entries(players).map(([category, categoryPlayers]) => {
+                  return categoryPlayers.length > 0 ? (
+                    <div key={category}>
+                      <h4 className="font-bold text-md mt-2">{category}</h4> {/* Category or Topic Header */}
+                      {categoryPlayers.map(player => (
+                        <div key={player.playerId} className="flex items-center mb-2">
+                          <input
+                            type="checkbox"
+                            id={`player-${player.playerId}`}
+                            className="mr-2"
+                            checked={selectedPlayers.some(p => p.playerId === player.playerId)}
+                            onChange={() => handlePlayerSelect(player)}
+                          />
+                          <label htmlFor={`player-${player.playerId}`} className="block text-black text-sm font-semibold">
+                            {player.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null; // Only display categories with players
+                })}
+              </div>
+            </div>
+          </div>
           <div className="flex justify-end space-x-2 ">
             <button
                type="submit"

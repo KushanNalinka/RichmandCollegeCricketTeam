@@ -32,9 +32,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
-  if (allowedRoles && !allowedRoles.includes(userRole)) {
-    return <Navigate to="/member" />; // Redirect to home if role is not allowed
-  }
+  
   return children;
 };
 

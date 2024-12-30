@@ -56,12 +56,12 @@ const TableComponent = () => {
     // Fetch player data for playerId 4
     setUploading(true);
     axios
+
       .get(`${API_URL}admin/players/all` , { 
           headers: {
             'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
       }})
+
       .then(response => {
         setUploading(false);
         const players = response.data;
@@ -238,12 +238,15 @@ const TableComponent = () => {
     setUploading(true);
     try{
       const deletePayer = await axios.delete(
+
         `${API_URL}admin/players/delete/${playerToDelete}`, { 
+          method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         }}
+
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);

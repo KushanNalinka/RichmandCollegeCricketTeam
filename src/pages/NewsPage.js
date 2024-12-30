@@ -302,6 +302,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 const itemsPerPage = 4;
+const accessToken = localStorage.getItem('accessToken');
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -312,6 +313,7 @@ const formatDate = (dateString) => {
 };
 
 const timeAgo = (dateTime) => {
+  
   const now = new Date();
   const timeDifference = Math.floor((now - new Date(dateTime)) / 1000);
 
@@ -345,7 +347,9 @@ const timeAgo = (dateTime) => {
 
 const getFirstTwoSentences = (text) => {
   const sentences = text.match(/[^.!?]+[.!?]+/g);
+  
   return sentences ? sentences.slice(0, 2).join(' ') : text;
+  
 };
 
 const NewsPage = () => {
@@ -363,6 +367,7 @@ const NewsPage = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
+
         const response = await axios.get(`${API_URL}news`
 
           ,{
@@ -373,6 +378,7 @@ const NewsPage = () => {
                 'Accept': 'application/json',
         }, }
         );
+
         
         console.log('Fetched News Data:', response.data); // Log the fetched data
         const newsWithFirstImage = response.data.map((news) => ({
@@ -561,7 +567,14 @@ const NewsPage = () => {
                             {news.heading}
                           </h2>
                           <p className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base">
-                            {getFirstTwoSentences(news.body)}
+                            <div
+                              className="text-gray-700 mt-2 text-xs sm:text-sm md:text-base"
+                              dangerouslySetInnerHTML={{
+                                __html: news.body
+                                  ? getFirstTwoSentences(news.body).replace(/\n/g, '<br />')
+                                  : 'No content available',
+                              }}
+                            ></div>
                             <span
                               className="text-[#012D5E] cursor-pointer"
                               onClick={() => goToFullArticle(news.id)}

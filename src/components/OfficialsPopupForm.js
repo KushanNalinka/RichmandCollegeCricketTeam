@@ -2,15 +2,14 @@ import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { Flex, message } from "antd";
-
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-
 const OfficialForm = ({ onClose, isSubmitted }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -75,7 +74,12 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
           clearTimeout(window.usernameValidationTimeout);
           window.usernameValidationTimeout = setTimeout(async () => {
             try {
-              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`);
+              const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${value}`,{
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                }, });
               if (response.data.usernameExists === true) {
                 setErrors((prevErrors) => ({
                   ...prevErrors,
@@ -104,7 +108,12 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
          clearTimeout(window.emailValidationTimeout);
          window.emailValidationTimeout = setTimeout(async () => {
            try {
-             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`);
+             const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
+              headers: {
+                  'Authorization': `Bearer ${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json',
+              }, });
              console.log("Email validation :", response.data);
              if (response.data.emailExists === true) {
                setErrors((prevErrors) => ({
@@ -139,16 +148,15 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
         };
         break;
 
-        case "position":
-          //position validation
-          if (value.trim().length < 4 || value.trim().length > 25) {
-            newErrors.position = "Name must be between 4 and 25 characters long.";
-          } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
-            newErrors.position = "Name can only contain letters, spaces, and periods.";
-          } else if (/^\s|\s$/.test(value)) {
-            newErrors.position = "Name cannot start or end with a space.";
-          }
-          break;
+      case "position":
+        //name validation
+        if (value.trim().length < 4 || value.trim().length > 25) {
+          newErrors.position = "Position must be between 4 and 25 characters long.";
+        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+          newErrors.position = "Position can only contain letters, spaces, and periods.";
+        } else if (/^\s|\s$/.test(value)) {
+          newErrors.position = "Position cannot start or end with a space.";
+        };
 
       default:
         break;  
@@ -169,9 +177,49 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
     return errors;
   };
 
+  const validateAsyncFormData = async (formData) => {
+    const errors = {};
+
+    // Check username availability
+    if (formData.username) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkUsernameAvailability?username=${formData.username}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.usernameExists) {
+                errors.username = "This username is already taken.";
+            }
+        } catch (error) {
+            console.error("Error validating username:", error);
+        }
+    }
+
+    // Check email availability
+    if (formData.email) {
+        try {
+            const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${formData.email}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            if (response.data.emailExists) {
+                errors.email = "This email is already in use.";
+            }
+        } catch (error) {
+            console.error("Error validating email:", error);
+        }
+    }
+
+    return errors;
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = validateFormData(formData);
+    const syncErrors = validateFormData(formData);
+    const asyncErrors = await validateAsyncFormData(formData);
+    const errors = { ...syncErrors, ...asyncErrors };
     setErrors(errors);
     if (Object.keys(errors).length > 0) {
       message.error("Please correct the highlighted errors.");
@@ -183,8 +231,11 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
       try {
         const response = await axios.post(
           `${API_URL}auth/signupOfficial`,
-          formData 
-        );
+          formData,{
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+        }, 
+      });
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
@@ -326,7 +377,9 @@ const OfficialForm = ({ onClose, isSubmitted }) => {
               required
               placeholder="Teacher"
             />
-              {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
+
+             {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
+
           </div>
           <div className="flex mt-8 justify-end col-span-2">
             <button

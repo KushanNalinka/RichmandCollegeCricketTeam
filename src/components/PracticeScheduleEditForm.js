@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState(practiceSchedule.coaches || []);
@@ -18,16 +19,27 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
  console.log("teamUnder: ", formData.teamUnder)
   useEffect(() => {
     axios
-      .get(`${API_URL}coaches/all`)
+      .get(`${API_URL}coaches/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then((response) => {
         const coaches = response.data;
-        setCoaches(coaches);
-        console.log("coaches Data:", response.data);
+        const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+        setCoaches(filteredCoaches);
+        console.log("coaches Data:", filteredCoaches);
         console.log("coaches1:", coaches);})
         .catch((error) => {
             console.error("There was an error fetching the player data!", error);
           });
-    axios.get(`${API_URL}teams/all`)
+    axios.get(`${API_URL}teams/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }})
       .then((response) => {
         const team = response.data;
         setTeams(team);
@@ -156,7 +168,10 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
       try {
         const response = await axios.put(
         `${API_URL}practiseSessions/update/${practiceSchedule.pracId}`,
-            formData
+            formData, { 
+              headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }}
         );
         console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");

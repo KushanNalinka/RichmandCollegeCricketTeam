@@ -20,6 +20,7 @@ import EditCoachForm from "../components/EditCoachPopup";
 
 const CoachTable = () => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const [coachData, setCoachData] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
@@ -47,7 +48,12 @@ const CoachTable = () => {
   const loadCoaches = async () => {
     setUploading(true);
     axios
-    .get(`${API_URL}coaches/all`)
+    .get(`${API_URL}coaches/all`,{
+          headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, })
       .then((response) => {
         const coaches = response.data;
         setUploading(false);
@@ -130,7 +136,12 @@ const CoachTable = () => {
   const confirmDelete = async () => {
     setUploading(true);
     try{
-      const deletePayer = await axios.delete(`${API_URL}coaches/${coachToDelete}`);
+      const deleteCoach = await axios.delete(`${API_URL}coaches/${coachToDelete}`,{
+          headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+      }, });
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);

@@ -8,6 +8,7 @@ import { message, DatePicker } from "antd";
 const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const accessToken = localStorage.getItem('accessToken');
   const [coaches, setCoaches] = useState([]);
   const [teams, setTeams] = useState();
   const [selectedCoaches, setSelectedCoaches] = useState([{coachId:user.coachId,name:user.username}]);
@@ -37,16 +38,27 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}coaches/all`)
+      .get(`${API_URL}coaches/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then((response) => {
         const coaches = response.data;
-        setCoaches(coaches);
+        const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+        setCoaches(filteredCoaches);
         console.log("coaches Data:", response.data);
         console.log("coaches1:", coaches);})
         .catch((error) => {
             console.error("There was an error fetching the player data!", error);
         });
-    axios.get(`${API_URL}teams/all`)
+    axios.get(`${API_URL}teams/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }})
       .then((response) => {
         const team = response.data;
         setTeams(team);
@@ -188,7 +200,10 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
     try {
       const response = await axios.post(
         `${API_URL}practiseSessions/add`,
-        updatedFormData
+        updatedFormData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }}
       );
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");

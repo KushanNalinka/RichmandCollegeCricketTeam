@@ -23,6 +23,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
   const [errors, setErrors] = useState({});
   const { Option } = Select;
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [formData, setFormData] = useState({
@@ -55,32 +56,49 @@ const FormPopup = ({  onClose, isSumitted }) => {
   useEffect(() => {
     // Fetch player data for playerId 4
     axios
-      .get(`${API_URL}admin/players/all`)
+      .get(`${API_URL}teams/${formData.team.teamId}/players`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const players = response.data;
-        setPlayers(players);
-        console.log("players Data:", players);
+        const filteredPlayers = players.filter((player) => ( player.status === "Active"));
+        setPlayers(filteredPlayers);
+        console.log("players Data:", filteredPlayers);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
-    axios.get(`${API_URL}coaches/all`).then(response => {
+    axios.get(`${API_URL}coaches/all`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+    }}).then(response => {
       const coaches = response.data;
-      setCoaches(coaches);
-      console.log("Coaches Data:", coaches);
+      const filteredCoaches = coaches.filter((coach) => ( coach.status === "Active"));
+      setCoaches(filteredCoaches);
+      console.log("Coaches Data:", filteredCoaches);
     });
     axios
-      .get(`${API_URL}teams/all`)
+      .get(`${API_URL}teams/all`, { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+      }})
       .then(response => {
         const teams = response.data;
         setTeams(teams);
         console.log("Teams Data:", teams);
       })
       .catch(error => {
-        console.error("There was an error fetching the player data!", error);
+        console.error("There was an error fetching the match data!", error);
       });
   }, 
-  []);
+  [formData.team.teamId]);
 
   const handleChange = e => {
     const { name, value,files } = e.target;
@@ -222,7 +240,10 @@ const FormPopup = ({  onClose, isSumitted }) => {
       //   date: formattedDate 
       // };
       // Make a POST request to the backend API
-      const response = await axios.post( `${API_URL}matches/add`, formDataToSend );
+      const response = await axios.post( `${API_URL}matches/add`, formDataToSend , { 
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+      }});
       console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
@@ -236,6 +257,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
         umpires: "",
         type: "",
         matchCaptain: "",
+        matchViceCaptain: "",
         team: {
           teamId: ""
         },
@@ -492,6 +514,23 @@ const FormPopup = ({  onClose, isSumitted }) => {
               <option value="T20">T20</option>
             </select>
           </div>
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-black text-sm font-semibold">Team</label>
+            <select
+              name="team.teamId"
+              value={formData.team.teamId}
+              onChange={handleChange}
+              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+              required
+            >
+              <option value="">Select team</option>
+              {teams.map(team =>
+                <option key={team.teamId} value={team.teamId}>
+                  {team.under}-{team.year}
+                </option>
+              )}
+            </select>
+          </div>
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Match Captain</label>
             <select
@@ -504,7 +543,7 @@ const FormPopup = ({  onClose, isSumitted }) => {
             >
               <option value="">Select Captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>
               )}
@@ -522,25 +561,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
             >
               <option value="">Select Vice-captain</option>
               {players.map(player =>
-                <option key={player.playerId} value={player.name}>
+                <option key={player.playerId} value={player.playerId}>
                   {player.name}
-                </option>
-              )}
-            </select>
-          </div>
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-black text-sm font-semibold">Team</label>
-            <select
-              name="team.teamId"
-              value={formData.team.teamId}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-30 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              required
-            >
-              <option value="">Select team</option>
-              {teams.map(team =>
-                <option key={team.teamId} value={team.teamId}>
-                  {team.under}-{team.year}
                 </option>
               )}
             </select>

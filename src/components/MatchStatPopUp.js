@@ -7,6 +7,7 @@ import { GiClick } from "react-icons/gi";
 
 const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   const API_URL = process.env.REACT_APP_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
   const [isSummaryExists, setIsSummaryExists] = useState(false);
   const initialStatData = {
     inning: matchType === "Test" ? "" : "1",
@@ -42,7 +43,12 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
   }, [onClose, matchType, matchId]);
 
   useEffect(() => {
-    axios.get(`${API_URL}matchSummary/match/${matchId}`)
+    axios.get(`${API_URL}matchSummary/match/${matchId}`, { 
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        }})
         .then(response => {
           const matchSummary = response.data;
           if (matchType === "T20" || matchType === "ODI") {
@@ -204,7 +210,12 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
       };
       const response = await axios.post(
         `${API_URL}matchSummary/add`,
-        addingStatData
+        addingStatData, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+      }}
       );
       message.success("Successful!");
       setStatData({
@@ -260,8 +271,10 @@ const MatchStatPopup = ({ matchId, matchType, onClose, isSubmitted }) => {
 
       console.log("add:", updatedStatData);
       const response = await axios.put(
-        `${API_URL}matchSummary/update/${statData.id}`,
-        updatedStatData
+        `${API_URL}matchSummary/update/${statData.id}`, { 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        }}
       );
       message.success("Successfully updated the match Summary!");
       setStatData({

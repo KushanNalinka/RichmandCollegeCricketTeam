@@ -285,8 +285,19 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
       // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        message.error(`Failed to submit: ${error.response.data.message}`);
+       if (error.response && error.response.data && error.response.data.message) {
+        // Map specific backend error messages to user-friendly messages
+        const errorMsg = error.response.data.message;
+
+        // Example of matching the error message and providing a friendly message
+        let userFriendlyMessage = "An unexpected error occurred. Please try again.";
+
+        if (errorMsg.includes("Data truncation: Data too long for column 'body'")) {
+          userFriendlyMessage = "The content you're trying to submit is too large (e.g., images exceeding the maximum size of 45KB). Please reduce the size and try again.";
+        } else if (errorMsg.includes("some other specific error condition")) {
+          userFriendlyMessage = "Specific error message for another case.";
+        }
+        message.error(userFriendlyMessage);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }
@@ -393,10 +404,20 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
       setCurrentNewsId(null);
       loadNews();
     } catch (error) {
-      console.error("Error submitting form:", error);
-      if (error.response && error.response.data && error.response.data.message) {
-        console.log("error message: ", error.response.data.message);
-        message.error(`Failed to submit: ${error.response.data.message}`);
+       console.error("Error submitting form:", error);
+       if (error.response && error.response.data && error.response.data.message) {
+        // Map specific backend error messages to user-friendly messages
+        const errorMsg = error.response.data.message;
+
+        // Example of matching the error message and providing a friendly message
+        let userFriendlyMessage = "An unexpected error occurred. Please try again.";
+
+        if (errorMsg.includes("Data truncation: Data too long for column 'body'")) {
+          userFriendlyMessage = "The content you're trying to submit is too large (e.g., images exceeding the maximum size of 45KB). Please reduce the size and try again.";
+        } else if (errorMsg.includes("some other specific error condition")) {
+          userFriendlyMessage = "Specific error message for another case.";
+        }
+        message.error(userFriendlyMessage);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
       }

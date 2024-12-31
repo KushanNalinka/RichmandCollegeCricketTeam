@@ -412,10 +412,8 @@
 
 // export default App;
 
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
+ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PrivateRoute from "./components/PrivateRoutes";
-
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import Initial from './pages/Initial.js';
@@ -462,14 +460,12 @@ import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 import Admin from './pages/Admin.js';
-
-
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 //import PrivateRoute from './components/PrivateRoutes.js';
-
 import { useAuth } from './hooks/UseAuth.js';
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 import Role from './pages/Role.js';
+import InitialRole from './pages/InitialRole.js';
 
 function App() {
 const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
@@ -484,37 +480,27 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-
-
-
-
           <Route path="/" element={<Initial />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
-
-          
           <Route path="/playerProfile"
             element={
                 <PlayerProfile />   }
                 />
-
           <Route path="/admin" element={<Admin/>} />
           <Route path ="/role" element ={<Role/>}/>
+          <Route path ="/initialrole" element ={<InitialRole/>}/>
           <Route
             path="/coachProfile"
             element={
-
                 <CoachProfile />
               }
               />
-
-         
           <Route
             path="/officialProfile"
             element={
-
                 <OfficialProfile />
             }
           />
@@ -524,30 +510,22 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
          <Route
           path="/under15"
           element={
-           
               <Under15 />
-           
           }
         />
-
         {/* Protected Routes */}
         <Route
           path="/player"
           element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
               <PlayerInfo />
-            </PrivateRoute>
           }
         />
         <Route
           path="/member"
           element={
-            <PrivateRoute allowedRoles={["ROLE_COACH", "ROLE_PLAYER", "ROLE_OFFICIAL"]}>
               <MemberInitial />
-            </PrivateRoute>
           }
         />
-
          <Route path="/under17" element={<Under17 />} />
          <Route path="/under19" element={<Under19 />} />
          <Route path="/oldboys" element={<OldBoys />} />
@@ -559,10 +537,8 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
          <Route path="/academy11" element={<Academy19 />} />
          <Route path="/over40" element={<Over40 />} />
          <Route path="/over50" element={<Over50 />} />
-
          <Route path="/coach" element={<CoachesProfile/>} />
          <Route path="/coachInfo" element={<CoachTable/>} />
-
          <Route path="/coach" element={<Coaches />} />
          <Route path="/allplayers" element={<AllPlayers />} />
          <Route path='/official' element={<OfficialsTable/>} />
@@ -580,15 +556,12 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
          <Route path="/login" element={<Login />} />
          <Route path="/register" element={<Register />} />
          <Route path="/news" element={<NewsPage />} />
-
          <Route path="/news/:id" element={<NewsDetailPage />} />
          <Route path="/initial-news/:id" element={<InitialNewsDetail />} />
-
          <Route path="/initial-news" element={<InitialNewsPage />} />
          <Route path="/news-create" element={<NewsCreator />} />
          <Route path="/about-us" element={<AboutUs />} />
          <Route path="/initial-about-us" element={<InitialAboutUs />} />
-
          <Route path="/admin-news" element={<NewsCreator />} />
          <Route path="/admin-control" element={<Admin />} />
          <Route path="/admin-newsdetail" element={<NewsCreator />} />
@@ -597,3 +570,17 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
   );
 }
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -225,40 +225,92 @@
 
 // export default AboutUs;
 
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import '../index.css';
 import topImageDesktop from '../assets/images/IMG5.png'; // Desktop image
-import topImageMobile from '../assets/images/MB1.png'; // Mobile image
+import topImageMobile from '../assets/images/MB1.png'; 
+
+// Mobile image
 // SVG for the star shape
 const StarLogo = () => (
   <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2L13.09 8.26L19 8.27L14.63 11.5L15.9 17.74L12 14.6L8.09 17.74L9.37 11.5L5 8.27L10.91 8.26L12 2Z" fill="white"/>
   </svg>
 );
+
+
+
+  
+
+    
 const AboutUs = () => {
+
+  // Handle screen size change for mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // 768px breakpoint for mobile
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add resize event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup the event listener on component unmount
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const [isMobile, setIsMobile] = useState(false);
   return (
     <div>
       {/* Navbar */}
       <Navbar />
-      {/* Top Image Section */}
+    
       {/* Mobile Image (visible only on small screens) */}
-      <div
+      {/* <div
         className="bg-cover bg-center bg-fixed h-[100vh] md:hidden flex items-center justify-center"
         style={{
           backgroundImage: `url(${topImageMobile})`,
         }}
       >
-      </div>
-      {/* Desktop Image (visible only on medium and larger screens) */}
-      <div
+      </div> */}
+
+        {/* Background for larger screens */}
+        <div
+        className={`relative w-full h-screen flex flex-col items-center justify-center ${isMobile ? 'hidden' : 'show-on-large'}`}
+        style={{
+          backgroundImage: `url(${topImageDesktop})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
+        </div>
+    
+      {/* <div
         className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
         style={{
           backgroundImage: `url(${topImageDesktop})`,
         }}
       >
-      </div>
+      </div> */}
+
+       {/* MOBILE VIEW */}
+       {isMobile && (
+        <div
+          className="relative w-full h-screen flex flex-col items-center justify-center show-on-small"
+          style={{
+            backgroundImage: `url(${topImageMobile})`,
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+        />
+      )}
     {/* Top Section */}
 <div className="bg-gradient-to-b to-[#00175F] from-[#4A0D34] text-white py-20 md:py-40">
   <div className="max-w-screen-lg w-full mx-auto text-center px-6 sm:px-4">

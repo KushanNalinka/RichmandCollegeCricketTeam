@@ -85,7 +85,7 @@ const PlayerProfile = () => {
     // Function to generate year options for the dropdown (e.g., last 10 years)
     const getYearOptions = () => {
         const currentYear = new Date().getFullYear();
-        return Array.from({ length: 10 }, (_, i) => currentYear - i);
+        return Array.from({ length: 10 }, (_, i) => (currentYear + 1) - i);
     };
 
 
@@ -587,7 +587,7 @@ summary.bestWickets > 0
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
                                 {/* Batting Stats Table (responsive and elegant for mobile) */}
 
-                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Batting Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Batting Stats</h3>
 
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
@@ -630,7 +630,7 @@ summary.bestWickets > 0
                                 </div>
 
                                 {/* Bowling Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Bowling Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">
                                         <thead>
@@ -672,7 +672,7 @@ summary.bestWickets > 0
                                 
                                 {/* Fielding Stats */}
               <br/>
-                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Fielding Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Fielding Stats</h3>
 
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">

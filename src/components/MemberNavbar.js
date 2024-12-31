@@ -772,6 +772,9 @@ const HomeNavbar = () => {
       // Clear user data from local storage
       localStorage.removeItem("userData");
       localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("roles");
+      sessionStorage.removeItem("userData");
 
       // Redirect to home or login page
       navigate('/');

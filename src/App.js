@@ -534,17 +534,17 @@ const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
         <Route
           path="/player"
           element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+           
               <PlayerInfo />
-            </PrivateRoute>
+           
           }
         />
         <Route
           path="/member"
           element={
-            <PrivateRoute allowedRoles={["ROLE_COACH", "ROLE_PLAYER", "ROLE_OFFICIAL"]}>
+          
               <MemberInitial />
-            </PrivateRoute>
+            
           }
         />
 

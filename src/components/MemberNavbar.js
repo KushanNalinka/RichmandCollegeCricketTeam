@@ -672,11 +672,12 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
 import { FaUser, FaBars } from 'react-icons/fa'; // Import FaUser and FaBars for user and hamburger icons
-//import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
+import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
 
 const HomeNavbar = () => {
   //const { userRole, logout, user } = useAuth();
   const navigate = useNavigate();
+  const {  logout } = useAuth();
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -765,19 +766,21 @@ const HomeNavbar = () => {
   };
 
   const handleLogoutClick = async () => {
-    try {
-      // Call the backend logout endpoint
-      await axios.post(`${API_URL}auth/logout`); // Adjust endpoint if necessary
+    // try {
+    //   // Call the backend logout endpoint
+    //   await axios.post(`${API_URL}auth/logout`); // Adjust endpoint if necessary
 
-      // Clear user data from local storage
-      localStorage.removeItem("userData");
-      localStorage.removeItem("user");
+    //   // Clear user data from local storage
+    //   localStorage.removeItem("userData");
+    //   localStorage.removeItem("user");
 
-      // Redirect to home or login page
-      navigate('/');
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+    //   // Redirect to home or login page
+    //   navigate('/');
+    // } catch (error) {
+    //   console.error("Error logging out:", error);
+    // }
+    logout();
+        navigate('/'); // Redirect to home page after logout
   };
   return (
     <nav

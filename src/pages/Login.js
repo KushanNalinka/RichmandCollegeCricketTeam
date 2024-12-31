@@ -515,6 +515,7 @@ import React, { useEffect, useState } from "react";
 import { useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/UseAuth";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -523,6 +524,7 @@ const Login = () => {
   });
 
   const { loading, error, dispatch } = useContext(AuthContext);
+  const {login} = useAuth();
 
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
@@ -589,7 +591,7 @@ const Login = () => {
       // Assuming res.data.roles is the roles array returned from the API response
 
 
-localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
+      localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
       
       const userData = {
         username: res.data.username,
@@ -611,16 +613,16 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
       console.log("userData In login: ", userData);
 
       if (roles.includes("ROLE_ADMIN")) {
-        //login("admin", userData);
+        login("admin", userData);
         navigate("/player");
       } else if (roles.includes("ROLE_COACH")) {
-        //login("coach", userData);
+        login("coach", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_PLAYER")) {
-        //login("player", userData);
+        login("player", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_OFFICIAL")) {
-       // login("official", userData);
+        login("official", userData);
         navigate("/member");
       } else {
         setError("Unknown role, please contact support.");
@@ -638,6 +640,8 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
           setError("Invalid username or password. Please check your credentials and try again.");
         } else if (err.response.status === 404) {
           setError("Username not found. Please register or verify your username.");
+        } else if (err.response.status === 400) {
+          setError( err.response.data.message);
         } else {
           setError("An unexpected error occurred. Please try again later.");
         }

@@ -235,7 +235,7 @@ const AddNewModal = ({  onClose, isSubmitted }) => {
 
   const years = [];
   const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1990; i--) {
+  for (let i = currentYear+1; i >= 1990; i--) {
     years.push(i);
   };
 

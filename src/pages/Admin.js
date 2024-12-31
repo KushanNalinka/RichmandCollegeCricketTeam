@@ -32,7 +32,6 @@ const Admin= () => {
   const accessToken = localStorage.getItem('accessToken');
   const divRef = useRef(null);
   const navigate = useNavigate();
- 
   // State to store the height
   const [divHeight, setDivHeight] = useState(0);
 

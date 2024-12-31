@@ -458,8 +458,8 @@ const FormPopup = ({  onClose, isSumitted }) => {
               required
             >
               <option value="" disabled selected>Select tier</option>
-              <option value="Tier 1">Tier A</option>
-              <option value="Tier 2">Tier B</option>
+              <option value="Tier A">Tier A</option>
+              <option value="Tier B">Tier B</option>
             </select>
           </div>
           <div className="col-span-1">

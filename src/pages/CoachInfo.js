@@ -226,7 +226,7 @@ const CoachTable = () => {
                     {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
                     </button>
                     {showStatusDropdown && (
-                      <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-1 z-50 bg-white border rounded shadow-lg">
+                      <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-1 z-50 bg-white border rounded shadow-lg">
                         <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">All</button>
                         <button onClick={() => handleFilterChange("status", "Active")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Active</button>
                         <button onClick={() => handleFilterChange("status", "Inactive")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">Inactive</button>

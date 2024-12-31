@@ -256,7 +256,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
 
   const years = [];
   const currentYear = new Date().getFullYear();
-  for (let i = currentYear; i >= 1900; i--) {
+  for (let i = currentYear+1; i >= 1900; i--) {
     years.push(i);
   }
 

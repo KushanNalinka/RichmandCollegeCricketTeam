@@ -61,8 +61,31 @@ const TableComponent = () => {
         // Extract unique year and under options
         const uniqueYears = [...new Set(response.data.map(team => team.year))];
         const uniqueUnders = [...new Set(response.data.map(team => team.under))];
-        setYearOptions(uniqueYears);
-        setUnderOptions(uniqueUnders);
+        setYearOptions(uniqueYears.sort((a, b) => b - a));
+        // setUnderOptions(uniqueUnders.sort());
+        setUnderOptions(
+          uniqueUnders.sort((a, b) => {
+              // Helper to extract number from a string
+              const extractNumber = (str) => {
+                  const match = str.match(/\d+/);
+                  return match ? parseInt(match[0], 10) : Number.MAX_SAFE_INTEGER;
+              };
+
+              // Compare by prefix (non-numerical portion of string)
+              const prefixA = a.replace(/\d+/g, '').trim();
+              const prefixB = b.replace(/\d+/g, '').trim();
+
+              if (prefixA !== prefixB) {
+                  return prefixA.localeCompare(prefixB); // Alphabetical by prefix
+              }
+
+              // Compare by number if prefixes are identical
+              const numA = extractNumber(a);
+              const numB = extractNumber(b);
+
+              return numA - numB; // Numerical order
+          })
+      );
 
         updateRowsPerPage(); // Initial setup
         window.addEventListener('resize', updateRowsPerPage);
@@ -239,7 +262,7 @@ const TableComponent = () => {
                         {showUnderDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showUnderDropdown && (
-                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-y-auto custom-scrollbar overflow-y-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] overflow-y-auto custom-scrollbar border rounded shadow-lg">
                            <button
                             onClick={() => handleFilterChange("under", "")}
                             className="block px-4 py-2 text-sm text-start text-gray-700 w-full hover:bg-gray-200"
@@ -267,7 +290,7 @@ const TableComponent = () => {
                         {showYearDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showYearDropdown && (
-                        <div className="absolute mt-5 bg-white border h-[74px] hover:overflow-y-auto custom-scrollbar overflow-y-hidden rounded shadow-lg">
+                        <div className="absolute mt-5 bg-white border h-[74px] overflow-y-auto custom-scrollbar rounded shadow-lg">
                           <button
                             onClick={() => handleFilterChange("year", "")}
                             className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"

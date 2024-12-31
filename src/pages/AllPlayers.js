@@ -434,8 +434,8 @@ summary.bestWickets > 0
             <div className="text-center md:text-left md:ml-8">
             <h1 className="text-xl md:text-5xl font-bold mt-2 md:mt-4"> {selectedPlayer?.name}</h1>
             <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
-                                    All Players
-                                </p>
+                    All Players
+             </p>
             </div>
         </div>
     </div>
@@ -506,9 +506,9 @@ summary.bestWickets > 0
                             </div>
 
                             <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
-                                <h2 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Player Statistics</h2>
+                                <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
                                 {/* Batting Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4">Batting and Fielding Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Batting Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
                                         <thead>
@@ -550,7 +550,7 @@ summary.bestWickets > 0
                                 </div>
 
                                 {/* Bowling Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Bowling Stats</h3>
+                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">
                                         <thead>
@@ -590,7 +590,7 @@ summary.bestWickets > 0
 
                                  {/* Fielding Stats */}
                                  <br/>
-                                 <h3 className="text-lg font-bold mb-4 bg-[#00175F] text-white p-2">Fielding Stats</h3>
+                                 <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Fielding Stats</h3>
 
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
@@ -621,10 +621,6 @@ summary.bestWickets > 0
                                         </tbody>
                                     </table>
                                 </div>
-                                
-
-
-
                             </div>
                         </div>
                     )}

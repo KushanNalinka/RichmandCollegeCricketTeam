@@ -646,7 +646,7 @@ import Highlights from '../components/Highlights';
 import bgImg from '../assets/images/Frame 152.png';
 import RCCRIC from '../assets/images/groundback.png';
 import CroppedImage from '../assets/images/players_image_home.png';
-import mobileBG from '../assets/images/mobileback.png';
+import mobileBG from '../assets/images/mobile1.png';
 
 const HomePage = () => {
   const [matchId, setMatchId] = useState(null);

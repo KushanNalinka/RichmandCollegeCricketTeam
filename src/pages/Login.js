@@ -579,7 +579,7 @@ const Login = () => {
       setValidationError({});
     }
     try {
-
+      console.log("data comes:", inputs);
       // API call to backend for sign-in
       const res = await axios.post(`${API_URL}auth/signin`, inputs);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
@@ -656,14 +656,14 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen">
-      {/* Left Section */}
+      {/* {/ Left Section /} */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-r from-[#00175F] to-[#4A0D34] items-center justify-center">
         <div className="text-white text-center space-y-6">
           <h1 className="text-5xl font-bold">Welcome Back!</h1>
           <p className="text-xl">Login to access your account</p>
         </div>
       </div>
-      {/* Right Section */}
+      {/* {/ Right Section /} */}
       <div className="flex w-full lg:w-1/2 justify-center items-center bg-white">
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
           <h1 className="text-3xl font-bold text-gray-900 text-center">Login</h1>
@@ -727,7 +727,7 @@ const Login = () => {
             >
               Login
             </button>
-            {/* Display error message */}
+            {/* {/ Display error message /} */}
             {err && <p className="text-sm text-red-500 text-center mt-2">{err}</p>}
           </form>
         </div>

@@ -3,7 +3,7 @@ import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import '../index.css';
 import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
-import topImageMobile from '../assets/images/MB1.png'; // Mobile image
+import topImageMobile from '../assets/images/mobile2.png'; // Mobile image
 import lahiru from '../assets/images/lahiru.png';
 import Asoka from '../assets/images/Asoka Sirimanne (2).png'
 import   Indika from '../assets/images/VICE.jpg'

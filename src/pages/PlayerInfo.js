@@ -67,10 +67,10 @@ const TableComponent = () => {
         const players = response.data;
         const sortedPlayers = players.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
         setPlayerData(sortedPlayers);
-        setStatusOptions([...new Set(players.map(player => player.status))]);
-        setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))]);
-        setBattingOptions([...new Set(players.map(player => player.battingStyle))]);
-        setRoleOptions([...new Set(players.map(player => player.playerRole))]);
+        setStatusOptions([...new Set(players.map(player => player.status))].sort());
+        setBowlingOptions([...new Set(players.map(player => player.bowlingStyle))].sort());
+        setBattingOptions([...new Set(players.map(player => player.battingStyle))].sort());
+        setRoleOptions([...new Set(players.map(player => player.playerRole))].sort());
         console.log("Player Data:", response.data);
       })
       .catch(error => {
@@ -393,7 +393,7 @@ const TableComponent = () => {
                         {showStatusDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showStatusDropdown && (
-                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] overflow-auto custom-scrollbar border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("status", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {statusOptions.map(status => (
                             <button
@@ -425,7 +425,7 @@ const TableComponent = () => {
                       {showBattingDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showBattingDropdown && (
-                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-1 bg-white border rounded shadow-lg">
+                        <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-1 bg-white border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("battingStyle", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {battingOptions.map(style => (
                             <button
@@ -445,7 +445,7 @@ const TableComponent = () => {
                         {showBowlingDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showBowlingDropdown && (
-                        <div className="absolute mt-1 bg-white h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden border rounded shadow-lg">
+                        <div className="absolute mt-1 bg-white h-[74px] overflow-auto custom-scrollbar border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("bowlingStyle", "")} className="block px-4 py-2 w-full text-left text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {bowlingOptions.map(style => (
                             <button
@@ -466,7 +466,7 @@ const TableComponent = () => {
                         {showRoleDropdown? <FaChevronUp /> : <FaChevronDown />}
                       </button>
                       {showRoleDropdown && (
-                        <div className="absolute mt-1 h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden bg-white border rounded shadow-lg">
+                        <div className="absolute mt-1 h-[74px] overflow-auto custom-scrollbar bg-white border rounded shadow-lg">
                           <button onClick={() => handleFilterChange("playerRole", "")} className="block px-4 py-2 text-left w-full text-sm text-gray-700 hover:bg-gray-200">All</button>
                           {roleOptions.map(role => (
                             <button
@@ -550,14 +550,14 @@ const TableComponent = () => {
                           >
                             <FaEdit />
                           </button>
-                          {/* <button
+                          <button
                             onClick={() => handleDelete(item.playerId)}
                             className="text-red-500 hover:text-red-600 text-md"
                             aria-label="Delete"
                             title="Delete"
                           >
                             <FaTrash />
-                          </button> */}
+                          </button>
                         </td>
                       </tr>
                     )

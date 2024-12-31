@@ -515,6 +515,7 @@ import React, { useEffect, useState } from "react";
 import { useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/UseAuth";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -523,6 +524,7 @@ const Login = () => {
   });
 
   const { loading, error, dispatch } = useContext(AuthContext);
+  const {login} = useAuth();
 
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
@@ -577,7 +579,7 @@ const Login = () => {
       setValidationError({});
     }
     try {
-
+      console.log("data comes:", inputs);
       // API call to backend for sign-in
       const res = await axios.post(`${API_URL}auth/signin`, inputs);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
@@ -589,7 +591,7 @@ const Login = () => {
       // Assuming res.data.roles is the roles array returned from the API response
 
 
-localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
+      localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
       
       const userData = {
         username: res.data.username,
@@ -611,16 +613,16 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
       console.log("userData In login: ", userData);
 
       if (roles.includes("ROLE_ADMIN")) {
-        //login("admin", userData);
+        login("admin", userData);
         navigate("/player");
       } else if (roles.includes("ROLE_COACH")) {
-        //login("coach", userData);
+        login("coach", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_PLAYER")) {
-        //login("player", userData);
+        login("player", userData);
         navigate("/member");
       } else if (roles.includes("ROLE_OFFICIAL")) {
-       // login("official", userData);
+        login("official", userData);
         navigate("/member");
       } else {
         setError("Unknown role, please contact support.");
@@ -638,6 +640,8 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
           setError("Invalid username or password. Please check your credentials and try again.");
         } else if (err.response.status === 404) {
           setError("Username not found. Please register or verify your username.");
+        } else if (err.response.status === 400) {
+          setError( err.response.data.message);
         } else {
           setError("An unexpected error occurred. Please try again later.");
         }
@@ -652,14 +656,14 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
 
   return (
     <div className="flex min-h-screen">
-      {/* Left Section */}
+      {/* {/ Left Section /} */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-r from-[#00175F] to-[#4A0D34] items-center justify-center">
         <div className="text-white text-center space-y-6">
           <h1 className="text-5xl font-bold">Welcome Back!</h1>
           <p className="text-xl">Login to access your account</p>
         </div>
       </div>
-      {/* Right Section */}
+      {/* {/ Right Section /} */}
       <div className="flex w-full lg:w-1/2 justify-center items-center bg-white">
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
           <h1 className="text-3xl font-bold text-gray-900 text-center">Login</h1>
@@ -723,7 +727,7 @@ localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as
             >
               Login
             </button>
-            {/* Display error message */}
+            {/* {/ Display error message /} */}
             {err && <p className="text-sm text-red-500 text-center mt-2">{err}</p>}
           </form>
         </div>

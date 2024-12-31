@@ -11,15 +11,21 @@ import { CgProfile } from "react-icons/cg";
 import { FaXmark, FaBars } from "react-icons/fa6";
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import { FaUserCircle } from "react-icons/fa";
+import { useAuth } from "../hooks/UseAuth";
 
 const MainNavbarToggle = () => {
     const navigate = useNavigate(); // Hook for navigation
+    const { user, login, logout } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const toggleButton = () => {
         setIsMenuOpen(!isMenuOpen);
       };
       const handleLoginClick = () => {
         navigate('/'); // Redirect to home page after logout
+      };
+      const handleLogoutClick = () => {
+        logout();
+        navigate('/login'); // Redirect to home page after logout
       };
     
       const handleDropdownClick = (path) => {
@@ -53,9 +59,9 @@ const MainNavbarToggle = () => {
                     {/* <Link to={"/playerProfile"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
                         {" "}<CgProfile className="text-[#00175F] text-xl" />Profile
                     </Link> */}
-                    <Link to={"/login"} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20 ">
+                    <div  onClick={handleLogoutClick} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20 ">
                         {" "}<RiLogoutCircleRLine className="text-[#00175F] text-xl"/> Logout
-                    </Link>
+                    </div>
                 </ul>
             </div>
           </div> 

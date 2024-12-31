@@ -43,6 +43,7 @@ const Admin= () => {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }}
+
       )
       .then(response => {
         const admins = response.data;

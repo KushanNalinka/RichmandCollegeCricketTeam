@@ -638,7 +638,7 @@ import Number from '../components/Number';
 import LatestNews from '../components/LatestNews';
 import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import videoSrc from '../assets/images/new.mp4';
 import videoSrc1 from '../assets/images/MP5.mp4';
 import Highlights from '../components/Highlights';
@@ -646,7 +646,7 @@ import Highlights from '../components/Highlights';
 import bgImg from '../assets/images/Frame 152.png';
 import RCCRIC from '../assets/images/groundback.png';
 import CroppedImage from '../assets/images/players_image_home.png';
-import mobileBG from '../assets/images/mobileback.png';
+import mobileBG from '../assets/images/mobile1.png';
 
 const HomePage = () => {
   const [matchId, setMatchId] = useState(null);
@@ -749,7 +749,7 @@ const HomePage = () => {
         <Hero />
       </div>
 
-      <Footer />
+      <InitialFooter />
     </>
   );
 };

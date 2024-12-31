@@ -390,7 +390,7 @@ const PlayerProfile = () => {
                   </button>
                 </div>
                 {/* Batting Stats */}
-                <h3 className="text-md text-white bg-[#00175f] p-2 font-bold mb-3">
+                <h3 className="text-md text-white bg-gradient-to-r from-[#00175f] to-[#480D35] p-2 font-bold mb-3">
                   Batting Stats
                 </h3>
                 {/* Assuming the data structure of selectedPlayer.stats */}
@@ -480,7 +480,7 @@ const PlayerProfile = () => {
                 </table>
               </div>
 
-              <h3 className="text-md font-bold w-full p-2 bg-[#00175f] text-white mb-3">Bowling Stats</h3>
+              <h3 className="text-md font-bold w-full p-2 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white mb-3">Bowling Stats</h3>
               <div className="flex hover:overflow-x-auto overflow-x-hidden" >
                 <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg mb-6">
                   <thead>
@@ -557,7 +557,7 @@ const PlayerProfile = () => {
                 </table>
                 </div>
 
-                <h3 className="text-md font-bold w-full bg-[#00175f] p-2 text-white mb-3">Fielding Stats</h3>
+                <h3 className="text-md font-bold w-full bg-gradient-to-r from-[#00175f] to-[#480D35] p-2 text-white mb-3">Fielding Stats</h3>
                 <div className="flex hover:overflow-x-auto overflow-x-hidden" >
                   <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg">
                     <thead>

@@ -672,11 +672,12 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import Logo from '../assets/images/rcclogo.png'; // Add your logo image import
 import { FaUser, FaBars } from 'react-icons/fa'; // Import FaUser and FaBars for user and hamburger icons
-//import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
+import { useAuth } from '../hooks/UseAuth'; // Import auth context to get user data
 
 const HomeNavbar = () => {
   //const { userRole, logout, user } = useAuth();
   const navigate = useNavigate();
+  const {  logout } = useAuth();
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -765,22 +766,22 @@ const HomeNavbar = () => {
   };
 
   const handleLogoutClick = async () => {
-    try {
-      // Call the backend logout endpoint
-      await axios.post(`${API_URL}auth/logout`); // Adjust endpoint if necessary
+    // try {
+    //   // Call the backend logout endpoint
+    //   await axios.post(`${API_URL}auth/logout`); // Adjust endpoint if necessary
 
-      // Clear user data from local storage
-      localStorage.removeItem("userData");
-      localStorage.removeItem("user");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("roles");
-      sessionStorage.removeItem("userData");
+    //   // Clear user data from local storage
+    //   localStorage.removeItem("userData");
+    //   localStorage.removeItem("user");
 
-      // Redirect to home or login page
-      navigate('/');
-    } catch (error) {
-      console.error("Error logging out:", error);
-    }
+    //   // Redirect to home or login page
+    //   navigate('/');
+    // } catch (error) {
+    //   console.error("Error logging out:", error);
+    // }
+    logout();
+        navigate('/'); // Redirect to home page after logout
+
   };
   return (
     <nav
@@ -1022,10 +1023,10 @@ const HomeNavbar = () => {
             <button onClick={() => toggleDropdown('overview')} className="hover:text-yellow-300">Overview</button>
             {activeDropdown === 'overview' && (
               <ul className="space-y-2 mt-2 text-white text-left">
-                <li><button onClick={() => handleDropdownClick('/coach')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Coaches</button></li>
-                <li><button onClick={() => handleDropdownClick('/allplayers')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">All Players</button></li>
-                <li><button onClick={() => handleDropdownClick('/oldboys')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Old Boys</button></li>
-                <li><button onClick={() => handleDropdownClick('/about-us')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">About Us</button></li>
+                <li><button onClick={() => handleDropdownClick('/coach')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Coaches</button></li>
+                <li><button onClick={() => handleDropdownClick('/allplayers')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">All Players</button></li>
+                <li><button onClick={() => handleDropdownClick('/oldboys')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Old Boys</button></li>
+                <li><button onClick={() => handleDropdownClick('/about-us')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">About Us</button></li>
               </ul>
             )}
           </li>
@@ -1033,10 +1034,10 @@ const HomeNavbar = () => {
             <button onClick={() => toggleDropdown('teams')} className="hover:text-yellow-300">Teams</button>
             {activeDropdown === 'teams' && (
               <ul className="space-y-2 mt-2 text-white text-left">
-                <li><button onClick={() => handleDropdownClick('/under13')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 13</button></li>
-                <li><button onClick={() => handleDropdownClick('/under15')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 15</button></li>
-                <li><button onClick={() => handleDropdownClick('/under17')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 17</button></li>
-                <li><button onClick={() => handleDropdownClick('/under19')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Under 19</button></li>
+                <li><button onClick={() => handleDropdownClick('/under13')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Under 13</button></li>
+                <li><button onClick={() => handleDropdownClick('/under15')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Under 15</button></li>
+                <li><button onClick={() => handleDropdownClick('/under17')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Under 17</button></li>
+                <li><button onClick={() => handleDropdownClick('/under19')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Under 19</button></li>
               </ul>
             )}
           </li>
@@ -1044,11 +1045,11 @@ const HomeNavbar = () => {
             <button onClick={() => toggleDropdown('academy')} className="hover:text-yellow-300">Academy</button>
             {activeDropdown === 'academy' && (
               <ul className="space-y-2 mt-2 text-white text-left">
-                <li><button onClick={() => handleDropdownClick('/academy9')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 9</button></li>
-                <li><button onClick={() => handleDropdownClick('/academy11')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 11</button></li>
-                <li><button onClick={() => handleDropdownClick('/academy13')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 13</button></li>
-                <li><button onClick={() => handleDropdownClick('/academy15')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 15</button></li>
-                <li><button onClick={() => handleDropdownClick('/academy17')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Academy 17</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy9')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Academy 9</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy11')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Academy 11</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy13')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Academy 13</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy15')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Academy 15</button></li>
+                <li><button onClick={() => handleDropdownClick('/academy17')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Academy 17</button></li>
               </ul>
             )}
           </li>
@@ -1056,8 +1057,8 @@ const HomeNavbar = () => {
             <button onClick={() => toggleDropdown('legends')} className="hover:text-yellow-300">Legends</button>
             {activeDropdown === 'legends' && (
               <ul className="space-y-2 mt-2 text-white text-left">
-                <li><button onClick={() => handleDropdownClick('/over40')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Over 40s</button></li>
-                <li><button onClick={() => handleDropdownClick('/over50')} className="block px-4 py-2 hover:bg-yellow-500 text-yellow-500">Over 50s</button></li>
+                <li><button onClick={() => handleDropdownClick('/over40')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Over 40s</button></li>
+                <li><button onClick={() => handleDropdownClick('/over50')} className="block px-4 py-2 hover:bg-gray-200 hover:bg-opacity-10 text-yellow-500">Over 50s</button></li>
                 
               </ul>
             )}

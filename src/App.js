@@ -47,6 +47,7 @@ import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 import Admin from './pages/Admin.js';
+import Role from './pages/Role.js'
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 import Role from './pages/Role.js';
 import InitialRole from './pages/InitialRole.js';
@@ -82,6 +83,7 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           <Route path ="/role" element ={<Role/>}/>
           <Route path ="/initialrole" element ={<InitialRole/>}/>
           <Route path="/unauthorized" element={<UnauthorizedPage/>} />
+          <Route path="/role" element={<Role/>} />
           <Route
           path="/about-us"
           element={
@@ -305,7 +307,7 @@ console.log("Retrieved roles from localStorage:", storedRoles);
             </PrivateRoute>
           }
         />
-        
+
         <Route
           path="/addPlayer"
           element={

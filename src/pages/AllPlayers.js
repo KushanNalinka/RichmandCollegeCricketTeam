@@ -393,7 +393,9 @@ summary.bestWickets > 0
         className="text-black font-bold flex justify-between items-center w-full"
     >
         Our Players
-        <span>{showPlayerList ? '-' : '+'}</span>
+         <div className='rounded-full p-2 w-10 h-10 bg-black'>
+                <span className=' text-white '>{showPlayerList ? '-' : '+'}</span>
+            </div>
     </button>
     {showPlayerList && (
         <div className="mt-4">

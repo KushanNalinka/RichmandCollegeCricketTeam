@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import PrivateRoute from "./components/PrivateRoutes";
 import 'slick-carousel/slick/slick.css';
@@ -47,6 +48,8 @@ import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 import Admin from './pages/Admin.js';
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
+import Role from './pages/Role.js';
+import InitialRole from './pages/InitialRole.js';
 import { useAuth } from './hooks/UseAuth.js';
 import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 import UnauthorizedPage from './pages/UnauthorizedPage.js';
@@ -76,6 +79,8 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           <Route path="/initial-news/:id" element={<InitialNewsDetail />} />
           <Route path="/initial-news" element={<InitialNewsPage />} />
           <Route path="/initial-about-us" element={<InitialAboutUs />} />
+          <Route path ="/role" element ={<Role/>}/>
+          <Route path ="/initialrole" element ={<InitialRole/>}/>
           <Route path="/unauthorized" element={<UnauthorizedPage/>} />
           <Route
           path="/about-us"
@@ -115,6 +120,7 @@ console.log("Retrieved roles from localStorage:", storedRoles);
             </PrivateRoute>
           }
         />
+
           {/* Other Protected Routes */}
           <Route
           path="/profile"

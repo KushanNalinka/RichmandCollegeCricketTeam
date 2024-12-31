@@ -638,7 +638,7 @@ import Number from '../components/Number';
 import LatestNews from '../components/LatestNews';
 import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import videoSrc from '../assets/images/new.mp4';
 import videoSrc1 from '../assets/images/MP5.mp4';
 import Highlights from '../components/Highlights';
@@ -749,7 +749,7 @@ const HomePage = () => {
         <Hero />
       </div>
 
-      <Footer />
+      <InitialFooter />
     </>
   );
 };

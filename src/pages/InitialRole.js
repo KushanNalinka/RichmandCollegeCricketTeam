@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/MemberNavbar';
-import Footer from '../components/Footer';
+import Navbar from '../components/InitialNavbar';
+import InitialFooter from '../components/Footer';
 import '../index.css';
 import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
 import topImageMobile from '../assets/images/mobile2.png'; // Mobile image
@@ -141,7 +141,7 @@ const SponsoredBy = () => {
            
 
       {/* Footer */}
-      <Footer />
+      <InitialFooter />
     </div>
   );
 };

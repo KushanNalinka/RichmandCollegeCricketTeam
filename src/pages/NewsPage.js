@@ -507,24 +507,30 @@ const NewsPage = () => {
     />
   </div>
 
-  {/* Date Picker with Reset Button */}
-  <div className="flex items-center space-x-2">
-    <div className="relative inline-block">
-      <FontAwesomeIcon
-        icon={faCalendar} // Calendar icon
-        size="sm"
-        className="text-gray-400 hover:text-gray-600 cursor-pointer"
-        onClick={() => document.getElementById('datepicker-trigger').focus()}
-      />
+ {/* Date Picker with Reset Button */}
+<div className="flex items-center space-x-2 hover:text-gray-600">
+  <div className="relative w-full">
+    <div className="flex items-center focus-within:ring-2   rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2 w-full px-2 py-1 border border-gray-300">
       <DatePicker
         id="datepicker-trigger"
         selected={selectedDate}
         onChange={(date) => setSelectedDate(date)}
         dateFormat="yyyy/MM/dd"
-        className="opacity-0 w-6 h-6 cursor-pointer"
-        placeholderText="Select a date"
+        className=" focus:outline-none"
+        placeholderText="Select a Date..."
+      />
+      <FontAwesomeIcon
+        icon={faCalendar}
+        size="sm"
+        className="text-gray-400 hover:text-gray-600 cursor-pointer px-2"
+        onClick={() => document.getElementById('datepicker-trigger').focus()}
       />
     </div>
+  </div>
+
+
+
+
 
     {/* Reset Button */}
     {selectedDate && (

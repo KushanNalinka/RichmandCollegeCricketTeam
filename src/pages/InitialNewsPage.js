@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import InitialNavbar from "../components/InitialNavbar";
 
 import topImage from '../assets/images/BG3.png';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch ,faCalendar } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from "react-datepicker";
@@ -201,52 +201,57 @@ const InitialNewsPage = () => {
                              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 sm:mb-0">Richmond Cricket News</h1>
                              <div className="flex items-center space-x-4">
                                {/* Search Input */}
-                               <div className="relative">
-                                 <input
-                                   type="text"
-                                   placeholder="Search News..."
-                                   value={searchQuery}
-                                   onChange={(e) => setSearchQuery(e.target.value)}
-                                   className="w-full px-2 py-1 border border-gray-300 rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2"
-                                 />
-                                 <FontAwesomeIcon
-                                   icon={faSearch}
-                                   size="sm"
-                                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
-                                 />
-                               </div>
-                             
+                                <div className="relative">
+                                  <input
+                                    type="text"
+                                    placeholder="Search News..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className="w-full px-2 py-1 border border-gray-300 rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2"
+                                  />
+                                  <FontAwesomeIcon
+                                    icon={faSearch}
+                                    size="sm"
+                                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500"
+                                  />
+                                </div>
+                              
                                {/* Date Picker with Reset Button */}
-                               <div className="flex items-center space-x-2">
-                                 <div className="relative inline-block">
-                                   <FontAwesomeIcon
-                                     icon={faCalendar} // Calendar icon
-                                     size="sm"
-                                     className="text-gray-400 hover:text-gray-600 cursor-pointer"
-                                     onClick={() => document.getElementById('datepicker-trigger').focus()}
-                                   />
-                                   <DatePicker
-                                     id="datepicker-trigger"
-                                     selected={selectedDate}
-                                     onChange={(date) => setSelectedDate(date)}
-                                     dateFormat="yyyy/MM/dd"
-                                     className="opacity-0 w-6 h-6 cursor-pointer"
-                                     placeholderText="Select a date"
-                                   />
-                                 </div>
-                             
-                                 {/* Reset Button */}
-                                 {selectedDate && (
-                                   <button
-                                     onClick={() => setSelectedDate(null)} // Reset selectedDate
-                                     className="px-2 py-1 bg-[#012D5E]  text-white rounded-xl text-xs  focus:outline-none"
-                                   >
-                                     Refresh
-                                   </button>
-                                 )}
-                               </div>
-                             </div>
-                             
+                              <div className="flex items-center space-x-2 hover:text-gray-600">
+                                <div className="relative w-full">
+                                  <div className="flex items-center focus-within:ring-2   rounded-xl text-xs shadow-sm focus:outline-none focus:ring-2 w-full px-2 py-1 border border-gray-300">
+                                    <DatePicker
+                                      id="datepicker-trigger"
+                                      selected={selectedDate}
+                                      onChange={(date) => setSelectedDate(date)}
+                                      dateFormat="yyyy/MM/dd"
+                                      className=" focus:outline-none"
+                                      placeholderText="Select a Date..."
+                                    />
+                                    <FontAwesomeIcon
+                                      icon={faCalendar}
+                                      size="sm"
+                                      className="text-gray-400 hover:text-gray-600 cursor-pointer px-2"
+                                      onClick={() => document.getElementById('datepicker-trigger').focus()}
+                                    />
+                                  </div>
+                                </div>
+                              
+                              
+                              
+                              
+                              
+                                  {/* Reset Button */}
+                                  {selectedDate && (
+                                    <button
+                                      onClick={() => setSelectedDate(null)} // Reset selectedDate
+                                      className="px-2 py-1 bg-[#012D5E]  text-white rounded-xl text-xs  focus:outline-none"
+                                    >
+                                      Refresh
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                              
                                              </div>
                              
@@ -386,7 +391,7 @@ const InitialNewsPage = () => {
 
 
       {/* Footer */}
-    <Footer/>
+    <InitialFooter/>
     </div>
   );
 };

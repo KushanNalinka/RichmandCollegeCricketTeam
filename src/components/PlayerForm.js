@@ -739,11 +739,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                     {isDragging ? (
                       "Drop the image here"
                     ) : (
-                      <span className="inline-flex items-center">
-                        Drag and drop an image, or&nbsp;
-                        <GiClick className="ml-1 text-lg" />
+                      <p className="flex flex-col md:flex-row items-center justify-center">
+                        Drag and drop an image, or click here&nbsp; 
+                        <span className="mt-1">
+                          <GiClick className="text-lg" />
+                        </span>
                         &nbsp;to upload images
-                      </span>
+                      </p>
                     )}
                   </p>
                 )}
@@ -767,7 +769,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               </button>
             )}
           </div>
-          {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}  
+        {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}  
           <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"

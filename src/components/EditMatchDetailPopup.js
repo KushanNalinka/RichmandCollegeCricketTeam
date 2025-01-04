@@ -1594,12 +1594,15 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
                   <p className="text-gray-500 text-sm">
                     {isDragging
                       ? "Drop the image here"
-                      : <div className="flex">
-                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
-                            click here
-                            <GiClick className="ml-1 text-lg" />
-                          </span>&nbsp; to upload images
-                        </div>}
+                      : (
+                        <p className="flex flex-col md:flex-row items-center justify-center">
+                          Drag and drop an image, or click here&nbsp; 
+                          <span className="mt-1">
+                            <GiClick className="text-lg" />
+                          </span>
+                          &nbsp;to upload images
+                        </p>
+                      )}
                   </p>
                 )}
               <input
@@ -1623,7 +1626,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             )} 
           </div>
           {showImageError && (
-            <p className="text-red-500 text-xs px-2 col-span-2">
+            <p className="text-red-500 text-xs px-2 col-span-1 md:col-span-2 relative ">
               Upload a new image to replace the existing one, or it will remain unchanged.
             </p>
           )}

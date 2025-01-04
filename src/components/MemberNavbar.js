@@ -682,6 +682,12 @@ const HomeNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu visibility
   const [activeDropdown, setActiveDropdown] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
+  const userData = localStorage.getItem("userData");
+  const user = localStorage.getItem("user");
+  const parsedUserData = JSON.parse(userData); 
+  const {roles} = parsedUserData;
+  console.log("userData navbar: ", userData);
+  console.log("role navbar: ", roles);
   
   useEffect(() => {
     const handleScroll = () => {
@@ -703,11 +709,6 @@ const HomeNavbar = () => {
   const handleDropdownClick = (path) => {
     navigate(path); // Navigate to the selected page
   };
-  const userData = localStorage.getItem("userData");
-  const user = localStorage.getItem("user");
-  console.log("User Data are ", userData);
-  console.log("User: ", user)
-  
 
   const handleProfileClick = () => {
     //const userData = JSON.parse(localStorage.getItem("userData"));
@@ -980,6 +981,7 @@ const HomeNavbar = () => {
             <FaUser className="text-2xl" /> {/* User Icon */}
           </div>
           <ul className="absolute left-0 top-full mt-2 bg-gray-800 text-white shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-300 ease-in-out">
+          {roles[0] !== "ROLE_ADMIN" &&
             <li>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
@@ -987,11 +989,11 @@ const HomeNavbar = () => {
               >
                 Profile
               </button>
-            </li>
+            </li>}
             <li>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-yellow-500 transition-all duration-300 ease-in-out"
-                onClick={handleLogoutClick}
+                onClick={handleLogoutClick} 
               >
                 Logout
               </button>
@@ -1078,14 +1080,15 @@ const HomeNavbar = () => {
               Contact Us
             </a>
           </li>
+          {roles[0] !== "ROLE_ADMIN" &&
           <li>
-            <button   onClick={handleProfileClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-             Profile
+            <button onClick={handleProfileClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Profile
             </button>
-          </li>
+          </li>}
           <li>
-            <button  onClick={handleLogoutClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
-             Logout
+            <button onClick={handleLogoutClick} className="hover:text-yellow-300 transition-all duration-300 ease-in-out">
+              Logout
             </button>
           </li>
          {/* <li>

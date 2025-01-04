@@ -534,10 +534,11 @@ const Login = () => {
 
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
-    const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
+    const savedUserData = localStorage.getItem("rememberMeData") || sessionStorage.getItem("rememberMeData");
     if (savedUserData) {
       const { username } = JSON.parse(savedUserData);
-      setInputs((prev) => ({ ...prev, username }));
+      const { password } = JSON.parse(savedUserData);
+      setInputs((prev) => ({ ...prev, username, password }));
       setRememberMe(true); // assume they checked "Remember Me"
       console.log("Pre-filled username:", username);
     } else {
@@ -587,26 +588,23 @@ const Login = () => {
       const accessToken = res.data.accessToken;
 
       localStorage.setItem('accessToken', accessToken);
-      
-      // Assuming res.data.roles is the roles array returned from the API response
-
-
       localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
       
+      // Save token based on Remember Me option
+      if (rememberMe) {
+        localStorage.setItem("rememberMeData", JSON.stringify(inputs)); // persists even after closing browser
+        console.log("Saved user data to localStorage:", inputs);
+      } else {
+        sessionStorage.setItem("rememberMeData", JSON.stringify(inputs)); // only persists while the session is active
+        console.log("Saved user data to sessionStorage:", inputs);
+      };
+
       const userData = {
         username: res.data.username,
         roles: res.data.roles,
         token: res.data.accessToken,
         userId: res.data.playerId || res.data.coachId || res.data.officialId ,
       };
-      // Save token based on Remember Me option
-      if (rememberMe) {
-        localStorage.setItem("userData", JSON.stringify(userData)); // persists even after closing browser
-        console.log("Saved user data to localStorage:", userData);
-      } else {
-        sessionStorage.setItem("userData", JSON.stringify(userData)); // only persists while the session is active
-        console.log("Saved user data to sessionStorage:", userData);
-      }
       // Check if roles exist to navigate to admin or user dashboard
       const roles = res.data.roles;
 

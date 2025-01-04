@@ -7,6 +7,8 @@ import flag from "../assets/images/backDrop.png";
 import image from "../assets/images/kusal.png";
 import Footer from '../components/Footer';
 import { message } from 'antd';
+import { FaEye } from "react-icons/fa";
+import { FaXmark } from "react-icons/fa6";
 //import { useAuth } from "../hooks/UseAuth";
 
 const PlayerProfile = () => {
@@ -15,6 +17,7 @@ const PlayerProfile = () => {
   const [filterUnder, setFilterUnder] = useState("");
   const [filterYear, setFilterYear] = useState("");
   const [practiceSessions, setPracticeSessions] = useState([]);
+  const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
@@ -252,6 +255,10 @@ const PlayerProfile = () => {
     setFilterYear("");
   };
 
+  const togglePopup = () => {
+    setIsProfilePopupOpen(!isProfilePopupOpen);
+  };
+
 
   return (
     <>
@@ -295,13 +302,17 @@ const PlayerProfile = () => {
                     )}
                   </div>
 
-                  {playerProfile && <img
-                    src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
-                    alt={playerProfile?.name}
-
-                    className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
-                  />
+                  {playerProfile && 
+                  <div className="relative ">
+                      <img
+                        src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
+                        alt={playerProfile?.name}
+                        className=" flex w-32 h-32 rounded-full object-cover cursor-pointer border-2 bg-white border-gray-300 text-gray-400 hover:border-[#480D35]"
+                        onClick={togglePopup}
+                      />
+                   </div>
                    }
+                  
                   
                 </div>
                 
@@ -651,10 +662,26 @@ const PlayerProfile = () => {
                 </div>
               </div>
              </div>
-
-
           </div>
        <Footer />
+       {/* Popup Modal */}
+       {isProfilePopupOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+            <div className="relative bg-white rounded-lg p-4 shadow-lg">
+              <button
+                className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                onClick={togglePopup} // Close the popup
+              >
+                <FaXmark/>
+              </button>
+              <img
+                  src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
+                  alt={playerProfile?.name}
+                className="w-full h-auto max-w-lg rounded-lg"
+              />
+            </div>
+          </div>
+        )}
        </>
 
 

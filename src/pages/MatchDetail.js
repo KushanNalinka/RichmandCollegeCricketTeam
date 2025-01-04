@@ -623,13 +623,13 @@ const MatchDetails = () => {
                         >
                           <MdAssignmentAdd />
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => handleDelete(match.matchId)}
                           title="Delete"
                           className="text-red-500 hover:text-red-600"
                         >
                           <FaTrash />
-                        </button>
+                        </button> */}
                       </td>
                     </tr>
                   ))}

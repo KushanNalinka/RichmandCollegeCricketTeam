@@ -69,7 +69,7 @@ const OfficialProfile = () => {
                 {officialProfile?.name}
               </h1>
             </div>
-            <FaUserCircle className=" w-32 h-32 rounded-full object-cover border border-gray-300" />
+            <FaUserCircle className=" w-32 h-32 rounded-full object-cover border text-black border-gray-300" />
            
           </div>
         </div>

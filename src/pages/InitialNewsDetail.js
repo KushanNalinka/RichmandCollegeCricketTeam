@@ -23,16 +23,11 @@ const InitialNewsDetail = () => {
     const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
+      console.log("Come in: ");
     const fetchNewsDetail = async () => {
       try {
-
-        const response = await axios.get(`${API_URL}news/${id}`,{
-          headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, });
-
+        console.log("Come in to news details page: ");
+        const response = await axios.get(`${API_URL}news/${id}`);
         const fetchedNews = response.data;
         setNewsItem(fetchedNews);
         setSelectedNews(fetchedNews); // Set the fetched news to selectedNews

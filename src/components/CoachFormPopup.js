@@ -578,12 +578,15 @@ const CoachForm = ({  onClose, isSubmitted }) => {
                   <p className="text-gray-500 text-sm">
                     {isDragging
                       ? "Drop the image here"
-                      : <div className="flex">
-                          Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
-                            click here
-                            <GiClick className="ml-1 text-lg" />
-                          </span>&nbsp; to upload images
-                        </div>}
+                      : (
+                        <p className="flex flex-col md:flex-row items-center justify-center">
+                          Drag and drop an image, or click here&nbsp; 
+                          <span className="mt-1">
+                            <GiClick className="text-lg" />
+                          </span>
+                          &nbsp;to upload images
+                        </p>
+                      )}
                   </p>
                 )}
               <input

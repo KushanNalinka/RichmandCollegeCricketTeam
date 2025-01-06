@@ -10,10 +10,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState( null); // Optional: Store user details
   const [loading, setLoading] = useState(true); // New loading state
 
-  const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
-
   useEffect(() => {
-    const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
+    const savedUserData = localStorage.getItem("userData");
+    console.log("Saved user data: ", savedUserData);
 
     if (savedUserData) {
       try {
@@ -41,12 +40,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = (role, userData) => {
     setIsAuthenticated(true);
-    setUserRole(role); // Set user role on login
+    //setUserRole(role); // Set user role on login
     setUser(userData); // Set user data on login
-    console.log("UserData: ", role);
 
     localStorage.setItem("userData", JSON.stringify(userData)); // Adjust this as per your storage type
-    console.log("User logged in, data saved to storage: ", userData);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -64,6 +62,7 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     setUserRole(null); // Clear the role on logout
     setUser(null); // Clear user data on logout
+    setLoading(false);
 
     localStorage.removeItem("userData");
     localStorage.removeItem("user");
@@ -83,7 +82,7 @@ export const AuthProvider = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userRole, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userRole, user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

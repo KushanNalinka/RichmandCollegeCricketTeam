@@ -497,7 +497,7 @@ const MatchDetails = () => {
                         {showTierDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTierDropdown && (
-                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-2 bg-white border rounded shadow-lg z-50">
+                        <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-2 bg-white border rounded shadow-lg z-50">
                           <button onClick={() => handleFilterChange("tier", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                             All
                           </button>
@@ -523,7 +523,7 @@ const MatchDetails = () => {
                         {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
                       </button>
                       {showTypeDropdown && (
-                        <div className="absolute h-[74px] hover:overflow-auto custom-scrollbar overflow-hidden mt-5 bg-white border rounded shadow-lg z-50">
+                        <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-5 bg-white border rounded shadow-lg z-50">
                           <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
                             All
                           </button>

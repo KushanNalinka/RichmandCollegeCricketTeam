@@ -1315,19 +1315,19 @@ const CoachesProfile = () => {
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Practice Schedules</h2>
                                 {/* Batting Stats Table */}
                                 <div className="overflow-x-auto">
-                                <table className="min-w-full bg-white rounded-lg">
+                                <table className="min-w-full bg-gradient-to-r bg-white to-[#480D35] rounded-lg">
                                     <thead>
-                                        <tr>
-                                            <th className="py-2 px-4 text-center text-gray-400">
+                                        <tr className=" bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                                            <th className="py-2 px-4 text-center text-white">
                                                 Venue
                                             </th>
-                                            <th className="py-2 px-4 text-center text-gray-400">
+                                            <th className="py-2 px-4 text-center text-white">
                                                 Start Time
                                             </th>
-                                            <th className="py-2 px-4 text-center text-gray-400">
+                                            <th className="py-2 px-4 text-center text-white">
                                                 End Time
                                             </th>
-                                            <th className="py-2 px-4 text-center text-gray-400">
+                                            <th className="py-2 px-4 text-center text-white">
                                                 Type
                                             </th>
                                         </tr>

@@ -115,7 +115,7 @@ const NavbarToggleMenu = () => {
         </button>
       </div>
       <div
-        className={`absolute space-y-2 z-50 mt-[28rem] left-5 w-[200px] mb-10 bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${
+        className={`absolute space-y-2 z-50 top-14 left-5 w-[200px] bg-white rounded-l-lg justify-end items-center py-3 shadow-lg border-[3px] ${
           isMenuOpen
             ? " h-auto w-48 block justify-center items-center mb-10"
             : "hidden"

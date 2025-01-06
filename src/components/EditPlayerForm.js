@@ -702,7 +702,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value="Top Order Batter">Top Order Batter</option>
               <option value="Wicketkeeper Batter">Wicketkeeper Batter</option>
               <option value="Allrounder">Allrounder</option>
-              <option value="Bawlling Allrounder">Bawlling Allrounder</option>
+              <option value="Bowling Allrounder">Bowling Allrounder</option>
               <option value="Batting Allrounder">Batting Allrounder</option>
             </select>
           </div>

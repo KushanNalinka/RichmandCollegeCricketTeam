@@ -1295,6 +1295,22 @@ export default function MatchInfo() {
         const uniqueAgeGroups = Array.from(
           new Set(data.map((match) => `${match.under}-${match.teamYear}`))
         );
+
+         // Sorting logic for age groups
+      const sortedAgeGroups = uniqueAgeGroups.sort((a, b) => {
+        const regex = /(\D*)(\d+)?-(\d+)/; // Matches "Under", number, and year
+        const [, labelA, numA, yearA] = a.match(regex);
+        const [, labelB, numB, yearB] = b.match(regex);
+
+        // Sort alphabetically by label (e.g., "Under", "Academy Under")
+        if (labelA !== labelB) return labelA.localeCompare(labelB);
+
+        // Sort numerically by age group number (e.g., "11", "13")
+        if (numA && numB && numA !== numB) return parseInt(numA) - parseInt(numB);
+
+        // Sort by year in descending order
+        return parseInt(yearB) - parseInt(yearA);
+      });
         const uniqueMatchTypes = Array.from(new Set(data.map((match) => match.type)));
   
         // Set the state with the extracted unique values

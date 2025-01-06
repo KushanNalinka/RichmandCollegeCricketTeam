@@ -1238,6 +1238,7 @@ import TopLayer from '../components/TopLayer';
 import topImage from '../assets/images/BG3.png';
 import Upcoming from '../components/Upcoming';
 import Footer from '../components/Footer';
+import ScorecardDataPopup from '../components/ScoreCardDataPopup';
 
 export default function MatchInfo() {
   const [matchDataList, setMatchDataList] = useState([]);
@@ -1249,6 +1250,8 @@ export default function MatchInfo() {
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isScoreCardOpened, setIsScoreCardOpened] = useState(false);
+  const [scoreCardData, setScoreCardData] = useState(null);
   const matchesPerPage = 5;
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem('accessToken');
@@ -1401,9 +1404,8 @@ export default function MatchInfo() {
 
   const handleMatchCentreClick = (match) => {
     const richmondLogo = require('../assets/images/LOGO.png');
-  
-    navigate('/scorecard', {
-      state: {
+    console.log("taken")
+    const data = {
         match: {
           matchId: match.matchId,
           type: match.type,
@@ -1437,8 +1439,9 @@ export default function MatchInfo() {
               : match.oppositionOvers,
           }
         ]
-      }
-    });
+    };
+    setScoreCardData(data);
+    setIsScoreCardOpened(true);
   };
 
   // Adjust handlePageChange to prevent unnecessary re-renders or state resets
@@ -1678,8 +1681,16 @@ const handlePageChange = (page)  =>
 </button>
 </div>
 )}
-
+{/* Match score card popup */}
+{isScoreCardOpened &&
+            <ScorecardDataPopup
+              data={scoreCardData}
+              onClose={()=> setIsScoreCardOpened(false)}
+            />
+          }
 </div>
+
+
 
 
 {/*       

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import topImage from '../assets/images/BG3.png';
 import InitialNavbar from '../components/InitialNavbar';
 import { FaTimes } from "react-icons/fa";
@@ -170,7 +170,7 @@ const InitialNewsDetail = () => {
 }
     </div>
   </div>
-        <Footer />
+        <InitialFooter />
       </div>
     );
   };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import topImage from '../assets/images/BG3.png';
 import InitialNavbar from '../components/InitialNavbar';
 import { FaTimes } from "react-icons/fa";
@@ -23,16 +23,11 @@ const InitialNewsDetail = () => {
     const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
+      console.log("Come in: ");
     const fetchNewsDetail = async () => {
       try {
-
-        const response = await axios.get(`${API_URL}news/${id}`,{
-          headers: {
-              'Authorization': `Bearer ${accessToken}`,
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-      }, });
-
+        console.log("Come in to news details page: ");
+        const response = await axios.get(`${API_URL}news/${id}`);
         const fetchedNews = response.data;
         setNewsItem(fetchedNews);
         setSelectedNews(fetchedNews); // Set the fetched news to selectedNews
@@ -175,7 +170,7 @@ const InitialNewsDetail = () => {
 }
     </div>
   </div>
-        <Footer />
+        <InitialFooter />
       </div>
     );
   };

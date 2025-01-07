@@ -3,21 +3,17 @@ import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import backgroundImage from "../assets/images/Score_table_back_Image.png";
-//import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
-import image from "../assets/images/coach.jpg";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
 import Footer from '../components/Footer';
-//import { useAuth } from "../hooks/UseAuth";
+import { FaXmark } from "react-icons/fa6";
 
 const CoachProfile = () => {
- // const { user } = useAuth();
   const API_URL = process.env.REACT_APP_API_URL;
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -38,7 +34,7 @@ const CoachProfile = () => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [teamOptions, setTeamOptions] = useState([]);
-  
+  const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
 
   const typeOptions = ["Bawling Practice","Batting Practice", "Fielding Practice"]
   const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
@@ -164,9 +160,6 @@ const CoachProfile = () => {
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
     } catch (error) {
       console.error("Error deleting player:", error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -208,6 +201,10 @@ const CoachProfile = () => {
     return `${hour}:${minutes} ${period}`;
   };
 
+  const togglePopup = () => {
+    setIsProfilePopupOpen(!isProfilePopupOpen);
+  };
+
   return (
     <>
     <div
@@ -247,7 +244,7 @@ const CoachProfile = () => {
                     <p className="lg:text-xl text-sm">{calculateAge(coach.dateOfBirth)} years old</p>
                   )}
                   </div>
-                  {coach && <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name} className=" w-32 h-32 rounded-full object-cover border bg-white border-gray-300"/>}
+                  {coach && <img src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={coach.name}  onClick={togglePopup} className=" w-32 h-32 rounded-full object-cover border-2 cursor-pointer bg-white border-gray-300 hover:border-[#480D35]"/>}
                 </div>
 
               </div>
@@ -488,6 +485,24 @@ const CoachProfile = () => {
           )}
     </div>
     <Footer />
+     {/* Popup Modal */}
+      {isProfilePopupOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <div className="relative bg-white rounded-lg p-4 shadow-lg">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+              onClick={togglePopup} // Close the popup
+            >
+              <FaXmark/>
+            </button>
+            <img
+                src={`${`http://rcc.dockyardsoftware.com/images/${ coach.image ? coach.image.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} 
+                alt={coach.name}
+              className="w-full h-auto max-w-lg rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 };

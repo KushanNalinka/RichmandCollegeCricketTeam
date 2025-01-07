@@ -234,6 +234,45 @@ const HomePage = () => {
         />
       )}
 
+      {/* Buttons in the bottom-right corner */}
+<div 
+  className="absolute bottom-4 right-4 flex flex-col space-y-4 z-50" // Ensure buttons are on top
+>
+  {/* SLCSA Button */}
+  <a 
+    href="https://slsca.batsman.com/live" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="w-full"
+  >
+    <button className="bg-[#10164C] text-white px-6 py-2 rounded-lg hover:bg-[#0c113a] w-40">
+      SLCSA ↗
+    </button>
+  </a>
+
+  {/* Crick Info Button */}
+  <a 
+    href="https://www.espncricinfo.com/live-cricket-score" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="w-full"
+  >
+    <button className="bg-[#10164C] text-white px-6 py-2 rounded-lg hover:bg-[#0c113a] w-40">
+      Crick Info
+    </button>
+  </a>
+
+  {/* Sponsored By Button */}
+  <a 
+    href="/role"
+    className="w-full"
+  >
+    <button className="bg-[#4A0D34] text-white px-6 py-2 rounded-lg hover:bg-[#3a0b2a] w-40">
+      Sponsored By
+    </button>
+  </a>
+</div>
+
       {/* Other Components */}
       <div className="w-full">
         <ScoreCard onMatchId={handleMatchId} />

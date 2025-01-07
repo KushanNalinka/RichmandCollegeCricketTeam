@@ -1,13 +1,9 @@
 
-
-
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import { message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
-import { storage } from '../config/firebaseConfig'; // Import Firebase storage
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
@@ -19,7 +15,6 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
   const [uploading, setUploading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [showPasswordError, setShowPasswordError] = useState(false);
-  const [editAdminId, setEditAdminId] = useState(null);
   const [formData, setFormData] = useState({ 
     name:admin.name,
     contactNo:admin.contactNo,
@@ -96,9 +91,6 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
         });
         setUploading(false);
         isSubmitted();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 
@@ -166,7 +158,7 @@ const EditSubAdminsForm = ({ admin, onClose, isSubmitted }) => {
       
       case "email":
         // Email validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(value)) {
           newErrors.email = "Please enter a valid email address";
 

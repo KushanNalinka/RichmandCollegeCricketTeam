@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; 
+import axios from "axios";
 import { message } from "antd";
-import { FaTrash, FaEdit, FaUsers, FaPlus, FaChevronDown, FaChevronUp  } from "react-icons/fa";
-import EditModal from "../components/TeamEditModal"; // Import the EditModal component
-import AddNewModal from "../components/TeamAddNewModal"; // Import the AddNewModal component
+import {
+  FaEdit,
+  FaUsers,
+  FaPlus,
+  FaChevronDown,
+  FaChevronUp
+} from "react-icons/fa";
+import EditModal from "../components/TeamEditModal";
+import AddNewModal from "../components/TeamAddNewModal";
 import flag from "../assets/images/backDrop3.png";
-import HomeNavbar from "../components/HomeNavbar";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
@@ -22,7 +27,6 @@ const TableComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTeamMembersOpen, setIsTeamMembersOpen] = useState(false);
-  const [form, setForm] = useState({ under: "", year: "", captain: "" });
   const [editItem, setEditItem] = useState(null);
   const [teamId, setTeamId] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,44 +43,52 @@ const TableComponent = () => {
   const [underOptions, setUnderOptions] = useState([]);
   const [filteredTeams, setFilteredTeams] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    setUploading(true);
-    const fetchTeams = async () => {
-      try {
-        const response = await axios.get(`${API_URL}teams/all`, { 
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        }}); // Update with your API endpoint
-        setUploading(false);
-        const sortedTeams = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
+  useEffect(
+    () => {
+      setUploading(true);
+      const fetchTeams = async () => {
+        try {
+          const response = await axios.get(`${API_URL}teams/all`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            }
+          }); // Update with your API endpoint
+          setUploading(false);
+          const sortedTeams = response.data.sort(
+            (a, b) => new Date(b.createdOn) - new Date(a.createdOn)
+          );
 
-        setTeams(sortedTeams);
-        setFilteredTeams(sortedTeams);
-        console.log(sortedTeams);
-        
-        // Extract unique year and under options
-        const uniqueYears = [...new Set(response.data.map(team => team.year))];
-        const uniqueUnders = [...new Set(response.data.map(team => team.under))];
-        setYearOptions(uniqueYears.sort((a, b) => b - a));
-        // setUnderOptions(uniqueUnders.sort());
-        setUnderOptions(
-          uniqueUnders.sort((a, b) => {
+          setTeams(sortedTeams);
+          setFilteredTeams(sortedTeams);
+          console.log(sortedTeams);
+
+          // Extract unique year and under options
+          const uniqueYears = [
+            ...new Set(response.data.map(team => team.year))
+          ];
+          const uniqueUnders = [
+            ...new Set(response.data.map(team => team.under))
+          ];
+          setYearOptions(uniqueYears.sort((a, b) => b - a));
+          // setUnderOptions(uniqueUnders.sort());
+          setUnderOptions(
+            uniqueUnders.sort((a, b) => {
               // Helper to extract number from a string
-              const extractNumber = (str) => {
-                  const match = str.match(/\d+/);
-                  return match ? parseInt(match[0], 10) : Number.MAX_SAFE_INTEGER;
+              const extractNumber = str => {
+                const match = str.match(/\d+/);
+                return match ? parseInt(match[0], 10) : Number.MAX_SAFE_INTEGER;
               };
 
               // Compare by prefix (non-numerical portion of string)
-              const prefixA = a.replace(/\d+/g, '').trim();
-              const prefixB = b.replace(/\d+/g, '').trim();
+              const prefixA = a.replace(/\d+/g, "").trim();
+              const prefixB = b.replace(/\d+/g, "").trim();
 
               if (prefixA !== prefixB) {
-                  return prefixA.localeCompare(prefixB); // Alphabetical by prefix
+                return prefixA.localeCompare(prefixB); // Alphabetical by prefix
               }
 
               // Compare by number if prefixes are identical
@@ -84,20 +96,21 @@ const TableComponent = () => {
               const numB = extractNumber(b);
 
               return numA - numB; // Numerical order
-          })
-      );
+            })
+          );
 
-        updateRowsPerPage(); // Initial setup
-        window.addEventListener('resize', updateRowsPerPage);
-        return () => window.removeEventListener('resize', updateRowsPerPage);
+          updateRowsPerPage(); // Initial setup
+          window.addEventListener("resize", updateRowsPerPage);
+          return () => window.removeEventListener("resize", updateRowsPerPage);
+        } catch (error) {
+          console.error("Error fetching teams:", error);
+        }
+      };
 
-      } catch (error) {
-        console.error("Error fetching teams:", error);
-      }
-    };
-  
-    fetchTeams();
-  }, [isSubmitted, isDeleted]);
+      fetchTeams();
+    },
+    [isSubmitted, isDeleted]
+  );
 
   const updateRowsPerPage = () => {
     const screenWidth = window.innerWidth;
@@ -105,22 +118,30 @@ const TableComponent = () => {
 
     if (screenWidth >= 1440 && screenHeight >= 900) {
       setRowsPerPage(10); // Desktop screens
-    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+    } else if (
+      screenWidth >= 1024 &&
+      screenWidth < 1440 &&
+      screenHeight >= 600 &&
+      screenHeight < 900
+    ) {
       setRowsPerPage(8); // Laptop screens
     } else {
       setRowsPerPage(6); // Smaller screens (tablets, mobile)
     }
   };
 
-  useEffect(() => {
-    const filtered = teams.filter(team => {
-      return (
-        (filters.year ? team.year === parseInt(filters.year) : true) &&
-        (filters.under ? team.under === filters.under : true)
-      );
-    });
-    setFilteredTeams(filtered);
-  }, [filters, teams]);
+  useEffect(
+    () => {
+      const filtered = teams.filter(team => {
+        return (
+          (filters.year ? team.year === parseInt(filters.year) : true) &&
+          (filters.under ? team.under === filters.under : true)
+        );
+      });
+      setFilteredTeams(filtered);
+    },
+    [filters, teams]
+  );
 
   const totalPages = Math.ceil(filteredTeams.length / rowsPerPage);
 
@@ -154,36 +175,34 @@ const TableComponent = () => {
     setIsEditModalOpen(true);
   };
 
- 
-
   const handleViewMembers = teamId => {
-    console.log("selected team:" , teamId);
+    console.log("selected team:", teamId);
     setIsTeamMembersOpen(true);
     setTeamId(teamId);
   };
 
   const handleDelete = id => {
-    setTeamToDelete(id)
-;
+    setTeamToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
   const confirmDelete = async () => {
-    try{
-      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`, { 
+    try {
+      const deleteTeam = await axios.delete(`${API_URL}teams/${teamToDelete}`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }})
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+          Accept: "application/json"
+        }
+      });
       message.success("Successfully Deleted!");
       setTimeout(() => {
         window.location.reload();
       }, 1500);
-  } catch (error) {
-    console.error("Error deleting match:", error);
-    message.error("Failed!");
-  }
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      message.error("Failed!");
+    }
   };
 
   const toggleButton = () => {
@@ -192,16 +211,10 @@ const TableComponent = () => {
 
   const handleAddFormClose = () => {
     setIsModalOpen(false);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
 
   const handleEditFormClose = () => {
-    setIsEditModalOpen(false)
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
+    setIsEditModalOpen(false);
   };
 
   const years = [];
@@ -212,64 +225,68 @@ const TableComponent = () => {
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
-    <div className=" flex relative justify-center items-stretch min-h-screen w-full">
-      <div className="lg:flex hidden justify-center items-center w-[12%] h-auto "
-         style={{
-          backgroundImage: `url(${flag})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <Navbar />
-      </div>
-      <div className="w-[88%] h-auto py-5  flex flex-col items-center justify-center">
-        <div className="flex justify-between w-full lg:px-10 pt-3">
-          <Link to={"/member"}>
-            <img src={logo} className="h-12 w-12" />
-          </Link >
-          <MainNavbarToggle/>
-        </div>
-        <div className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg" 
+      <div className=" flex relative justify-center items-stretch min-h-screen w-full">
+        <div
+          className="lg:flex hidden justify-center items-center w-[12%] h-auto "
           style={{
-            backdropFilter: "blur(10px)",
-            boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
-            border: "1px solid rgba(255, 255, 255, 0.3)",
-            
+            backgroundImage: `url(${flag})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center"
           }}
-          
         >
-          <div className="flex justify-between items-center mb-3">
-            <NavbarToggleMenu/>
-            <h2 className="md:text-2xl text-xl font-bold text-center text-[#480D35] ">Team Details</h2>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className=" right-4 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 transition-colors rounded-full p-1"
-              title="Add New"
-            >
-              <FaPlus style={{color:"#fff"}}/>
-            </button>
+          <Navbar />
+        </div>
+        <div className="w-[88%] h-auto py-5  flex flex-col items-center justify-center">
+          <div className="flex justify-between w-full lg:px-10 pt-3">
+            <Link to={"/member"}>
+              <img src={logo} className="h-12 w-12" />
+            </Link>
+            <MainNavbarToggle />
           </div>
-          <div className="flex overflow-x-auto">
-            <table className="min-w-full min-h-full divide-gray-300 bg-gray-200 shadow-md">
-              <thead className=" text-white">
-                <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
-                  <th className="relative py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
-                    Under
-                    <button
+          <div
+            className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
+            style={{
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 4px 30px rgba(0, 0, 0, 0)",
+              border: "1px solid rgba(255, 255, 255, 0.3)"
+            }}
+          >
+            <div className="flex justify-between items-center mb-3">
+              <NavbarToggleMenu />
+              <h2 className="md:text-2xl text-xl font-bold text-center text-[#480D35] ">
+                Team Details
+              </h2>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className=" right-4 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 transition-colors rounded-full p-1"
+                title="Add New"
+              >
+                <FaPlus style={{ color: "#fff" }} />
+              </button>
+            </div>
+            <div className="flex overflow-x-auto">
+              <table className="min-w-full min-h-full divide-gray-300 bg-gray-200 shadow-md">
+                <thead className=" text-white">
+                  <tr className="lg:rounded bg-gradient-to-r from-[#00175f] to-[#480D35]">
+                    <th className="relative py-3 px-4 lg:rounded-l-lg text-left text-xs font-semibold uppercase tracking-wider">
+                      Under
+                      <button
                         onClick={() => setShowUnderDropdown(!showUnderDropdown)}
                         className="ml-2 text-white"
                       >
-                        {showUnderDropdown? <FaChevronUp /> : <FaChevronDown />}
+                        {showUnderDropdown
+                          ? <FaChevronUp />
+                          : <FaChevronDown />}
                       </button>
-                      {showUnderDropdown && (
+                      {showUnderDropdown &&
                         <div className="absolute mt-1 bg-white h-[74px] overflow-y-auto custom-scrollbar border rounded shadow-lg">
-                           <button
+                          <button
                             onClick={() => handleFilterChange("under", "")}
                             className="block px-4 py-2 text-sm text-start text-gray-700 w-full hover:bg-gray-200"
                           >
                             All
                           </button>
-                          {underOptions.map(under => (
+                          {underOptions.map(under =>
                             <button
                               key={under}
                               onClick={() => handleFilterChange("under", under)}
@@ -277,19 +294,18 @@ const TableComponent = () => {
                             >
                               {under}
                             </button>
-                          ))}
-                        </div>
-                      )}
-                  </th>
-                  <th className=" relative py-3 px-4 flex text-left text-xs font-semibold uppercase tracking-wider">
-                    Year
-                    <button
+                          )}
+                        </div>}
+                    </th>
+                    <th className=" relative py-3 px-4 flex text-left text-xs font-semibold uppercase tracking-wider">
+                      Year
+                      <button
                         onClick={() => setShowYearDropdown(!showYearDropdown)}
                         className="ml-2 text-white"
                       >
-                        {showYearDropdown? <FaChevronUp /> : <FaChevronDown />}
+                        {showYearDropdown ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
-                      {showYearDropdown && (
+                      {showYearDropdown &&
                         <div className="absolute mt-5 bg-white border h-[74px] overflow-y-auto custom-scrollbar rounded shadow-lg">
                           <button
                             onClick={() => handleFilterChange("year", "")}
@@ -297,7 +313,7 @@ const TableComponent = () => {
                           >
                             All
                           </button>
-                          {yearOptions.map(year => (
+                          {yearOptions.map(year =>
                             <button
                               key={year}
                               onClick={() => handleFilterChange("year", year)}
@@ -305,78 +321,78 @@ const TableComponent = () => {
                             >
                               {year}
                             </button>
-                          ))}
-                          
-                        </div>
-                      )}
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                    Captain
-                  </th>
-                  <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
-                    Vice Captain
-                  </th>
-                  <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-                <tr className=" h-2"></tr>
-              </thead>
-              <tbody className=" divide-y-2 divide-gray-300">
-              {paginatedData && paginatedData.length === 0 ? (
-                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={5} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
-                      There is no data available
-                  </td>
+                          )}
+                        </div>}
+                    </th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                      Captain
+                    </th>
+                    <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
+                      Vice Captain
+                    </th>
+                    <th className="py-3 px-4 lg:rounded-r-lg text-left text-xs font-semibold uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
-                  ):(
-                paginatedData.map((item,index) =>
-                  <tr
-                    key={item.teamId}
-                    className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
-                  >
-                    <td className="py-2 px-4 h-16 lg:rounded-l-lg whitespace-nowrap text-sm text-gray-800 font-bold">
-                      {item.under}
-                    </td>
-                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                      {item.year}
-                    </td>
-                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                      {item.captain}
-                    </td>
-                    <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                      {item.viceCaptain}
-                    </td>
-                    <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap items-center text-sm text-gray-600">
-                      <button
-                        onClick={() => handleEdit(item)}
-                        className="text-blue-500 hover:text-blue-600 transition-colors"
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                      {/* <button
+                  <tr className=" h-2" />
+                </thead>
+                <tbody className=" divide-y-2 divide-gray-300">
+                  {paginatedData && paginatedData.length === 0
+                    ? <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                        <td
+                          colSpan={5}
+                          className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm"
+                        >
+                          There is no data available
+                        </td>
+                      </tr>
+                    : paginatedData.map((item, index) =>
+                        <tr
+                          key={item.teamId}
+                          className=" hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle"
+                        >
+                          <td className="py-2 px-4 h-16 lg:rounded-l-lg whitespace-nowrap text-sm text-gray-800 font-bold">
+                            {item.under}
+                          </td>
+                          <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {item.year}
+                          </td>
+                          <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {item.captain}
+                          </td>
+                          <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {item.viceCaptain}
+                          </td>
+                          <td className="py-2 px-4 lg:rounded-r-lg space-x-2 h-16 whitespace-nowrap items-center text-sm text-gray-600">
+                            <button
+                              onClick={() => handleEdit(item)}
+                              className="text-blue-500 hover:text-blue-600 transition-colors"
+                              title="Edit"
+                            >
+                              <FaEdit />
+                            </button>
+                            {/* <button
                         onClick={() => handleDelete(item.teamId)}
                         className="text-red-500 hover:text-red-600 transition-colors"
                         title="Delete"
                       >
                         <FaTrash />
                       </button> */}
-                      <button
-                        onClick={() => handleViewMembers(item.teamId)}
-                        className="text-green-500 hover:text-green-600 transition-colors"
-                        title="Members"
-                      >
-                        <FaUsers />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                            <button
+                              onClick={() => handleViewMembers(item.teamId)}
+                              className="text-green-500 hover:text-green-600 transition-colors"
+                              title="Members"
+                            >
+                              <FaUsers />
+                            </button>
+                          </td>
+                        </tr>
+                      )}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-         <div className="flex justify-between w-[95%] items-center p-1 bg-white shadow-md rounded mt-1">
+          <div className="flex justify-between w-[95%] items-center p-1 bg-white shadow-md rounded mt-1">
             <button
               onClick={handlePrevPage}
               disabled={currentPage === 1}
@@ -398,63 +414,62 @@ const TableComponent = () => {
             </button>
           </div>
 
+          {/* Modal for adding new item */}
 
-         {/* Modal for adding new item */}
-
-        {showDeleteModal && (
-          <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
-            <div className="bg-white rounded-3xl shadow-lg lg:p-8 p-5">
-              <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
-              <p>Are you sure you want to delete this team?</p>
-              <div className="flex justify-end mt-4 space-x-2">
-                <button
-                  onClick={() => setShowDeleteModal(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDelete}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                >
-                  Confirm
-                </button>
+          {showDeleteModal &&
+            <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
+              <div className="bg-white rounded-3xl shadow-lg lg:p-8 p-5">
+                <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
+                <p>Are you sure you want to delete this team?</p>
+                <div className="flex justify-end mt-4 space-x-2">
+                  <button
+                    onClick={() => setShowDeleteModal(false)}
+                    className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                  >
+                    Confirm
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-        {isModalOpen &&
-          <AddNewModal
-            onClose={handleAddFormClose}
-            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
-          />}
+            </div>}
+          {isModalOpen &&
+            <AddNewModal
+              onClose={handleAddFormClose}
+              isSubmitted={() => setIsSubmitted(!isSubmitted)}
+            />}
 
-         {/* Edit Modal  */}
+          {/* Edit Modal  */}
 
-        {isEditModalOpen &&
-          editItem &&
-          <EditModal
-            team={editItem}
-            onClose={handleEditFormClose}
-            isSubmitted={()=>setIsSubmitted(!isSubmitted)}
-          />}
+          {isEditModalOpen &&
+            editItem &&
+            <EditModal
+              team={editItem}
+              onClose={handleEditFormClose}
+              isSubmitted={() => setIsSubmitted(!isSubmitted)}
+            />}
           {isTeamMembersOpen &&
-          teamId &&
-          <TeamMembers
-            teamId={teamId}
-            onClose={() => setIsTeamMembersOpen(false)}
-           
-          />}
+            teamId &&
+            <TeamMembers
+              teamId={teamId}
+              onClose={() => setIsTeamMembersOpen(false)}
+            />}
         </div>
-        {uploading && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
-              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
-            </div>
-          )}
+        {uploading &&
+          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+            <img
+              src={ball}
+              alt="Loading..."
+              className="w-20 h-20 bg-transparent"
+            />
+          </div>}
       </div>
     </div>
   );
 };
-
 
 export default TableComponent;

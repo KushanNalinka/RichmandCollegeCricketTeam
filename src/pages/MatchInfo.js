@@ -1238,6 +1238,7 @@ import TopLayer from '../components/TopLayer';
 import topImage from '../assets/images/BG3.png';
 import Upcoming from '../components/Upcoming';
 import Footer from '../components/Footer';
+import ScorecardDataPopup from '../components/ScoreCardDataPopup';
 
 export default function MatchInfo() {
   const [matchDataList, setMatchDataList] = useState([]);
@@ -1249,6 +1250,8 @@ export default function MatchInfo() {
   const [activeButton, setActiveButton] = useState('Latest');
   const [showUpcoming, setShowUpcoming] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isScoreCardOpened, setIsScoreCardOpened] = useState(false);
+  const [scoreCardData, setScoreCardData] = useState(null);
   const matchesPerPage = 5;
   const API_URL = process.env.REACT_APP_API_URL;
   const accessToken = localStorage.getItem('accessToken');
@@ -1292,6 +1295,22 @@ export default function MatchInfo() {
         const uniqueAgeGroups = Array.from(
           new Set(data.map((match) => `${match.under}-${match.teamYear}`))
         );
+
+         // Sorting logic for age groups
+      const sortedAgeGroups = uniqueAgeGroups.sort((a, b) => {
+        const regex = /(\D*)(\d+)?-(\d+)/; // Matches "Under", number, and year
+        const [, labelA, numA, yearA] = a.match(regex);
+        const [, labelB, numB, yearB] = b.match(regex);
+
+        // Sort alphabetically by label (e.g., "Under", "Academy Under")
+        if (labelA !== labelB) return labelA.localeCompare(labelB);
+
+        // Sort numerically by age group number (e.g., "11", "13")
+        if (numA && numB && numA !== numB) return parseInt(numA) - parseInt(numB);
+
+        // Sort by year in descending order
+        return parseInt(yearB) - parseInt(yearA);
+      });
         const uniqueMatchTypes = Array.from(new Set(data.map((match) => match.type)));
   
         // Set the state with the extracted unique values
@@ -1401,9 +1420,8 @@ export default function MatchInfo() {
 
   const handleMatchCentreClick = (match) => {
     const richmondLogo = require('../assets/images/LOGO.png');
-  
-    navigate('/scorecard', {
-      state: {
+    console.log("taken")
+    const data = {
         match: {
           matchId: match.matchId,
           type: match.type,
@@ -1437,8 +1455,9 @@ export default function MatchInfo() {
               : match.oppositionOvers,
           }
         ]
-      }
-    });
+    };
+    setScoreCardData(data);
+    setIsScoreCardOpened(true);
   };
 
   // Adjust handlePageChange to prevent unnecessary re-renders or state resets
@@ -1678,8 +1697,16 @@ const handlePageChange = (page)  =>
 </button>
 </div>
 )}
-
+{/* Match score card popup */}
+{isScoreCardOpened &&
+            <ScorecardDataPopup
+              data={scoreCardData}
+              onClose={()=> setIsScoreCardOpened(false)}
+            />
+          }
 </div>
+
+
 
 
 {/*       

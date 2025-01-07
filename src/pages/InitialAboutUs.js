@@ -127,7 +127,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/InitialNavbar';
-import Footer from '../components/Footer';
+import InitialFooter from '../components/InitialFooter';
 import '../index.css';
 import topImageDesktop from '../assets/images/IMG5.png'; // Desktop image
 import topImageMobile from '../assets/images/MB1.png'; 
@@ -273,7 +273,7 @@ h
   </div>
 </div>
       {/* Footer */}
-      <Footer />
+      <InitialFooter />
     </div>
     </div>
   );

@@ -6,11 +6,10 @@ import flag from "../assets/images/backDrop3.png";
 import logo from "../assets/images/RLogo.png";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import NavbarToggleMenu from "../components/NavbarToggleMenu";
-import { message, Alert, Button, Layout, Input, DatePicker } from "antd";
+import { message, DatePicker } from "antd";
 import { storage } from "../config/firebaseConfig"; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import { FaEye } from "react-icons/fa";
-import { FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
 import { GiClick } from "react-icons/gi";
@@ -20,10 +19,8 @@ import { CalendarOutlined } from "@ant-design/icons";
 import relativeTime from "dayjs/plugin/relativeTime"; // To use time from now feature
 import NewsPreview from "../components/NewsPreview";
 import MainNavbarToggle from "../components/MainNavBarToggle";
-
 import ReactQuill from "react-quill"; // Import the rich-text editor
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import { Color } from "antd/es/color-picker";
 
 dayjs.extend(relativeTime);
 
@@ -32,18 +29,13 @@ const NewsCreator = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [imageIds, setImageIds] = useState([]);
-  const [imageURLs, setImageURLs] = useState([]);
-  const [isImageAdded, setIsImageAdded] = useState(false);
   const [isEditPressed, setIsEditPressed] = useState(false);
   const [isShowmorePressed, setIsShowmorePressed] = useState(false);
   const [isViewPressed, setIsViewPressed] = useState(false);
   const [keyViewPressed, setKeyViewPressed] = useState(null);
   const [currentNewsId, setCurrentNewsId] = useState();
   const [currentNews, setCurrentNews] = useState();
-  const [isEditImage, setIsEditImage] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showImageDeleteModal, setShowImageDeleteModal] = useState(false);
   const [errors, setErrors] = useState({});
@@ -55,11 +47,6 @@ const NewsCreator = () => {
   const [searchHeading, setSearchHeading] = useState(""); // State for heading search
   const [searchDate,setSearchDate] = useState("");
   const [isDragging, setIsDragging] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null); 
-    
- 
-
-const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
 
   const [formData, setFormData] = useState({
     heading: "",
@@ -138,9 +125,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
     }));
     if (files) {
       const selectedFiles = Array.from(files);
-      // const previewUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-      // setImageFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-      // setImagePreviews((prevPreviews) => [...prevPreviews, ...previewUrls]);
       const validationErrors = selectedFiles.map(file => validateImageFile(file)).filter(Boolean);
 
     if (validationErrors.length > 0) {
@@ -247,7 +231,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
       formDataToSend.append("newsData", JSON.stringify(newsData));
 
       // Append image file
-      //formDataToSend.append("images", images);
       imageFiles.forEach((file) => {
         formDataToSend.append("images", file);
       });
@@ -279,10 +262,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
       setImagePreviews([]);
       setImageFiles([]);
       loadNews();
-      // setIsSubmitted(!isSubmitted);      
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
     } catch (error) {
       console.error("Error submitting form:", error);
        if (error.response && error.response.data && error.response.data.message) {
@@ -465,9 +444,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       loadNews();
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
       
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -767,19 +743,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
                         />
                         {errors.author && <p className="text-red-500 text-xs mt-1">{errors.author}</p>}
                       </div>
-                      {/* <div className=" col-span-1">
-                        <label htmlFor="dateTime" className="block text-black text-sm w-full font-semibold">Date</label>
-                        <input
-                          type="datetime-local"
-                          id="dateTime"
-                          name="dateTime"
-                          value={formData.dateTime}
-                          onChange={handleChange}
-                          placeholder="Date"
-                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-                        />
-                        {errors.dateTime && <p className="text-red-500 text-xs mt-1">{errors.dateTime}</p>}
-                      </div> */}
                     <div className="col-span-1 md:col-span-2">
                       <label htmlFor="heading" className="block text-black text-sm font-semibold">Heading</label>
                       <input
@@ -822,53 +785,11 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
                       }}
                       theme="snow"
                     />
-                      {/* <textarea
-                        type="Form"
-                        id="body"
-                        name="body"
-                        value={formData.body}
-                        onChange={handleChange}
-                        className="bg-gray-50 border custom-scrollbar border-gray-300 text-gray-600 text-sm rounded-md block w-full h-32 px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-                        placeholder="......"
-                        height="Auto"
-                        required
-                      /> */}
                       {errors.body && <p className="text-red-500 text-xs mt-1">{errors.body}</p>}
                       </div>
                       <div className="col-span-1 md:col-span-2">
                         <label htmlFor="imageUrl" className="block text-black text-sm font-semibold">Upload Images for carousel</label>
-                        {/* <input
-                          id="imageUrl"
-                          type="file"
-                          name="imageUrl"
-                          accept="image/*"
-                          onChange={handleChange}
-                          multiple
-
-                          className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block w-full px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-                        />
-                        {errors.imageUrl && <p className="text-red-500 text-xs mt-1">{errors.imageUrl}</p>}
-                          {imagePreviews.map((image,index)=>(
-                            <div className="flex flex-col relative">
-
-                            <img
-                              key={index}
-                              src={image}
-                              alt="Preview"
-
-                              className="mt-4 w-full max-h-[40vh] object-contain border border-gray-300"
-                          />
-                             <button
-                              type="button"
-                              title="Remove"
-                              onClick={() => handleImageRemove(index)}
-                              className="right-0 absolute bottom-0 self-end p-2 justify-end items-end text-[red]"
-                            >
-                              <FaTrash />
-                            </button>
-                            </div>
-                          ))
-                        } */}
+                       
                       <div
                         className={`w-full px-3 py-4 border rounded-md ${
                           isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
@@ -963,7 +884,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
                               <div className="flex rounded w-20 h-20 p-1">
                                 <img
                                   className="w-full h-full rounded-lg object-cover"
-                                  //src={news.images && news.images[0]?.imageUrl}
                                   src={`${`http://rcc.dockyardsoftware.com/images/${ news.images? news.images[0]?.imageUrl.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
                                 />
                               </div>
@@ -1008,15 +928,6 @@ const [searchAuthor, setSearchAuthor] = useState(""); // State for author search
                         </React.Fragment>
                       ))}
                   </div>
-                  {/* <div className="my-3">
-                    <button
-                      type="button"
-                      onClick={toggleShowmore}
-                      className="relative bg-gradient-to-r from-[#00175f] to-[#480D35] text-white px-4 py-2 w-full rounded-md before:absolute before:inset-0 before:bg-white/10 hover:before:bg-black/0 before:rounded-md before:pointer-events-none"
-                    >
-                      {!isShowmorePressed ? "Show More" : "Show Less"}
-                    </button>
-                  </div> */}
                 </div>
               </div>
             </div>

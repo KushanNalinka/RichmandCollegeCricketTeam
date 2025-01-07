@@ -4,12 +4,9 @@ import axios from "axios";
 import MemberNavbar from '../components/MemberNavbar';
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
-import image from "../assets/images/kusal.png";
 import Footer from '../components/Footer';
 import { message } from 'antd';
-import { FaEye } from "react-icons/fa";
 import { FaXmark } from "react-icons/fa6";
-//import { useAuth } from "../hooks/UseAuth";
 
 const PlayerProfile = () => {
   const [playerProfile, setPlayerProfile] = useState(null);
@@ -153,10 +150,6 @@ const PlayerProfile = () => {
         };
 
         acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
-
-        // const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
-        // acc.bestValue = Math.min(acc.bestValue, currentAverage);
-         // Update the best value based on max wickets
         if (
           stat.wickets > acc.bestWickets ||
           (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)
@@ -225,9 +218,6 @@ const PlayerProfile = () => {
         ? (summary.runsConceded / summary.overs).toFixed(2)
         : 0;
 
-    // summary.bestValue =
-    //   summary.bestValue === Infinity ? 0 : summary.bestValue.toFixed(2);
-    // Format the best value as "wickets/runsConceded"
     summary.bestValue =
     summary.bestWickets > 0
       ? `${summary.bestWickets}/${summary.bestRunsConceded}`
@@ -283,9 +273,9 @@ const PlayerProfile = () => {
                 border: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
-             {/* <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
+              <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
                 Player Profile
-              </h1>*/} 
+              </h1>
               <div
                 className="flex justify-center items-center w-full rounded-xl h-36 px-10 mb-6"
                 style={{

@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { FaEdit, FaTrash, FaPlus, FaClipboardList, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import {
+  FaEdit,
+  FaPlus,
+  FaClipboardList,
+  FaChevronDown,
+  FaChevronUp
+} from "react-icons/fa";
 import { message } from "antd";
 import { Link } from "react-router-dom";
-import MatchStatPopup from "../components/MatchStatPopUp.js"; // Import the new popup component
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import EditPopup from "../components/EditMatchDetailPopup.js"; // Import the EditPopup component
-import FormPopup from "../components/MatchFormPopUp.js"; // Import the new FormPopup component
+import MatchStatPopup from "../components/MatchStatPopUp.js";
+import { useNavigate } from "react-router-dom";
+import EditPopup from "../components/EditMatchDetailPopup.js";
+import FormPopup from "../components/MatchFormPopUp.js";
 import { GrLinkNext } from "react-icons/gr";
 import { MdAssignmentAdd } from "react-icons/md";
 import { GrLinkPrevious } from "react-icons/gr";
@@ -14,10 +20,8 @@ import flag from "../assets/images/backDrop3.png";
 import Navbar from "../components/Navbar.js";
 import NavbarToggleMenu from "../components/NavbarToggleMenu.js";
 import MainNavbarToggle from "../components/MainNavBarToggle";
-import HomeNavbar from "../components/HomeNavbar.js";
 import ball from "../assets/images/CricketBall-unscreen.gif";
 import ScoreCardPopup from "../components/ScoreCardPopup.js";
-import PlayerFormPopup from "../components/ScoreCardPopup.js";
 import logo from "../assets/images/RLogo.png";
 import ScoreCardAIModel from "../components/ScoreCardAIModel.js";
 import { IoIosSearch } from "react-icons/io";
@@ -31,7 +35,6 @@ const MatchDetails = () => {
   const [matchType, setMatchType] = useState(null);
   const [matchDate, setMatchDate] = useState(null);
   const [currentMatch, setCurrentMatch] = useState(null);
-  const navigate = useNavigate();
   const [currentMatchIndex, setCurrentMatchIndex] = useState(null);
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); // State for Edit Popup
   const [isFormPopupOpen, setIsFormPopupOpen] = useState(false); // State for Form Popup
@@ -47,7 +50,7 @@ const MatchDetails = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem("accessToken");
   const [filteredMatches, setFilteredsortedMatches] = useState([]);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTierDropdown, setShowTierDropdown] = useState(false);
@@ -56,79 +59,93 @@ const MatchDetails = () => {
   const [teamOptions, setTeamOptions] = useState([]);
   const [underOptions, setUnderOptions] = useState([]);
   const [yearOptions, setYearOptions] = useState([]);
-  const [filters, setFilters] = useState({ type: '', team: '' });
+  const [filters, setFilters] = useState({ type: "", team: "" });
   const [filteredTeamOptions, setFilteredTeamOptions] = useState([]);
 
-  const typeOptions = ["Test", "T20", "ODI"]
+  const typeOptions = ["Test", "T20", "ODI"];
 
-  const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
-    "Under 19","Academy Under 9","Academy Under 11", "Academy Under 13",
-    "Academy Under 15","Academy Under 17","Academy Under 19","Richmond Legend Over 50","Richmond Legend Over 40", "Old Boys"  ];
+  const teamUnder = [
+    "Under 9",
+    "Under 11",
+    "Under 13",
+    "Under 15",
+    "Under 17",
+    "Under 19",
+    "Academy Under 9",
+    "Academy Under 11",
+    "Academy Under 13",
+    "Academy Under 15",
+    "Academy Under 17",
+    "Academy Under 19",
+    "Richmond Legend Over 50",
+    "Richmond Legend Over 40",
+    "Old Boys"
+  ];
 
   const years = [];
   const currentYear = new Date().getFullYear();
   for (let i = currentYear; i >= 1990; i--) {
     years.push(i);
-  };
+  }
 
+  useEffect(
+    () => {
+      setUploading(true);
+      const fetchMatches = async () => {
+        try {
+          const response = await axios.get(`${API_URL}matches/all`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+              Accept: "application/json"
+            }
+          });
 
-  useEffect(() => {
-    setUploading(true);
-    const fetchMatches = async () => {
-      try {
+          // Sort matches by date in descending order so future dates come first
+          setUploading(false);
+          const sortedMatches = response.data.sort(
+            (a, b) => new Date(b.createdOn) - new Date(a.createdOn)
+          );
+          setMatches(sortedMatches);
 
-        const response = await axios.get(`${API_URL}matches/all`, { 
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        }}); // Update with your API endpoint
-        // Sort matches by date in descending order so future dates come first
-        setUploading(false);
-        const sortedMatches = response.data.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-        setMatches(sortedMatches);
+          setUnderOptions([
+            ...new Set(response.data.map(match => match.under))
+          ]);
+          setYearOptions([
+            ...new Set(response.data.map(match => match.teamYear))
+          ]);
 
-        // const uniqueTeams = [];
-        // years.forEach(year => {
-        //   teamUnder.forEach(team => {
-        //     uniqueTeams.push(`${team}-${year}`);
-        //   });
-        // });
-        // setTeamOptions(uniqueTeams);
-        // console.log(response.data);
+          updateRowsPerPage(); // Initial setup
+          window.addEventListener("resize", updateRowsPerPage);
+          return () => window.removeEventListener("resize", updateRowsPerPage);
+        } catch (error) {
+          console.error("Error fetching matches:", error);
+        }
+      };
 
-        setUnderOptions([...new Set(response.data.map(match => match.under))]);
-        setYearOptions([...new Set(response.data.map(match => match.teamYear))]);
-        
-        
-        updateRowsPerPage(); // Initial setup
-        window.addEventListener('resize', updateRowsPerPage);
-        return () => window.removeEventListener('resize', updateRowsPerPage);
+      fetchMatches();
+    },
+    [isSubmitted, isDeleted, API_URL]
+  );
 
-      } catch (error) {
-        console.error("Error fetching matches:", error);
-      }
-    };
-  
-    fetchMatches();
-
-  }, [isSubmitted, isDeleted, API_URL]);
-
-   // Generate Team Options with useMemo to avoid redundant calculations
-   const uniqueTeams = useMemo(() => {
-    const teams = [];
-    yearOptions.forEach(year => {
-      underOptions.forEach(under => {
-        teams.push(`${under}-${year}`);
+  // Generate Team Options with useMemo to avoid redundant calculations
+  const uniqueTeams = useMemo(
+    () => {
+      const teams = [];
+      yearOptions.forEach(year => {
+        underOptions.forEach(under => {
+          teams.push(`${under}-${year}`);
+        });
       });
-    });
 
-    return Array.from(new Set(teams)).sort((a, b) => {
-      const yearA = parseInt(a.split("-").pop(), 10);
-      const yearB = parseInt(b.split("-").pop(), 10);
-      return yearA - yearB;
-    });
-  }, [yearOptions, underOptions]);
+      return Array.from(new Set(teams)).sort((a, b) => {
+        const yearA = parseInt(a.split("-").pop(), 10);
+        const yearB = parseInt(b.split("-").pop(), 10);
+        return yearA - yearB;
+      });
+    },
+    [yearOptions, underOptions]
+  );
 
   const updateRowsPerPage = () => {
     const screenWidth = window.innerWidth;
@@ -136,25 +153,34 @@ const MatchDetails = () => {
 
     if (screenWidth >= 1440 && screenHeight >= 900) {
       setRowsPerPage(10); // Desktop screens
-    } else if (screenWidth >= 1024 && screenWidth < 1440 && screenHeight >= 600 && screenHeight < 900) {
+    } else if (
+      screenWidth >= 1024 &&
+      screenWidth < 1440 &&
+      screenHeight >= 600 &&
+      screenHeight < 900
+    ) {
       setRowsPerPage(8); // Laptop screens
     } else {
       setRowsPerPage(6); // Smaller screens (tablets, mobile)
     }
   };
 
-
-  useEffect(() => {
-    const filtered = matches.filter(match => {
-      return (
-        (filters.type ? match.type === filters.type : true) &&
-        (filters.team ? `${match.under}-${match.teamYear}` === filters.team : true) &&
-        (filters.tier ? match.tier === filters.tier : true)
-      );
-    });
-    setFilteredsortedMatches(filtered);
-    console.log("sorted matches: ", filters.team);
-  }, [filters, matches]);
+  useEffect(
+    () => {
+      const filtered = matches.filter(match => {
+        return (
+          (filters.type ? match.type === filters.type : true) &&
+          (filters.team
+            ? `${match.under}-${match.teamYear}` === filters.team
+            : true) &&
+          (filters.tier ? match.tier === filters.tier : true)
+        );
+      });
+      setFilteredsortedMatches(filtered);
+      console.log("sorted matches: ", filters.team);
+    },
+    [filters, matches]
+  );
 
   const handleFilterChange = (name, value) => {
     setFilters({ ...filters, [name]: value });
@@ -164,7 +190,6 @@ const MatchDetails = () => {
   };
 
   const totalPages = Math.ceil(filteredMatches.length / rowsPerPage);
-
 
   // Slice data for current page
   const paginatedData = filteredMatches.slice(
@@ -191,8 +216,7 @@ const MatchDetails = () => {
   };
 
   const handleDelete = id => {
-    setMatchToDelete(id)
-;
+    setMatchToDelete(id);
     setShowDeleteModal(true); // Show confirmation modal
   };
 
@@ -200,23 +224,26 @@ const MatchDetails = () => {
     setUploading(true);
     try {
       const deleteMatch = await axios.delete(
-        `${API_URL}matches/delete/${matchToDelete}`, { 
+        `${API_URL}matches/delete/${matchToDelete}`,
+        {
           headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        }}
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          }
+        }
       );
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
     } catch (error) {
       console.error("Error deleting match:", error);
 
-      if (error.response && error.response.data && error.response.data.message) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
         message.error(`Failed to delete: ${error.response.data.message}`);
       } else {
         message.error("An unexpected error occurred. Please try again later.");
@@ -230,10 +257,12 @@ const MatchDetails = () => {
     const currentDateTime = new Date();
     const matchDateTime = new Date(`${match.date}T${match.time}`);
 
-    if(matchDateTime>currentDateTime){
+    if (matchDateTime > currentDateTime) {
       message.error({
-        content: "This match is scheduled for a future date. Match summary cannot be added at this time.",
-        duration: 10,});
+        content:
+          "This match is scheduled for a future date. Match summary cannot be added at this time.",
+        duration: 10
+      });
       return;
     }
     setMatchId(match.matchId);
@@ -246,10 +275,12 @@ const MatchDetails = () => {
     const currentDateTime = new Date();
     const matchDateTime = new Date(`${match.date}T${match.time}`);
 
-    if(matchDateTime>currentDateTime){
+    if (matchDateTime > currentDateTime) {
       message.error({
-        content: "This match is scheduled for a future date. Player stats cannot be added at this time.",
-        duration: 10,});
+        content:
+          "This match is scheduled for a future date. Player stats cannot be added at this time.",
+        duration: 10
+      });
       return;
     }
     setMatchType(match.type);
@@ -257,16 +288,10 @@ const MatchDetails = () => {
     setTeamId(match.teamId);
     setMatchOpponent(match.opposition);
     setMatchType(match.type);
-    // navigate(`/scorecard/${matchId}`);
     setIsScorePopupOpen(true);
     setMatchDate(match.date);
-    //setChoiseModelOpen(true);
   };
-  const handleFormSubmit = playerData => {
-    // Add matchId to player data and update the players state
-    // setPlayers([...players, { ...playerData, matchId }]);
-    //handleFormClose();
-  };
+ 
   const handleEditPopupSubmit = updatedMatchData => {
     const updatedMatches = matches.map(
       (match, index) => (index === currentMatchIndex ? updatedMatchData : match)
@@ -279,35 +304,24 @@ const MatchDetails = () => {
   const handleAddPopupClose = () => {
     setIsFormPopupOpen(false);
     setCurrentMatchIndex(null);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
 
   const handlePopupClose = () => {
     setIsPopupOpen(false);
     setCurrentMatchIndex(null);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
   const handleScorePopupAIOpen = () => {
     setIsScorePopupAIOpen(true);
     setChoiseModelOpen(false);
-   
   };
   const handleScorePopupOpen = () => {
     setIsScorePopupOpen(true);
     setChoiseModelOpen(false);
-   
   };
 
   const handleEditPopupClose = () => {
     setIsEditPopupOpen(false);
     setCurrentMatch(null);
-    // setTimeout(() => {
-    //   window.location.reload();
-    // }, 1500);
   };
 
   const handleScorePopupClose = () => {
@@ -328,29 +342,33 @@ const MatchDetails = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const formatTimeToAMPM = (time) => {
-    const [hours, minutes] = time.split(':');
-    let period = 'AM';
+  const formatTimeToAMPM = time => {
+    const [hours, minutes] = time.split(":");
+    let period = "AM";
     let hour = parseInt(hours);
-  
+
     if (hour >= 12) {
-      period = 'PM';
+      period = "PM";
       if (hour > 12) hour -= 12;
     } else if (hour === 0) {
       hour = 12;
     }
-  
+
     return `${hour}:${minutes} ${period}`;
   };
 
-    // Update Team Options
-    useEffect(() => {
+  // Update Team Options
+  useEffect(
+    () => {
       setTeamOptions(uniqueTeams);
       setFilteredTeamOptions(uniqueTeams); // Initialize filtered options
-    }, [uniqueTeams]);
-  
-    // Debounce Search Logic
-    useEffect(() => {
+    },
+    [uniqueTeams]
+  );
+
+  // Debounce Search Logic
+  useEffect(
+    () => {
       const timeout = setTimeout(() => {
         if (searchingTeams) {
           setFilteredTeamOptions(
@@ -362,9 +380,11 @@ const MatchDetails = () => {
           setFilteredTeamOptions(teamOptions);
         }
       }, 300);
-  
+
       return () => clearTimeout(timeout); // Cleanup timeout
-    }, [searchingTeams, teamOptions]);
+    },
+    [searchingTeams, teamOptions]
+  );
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
@@ -383,8 +403,8 @@ const MatchDetails = () => {
           <div className="flex justify-between w-full lg:px-10 pt-3">
             <Link to={"/member"}>
               <img src={logo} className="h-12 w-12" />
-            </Link >
-            <MainNavbarToggle/>
+            </Link>
+            <MainNavbarToggle />
           </div>
           <div
             className=" lg:w-[95%] h-full w-[100%] bg-gray-200 lg:px-5 p-5 rounded-lg shadow-lg"
@@ -403,39 +423,43 @@ const MatchDetails = () => {
                 <div className=" hidden md:flex text-gray-600 border bg-white border-gray-300 px-3 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
                   <input
                     type="text"
-                    onChange={(e)=>setSearchingTeams(e.target.value)}
+                    onChange={e => setSearchingTeams(e.target.value)}
                     className="border-0 py-1 px-5 w-[90%]  cursor-pointer focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                    placeholder='Choose a team'
-                    onClick={() => setShowTeamDropdown(!showTeamDropdown)} 
+                    placeholder="Choose a team"
+                    onClick={() => setShowTeamDropdown(!showTeamDropdown)}
                   />
                   <button
                     type="button"
                     className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
                     //onClick={handleSearchChange}
-                    >
+                  >
                     <IoIosSearch />
                   </button>
-                      {showTeamDropdown && (
-                  <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
-                    <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                      All
-                    </button>
-                    {filteredTeamOptions.map(team => ( // Use 'team' as the map parameter here
+                  {showTeamDropdown &&
+                    <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
                       <button
-                        key={team}
-                        onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                        onClick={() => handleFilterChange("team", "")}
                         className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
                       >
-                        {team}
+                        All
                       </button>
-                    ))}
-                  </div>
-                  )}
+                      {filteredTeamOptions.map((
+                        team // Use 'team' as the map parameter here
+                      ) =>
+                        <button
+                          key={team}
+                          onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                          className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                        >
+                          {team}
+                        </button>
+                      )}
+                    </div>}
                 </div>
                 <button
-                title="Add New"
-                onClick={() => setIsFormPopupOpen(true)}
-                className="bg-green-500 hover:bg-green-600 rounded-full p-1 text-white text-lg lg:text-2xl"
+                  title="Add New"
+                  onClick={() => setIsFormPopupOpen(true)}
+                  className="bg-green-500 hover:bg-green-600 rounded-full p-1 text-white text-lg lg:text-2xl"
                 >
                   <FaPlus />
                 </button>
@@ -445,34 +469,38 @@ const MatchDetails = () => {
               <div className="flex text-gray-600 border bg-white border-gray-300 px-1 rounded-3xl focus-within:ring-1 focus-within:ring-[#00175f] focus-within:outline-none">
                 <input
                   type="text"
-                  onChange={(e)=>setSearchingTeams(e.target.value)}
+                  onChange={e => setSearchingTeams(e.target.value)}
                   className="border-0 py-1 px-5 w-[90%]  cursor-pointer rounded-3xl focus-within:ring-0 focus-within:ring-transparent focus-within:outline-none text-gray-600"
-                  placeholder='Choose a team'
-                  onClick={() => setShowTeamDropdown(!showTeamDropdown)} 
+                  placeholder="Choose a team"
+                  onClick={() => setShowTeamDropdown(!showTeamDropdown)}
                 />
                 <button
                   type="button"
                   className="flex items-center w-[10%] justify-center text-gray-500 hover:text-gray-700 rounded-md"
                   //onClick={handleSearchChange}
-                  >
+                >
                   <IoIosSearch />
                 </button>
-                    {showTeamDropdown && (
-                <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
-                  <button onClick={() => handleFilterChange("team", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                    All
-                  </button>
-                  {filteredTeamOptions.map(team => ( // Use 'team' as the map parameter here
+                {showTeamDropdown &&
+                  <div className="absolute mt-8 h-80 hover:overflow-auto overflow-hidden bg-white border rounded shadow-lg z-50">
                     <button
-                      key={team}
-                      onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                      onClick={() => handleFilterChange("team", "")}
                       className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
                     >
-                      {team}
+                      All
                     </button>
-                  ))}
-                </div>
-                )}
+                    {filteredTeamOptions.map((
+                      team // Use 'team' as the map parameter here
+                    ) =>
+                      <button
+                        key={team}
+                        onClick={() => handleFilterChange("team", team)} // Use 'team' here as well
+                        className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                      >
+                        {team}
+                      </button>
+                    )}
+                  </div>}
               </div>
             </div>
             <div className="flex overflow-x-auto">
@@ -493,23 +521,33 @@ const MatchDetails = () => {
                     </th>
                     <th className=" relative py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Tier
-                      <button onClick={() => setShowTierDropdown(!showTierDropdown)} className="ml-2">
-                        {showTierDropdown?<FaChevronUp />:<FaChevronDown />}
+                      <button
+                        onClick={() => setShowTierDropdown(!showTierDropdown)}
+                        className="ml-2"
+                      >
+                        {showTierDropdown ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
-                      {showTierDropdown && (
+                      {showTierDropdown &&
                         <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-2 bg-white border rounded shadow-lg z-50">
-                          <button onClick={() => handleFilterChange("tier", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                          <button
+                            onClick={() => handleFilterChange("tier", "")}
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
                             All
                           </button>
-                            <button onClick={() => handleFilterChange("tier",  "Tier A")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
-                             Tier A
-                            </button>
-                            <button onClick={() => handleFilterChange("tier", "Tier B")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
-                            >
-                             Tier B
-                            </button>
-                        </div>
-                      )}
+                          <button
+                            onClick={() => handleFilterChange("tier", "Tier A")}
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
+                            Tier A
+                          </button>
+                          <button
+                            onClick={() => handleFilterChange("tier", "Tier B")}
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
+                            Tier B
+                          </button>
+                        </div>}
                     </th>
                     <th className="py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Division
@@ -519,15 +557,21 @@ const MatchDetails = () => {
                     </th>
                     <th className=" relative py-3 px-4 text-left flex text-xs font-semibold uppercase tracking-wider">
                       Type
-                      <button onClick={() => setShowTypeDropdown(!showTypeDropdown)} className="ml-2">
-                        {showTypeDropdown?<FaChevronUp />:<FaChevronDown />}
+                      <button
+                        onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                        className="ml-2"
+                      >
+                        {showTypeDropdown ? <FaChevronUp /> : <FaChevronDown />}
                       </button>
-                      {showTypeDropdown && (
+                      {showTypeDropdown &&
                         <div className="absolute h-[74px] overflow-auto custom-scrollbar mt-5 bg-white border rounded shadow-lg z-50">
-                          <button onClick={() => handleFilterChange("type", "")} className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200">
+                          <button
+                            onClick={() => handleFilterChange("type", "")}
+                            className="block px-4 py-2 w-full text-start text-sm text-gray-700 hover:bg-gray-200"
+                          >
                             All
                           </button>
-                          {typeOptions.map(type => (
+                          {typeOptions.map(type =>
                             <button
                               key={type}
                               onClick={() => handleFilterChange("type", type)}
@@ -535,132 +579,138 @@ const MatchDetails = () => {
                             >
                               {type}
                             </button>
-                          ))}
-                        </div>
-                      )}
+                          )}
+                        </div>}
                     </th>
                     <th className=" relative py-3 px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Team
-                  </th>
+                    </th>
                     <th className="py-3 lg:rounded-r-lg px-4 text-left text-xs font-semibold uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
-                  <tr className=" h-2"></tr>
+                  <tr className=" h-2" />
                 </thead>
-                <tbody  className="divide-y-2 divide-gray-300" >
-                {paginatedData && paginatedData.length === 0 ? (
-                  <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
-                  <td colSpan={10} className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm">
-                      There is no data available
-                  </td>
-                  </tr>
-                  ):(
-                  paginatedData.map((match, index) =>
-                    <tr
-                      key={match.matchId}
-                      className=" hover:bg-gray-50 h-[64px] lg:rounded-lg bg-white align-middle"
-                    >
-                      <td className="gap-4 px-4 lg:rounded-l-lg py-2 h-16 items-center text-wrap justify-start text-sm font-bold text-gray-900">
-                        <div className="flex items-center justify-start gap-2 ">
-                          <img
-                            //src={`${match.logo}?cacheBust=${Date.now()}`}
-                            src={`${`http://rcc.dockyardsoftware.com/images/${ match.logo ? match.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`}
-                            alt={match.matchId}
-                            className="h-12 w-12 rounded-full object-cover border border-gray-300"
-                          />
-                           {/* Use truncate or text wrapping for small screens  */}
-                          <span className="truncate whitespace-nowrap">
-                            {match.opposition}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
-                        {match.date}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {formatTimeToAMPM(match.time)}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.venue}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.tier}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.division}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.umpires}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.type}
-                      </td>
-                      <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
-                        {match.under} - {match.teamYear}
-                      </td>
+                <tbody className="divide-y-2 divide-gray-300">
+                  {paginatedData && paginatedData.length === 0
+                    ? <tr className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900">
+                        <td
+                          colSpan={10}
+                          className="px-4 py-4 h-20 lg:rounded-lg text-center  whitespace-nowrap text-sm"
+                        >
+                          There is no data available
+                        </td>
+                      </tr>
+                    : paginatedData.map((match, index) =>
+                        <tr
+                          key={match.matchId}
+                          className=" hover:bg-gray-50 h-[64px] lg:rounded-lg bg-white align-middle"
+                        >
+                          <td className="gap-4 px-4 lg:rounded-l-lg py-2 h-16 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                            <div className="flex items-center justify-start gap-2 ">
+                              <img
+                                //src={`${match.logo}?cacheBust=${Date.now()}`}
+                                src={`${`http://rcc.dockyardsoftware.com/images/${match.logo
+                                  ? match.logo.split("/").pop()
+                                  : "default.jpg"}`}?cacheBust=${Date.now()}`}
+                                alt={match.matchId}
+                                className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                              />
+                              {/* Use truncate or text wrapping for small screens  */}
+                              <span className="truncate whitespace-nowrap">
+                                {match.opposition}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-2 px-4 h-16 whitespace-nowrap text-sm text-gray-600 ">
+                            {match.date}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {formatTimeToAMPM(match.time)}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.venue}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.tier}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.division}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.umpires}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.type}
+                          </td>
+                          <td className="py-4 px-4 h-16 whitespace-nowrap text-sm text-gray-600">
+                            {match.under} - {match.teamYear}
+                          </td>
 
-                      <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 items-center whitespace-nowrap text-sm text-gray-600">
-
-                        <button
-                          title="Edit"
-                          onClick={() => handleEdit(match)}
-                          className=" text-green-500 hover:text-green-600"
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          onClick={() => handleAddStat(match)}
-                          title="Add match stats"
-                          className="text-yellow-500 hover:text-yellow-600"
-                        >
-                          <FaClipboardList />
-                        </button>
-                        <button
-                          title="Add Score"
-                          onClick={() => handleAddScoreCard(match)}
-                          className=" text-blue-500 hover:text-blue-600"
-                        >
-                          <MdAssignmentAdd />
-                        </button>
-                        {/* <button
+                          <td className="py-4 px-4 lg:rounded-r-lg space-x-2 h-16 items-center whitespace-nowrap text-sm text-gray-600">
+                            <button
+                              title="Edit"
+                              onClick={() => handleEdit(match)}
+                              className=" text-green-500 hover:text-green-600"
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              onClick={() => handleAddStat(match)}
+                              title="Add match stats"
+                              className="text-yellow-500 hover:text-yellow-600"
+                            >
+                              <FaClipboardList />
+                            </button>
+                            <button
+                              title="Add Score"
+                              onClick={() => handleAddScoreCard(match)}
+                              className=" text-blue-500 hover:text-blue-600"
+                            >
+                              <MdAssignmentAdd />
+                            </button>
+                            {/* <button
                           onClick={() => handleDelete(match.matchId)}
                           title="Delete"
                           className="text-red-500 hover:text-red-600"
                         >
                           <FaTrash />
                         </button> */}
-                      </td>
-                    </tr>
-                  ))}
+                          </td>
+                        </tr>
+                      )}
                 </tbody>
               </table>
             </div>
           </div>
           <div className="flex w-[95%] justify-between items-center mt-1 p-1 bg-white shadow-md rounded">
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkPrevious style={{ color: "#fff" }} />
-              </button>
+            <button
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkPrevious style={{ color: "#fff" }} />
+            </button>
 
-              <div className="text-sm font-semibold">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
-              >
-                <GrLinkNext style={{ color: "#fff" }} />
-              </button>
+            <div className="text-sm font-semibold">
+              Page {currentPage} of {totalPages}
             </div>
+
+            <button
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+              className="px-1 py-1 text-lg lg:text-2xl bg-green-500 hover:bg-green-600 rounded disabled:bg-gray-300"
+            >
+              <GrLinkNext style={{ color: "#fff" }} />
+            </button>
+          </div>
           {showDeleteModal &&
             <div className="fixed inset-0 flex justify-center items-center p-5 bg-gray-600 bg-opacity-75">
-              <div className={` ${uploading? "opacity-80": "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}>
+              <div
+                className={` ${uploading
+                  ? "opacity-80"
+                  : "bg-opacity-100"} bg-white rounded-3xl shadow-lg lg:p-8 p-5`}
+              >
                 <h3 className="text-lg font-bold mb-4">Confirm Deletion</h3>
                 <p>Are you sure you want to delete this match?</p>
                 <div className="flex justify-end mt-4 space-x-2">
@@ -717,19 +767,23 @@ const MatchDetails = () => {
 
           {/* Popup for Adding Form  */}
           {isFormPopupOpen &&
-            <FormPopup onClose={handleAddPopupClose} isSumitted={()=>setIsSubmitted(!isSubmitted)} />
-          }
-          {
-            isPopupOpen &&
+            <FormPopup
+              onClose={handleAddPopupClose}
+              isSumitted={() => setIsSubmitted(!isSubmitted)}
+            />}
+          {isPopupOpen &&
             <MatchStatPopup
               matchType={matchType}
               matchId={matchId}
               onClose={handlePopupClose}
-              isSubmitted={()=>setIsSubmitted(!isSubmitted)}
-            />
-          }
+              isSubmitted={() => setIsSubmitted(!isSubmitted)}
+            />}
           {isEditPopupOpen &&
-            <EditPopup onClose={handleEditPopupClose} match={currentMatch} isSubmitted={()=>setIsSubmitted(!isSubmitted)} />}
+            <EditPopup
+              onClose={handleEditPopupClose}
+              match={currentMatch}
+              isSubmitted={() => setIsSubmitted(!isSubmitted)}
+            />}
           {/* Player Form Popup */}
           {isScorePopupOpen &&
             <ScoreCardPopup
@@ -740,17 +794,20 @@ const MatchDetails = () => {
               teamId={teamId}
               date={matchDate}
             />}
-           {isScorePopupAIOpen &&
+          {isScorePopupAIOpen &&
             <ScoreCardAIModel
               onClose={handleScorePopupAIClose}
               matchId={matchId}
-            />} 
+            />}
         </div>
-        {uploading && (
-            <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
-              <img src={ball} alt="Loading..." className="w-20 h-20 bg-transparent" />
-            </div>
-            )}
+        {uploading &&
+          <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+            <img
+              src={ball}
+              alt="Loading..."
+              className="w-20 h-20 bg-transparent"
+            />
+          </div>}
       </div>
     </div>
   );

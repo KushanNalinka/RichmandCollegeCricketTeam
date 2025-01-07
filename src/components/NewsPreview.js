@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";  
@@ -6,10 +6,7 @@ dayjs.extend(relativeTime);
 
 const NewsPreview = ({ news, onClose }) => {
   const [selectedNews, setSelectedNews] = useState({ ...news });
-  const [isImageAdded, setIsImageAdded] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const API_URL = process.env.REACT_APP_API_URL;
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) =>
@@ -84,8 +81,7 @@ const NewsPreview = ({ news, onClose }) => {
                 </>
               )}
             </div>
-{/* 
-          {/ News Body /} */}
+          {/*News Body*/}
           <div className="text-gray-700 text-justify text-lg leading-relaxed mt-6 pb-5">
             <span
               dangerouslySetInnerHTML={{

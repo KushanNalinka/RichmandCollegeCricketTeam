@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
-import { FaEdit, FaTrash, FaPlus } from "react-icons/fa";
+import { FaTrash} from "react-icons/fa";
 import { message , DatePicker} from "antd";
 import dayjs from 'dayjs';
 
@@ -297,15 +297,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
             >
               Date
             </label>
-            {/* <input
-              type="date"
-              id="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
-            /> */}
+         
             <DatePicker
               name="date"
               dateFormat="yyyy-mm-dd"
@@ -330,6 +322,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               name="startTime"
               value={ convertTo24HourFormat(formData.startTime)}
               onChange={handleChange}
+              required
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
             />
              {errors.startTime && <p className="text-red-500 text-xs mt-1">{errors.startTime}</p>}
@@ -348,7 +341,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
               value={ convertTo24HourFormat(formData.endTime)}
               onChange={handleChange}
               className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-           
+              required
             />
              {errors.endTime && <p className="text-red-500 text-xs mt-1">{errors.endTime}</p>}
           </div>
@@ -376,6 +369,7 @@ const PracticeScheduleEditForm = ({ onClose,practiceSchedule,isSubmitted }) => {
                 value={formData.team.teamId || ""}
                 onChange={handleChange}
                 className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
+                required
                 >
                 <option value="" disabled>Select team</option>
                 {teams && teams.map(team =>

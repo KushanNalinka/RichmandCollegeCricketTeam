@@ -3,11 +3,8 @@ import MemberNavbar from '../components/MemberNavbar';
 import axios from "axios";
 import { message } from "antd";
 import { FaEdit, FaTrash, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import backgroundImage from "../assets/images/Score_table_back_Image.png";
-//import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
-import image from "../assets/images/coach.jpg";
 import { GrLinkNext } from "react-icons/gr";
 import { GrLinkPrevious } from "react-icons/gr";
 import ball from "../assets/images/CricketBall-unscreen.gif";
@@ -15,10 +12,8 @@ import PracticeScheduleForm from "../components/PracticeScheduleForm";
 import PracticeScheduleEditForm from "../components/PracticeScheduleEditForm";
 import Footer from '../components/Footer';
 import { FaXmark } from "react-icons/fa6";
-//import { useAuth } from "../hooks/UseAuth";
 
 const CoachProfile = () => {
- // const { user } = useAuth();
   const API_URL = process.env.REACT_APP_API_URL;
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,7 +34,7 @@ const CoachProfile = () => {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [showTeamDropdown, setShowTeamDropdown] = useState(false);
   const [teamOptions, setTeamOptions] = useState([]);
-    const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
+  const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
 
   const typeOptions = ["Bawling Practice","Batting Practice", "Fielding Practice"]
   const teamUnder = ["Under 9", "Under 11", "Under 13","Under 15","Under 17",
@@ -165,9 +160,6 @@ const CoachProfile = () => {
       message.success("Successfully Deleted!");
       setShowDeleteModal(false);
       setIsDeleted(!isDeleted);
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 1500);
     } catch (error) {
       console.error("Error deleting player:", error);
       if (error.response && error.response.data && error.response.data.message) {

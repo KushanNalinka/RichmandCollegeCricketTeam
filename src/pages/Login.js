@@ -522,16 +522,13 @@ const Login = () => {
     username: "",
     password: "",
   });
-
   const { loading, error, dispatch } = useContext(AuthContext);
   const {login} = useAuth();
-
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
   const accessToken1 = localStorage.getItem('accessToken');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const savedUserData = localStorage.getItem("rememberMeData") || sessionStorage.getItem("rememberMeData");
@@ -572,9 +569,7 @@ const Login = () => {
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
-
       console.log("Validation errors:", errors);
-
       return;
     } else {
       setValidationError({});
@@ -612,7 +607,7 @@ const Login = () => {
 
       if (roles.includes("ROLE_ADMIN")) {
         login("admin", userData);
-        navigate("/player");
+        navigate("/admin-player");
       } else if (roles.includes("ROLE_COACH")) {
         login("coach", userData);
         navigate("/member");
@@ -625,9 +620,7 @@ const Login = () => {
       } else {
         setError("Unknown role, please contact support.");
         return;
-      }
-
-      
+      }  
     } catch (err) {
       dispatch({ type: "LOGIN_FAILURE", payload: err.response });
       // Specific error handling for incorrect username or password
@@ -651,7 +644,6 @@ const Login = () => {
     }
   };
   
-
   return (
     <div className="flex min-h-screen">
       {/* {/ Left Section /} */}
@@ -705,7 +697,6 @@ const Login = () => {
             </div>
             <div className="flex justify-between items-center">
               <label className="inline-flex items-center">
-
                 <input
                   type="checkbox"
                   className="form-checkbox text-purple-500"
@@ -715,7 +706,6 @@ const Login = () => {
                     console.log("Remember Me changed:", e.target.checked);
                   }}
                 />
-
                 <span className="ml-2 text-sm text-gray-600">Remember Me</span>
               </label>
             </div>

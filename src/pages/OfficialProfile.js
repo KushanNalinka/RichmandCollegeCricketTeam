@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MemberNavbar from '../components/MemberNavbar';
-import backgroundImage from "../assets/images/Score_table_back_Image.png";
-import playersData from "./PlayersData";
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
-import image from "../assets/images/coach.jpg";
 import { FaUserCircle } from "react-icons/fa";
 import Footer from '../components/Footer';
-
 
 const OfficialProfile = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
   const [officialProfile, setOfficialProfile] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
+  
   useEffect(() => {
     console.log("userId O:", user.userId);
     const fetchData = async () => {

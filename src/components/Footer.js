@@ -428,7 +428,7 @@ const Footer = () => {
             </div>
 
             {/* Copyright */}
-            <div className="text-center text-gray-600 text-sm mt-4">
+            {/* <div className="text-center text-gray-600 text-sm mt-4">
               <p>© 2024 Richmond College</p>
             </div>
 
@@ -449,7 +449,7 @@ const Footer = () => {
       Sponsored By
     </button>
   </a>
-</div>
+</div> */}
 
 
 

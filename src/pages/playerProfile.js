@@ -4,10 +4,9 @@ import axios from "axios";
 import MemberNavbar from '../components/MemberNavbar';
 import back from "../assets/images/flag.png";
 import flag from "../assets/images/backDrop.png";
-import image from "../assets/images/kusal.png";
 import Footer from '../components/Footer';
 import { message } from 'antd';
-//import { useAuth } from "../hooks/UseAuth";
+import { FaXmark } from "react-icons/fa6";
 
 const PlayerProfile = () => {
   const [playerProfile, setPlayerProfile] = useState(null);
@@ -15,6 +14,7 @@ const PlayerProfile = () => {
   const [filterUnder, setFilterUnder] = useState("");
   const [filterYear, setFilterYear] = useState("");
   const [practiceSessions, setPracticeSessions] = useState([]);
+  const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
@@ -150,10 +150,6 @@ const PlayerProfile = () => {
         };
 
         acc.highestScore = Math.max(acc.highestScore, stat.runs) || 0;
-
-        // const currentAverage = stat.wickets > 0 ? stat.runsConceded / stat.wickets : Infinity;
-        // acc.bestValue = Math.min(acc.bestValue, currentAverage);
-         // Update the best value based on max wickets
         if (
           stat.wickets > acc.bestWickets ||
           (stat.wickets === acc.bestWickets && stat.runsConceded < acc.bestRunsConceded)
@@ -222,9 +218,6 @@ const PlayerProfile = () => {
         ? (summary.runsConceded / summary.overs).toFixed(2)
         : 0;
 
-    // summary.bestValue =
-    //   summary.bestValue === Infinity ? 0 : summary.bestValue.toFixed(2);
-    // Format the best value as "wickets/runsConceded"
     summary.bestValue =
     summary.bestWickets > 0
       ? `${summary.bestWickets}/${summary.bestRunsConceded}`
@@ -252,6 +245,10 @@ const PlayerProfile = () => {
     setFilterYear("");
   };
 
+  const togglePopup = () => {
+    setIsProfilePopupOpen(!isProfilePopupOpen);
+  };
+
 
   return (
     <>
@@ -276,9 +273,9 @@ const PlayerProfile = () => {
                 border: "1px solid rgba(255, 255, 255, 0.3)",
               }}
             >
-             {/* <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
+              <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
                 Player Profile
-              </h1>*/} 
+              </h1>
               <div
                 className="flex justify-center items-center w-full rounded-xl h-36 px-10 mb-6"
                 style={{
@@ -295,13 +292,17 @@ const PlayerProfile = () => {
                     )}
                   </div>
 
-                  {playerProfile && <img
-                    src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
-                    alt={playerProfile?.name}
-
-                    className="w-32 h-32 rounded-full object-cover border bg-white border-gray-300"
-                  />
+                  {playerProfile && 
+                  <div className="relative ">
+                      <img
+                        src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
+                        alt={playerProfile?.name}
+                        className=" flex w-32 h-32 rounded-full object-cover cursor-pointer border-2 bg-white border-gray-300 text-gray-400 hover:border-[#480D35]"
+                        onClick={togglePopup}
+                      />
+                   </div>
                    }
+                  
                   
                 </div>
                 
@@ -651,10 +652,26 @@ const PlayerProfile = () => {
                 </div>
               </div>
              </div>
-
-
           </div>
        <Footer />
+       {/* Popup Modal */}
+       {isProfilePopupOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+            <div className="relative bg-white rounded-lg p-4 shadow-lg">
+              <button
+                className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+                onClick={togglePopup} // Close the popup
+              >
+                <FaXmark/>
+              </button>
+              <img
+                  src={`http://rcc.dockyardsoftware.com/images/${ playerProfile.image ? playerProfile.image.split('/').pop() : 'default.jpg'}`}
+                  alt={playerProfile?.name}
+                className="w-full h-auto max-w-lg rounded-lg"
+              />
+            </div>
+          </div>
+        )}
        </>
 
 

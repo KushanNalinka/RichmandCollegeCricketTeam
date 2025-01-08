@@ -1,16 +1,14 @@
-import React, {useRef, useState, useEffect } from "react";
+import React, {useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { DatePicker, message, Spin } from "antd";
+import { DatePicker, message } from "antd";
 import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
-import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GiClick } from "react-icons/gi";
 
 const PlayerForm = ({  onClose, isSubmitted }) => {
-  const [isImageAdded, setIsImageAdded] = useState(false);
-  const [isEditImage, setIsEditImage] = useState(false);
   const API_URL = process.env.REACT_APP_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const accessToken = localStorage.getItem('accessToken');
@@ -134,11 +132,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
   const handleSubmit = async e => {
     console.log("Form data before submit: ", formData);
     e.preventDefault();
-    // if (!validateForm()) {
-    //   message.error("Please fix validation errors before submitting");
-    //   return;
-    // };
-
     const syncErrors = validateFormData(formData);
     const asyncErrors = await validateAsyncFormData(formData);
     const errors = { ...syncErrors, ...asyncErrors };
@@ -150,14 +143,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
     };
     setUploading(true);
       try {
-        
-      // let imageURL = formData.image;
-      
-      // // Upload image if an image file is added
-      // if (formData.image instanceof File) {
-      //   imageURL = await handleImageUpload(formData.image);
-      // }
-      
       const formDataToSend = new FormData();
       const { image, ...userData } = formData;
 
@@ -195,9 +180,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         });
         isSubmitted();
         setImagePreview();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
       } catch (error) {
         console.error("Error submitting form:", error);
 
@@ -262,7 +244,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
       
       case "email":
         // Email validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(value)) {
           newErrors.email = "Please enter a valid email address";
         } else {
@@ -332,20 +314,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           newErrors["membership.endDate"] = "End date must be after start date.";
         }
         break;  
-
-      // case "image":
-      //   if (!value && imagePreview === null) {
-      //     newErrors.image = "Image is required.";
-      //   } else if (value && value[0].type) {
-      //   console.log("image file", value[0] );
-      //     // Check the file type for valid image MIME types
-      //     if (!/^image\/(jpeg|png|gif|bmp|webp)$/.test(value[0].type)) {
-      //       newErrors.image = "Only image files (JPEG, PNG, GIF, BMP, WebP) are allowed.";
-      //     }
-      //   } else {
-      //     newErrors.image = "Invalid file. Please select an image file.";
-      //   }
-      //   break;
       case "image":
         console.log("Image validation:", value);
         if (!value) {
@@ -703,22 +671,6 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
           
           <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
-            {/* <input
-              id="image"
-              type="file" 
-              name="image" 
-              accept="image/*" 
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-1 border bg-white text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            />
-            {imagePreview &&
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="mt-1 w-20 h-20 bg-white rounded-full object-cover border border-gray-300"
-              />
-              } */}
               <div
                 className={`w-full px-3 py-4 border rounded-md ${
                   isDragging? "border-[#00175f] bg-blue-50" : "border-gray-300"
@@ -739,11 +691,13 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
                     {isDragging ? (
                       "Drop the image here"
                     ) : (
-                      <span className="inline-flex items-center">
-                        Drag and drop an image, or&nbsp;
-                        <GiClick className="ml-1 text-lg" />
+                      <p className="flex flex-col md:flex-row items-center justify-center">
+                        Drag and drop an image, or click here&nbsp; 
+                        <span className="mt-1">
+                          <GiClick className="text-lg" />
+                        </span>
                         &nbsp;to upload images
-                      </span>
+                      </p>
                     )}
                   </p>
                 )}
@@ -767,7 +721,7 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
               </button>
             )}
           </div>
-          {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}  
+        {errors.image && <p className="text-red-500 text-xs">{errors.image}</p>}  
           <div className="flex justify-end col-span-1 md:col-span-2">
             <button
               type="submit"

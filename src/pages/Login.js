@@ -522,22 +522,20 @@ const Login = () => {
     username: "",
     password: "",
   });
-
   const { loading, error, dispatch } = useContext(AuthContext);
   const {login} = useAuth();
-
   const [err, setError] = useState(null);
   const [validationError, setValidationError] = useState({});
   const accessToken1 = localStorage.getItem('accessToken');
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-
   const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
-    const savedUserData = localStorage.getItem("userData") || sessionStorage.getItem("userData");
+    const savedUserData = localStorage.getItem("rememberMeData") || sessionStorage.getItem("rememberMeData");
     if (savedUserData) {
       const { username } = JSON.parse(savedUserData);
-      setInputs((prev) => ({ ...prev, username }));
+      const { password } = JSON.parse(savedUserData);
+      setInputs((prev) => ({ ...prev, username, password }));
       setRememberMe(true); // assume they checked "Remember Me"
       console.log("Pre-filled username:", username);
     } else {
@@ -571,9 +569,7 @@ const Login = () => {
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
-
       console.log("Validation errors:", errors);
-
       return;
     } else {
       setValidationError({});
@@ -587,26 +583,23 @@ const Login = () => {
       const accessToken = res.data.accessToken;
 
       localStorage.setItem('accessToken', accessToken);
-      
-      // Assuming res.data.roles is the roles array returned from the API response
-
-
       localStorage.setItem("roles", JSON.stringify(res.data.roles)); // Store roles as a JSON string
       
+      // Save token based on Remember Me option
+      if (rememberMe) {
+        localStorage.setItem("rememberMeData", JSON.stringify(inputs)); // persists even after closing browser
+        console.log("Saved user data to localStorage:", inputs);
+      } else {
+        sessionStorage.setItem("rememberMeData", JSON.stringify(inputs)); // only persists while the session is active
+        console.log("Saved user data to sessionStorage:", inputs);
+      };
+
       const userData = {
         username: res.data.username,
         roles: res.data.roles,
         token: res.data.accessToken,
         userId: res.data.playerId || res.data.coachId || res.data.officialId ,
       };
-      // Save token based on Remember Me option
-      if (rememberMe) {
-        localStorage.setItem("userData", JSON.stringify(userData)); // persists even after closing browser
-        console.log("Saved user data to localStorage:", userData);
-      } else {
-        sessionStorage.setItem("userData", JSON.stringify(userData)); // only persists while the session is active
-        console.log("Saved user data to sessionStorage:", userData);
-      }
       // Check if roles exist to navigate to admin or user dashboard
       const roles = res.data.roles;
 
@@ -614,7 +607,7 @@ const Login = () => {
 
       if (roles.includes("ROLE_ADMIN")) {
         login("admin", userData);
-        navigate("/player");
+        navigate("/admin-player");
       } else if (roles.includes("ROLE_COACH")) {
         login("coach", userData);
         navigate("/member");
@@ -627,9 +620,7 @@ const Login = () => {
       } else {
         setError("Unknown role, please contact support.");
         return;
-      }
-
-      
+      }  
     } catch (err) {
       dispatch({ type: "LOGIN_FAILURE", payload: err.response });
       // Specific error handling for incorrect username or password
@@ -653,7 +644,6 @@ const Login = () => {
     }
   };
   
-
   return (
     <div className="flex min-h-screen">
       {/* {/ Left Section /} */}
@@ -707,7 +697,6 @@ const Login = () => {
             </div>
             <div className="flex justify-between items-center">
               <label className="inline-flex items-center">
-
                 <input
                   type="checkbox"
                   className="form-checkbox text-purple-500"
@@ -717,7 +706,6 @@ const Login = () => {
                     console.log("Remember Me changed:", e.target.checked);
                   }}
                 />
-
                 <span className="ml-2 text-sm text-gray-600">Remember Me</span>
               </label>
             </div>

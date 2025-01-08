@@ -1,4 +1,3 @@
-// src/components/EditPlayerForm.jsx
 
 import React, { useRef,useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
@@ -8,7 +7,7 @@ import ball from "./../assets/images/CricketBall-unscreen.gif";
 import { storage } from '../config/firebaseConfig'; // Import Firebase storage
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; // Firebase storage utilities
 import dayjs from 'dayjs';
-import { FaCamera, FaEdit,FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GiClick } from "react-icons/gi";
 
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
@@ -39,12 +38,10 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     updatedOn: new Date().toISOString(),
    });
   const [imagePreview, setImagePreview] = useState(`http://rcc.dockyardsoftware.com/images/${ player.image ? player.image.split('/').pop() : 'default.jpg'}`);
-  //const [imagePreview, setImagePreview] = useState(player.image);
   const [isImageAdded, setIsImageAdded] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState({});
   const API_URL = process.env.REACT_APP_API_URL;
-  const dateFormat = 'YYYY/MM/DD';
   const [passwordVisible, setPasswordVisible] = useState(false);
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -209,7 +206,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       
       case "user.email":
         // Email validation
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        //const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailPattern.test(value)) {
           newErrors["user.email"] = "Please enter a valid email address";
            
@@ -375,13 +373,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
 
     setUploading(true);
       try {
-      //   let imageURL = formData.image;
-
-      // // Upload image if an image file is added
-      // if (formData.image instanceof File) {
-      //   imageURL = await handleImageUpload(formData.image);
-      // }
-
       const formDataToSend = new FormData();
       const { image, role, ...userData } = formData;
 
@@ -394,10 +385,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
        // Ensure role is sent as a single string
       formDataToSend.append("role", role[0]);
 
-      // const playerData = {
-      //   ...formData,
-      //   image: imageURL, // Assign the uploaded image URL to formData
-      // };
         const response = await axios.put(
           `${API_URL}admin/players/update/${player.playerId}`,
           formDataToSend,{ 
@@ -450,9 +437,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       } finally {
         setUploading(false);
         onClose();
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1500);
       }
     
   };
@@ -583,6 +567,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               onChange={handleChange}
               className=" w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="username"
+              required
             />
             {errors["user.username"] && <p className="text-red-500 text-xs mt-1">{errors["user.username"]}</p>}
           </div>
@@ -595,6 +580,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="you@example.com"
+              required
             />
             {errors["user.email"]  && <p className="text-red-500 text-xs mt-1">{errors["user.email"]}</p>}
           </div>
@@ -630,6 +616,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
+              required
             />
             {errors.contactNo && <p className="text-red-500 text-xs mt-1">{errors.contactNo}</p>}
           </div>
@@ -641,6 +628,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               onChange={handleChange}
               className=" py-1 px-3 border border-gray-300 text-gray-600 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               placeholder="+1 (555) 123-4567"
+              required
             >
               <option value='' disabled>
                 Select
@@ -656,7 +644,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               value={formData.bowlingStyle}
               onChange={handleChange}
               className=" px-3 py-1 border text-gray-600 border-gray-300 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-              
+              required
             >
                <option value='' disabled> Select bowling style</option>
               <option value="RAF">Right-arm fast</option>
@@ -692,7 +680,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               value={formData.playerRole}
               onChange={handleChange}
               className=" px-3 py-1 border text-gray-600 border-gray-300 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            
+              required
             >
               <option value='' disabled>
                 Select
@@ -713,7 +701,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               value={formData.status}
               onChange={handleChange}
               className="w-full px-3 py-1 border text-gray-600 border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-          
+              required
             >
               <option value='' disabled >
                 Select
@@ -756,23 +744,6 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
           </div>
           <div className="col-span-1 md:col-span-2 relative ">
             <label className="block text-black text-sm font-semibold">Image</label>
-            {/* <input
-              id="image"
-              type="file" 
-              name="image" 
-              accept="image/*" 
-              onChange={handleChange}
-              placeholder="Change image"
-              className="w-full px-3 py-1 border border-gray-300 text-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-[#00175f]"
-            />
-            {imagePreview &&
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="mt-1 w-20 h-20 rounded-full object-cover border border-gray-300"
-              />}
-              {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>} 
-          </div> */}
           <div
             className={`w-full px-3 py-4 border rounded-md ${
               isDragging ? "border-[#00175f] bg-blue-50" : "border-gray-300"
@@ -789,15 +760,17 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
                 className=" object-contain rounded-lg border border-gray-300"
               />
             ) : (
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 text-sm md:text-sm">
                 {isDragging
                   ? "Drop the image here"
-                  : <div className="flex">
-                      Drag and drop an image, or&nbsp;<span className="flex flex-row items-center">
-                        click here
-                        <GiClick className="ml-1 text-lg" />
-                      </span>&nbsp; to upload images
-                    </div>}
+                  : (<p className="flex flex-col md:flex-row items-center justify-center">
+                        Drag and drop an image, or click here&nbsp; 
+                        <span className="mt-1">
+                          <GiClick className="text-lg" />
+                        </span>
+                        &nbsp;to upload images
+                      </p>
+                  )}
               </p>
             )}
               <input
@@ -821,7 +794,7 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
             )}
           </div>
           {showImageError && (
-            <p className="text-red-500 text-xs px-2 col-span-2">
+            <p className="text-red-500 text-xs px-2 col-span-1 md:col-span-2 relative ">
               Upload a new image to replace the existing one, or it will remain unchanged.
             </p>
           )}

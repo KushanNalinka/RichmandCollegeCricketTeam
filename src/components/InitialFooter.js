@@ -161,7 +161,7 @@ const InitialFooter = () => {
             </div>
 
             {/* Copyright */}
-            <div className="text-center text-gray-600 text-sm mt-4">
+            {/* <div className="text-center text-gray-600 text-sm mt-4">
               <p>© 2024 Richmond College</p>
             </div>
 
@@ -182,7 +182,7 @@ const InitialFooter = () => {
       Sponsored By
     </button>
   </a>
-</div>
+</div> */}
 
 
 

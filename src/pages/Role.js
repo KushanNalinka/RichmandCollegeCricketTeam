@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/MemberNavbar';
 import Footer from '../components/Footer';
 import '../index.css';
+import TopLayer from '../components/TopLayer';
 import topImageDesktop1 from '../assets/images/memebrs.png'; // Desktop image
 import topImageMobile from '../assets/images/mobile2.png'; // Mobile image
 import lahiru from '../assets/images/lahiru.png';
@@ -20,7 +21,10 @@ import Banuka from '../assets/images/Bhanuka Rathnayake.jpg'
 import Chathupama from '../assets/images/Chathupama Gunasinghe.jpg'
 import Chamath from '../assets/images/Chamath Siriwardena.jpg'
 import Tharindu from '../assets/images/Tharindu Weerasinghe.jpg'
-
+import Lasantha from '../assets/images/Lasantha De Silva1.jpg'
+import Hewamanna from '../assets/images/C.K. Hewamanne.jpg'
+import  Thushan  from '../assets/images/Thushan Jayawardena.jpg'
+import Upul from '../assets/images/Upul Yatawara2.jpg'
 
 
 const SponsoredBy = () => {
@@ -32,12 +36,12 @@ const SponsoredBy = () => {
     { id: 5, name: 'Jayamini Senevirathna', role: 'Vice President', image: [Jayamini] },
     { id: 6, name: 'Bakthi Mendis', role: 'Assistant Secretary', image: [Bakthi] },
     { id: 7, name: 'Samantha Lorensuhewa', role: 'Assistant Treasurer', image: [Samantha] },
-    { id: 8, name: 'Lasantha De Silva', role: 'Committee Member', image: [lahiru] },
+    { id: 8, name: 'Lasantha De Silva', role: 'Committee Member', image: [Lasantha] },
     { id: 9, name: 'P. A. Gunawardane', role: 'Committee Member', image: [Gunawardana] },
     { id: 10, name: 'Nishantha Mendis', role: 'Committee Member', image: [Nishantha] },
-    { id: 11, name: 'C. K. Hewamanna', role: 'Committee Member', image: [lahiru] },
-    { id: 12, name: 'Thushan Jayawardane', role: 'Committee Member', image: [lahiru] },
-    { id: 13, name: 'Upul Yatawara', role: 'Committee Member', image: [lahiru] },
+    { id: 11, name: 'C. K. Hewamanna', role: 'Committee Member', image: [Hewamanna] },
+    { id: 12, name: 'Thushan Jayawardane', role: 'Committee Member', image: [Thushan] },
+    { id: 13, name: 'Upul Yatawara', role: 'Committee Member', image: [Upul] },
     { id: 14, name: 'Asitha De Silva', role: 'Committee Member', image: [Asitha ]},
     { id: 15, name: 'Mihiruk De Silva', role: 'Committee Member', image: [Mihiruk]},
     { id: 16, name: 'Banuka Rathnayake', role: 'Committee Member', image: [Banuka] },
@@ -69,7 +73,7 @@ const SponsoredBy = () => {
   return (
     <div>
       {/* Navbar */}
-      <Navbar />
+      <TopLayer />
 
       {/* Top Image Section
       <div
@@ -79,7 +83,7 @@ const SponsoredBy = () => {
         }}
       ></div> */}
 
-        {/* Background for larger screens */}
+        {/* Background for larger screens
         <div
         className={`relative w-full h-screen flex flex-col items-center justify-center ${isMobile ? 'hidden' : 'show-on-large'}`}
         style={{
@@ -89,7 +93,7 @@ const SponsoredBy = () => {
           backgroundPosition: "center",
         }}
       >
-        </div>
+        </div> */}
 
       {/* <div
         className="hidden md:bg-cover md:bg-center md:bg-fixed md:h-[75vh] lg:h-[100vh] md:flex md:items-center md:justify-center"
@@ -99,7 +103,7 @@ const SponsoredBy = () => {
       ></div> */}
 
          {/* MOBILE VIEW */}
-         {isMobile && (
+         {/* {isMobile && (
         <div
           className="relative w-full h-screen flex flex-col items-center justify-center show-on-small"
           style={{
@@ -109,7 +113,7 @@ const SponsoredBy = () => {
             backgroundPosition: "center",
           }}
         />
-      )}
+      )} */}
 
 <div className="bg-[#F9F9F7] py-20">
   <div className="container mx-auto text-center max-w-7xl px-4"> {/* Adjusted to a larger width */}

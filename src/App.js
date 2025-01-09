@@ -47,11 +47,10 @@ import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 import Admin from './pages/Admin.js';
+import Role from './pages/Role.js'
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
-import Role from './pages/Role.js';
 import InitialRole from './pages/InitialRole.js';
 import { useAuth } from './hooks/UseAuth.js';
-import AdminNewsDetailPage from './pages/AdminNewsDetailPage';
 import UnauthorizedPage from './pages/UnauthorizedPage.js';
 
 function App() {
@@ -82,6 +81,7 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           <Route path ="/role" element ={<Role/>}/>
           <Route path ="/initialrole" element ={<InitialRole/>}/>
           <Route path="/unauthorized" element={<UnauthorizedPage/>} />
+          <Route path="/role" element={<Role/>} />
           <Route
           path="/about-us"
           element={
@@ -120,8 +120,81 @@ console.log("Retrieved roles from localStorage:", storedRoles);
             </PrivateRoute>
           }
         />
+        {/*admin routes*/}
+
+        <Route
+          path="/admin-coach"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <CoachTable />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/admin-official"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <OfficialsTable />
+            </PrivateRoute>
+          }
+        />
+        <Route path='/admin-player' element={
+          <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+            <PlayerInfo/>
+          </PrivateRoute>} 
+          />
+         <Route
+          path="/admin-match"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <MatchDetail />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-scorecard"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <ScoreCardPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-team"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <Team />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-scorecard-form"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <ScoreCardPopup />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin-news"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <NewsCreator />
+            </PrivateRoute>
+          }
+        />
+
+         <Route
+          path="/admin-admin-control"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
+              <Admin />
+            </PrivateRoute>
+          }
+        />
 
           {/* Other Protected Routes */}
+
           <Route
           path="/profile"
           element={
@@ -235,14 +308,6 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           }
         />
          <Route
-          path="/coachInfo"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <CoachTable />
-            </PrivateRoute>
-          }
-        />
-         <Route
           path="/coach"
           element={
             <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
@@ -260,89 +325,11 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           }
         />
 
-        <Route
-          path="/official"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <OfficialsTable />
-            </PrivateRoute>
-          }
-        />
-        <Route path='/player' element={
-          <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-            <PlayerInfo/>
-          </PrivateRoute>} 
-          />
-         <Route
-          path="/match"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <MatchDetail />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin-scorecard"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <ScoreCardPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/team"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <Team />
-            </PrivateRoute>
-          }
-        />
-         <Route
-          path="/addPlayerOld"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <AddPlayer />
-            </PrivateRoute>
-          }
-        />
-        
-        <Route
-          path="/addPlayer"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
-              <AddPlayer />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/addCoach"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <AddCoachForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/addOfficial"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <AddOfficialForm />
-            </PrivateRoute>
-          }
-        />
          <Route
           path="/match-info"
           element={
             <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
               <MatchInfo />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/scorecard-form"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <ScoreCardPopup />
             </PrivateRoute>
           }
         />
@@ -369,41 +356,6 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           element={
             <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
               <NewsDetailPage />
-            </PrivateRoute>
-          }
-        />
-     
-       <Route
-          path="/news-create"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <NewsCreator />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="/admin-news"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
-              <NewsCreator />
-            </PrivateRoute>
-          }
-        />
-
-         <Route
-          path="/admin-control"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_ADMIN"]}>
-              <Admin />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin-newsdetail"
-          element={
-            <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
-              <NewsCreator />
             </PrivateRoute>
           }
         />

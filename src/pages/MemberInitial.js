@@ -146,6 +146,7 @@ import bgImg from '../assets/images/Frame 152.png';
 import RCCRIC from '../assets/images/groundback.png';
 import CroppedImage from '../assets/images/players_image_home.png';
 import mobileBG from '../assets/images/mobile1.png';
+import mobilebg1 from '../assets/images/Rcc1.png';
 
 const HomePage = () => {
   const [matchId, setMatchId] = useState(null);
@@ -226,7 +227,7 @@ const HomePage = () => {
         <div
           className="relative w-full h-screen flex flex-col items-center justify-center show-on-small"
           style={{
-            backgroundImage: `url(${mobileBG})`,
+            backgroundImage: `url(${mobilebg1})`,
             backgroundSize: "cover",
             backgroundRepeat: "no-repeat",
             backgroundPosition: "center",

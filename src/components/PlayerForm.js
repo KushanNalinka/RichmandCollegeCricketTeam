@@ -243,10 +243,16 @@ const PlayerForm = ({  onClose, isSubmitted }) => {
         break;
       
       case "email":
-        // Email validation
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(value)) {
-          newErrors.email = "Please enter a valid email address";
+        // // Email validation
+        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // if (!emailPattern.test(value)) {
+        //   newErrors.email = "Please enter a valid email address";
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // General email syntax
+        const specificDomainRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/; // Specific domains
+        if (!emailRegex.test(value)) {
+          newErrors.email  = "Email is invalid";
+        } else if (!specificDomainRegex.test(value)) {
+          newErrors.email = "Only emails from gmail.com, yahoo.com, or outlook.com are allowed."; 
         } else {
            // Debounced API call for email availability
           clearTimeout(window.emailValidationTimeout);

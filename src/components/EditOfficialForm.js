@@ -12,7 +12,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
     user: {
       username: official.username,
       email: official.email,
-      password: official.password
+      password: ""
     },
     name: official.name,
     contactNo: official.contactNo,
@@ -200,9 +200,15 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
 
       case "user.email":
         // Email validation
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(value)) {
-          newErrors["user.email"] = "Please enter a valid email address";
+        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // if (!emailPattern.test(value)) {
+        //   newErrors["user.email"] = "Please enter a valid email address";
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // General email syntax
+        const specificDomainRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/; // Specific domains
+        if (!emailRegex.test(value)) {
+          newErrors["user.email"]  = "Email is invalid";
+        } else if (!specificDomainRegex.test(value)) {
+          newErrors["user.email"] = "Only emails from gmail.com, yahoo.com, or outlook.com are allowed.";
         } else {
           // Debounced API call for email availability
           clearTimeout(window.emailValidationTimeout);

@@ -207,16 +207,21 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
       case "user.email":
         // Email validation
         //const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(value)) {
-          newErrors["user.email"] = "Please enter a valid email address";
-           
-           
-             } else {
-          // Debounced API call for email availability
-         clearTimeout(window.emailValidationTimeout);
-         window.emailValidationTimeout = setTimeout(async () => {
-           try {
+        // const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        // if (!emailPattern.test(value)) {
+        //   newErrors["user.email"] = "Please enter a valid email address";
+
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // General email syntax
+          const specificDomainRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/; // Specific domains
+          if (!emailRegex.test(value)) {
+            newErrors["user.email"]  = "Email is invalid";
+          } else if (!specificDomainRegex.test(value)) {
+            newErrors["user.email"] = "Only emails from gmail.com, yahoo.com, or outlook.com are allowed.";
+          }else{
+            // Debounced API call for email availability
+            clearTimeout(window.emailValidationTimeout);
+            window.emailValidationTimeout = setTimeout(async () => {
+            try {
              const response = await axios.get(`${API_URL}auth/checkEmailAvailability?email=${value}`,{
               headers: {
                   'Authorization': `Bearer ${accessToken}`,

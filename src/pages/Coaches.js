@@ -1166,29 +1166,76 @@ const CoachesProfile = () => {
     }, []);
 
     // Fetch practice sessions when selectedCoach changes
-    useEffect(() => {
-        if (selectedCoach) {
-            const fetchPracticeSessions = async () => {
-                try {
-                    const response = await fetch(
-                        `${API_URL}practiseSessions/coach/${selectedCoach.coachId}`,{
-                            method: 'GET',
-                            headers: {
-                                 Authorization: `Bearer ${accessToken}`,
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                        }, }
-                    );
-                    const data = await response.json();
-                    setPracticeSchedulesData(data);
-                } catch (error) {
-                    console.error("Error fetching practice sessions:", error);
-                }
-            };
+//     useEffect(() => {
+//         if (selectedCoach) {
+//             const fetchPracticeSessions = async () => {
+                
+//   console.log("Fetching practice schedules for coach:", selectedCoach.coachId);
+//                 try {
+//                     const response = await fetch(
+//                         `${API_URL}practiseSessions/coach/${selectedCoach.coachId}`,{
+//                             method: 'GET',
+//                             headers: {
+//                                  Authorization: `Bearer ${accessToken}`,
+//                                 'Content-Type': 'application/json',
+//                                 'Accept': 'application/json',
+//                         }, }
+//                     );
+//                     const data = await response.json();
+//                     setPracticeSchedulesData(data);
+//                 } catch (error) {
+//                     console.error("Error fetching practice sessions:", error);
+//                 }
+//             };
 
-            fetchPracticeSessions();
-        }
-    }, [selectedCoach]);
+//             fetchPracticeSessions();
+//         }
+//     }, [selectedCoach]);
+
+// Fetch practice sessions when selectedCoach changes
+useEffect(() => {
+    if (selectedCoach) {
+        const fetchPracticeSessions = async () => {
+            console.log("Fetching practice schedules for coach:", selectedCoach.coachId);
+
+            try {
+                const response = await fetch(
+                    `${API_URL}practiseSessions/coach/${selectedCoach.coachId}`, {
+                        method: 'GET',
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    console.error("Failed to fetch practice schedules:", response.status, response.statusText);
+                    setPracticeSchedulesData([]); // Set to empty if there's an error
+                    return;
+                }
+
+                // Check if the response has content
+                const text = await response.text();
+                if (text) {
+                    const data = JSON.parse(text);
+                    console.log("Fetched practice schedules data:", data);
+                    setPracticeSchedulesData(data);
+                } else {
+                    console.log("No practice schedules found for this coach.");
+                    setPracticeSchedulesData([]); // No schedules available
+                }
+            } catch (error) {
+                console.error("Error fetching practice schedules:", error);
+                setPracticeSchedulesData([]); // Set to empty in case of an error
+            }
+        };
+
+        fetchPracticeSessions();
+    }
+}, [selectedCoach]);
+
 
     if (!selectedCoach) {
         return <div>Loading...</div>;

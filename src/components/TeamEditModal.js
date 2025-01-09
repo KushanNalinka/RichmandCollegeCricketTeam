@@ -158,7 +158,33 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       ...formData,
       [name]: value
     });
+    // Validate captain and vice-captain inclusion
+    const isCaptainIncluded = selectedPlayers.some((p) => p.playerId === Number(formData.captain));
+    const isViceCaptainIncluded = selectedPlayers.some((p) => p.playerId === Number(formData.viceCaptain));
+
+    // Set errors if captain or vice-captain is not in the selected players
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      captain: isCaptainIncluded ? "" : "The selected captain must be a member of the team.",
+      viceCaptain: isViceCaptainIncluded ? "" : "The selected vice-captain must be a member of the team.",
+    }));
   };
+
+  useEffect(
+    ()=>{
+        // Validate captain and vice-captain inclusion
+      const isCaptainIncluded = selectedPlayers.some((p) => p.playerId === Number(formData.captain));
+      const isViceCaptainIncluded = selectedPlayers.some((p) => p.playerId === Number(formData.viceCaptain));
+
+      // Set errors if captain or vice-captain is not in the selected players
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        players: selectedPlayers.length === 0 ? "Select players." : "",
+        captain: isCaptainIncluded ? "" : "The selected captain must be a member of the team.",
+        viceCaptain: isViceCaptainIncluded ? "" : "The selected vice-captain must be a member of the team.",
+      }));
+    },[selectedPlayers,formData.captain,formData.viceCaptain]
+  )
 
   const validateForm = () => {
     const newErrors = {};
@@ -173,7 +199,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
   const handleEdit = async e => {
     e.preventDefault();
     console.log("coachIds;", formData.coaches);
-    if (!validateForm()) {
+    if (Object.values(errors).some(error => error !== "")) {
       message.error("Please fix validation errors before submitting");
       return;
     }
@@ -234,12 +260,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       updatedPlayers = [...selectedPlayers, player];
     }
     setSelectedPlayers(updatedPlayers);
-    setErrors(prevErrors => ({
-      ...prevErrors,
-      players: updatedPlayers.length === 0 ? "Select players." : ""
-    }));
-
-    console.log("selected players: ", selectedPlayers.name);
+    
   };
 
   const clearSelectedPlayers = () => {
@@ -378,6 +399,10 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                     : null;
                 })}
               </select>
+              {errors.captain &&
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.captain}
+                </p>}
             </div>
             <div className="mb-2">
               <label className="block text-black text-sm font-semibold">
@@ -396,7 +421,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                   return categoryPlayers.length > 0
                     ? <optgroup label={category} key={category}>
                         {" "}{/* Group by category */}
-                        {categoryPlayers.map(player =>
+                        {categoryPlayers.filter((player) => player.playerId !== Number(formData.captain)).map(player =>
                           <option key={player.playerId} value={player.playerId}>
                             {player.name}
                           </option>
@@ -405,6 +430,10 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
                     : null;
                 })}
               </select>
+              {errors.viceCaptain &&
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.viceCaptain}
+                </p>}
             </div>
             <div className="mb-4">
               <label

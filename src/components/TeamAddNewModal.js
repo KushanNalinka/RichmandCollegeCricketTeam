@@ -121,26 +121,28 @@ const AddNewModal = ({ onClose, isSubmitted }) => {
 
   const handleChange = e => {
     const { name, value } = e.target;
+  
     setFormData({
       ...formData,
       [name]: value
     });
-  };
 
-  const validateForm = () => {
-    const newErrors = {};
-    // Validate selected coaches
-    if (selectedPlayers.length === 0) {
-      newErrors.players = "Select players.";
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!validateForm()) {
-      message.error("Please fix validation errors before submitting");
+    if (Object.values(errors).some(error => error !== "")) {
+        message.error("Please fix validation errors before submitting");
+        return;
+      };
+
+    if ( selectedPlayers.length === 0 ){
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        players: "Select players.",
+      }))
+      message.error("Please select players before submitting");
       return;
     }
     setUploading(true);
@@ -193,12 +195,23 @@ const AddNewModal = ({ onClose, isSubmitted }) => {
     }
 
     setSelectedPlayers(updatedPlayers);
+    // Validate captain and vice-captain inclusion
+    const isCaptainIncluded = updatedPlayers.some((p) => p.playerId === Number(formData.captain));
+    const isViceCaptainIncluded = updatedPlayers.some((p) => p.playerId === Number(formData.viceCaptain));
 
-    setErrors(prevErrors => ({
+    // Set errors if captain or vice-captain is not in the selected players
+    setErrors((prevErrors) => ({
       ...prevErrors,
-      players: updatedPlayers.length === 0 ? "Select players." : ""
+      players: updatedPlayers.length === 0 ? "Select players." : "",
+      captain: isCaptainIncluded ? "" : "The selected captain must be a member of the team.",
+      viceCaptain: isViceCaptainIncluded ? "" : "The selected vice-captain must be a member of the team.",
     }));
+
+    console.log("Updated Players:", updatedPlayers);
+    console.log("Captain Included:", isCaptainIncluded);
+    console.log("Vice Captain Included:", isViceCaptainIncluded);
   };
+  
 
   const clearSelectedPlayers = () => {
     setSelectedPlayers([]); // Clear all selected players
@@ -329,6 +342,10 @@ const AddNewModal = ({ onClose, isSubmitted }) => {
                     : null;
                 })}
               </select>
+              {errors.captain &&
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.captain}
+                </p>}
             </div>
             <div className="mb-2">
               <label className="block text-black text-sm font-semibold">
@@ -347,7 +364,7 @@ const AddNewModal = ({ onClose, isSubmitted }) => {
                   return categoryPlayers.length > 0
                     ? <optgroup label={category} key={category}>
                         {" "}{/* Group by category */}
-                        {categoryPlayers.map(player =>
+                        {categoryPlayers.filter((player) => player.playerId !== Number(formData.captain)).map(player =>
                           <option key={player.playerId} value={player.playerId}>
                             {player.name}
                           </option>
@@ -356,6 +373,10 @@ const AddNewModal = ({ onClose, isSubmitted }) => {
                     : null;
                 })}
               </select>
+              {errors.viceCaptain &&
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.viceCaptain}
+                </p>}
             </div>
             <div className="mb-4">
               <label

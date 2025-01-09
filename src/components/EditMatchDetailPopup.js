@@ -654,7 +654,7 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
               required
             >
               <option value="">Select Vice-captain</option>
-              {players.map(player =>
+              {players.filter((player) => player.playerId !== Number(formData.matchCaptain)).map(player =>
                 <option key={player.playerId} value={player.playerId}>
                   {player.name}
                 </option>

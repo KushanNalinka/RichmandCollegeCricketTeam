@@ -14,7 +14,7 @@ const EditOfficialForm = ({ official, onClose, isSubmitted }) => {
     user:{
       username: official.username,
       email: official.email,
-      password: official.password,
+      password: "",
     },
     name: official.name,
     contactNo: official.contactNo,

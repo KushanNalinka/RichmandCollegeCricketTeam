@@ -24,7 +24,7 @@ const EditCoachForm = ({ coach, onClose, isSubmitted }) => {
 
       email: coach.email,
       username: coach.username,
-      password: coach.password,
+      password: "",
     },
     updatedOn:new Date().toISOString(),
     updatedBy:user.username,

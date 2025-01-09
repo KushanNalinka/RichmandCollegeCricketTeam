@@ -1267,11 +1267,18 @@ export default function MatchInfo() {
     });
   };
 
+  // const isUpcomingMatch = (matchDate) => {
+  //   const today = new Date();
+  //   const matchDay = new Date(matchDate);
+  //   return matchDay >= today.setHours(0, 0, 0, 0);
+  // };
+
   const isUpcomingMatch = (matchDate) => {
     const today = new Date();
     const matchDay = new Date(matchDate);
-    return matchDay >= today.setHours(0, 0, 0, 0);
+    return matchDay >= today.setHours(0, 0, 0, 0); // Ensures only today's or future matches are included
   };
+  
 
   
 
@@ -1331,9 +1338,12 @@ export default function MatchInfo() {
     }
   }, [selectedAgeGroup, selectedMatchType, activeButton]);
 
+  // const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
+  //   let filtered = [...data];
+  
   const filterMatches = (data = matchDataList, showOnlyUpcoming = false, latest = false) => {
     let filtered = [...data];
-  
+
     if (selectedAgeGroup !== 'All') {
       filtered = filtered.filter(
         (match) =>
@@ -1378,17 +1388,30 @@ export default function MatchInfo() {
     }
   
   
+    // if (showOnlyUpcoming) {
+    //   filtered = filtered.filter((match) => isUpcomingMatch(match.date));
+    // }
+  
+    // if (showOnlyUpcoming) {
+    //   filtered = filtered.filter((match) => isUpcomingMatch(match.date));
+    // }
+    
+    // // Sort matches based on upcoming or latest
+    // filtered.sort((a, b) =>
+    //   showOnlyUpcoming
+    //     ? new Date(a.date) - new Date(b.date)
+    //     : new Date(b.date) - new Date(a.date)
+    // );
+  
     if (showOnlyUpcoming) {
       filtered = filtered.filter((match) => isUpcomingMatch(match.date));
     }
   
-    // Sort matches based on upcoming or latest
     filtered.sort((a, b) =>
       showOnlyUpcoming
         ? new Date(a.date) - new Date(b.date)
         : new Date(b.date) - new Date(a.date)
     );
-  
    
     // Handle latest matches logic
     if (latest) {
@@ -1535,7 +1558,7 @@ const handlePageChange = (page)  =>
               >
                 Latest
               </button>
-              <button
+              {/* <button
                 className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Upcoming' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
                 onClick={() => {
                   setActiveButton('Upcoming');
@@ -1544,7 +1567,19 @@ const handlePageChange = (page)  =>
                 }}
               >
                 Upcoming
-              </button>
+              </button> */}
+
+<button
+  className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Upcoming' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
+  onClick={() => {
+    setActiveButton('Upcoming');
+    filterMatches(matchDataList, true); // Only show upcoming matches
+    setShowUpcoming(true);
+  }}
+>
+  Upcoming
+</button>
+
               <button
                 className={`w-24 h-8 rounded-full text-white text-xxs ${activeButton === 'Matches' ? 'bg-[#001f3f]' : 'bg-gray-400'}`}
                 onClick={() => {

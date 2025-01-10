@@ -898,7 +898,6 @@ summary.bestWickets > 0
     >
         Our Players
         <span>{showPlayerList ? '-' : '+'}</span>
-        
     </button>
 
     <div className="relative">

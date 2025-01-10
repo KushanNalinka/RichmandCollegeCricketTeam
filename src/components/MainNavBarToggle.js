@@ -1,36 +1,25 @@
 
 import React, { useState } from "react";
-import { IoHomeSharp } from "react-icons/io5";
-import { TbScoreboard } from "react-icons/tb";
-import { RiTeamFill } from "react-icons/ri";
-import { BiSolidCricketBall } from "react-icons/bi";
-import { BsPersonFill } from "react-icons/bs";
-import { MdDashboard } from "react-icons/md";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { CgProfile } from "react-icons/cg";
-import { FaXmark, FaBars } from "react-icons/fa6";
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
+import { FaXmark } from "react-icons/fa6";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate and Link for navigation
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../hooks/UseAuth";
 
 const MainNavbarToggle = () => {
     const navigate = useNavigate(); // Hook for navigation
-    const { user, login, logout } = useAuth();
+    const { logout } = useAuth();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    
     const toggleButton = () => {
         setIsMenuOpen(!isMenuOpen);
       };
-      const handleLoginClick = () => {
-        navigate('/'); // Redirect to home page after logout
-      };
+
       const handleLogoutClick = () => {
         logout();
         navigate('/login'); // Redirect to home page after logout
       };
-    
-      const handleDropdownClick = (path) => {
-        navigate(path); // Navigate to the selected page
-      };
+
       return (
         <>
           <div className="flex items-start justify-start ">
@@ -56,9 +45,6 @@ const MainNavbarToggle = () => {
           >
             <div className="relative group w-full">
                 <ul className=" flex flex-col gap-1 relative w-full !text-[12px] cursor-pointer px-1 ![font-family:'Inter',Helvetica]  items-start">
-                    {/* <Link to={"/playerProfile"} className=" flex gap-3 items-center p-2 pl-5 cursor-pointer text-black w-full hover:bg-gray-300 hover:bg-opacity-20">
-                        {" "}<CgProfile className="text-[#00175F] text-xl" />Profile
-                    </Link> */}
                     <div  onClick={handleLogoutClick} className=" flex gap-3 items-center p-2 pl-5 text-black w-full hover:bg-gray-300 hover:bg-opacity-20 ">
                         {" "}<RiLogoutCircleRLine className="text-[#00175F] text-xl"/> Logout
                     </div>

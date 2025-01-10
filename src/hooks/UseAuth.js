@@ -73,10 +73,6 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem("userData");
     sessionStorage.removeItem("user"); // Optionally, if 'user' exists here
     sessionStorage.removeItem("roles"); // Optionally, if 'roles' exist here
-
-    localStorage.clear();
-    sessionStorage.clear();
-
   };
 
 

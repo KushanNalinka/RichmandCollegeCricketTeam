@@ -6,6 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import Initial from './pages/Initial.js';
 import MemberInitial from './pages/MemberInitial.js';
 import Profile from './pages/Profile.js';
+import Under11 from './pages/Under11.js';
 import Under13 from './pages/Under13.js';
 import Under15 from './pages/Under15.js';
 import Under17 from './pages/Under17.js';
@@ -200,6 +201,14 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           element={
             <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
               <Profile />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/under11"
+          element={
+            <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
+              <Under11/>
             </PrivateRoute>
           }
         />

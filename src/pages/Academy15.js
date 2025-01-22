@@ -468,7 +468,7 @@ const PlayerProfile = () => {
         const fetchPlayerStats = async () => {
             if (selectedPlayer) {
                 try {
-                    const response = await fetch(`http://localhost:8080/api/playerStats/all-stats/${selectedPlayer.playerId}`,{
+                    const response = await fetch(`${API_URL}playerStats/all-stats/${selectedPlayer.playerId}`,{
                         method: 'GET',
                         headers: {
                              Authorization: `Bearer ${accessToken}`,

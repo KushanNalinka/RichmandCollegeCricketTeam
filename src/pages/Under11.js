@@ -27,18 +27,18 @@ const PlayerProfile = () => {
                 const data = await response.json();
 
                 // Filter players who are part of "Under 13" in the selected year
-                const under13Players = data.filter((player) =>
+                const under11Players = data.filter((player) =>
                     player.teamDetails &&
                     player.teamDetails.some(
-                        (team) => team.under === "Under 13" && parseInt(team.year, 10) === selectedYear
+                        (team) => team.under === "Under 11" && parseInt(team.year, 10) === selectedYear
                     )
                 );
 
-                setPlayers(under13Players);
+                setPlayers(under11Players);
 
                 // Set default selected player if data exists
-                if (under13Players.length > 0) {
-                    setSelectedPlayer(under13Players[0]); // Select first player by default
+                if (under11Players.length > 0) {
+                    setSelectedPlayer(under11Players[0]); // Select first player by default
                 }
             } catch (error) {
                 console.error('Error fetching player data:', error);
@@ -478,7 +478,7 @@ summary.bestWickets > 0
         
     )}</h1>
                 <p className="text-gray-400 text-sm md:text-3xl mt-1 md:mt-2">
-                Richmond Team Under 13 Year {selectedYear}
+                Richmond Team Under 11 Year {selectedYear}
                                 </p>
             </div>
                {/* Year Dropdown */}

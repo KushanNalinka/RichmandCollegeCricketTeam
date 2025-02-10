@@ -144,7 +144,7 @@ const EditModal = ({ team, onClose, isSubmitted }) => {
       if (age >= 50) {
         categories["Richmond Legend Over 50"].push(player);
       }
-      if (age >= 40) {
+      if (age >= 19) {
         categories["Old Boys"].push(player);
       }
     });

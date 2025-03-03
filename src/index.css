@@ -248,17 +248,20 @@ html {
   font-size: 8vw; /* Responsive font size for larger devices */
   color: transparent;
   background: linear-gradient(180deg, #0E1E79, #074696);
-  -webkit-background-clip: text;
+  -webkit-background-clip: text; /* WebKit-based browsers */
+  background-clip: text; /* Standard property for compatibility */
   text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
+
 #college-text {
   font-size: 6vw; /* Responsive font size for larger devices */
   color: transparent;
   background: linear-gradient(180deg,  #4A0D34, #B01F7C);
   -webkit-background-clip: text;
+  background-clip: text;
   text-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 
-};
+}
 
 /* Completely remove border and shadow */
 .custom-datepicker {

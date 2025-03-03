@@ -1241,7 +1241,7 @@ const ResultsTable = ({ matchId }) => {
         <div className="p-6 max-w-screen-xl mx-auto mt-5 bg-gray-900 bg-opacity-70 rounded-lg shadow-lg">
           <div className="flex items-center justify-between bg-gray-800 p-2 rounded-lg">
             <div className="flex items-center">
-              {matchType === 'Test' && (
+            {(matchType === 'Test' || matchType === '2 Day' || matchType === '3 Day') && (
                 <select
                   className="px-3 py-1 bg-gray-700 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-600 focus:border-transparent w-full md:w-64 text-xs text-white"
                   value={inning}

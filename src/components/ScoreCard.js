@@ -1083,7 +1083,7 @@ const ScoreCard = ({ onMatchId }) => {
         if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
           setMatchData(lastMatch); // Use only the last match data for T20 and ODI
           onMatchId(lastMatch.matchId); // Pass matchId back to HomePage.js
-        } else if (lastMatch.type === 'Test') {
+        } else if (lastMatch.type === 'Test' || lastMatch.type === '2 Day' || lastMatch.type === '3 Day') {
           // Handle Test Match
           const matchId = lastMatch.matchId;
           setMatchData(lastMatch); // Set the first inning data
@@ -1109,7 +1109,8 @@ const ScoreCard = ({ onMatchId }) => {
     return <p>Loading...</p>; 
   }
 
-  const isTestMatch = matchData.type === 'Test';
+  const isTestMatch = matchData.type === 'Test' || matchData.type === '2 Day' || matchData.type === '3 Day';
+
   const richmondWon = matchData.runs > matchData.oppositionRuns;
 
   return (

@@ -90,7 +90,7 @@ const ScoreCardPage = () => {
           const playersStats = response.data;
           setPlayersStats(playersStats);
           // Apply inning filter only for Test matches
-          if (matchType === "Test") {
+          if (matchType === 'Test' || matchType === '2 Day' || matchType === '3 Day') {
             const inningStats = filterInningStats(playersStats, selectedInning[currentMatchID]);
             const battingStats = inningStats.filter(stat => stat.balls > 0);
             const bawlingStats = inningStats.filter(stat => stat.overs > 0);
@@ -148,22 +148,40 @@ const ScoreCardPage = () => {
     }));
   };
 
-  // Function to toggle dropdown visibility for each match
-  const toggleDropDown = (match) => {
-    if (currentMatchID === match.matchId) {
-      setCurrentMatchID(null); // Close the dropdown if the same match is pressed again
-      setMatchType(null);
-    } else {
-      setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
-      setMatchType(match.type);
-      const inning = selectedInning[match.matchId];
-      if (match.type === 'Test' && inning) {
-        const inningStats = filterInningStats(playersStats, inning);
-        setPlayersStats(inningStats);
-      }
+  // // Function to toggle dropdown visibility for each match
+  // const toggleDropDown = (match) => {
+  //   if (currentMatchID === match.matchId) {
+  //     setCurrentMatchID(null); // Close the dropdown if the same match is pressed again
+  //     setMatchType(null);
+  //   } else {
+  //     setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
+  //     setMatchType(match.type);
+  //     const inning = selectedInning[match.matchId];
+  //     if (match.type === 'Test' && inning) {
+  //       const inningStats = filterInningStats(playersStats, inning);
+  //       setPlayersStats(inningStats);
+  //     }
+  //   }
+   // Function to toggle dropdown visibility for each match
+const toggleDropDown = (match) => {
+  if (currentMatchID === match.matchId) {
+    setCurrentMatchID(null); // Close the dropdown if the same match is pressed again
+    setMatchType(null);
+  } else {
+    setCurrentMatchID(match.matchId); // Open the new dropdown and fetch its data
+    setMatchType(match.type);
+    
+    const inning = selectedInning[match.matchId];
+    
+    // Check if match type is Test, 2-day, or 3-day
+    if ((match.type === 'Test' || match.type === '2 Day' || match.type === '3 Day') && inning) {
+      const inningStats = filterInningStats(playersStats, inning);
+      setPlayersStats(inningStats);
     }
-   
-  };
+  }
+};
+
+
 
   return (
     <div className=" flex flex-col relative justify-center items-center bg-white">
@@ -245,7 +263,7 @@ const ScoreCardPage = () => {
                       </div>
                       <div className="flex lg:w-[30%] w-[40%] items-center justify-end lg:gap-5">
                         <div className="flex items-center gap-3 tracking-wider">
-                          {match.type === 'Test' && (
+                        {(match.type === 'Test' || match.type === '2 Day' || match.type === '3 Day') && (
                             <div className={`flex tracking-wider justify-end`}>
                               {/* <label htmlFor={`inning-select-${match.matchId}`} className="text-xs font-bold font-serif">Select Inning:</label> */}
                               <select

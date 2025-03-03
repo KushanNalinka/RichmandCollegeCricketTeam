@@ -62,7 +62,7 @@ const MatchDetails = () => {
   const [filters, setFilters] = useState({ type: "", team: "" });
   const [filteredTeamOptions, setFilteredTeamOptions] = useState([]);
 
-  const typeOptions = ["Test", "T20", "ODI"];
+  const typeOptions = ["Test", "3 Day" , "2 Day" ,"T20", "ODI"];
 
   const teamUnder = [
     "Under 9",

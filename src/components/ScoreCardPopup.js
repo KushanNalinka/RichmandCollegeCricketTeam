@@ -221,7 +221,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   
         // Filter available players for the specific inning in Test matches
         const availablePlayers = allPlayers.filter(player => {
-          if (matchType === "Test") {
+          if (["Test", "2 Day", "3 Day"].includes(matchType)) {
             // For Test matches, check stats for the specific inning
             return !playersWithInningStats.has(player.playerId);
           } else {
@@ -233,7 +233,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         dispatch({ type: "SET_PLAYERS", payload: availablePlayers });
         console.log("available players:", availablePlayers);
         // Apply inning filter only for Test matches
-        if (matchType === "Test") {
+        if (["Test", "2 Day", "3 Day"].includes(matchType)) {
           const inningStats = filterInningStats(allStats, inningNumber);
           setFilteredStats(inningStats);
         } else {
@@ -251,7 +251,7 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
   }, [matchId, inningNumber, matchType,isSubmitted]);
 
   useEffect(() => {
-    if (matchType === "Test") {
+    if (["Test", "2 Day", "3 Day"].includes(matchType)) {
       setFilteredStats(filterInningStats(state.playerStats, inningNumber));
     } else {
       setFilteredStats(state.playerStats); // No filter for ODI/T20
@@ -610,21 +610,29 @@ const ScoreCardPopup = ({  onClose, matchId, matchType, teamId, matchOpponent, d
         <h2 className=" flex flex-wrap items-center font-semibold py-3 text-[#480D35] text-sm lg:text-xl">
          <span className=" md:text-2xl font-bold text-xl">Score Card - &nbsp;</span><span className="text-highlight uppercase text-lg md:text-2xl">{matchType} match</span> &nbsp; against &nbsp;<span className="text-highlight uppercase text-lg md:text-2xl">{matchOpponent}</span>&nbsp; on &nbsp;<span className="text-highlight">{dayjs(date).format("YYYY-MMM-DD")}</span>
         </h2> 
-      {matchType === 'Test' && (
-        <div className={`flex pb-2 tracking-wider flex-wrap justify-start items-center mydfdsfh-1 gap-3`}>
-          <label htmlFor="inning" className="block text-black text-sm font-semibold">Select Inning:</label>
-          <select
-            className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#2c2e34]"
-            id="inning"
-            value={inningNumber}
-            onChange={handleInningChange}
-          > <option value={0} selected disabled className="text-sm text-gray-700 px-3 ">Select Inning</option>
-            <option value={1} className="text-sm text-gray-700 px-3 ">Inning 1</option>
-            <option value={2} className=" text-sm text-gray-700 px-3 ">Inning 2</option>
-          </select>
-        </div>
-        ) 
-      }
+        {["Test", "2 Day", "3 Day"].includes(matchType) && (
+  <div className="flex pb-2 tracking-wider flex-wrap justify-start items-center gap-3">
+    <label htmlFor="inning" className="block text-black text-sm font-semibold">
+      Select Inning:
+    </label>
+    <select
+      className="bg-gray-50 border border-gray-300 text-gray-600 text-sm rounded-md block px-3 py-1 mt-1 focus:outline-none focus:ring-1 focus:ring-[#2c2e34]"
+      id="inning"
+      value={inningNumber}
+      onChange={handleInningChange}
+    >
+      <option value={0} disabled className="text-sm text-gray-700 px-3">
+        Select Inning
+      </option>
+      <option value={1} className="text-sm text-gray-700 px-3">
+        Inning 1
+      </option>
+      <option value={2} className="text-sm text-gray-700 px-3">
+        Inning 2
+      </option>
+    </select>
+  </div>
+)}
     </div>
         <div  className="overflow-x-auto  ">
           <table className="min-w-full divide-gray-300 bg-gray-00 shadow-md">

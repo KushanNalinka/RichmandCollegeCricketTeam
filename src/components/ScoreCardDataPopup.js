@@ -143,19 +143,19 @@ const ScorecardDataPopup = ({ onClose, data }) => {
         <tr className="bg-gray-200">
           <td colSpan="7" className="px-2 py-2 sm:px-3">
             <div className="flex justify-between items-center">
-              {matchType === 'Test' && (
-                <select
-                  className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-100 rounded-xl border border-gray-400 w-48 sm:w-64 text-xs"
-                  value={selectedInning}
-                  onChange={(e) => {
-                    setSelectedInning(e.target.value);
-                    console.log('Selected Inning:', e.target.value); // Logs the selected inning
-                  }}
-                >
-                  <option value="1st">1st Inning</option>
-                  <option value="2nd">2nd Inning</option>
-                </select>
-              )}
+            {(matchType === 'Test' || matchType === '3 Day' || matchType === '2 Day') && (
+  <select
+    className="px-2 py-1 sm:px-3 sm:py-1 bg-gray-100 rounded-xl border border-gray-400 w-48 sm:w-64 text-xs"
+    value={selectedInning}
+    onChange={(e) => {
+      setSelectedInning(e.target.value);
+      console.log('Selected Inning:', e.target.value);
+    }}
+  >
+    <option value="1st">1st Inning</option>
+    <option value="2nd">2nd Inning</option>
+  </select>
+)}
               <div className="text-gray-700 font-medium text-xs sm:text-sm text-right">
                 {selectedInning === '1st' ? (
                   <span>

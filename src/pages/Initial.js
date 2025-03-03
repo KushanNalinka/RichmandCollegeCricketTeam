@@ -764,10 +764,10 @@ import {motion} from 'framer-motion';
 import ScoreCard from '../components/ScoreCard';
 import ResultsTable from '../components/ResultsTable';
 import Number from '../components/Number';
-import LatestNews from '../components/LatestNews';
+import InitialLatestNews from '../components/InitialLatestNews';
 import UpcomingMatches from '../components/UpcommingMatches';
 import Hero from '../components/Hero';
-import InitialFooter from '../components/InitialFooter';
+import Footer from '../components/Footer';
 import videoSrc from '../assets/images/new.mp4';
 import videoSrc1 from '../assets/images/MP5.mp4';
 import Highlights from '../components/Highlights';
@@ -917,13 +917,13 @@ const HomePage = () => {
         {matchId && <ResultsTable matchId={matchId} />}
 
         <Number />
-        <LatestNews />
+        <InitialLatestNews />
         <Highlights />
         <UpcomingMatches />
         <Hero />
       </div>
 
-      <InitialFooter />
+      <Footer />
     </>
   );
 };

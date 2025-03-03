@@ -603,6 +603,8 @@ const EditPopup = ({ onClose, match, isSubmitted }) => {
             >
                <option value="" disabled selected>Select type</option>
               <option value="Test">Test</option>
+              <option value="3 Day">3 Day</option>
+              <option value="2 Day">2 Day</option>
               <option value="ODI">ODI</option>
               <option value="T20">T20</option>
             </select>

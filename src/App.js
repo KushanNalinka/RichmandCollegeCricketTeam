@@ -53,6 +53,7 @@ import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 import InitialRole from './pages/InitialRole.js';
 import { useAuth } from './hooks/UseAuth.js';
 import UnauthorizedPage from './pages/UnauthorizedPage.js';
+import AdminInitial from './pages/AdminInitial.js';
 
 function App() {
 
@@ -97,6 +98,12 @@ console.log("Retrieved roles from localStorage:", storedRoles);
           <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
             <MemberInitial />
         </PrivateRoute>} />
+
+        <Route  path="/admin-home" element={ 
+          <PrivateRoute allowedRoles={["ROLE_PLAYER","ROLE_COACH","ROLE_ADMIN","ROLE_OFFICIAL"]}>
+            <AdminInitial />
+        </PrivateRoute>} />
+
         <Route
           path="/playerProfile"
           element={

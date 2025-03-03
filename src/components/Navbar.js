@@ -38,7 +38,7 @@ const Navbar = () => {
                     <h1 className=" h-20 py-5 pl-4 relative  text-white text-2xl font-bold">RCC Admin</h1>
                 </div>
                 <ul className="flex flex-col w-full h-full">
-                    <Link to={"/member"} className={`${getLinkClass("/member")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
+                    <Link to={"/admin-home"} className={`${getLinkClass("/admin-home")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
                         {" "}<FaHome className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">Home</span>
                     </Link >
                     <Link to={"/admin-player"} className={`${getLinkClass("/admin-player")} group flex flex-wrap gap-3 pl-4 py-4 items-center text-2xl text-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
@@ -63,7 +63,7 @@ const Navbar = () => {
 
                         {" "}<MdOutlineNewspaper className="text-white"/> <span className="text-sm text-white transition-opacity duration-300 mt-1">News</span>
                     </Link>
-                    {username === "admin01" && (
+                    {/* {username === "admin01" && (
                       <Link
                         to={"/admin-admin-control"}
                         className={`${getLinkClass("/admin-admin-control")} group flex flex-wrap pl-4 gap-3 py-4 text-2xl cursor-pointer items-center p-2  text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}>
@@ -73,7 +73,20 @@ const Navbar = () => {
                           Admins
                         </span>
                       </Link>
-                    )}
+                    )} */}
+
+
+{(username === "admin01" || username === "ITMaster") && (
+  <Link
+    to={"/admin-admin-control"}
+    className={`${getLinkClass("/admin-admin-control")} group flex flex-wrap pl-4 gap-3 py-4 text-2xl cursor-pointer items-center p-2 text-white w-full hover:bg-gray-300 hover:bg-opacity-20`}
+  >
+    <MdPeople className="text-white" />
+    <span className="text-sm text-white transition-opacity duration-300 mt-1">
+      Admins
+    </span>
+  </Link>
+)}
                 </ul>
             </div>
         </>   

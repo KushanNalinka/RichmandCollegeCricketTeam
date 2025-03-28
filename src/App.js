@@ -48,7 +48,7 @@ import InitialAboutUs from './pages/InitialAboutUs.js';
 import NewsCreator from './pages/NewsCreatingPage.js';
 import OfficialsTable from './pages/OfficialInfo.js';
 import Admin from './pages/Admin.js';
-import Role from './pages/Role.js'
+//import Role from './pages/Role.js'
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 import InitialRole from './pages/InitialRole.js';
 import { useAuth } from './hooks/UseAuth.js';

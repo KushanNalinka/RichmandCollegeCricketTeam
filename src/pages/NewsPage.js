@@ -380,7 +380,7 @@ const NewsPage = () => {
         );
 
         
-        console.log('Fetched News Data:', response.data); // Log the fetched data
+        // console.log('Fetched News Data:', response.data); // Log the fetched data
         const newsWithFirstImage = response.data.map((news) => ({
           ...news,
           imageUrl: news.images?.[0] || '', // Set the first image URL or fallback

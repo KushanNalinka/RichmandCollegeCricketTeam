@@ -11,6 +11,7 @@ const OfficialProfile = () => {
   const accessToken = localStorage.getItem('accessToken');
   const [officialProfile, setOfficialProfile] = useState(null);
   const API_URL = process.env.REACT_APP_API_URL;
+   const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
   
   useEffect(() => {
     console.log("userId O:", user.userId);
@@ -28,6 +29,11 @@ const OfficialProfile = () => {
   fetchData();
 
   }, []);
+
+  const togglePopup = () => {
+    setIsProfilePopupOpen(!isProfilePopupOpen);
+  };
+
 
   return (
     <>
@@ -52,6 +58,7 @@ const OfficialProfile = () => {
         <h1 className="text-2xl self-start p-2 pt-0 text-[#480D35] font-bold">
           Official Profile
         </h1>
+      
         <div
           className="flex justify-center items-center w-full rounded-xl h-36 px-10 mb-6"
           style={{
@@ -66,7 +73,32 @@ const OfficialProfile = () => {
                 {officialProfile?.name}
               </h1>
             </div>
-            <FaUserCircle className=" w-32 h-32 rounded-full object-cover border text-black border-gray-300" />
+            {/* {officialProfile && 
+                  <div className="relative ">
+                      <img
+                        src={`http://rcc.dockyardsoftware.com/images/${ officialProfile.image ? officialProfile.image.split('/').pop() : 'default.jpg'}`}
+                        alt={officialProfile?.name}
+                        className=" flex w-32 h-32 rounded-full object-cover cursor-pointer border-2 bg-white border-gray-300 text-gray-400 hover:border-[#480D35]"
+                        onClick={togglePopup}
+                      />
+                   </div>
+                   } */}
+
+{officialProfile && (
+  <>
+    {console.log("Image URL:", `http://rcc.dockyardsoftware.com/images/${officialProfile.image ? officialProfile.image.split('/').pop() : 'default.jpg'}`)}
+    <div className="relative">
+      <img
+        src={`http://rcc.dockyardsoftware.com/images/${ officialProfile.image ? officialProfile.image.split('/').pop() : 'default.jpg'}`}
+        alt={officialProfile?.name}
+        className="flex w-32 h-32 rounded-full object-cover cursor-pointer border-2 bg-white border-gray-300 text-gray-400 hover:border-[#480D35]"
+        onClick={togglePopup}
+      />
+    </div>
+  </>
+)}
+
+            {/* <FaUserCircle className=" w-32 h-32 rounded-full object-cover border text-black border-gray-300" /> */}
            
           </div>
         </div>

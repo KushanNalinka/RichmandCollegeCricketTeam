@@ -59,7 +59,7 @@ function App() {
 
 
 const storedRoles = localStorage.getItem("roles") ; // Retrieve and parse roles
-console.log("Retrieved roles from localStorage:", storedRoles);
+// console.log("Retrieved roles from localStorage:", storedRoles);
 
 
 // if (storedRoles.includes("ROLE_PLAYER")) {

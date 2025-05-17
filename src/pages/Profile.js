@@ -1045,7 +1045,7 @@ const PlayerProfile = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {["Test", "ODI", "T20"].map((type) => {
+                                        {["Test", "1 Day", "T20"].map((type) => {
                                             const summary = summarizeStats(type);
                                             return (
                                                 <tr key={type} className="border-b border-gray-300">
@@ -1083,7 +1083,7 @@ const PlayerProfile = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {["Test", "ODI", "T20"].map((type) => {
+                                        {["Test", "1 Day", "T20"].map((type) => {
                                             const summary = summarizeStats(type);
                                             return (
                                                 <tr key={type} className="border-b bg-white border-gray-300">

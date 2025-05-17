@@ -13,6 +13,10 @@ const PlayerProfile = () => {
     const [selectedYear, setSelectedYear] = useState(new Date().getFullYear()); // Default to current year
     const API_URL = process.env.REACT_APP_API_URL;
     const accessToken = localStorage.getItem('accessToken');
+    const [filterUnder, setFilterUnder] = useState("");
+    const [filterYear, setFilterYear] = useState("");
+    const [isProfilePopupOpen, setIsProfilePopupOpen] = useState(false);
+          
   
     // Fetch all players from the API when the component mounts or selectedYear changes
     useEffect(() => {
@@ -256,6 +260,9 @@ const summarizeStats = (type) => {
         overs:0,
         wickets:0,
         runsConceded:0,
+        noBalls:0,
+        
+        wides:0,
         bawlingAvg:0,
         battingAvg:0,
         bestValue:'N/A',
@@ -265,9 +272,15 @@ const summarizeStats = (type) => {
         
       };
     }
+    // const filteredStats = playerStat.filter(
+    //   (stat) => stat.match.type === type 
+    // );
+
     const filteredStats = playerStat.filter(
-      (stat) => stat.match.type === type 
-    );
+        (stat) => stat.match.type === type &&
+        (filterUnder ? stat.match.under === filterUnder : true) &&
+        (filterYear ? stat.match.year === parseInt(filterYear) : true)
+      );
     const uniqueMatches = new Set();
   // Track unique innings for both batting and bowling
   const uniqueBowlingInnings = new Set();
@@ -285,6 +298,8 @@ const summarizeStats = (type) => {
       acc["4s"] += stat.fours || 0;
       acc["6s"] += stat.sixers || 0;
       acc.overs += stat.overs || 0;
+      acc.noBalls += stat.noBalls || 0;
+      acc.wides += stat.wides || 0;
       acc.wickets += stat.wickets || 0;
       acc.runsConceded += stat.runsConceded || 0;
       acc.catches += stat.catches || 0;
@@ -331,6 +346,9 @@ const summarizeStats = (type) => {
       overs:0,
       wickets:0,
       runsConceded:0,
+      noBalls:0,
+        
+      wides:0,
       bawlingAvg:0,
       battingAvg:0,
       bestValue:Infinity,
@@ -351,8 +369,8 @@ const summarizeStats = (type) => {
 
     }
   );
-  console.log("Unique Bowling Innings:", uniqueBowlingInnings);
-  console.log("Unique Batting Innings:", uniqueBattingInnings);
+//   console.log("Unique Bowling Innings:", uniqueBowlingInnings);
+//   console.log("Unique Batting Innings:", uniqueBattingInnings);
   summary.matches = uniqueMatches.size;
   summary.bawlingInnings = uniqueBowlingInnings.size;
   summary.battingInnings = uniqueBattingInnings.size;
@@ -385,7 +403,14 @@ summary.bestWickets > 0
   return summary;
 };
 
+const resetFilters = () => {
+    setFilterUnder("");
+    setFilterYear("");
+  };
 
+  const togglePopup = () => {
+    setIsProfilePopupOpen(!isProfilePopupOpen);
+  };
 
 
     return (
@@ -587,6 +612,38 @@ summary.bestWickets > 0
                             <div className="mt-6 bg-gray-100 p-6 rounded-lg shadow-md text-[black]">
                                 <h2 className="text-xl font-bold mb-4 text-center text-[black]">Player Statistics</h2>
                                 {/* Batting Stats Table (responsive and elegant for mobile) */}
+                                <div className="flex flex-col lg:flex-row lg:justify-center gap-4 mb-6 items-center">
+                  <select
+                    value={filterUnder}
+                    onChange={(e) => setFilterUnder(e.target.value)}
+                    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+                  >
+                    <option value="">Select Under</option>
+                    {[...new Set(playerStat?.map((stat) => stat.match.under))].map((under) => (
+                      <option key={under} value={under}>
+                        {under}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={filterYear}
+                    onChange={(e) => setFilterYear(e.target.value)}
+                    className="px-4 py-2 border rounded-md w-full lg:w-auto"
+                  >
+                    <option value="">Select Year</option>
+                    {[...new Set(playerStat?.map((stat) => stat.match.year))].map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={resetFilters}
+                    className="px-4 py-2 bg-[#00175F] text-white rounded-md w-full lg:w-auto"
+                  >
+                    Reset
+                  </button>
+                </div>
                                 <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Batting Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full bg-white border border-gray-300 text-black rounded-lg mb-6 table-auto">
@@ -606,30 +663,34 @@ summary.bestWickets > 0
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {["Test", "ODI", "T20"].map((type) => {
-                                                const summary = summarizeStats(type);
-                                                return (
-                                                    <tr key={type} className="border-b border-gray-300">
-                                                        <td className="py-2 px-5 text-center align-middle">{type}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.battingInnings}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.runs}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.highestScore}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.battingAvg}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.sr}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary["100s"]}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary["50s"]}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary["4s"]}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary["6s"]}</td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
+                                        {[ "2 Day", "3 Day", "1 Day", "T20" ]
+                               .map((type) => {
+                                 const summary = summarizeStats(type);
+                                 return { type, summary };
+                               })
+                               .filter(({ summary }) => summary.matches > 0) // Only keep rows with data
+                               .map(({ type, summary }) => (
+                                 <tr key={type} className="border-b border-gray-300">
+                                   <td className="py-2 px-5 text-center align-middle">{type}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.battingInnings}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.runs}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.highestScore}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.battingAvg}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.sr}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary["100s"]}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary["50s"]}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary["4s"]}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary["6s"]}</td>
+                                 </tr>
+                               ))}
+                           </tbody>
                                     </table>
                                 </div>
 
                                 {/* Bowling Stats Table (responsive and elegant for mobile) */}
-                                <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Bowling Stats</h3>
+                                   {/* Bowling Stats Table (responsive and elegant for mobile) */}
+                                   <h3 className="text-lg font-bold mb-4 bg-gradient-to-r from-[#00175f] to-[#480D35] text-white p-2">Bowling Stats</h3>
                                 <div className="hover:overflow-x-auto overflow-x-hidden">
                                     <table className="min-w-full text-black bg-gray-100 border border-gray-300 rounded-lg table-auto">
                                         <thead>
@@ -638,32 +699,41 @@ summary.bestWickets > 0
                                                 <th className="py-2 px-5 text-center align-middle">Matches</th>
                                                 <th className="py-2 px-5 text-center align-middle">Inns</th>
                                                 <th className="py-2 px-5 text-center align-middle">Overs</th>
-                                               
+                                              
                                                 <th className="py-2 px-5 text-center align-middle">Wickets</th>
-                                                <th className="py-2 px-5 text-center align-middle">Runs Conceded</th>
+                                                <th className="py-2 px-5 text-center align-middle">RC</th>
+                                                <th className="py-2 px-5 text-center align-middle">No Ball</th>
+                                                <th className="py-2 px-5 text-center align-middle">Wide Ball</th>
                                                 <th className="py-2 px-5 text-center align-middle">Best</th>
                                                 <th className="py-2 px-5 text-center align-middle">Avg</th>
-                                                <th className="py-2 px-5 text-center align-middle">Economy Rate</th>
+                                                <th className="py-2 px-5 text-center align-middle">ER</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {["Test", "ODI", "T20"].map((type) => {
-                                                const summary = summarizeStats(type);
-                                                return (
-                                                    <tr key={type} className="border-b bg-white border-gray-300">
-                                                        <td className="py-2 px-5 text-center align-middle">{type}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.overs}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.wickets}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.runsConceded}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.bestValue}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingAvg}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.economyRate}</td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
+                                        {[ "2 Day", "3 Day", "1 Day", "T20" ]
+                               .map((type) => {
+                                 const summary = summarizeStats(type);
+                                 return { type, summary };
+                               })
+                               .filter(({ summary }) => summary.matches > 0) // Only keep rows with data
+                               .map(({ type, summary }) => (
+                                 <tr key={type} className="border-b bg-white border-gray-300">
+                                 <td className="py-2 px-5 text-center align-middle">{type}</td>
+                          
+                               
+                          <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.overs}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.wickets}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.runsConceded}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.noBalls}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.wides}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.bestValue}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.bawlingAvg}</td>
+                          <td className="py-2 px-5 text-center align-middle">{summary.economyRate}</td>
+                             </tr>
+                               ))}
+                           </tbody>
                                     </table>
                                 </div>
 
@@ -685,26 +755,27 @@ summary.bestWickets > 0
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {["Test", "ODI", "T20"].map((type) => {
-                                                const summary = summarizeStats(type);
-                                                return (
-                                                    <tr key={type} className="border-b border-gray-300">
-                                                        <td className="py-2 px-5 text-center align-middle">{type}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.catches}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.stumps}</td>
-                                                        <td className="py-2 px-5 text-center align-middle">{summary.runOuts}</td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
+                             {[ "2 Day", "3 Day", "1 Day", "T20" ]
+                               .map((type) => {
+                                 const summary = summarizeStats(type);
+                                 return { type, summary };
+                               })
+                               .filter(({ summary }) => summary.matches > 0) // Only keep rows with data
+                               .map(({ type, summary }) => (
+                                   <tr key={type} className="border-b border-gray-300">
+                                   <td className="py-2 px-5 text-center align-middle">{type}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.matches}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.bawlingInnings}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.catches}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.stumps}</td>
+                                   <td className="py-2 px-5 text-center align-middle">{summary.runOuts}</td>
+                               </tr>
+                               ))}
+                           </tbody>
+                           
                                     </table>
                                 </div>
                                 
-
-
-
                             </div>
                         </div>
                     )}

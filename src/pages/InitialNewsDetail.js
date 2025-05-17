@@ -23,10 +23,10 @@ const InitialNewsDetail = () => {
     const accessToken = localStorage.getItem('accessToken');
 
     useEffect(() => {
-      console.log("Come in: ");
+      // console.log("Come in: ");
     const fetchNewsDetail = async () => {
       try {
-        console.log("Come in to news details page: ");
+        // console.log("Come in to news details page: ");
         const response = await axios.get(`${API_URL}news/${id}`);
         const fetchedNews = response.data;
         setNewsItem(fetchedNews);

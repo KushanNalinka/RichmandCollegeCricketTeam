@@ -74,12 +74,12 @@ useEffect(() => {
   };
 
   const handleDelete = async id => {
-    console.log("Delete Official: ", id);
+    // console.log("Delete Official: ", id);
     const deleteOfficial = await axios.delete(
       `${API_URL}admin/officials/delete/${id}`
     );
 
-    console.log("Delete row:", id);
+    // console.log("Delete row:", id);
     setTimeout(() => {
       window.location.reload();
     }, 1500);

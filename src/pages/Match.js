@@ -131,7 +131,7 @@ const MatchForm = () => {
           >
             <option value="" disabled>Select Match Type</option>
             <option value="Test">Test</option>
-            <option value="ODI">ODI</option>
+            <option value="1 Day">1 Day</option>
             <option value="T20">T20</option>
           </select>
         </div>

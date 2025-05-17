@@ -1196,7 +1196,7 @@ const CoachesProfile = () => {
 useEffect(() => {
     if (selectedCoach) {
         const fetchPracticeSessions = async () => {
-            console.log("Fetching practice schedules for coach:", selectedCoach.coachId);
+            // console.log("Fetching practice schedules for coach:", selectedCoach.coachId);
 
             try {
                 const response = await fetch(
@@ -1220,7 +1220,7 @@ useEffect(() => {
                 const text = await response.text();
                 if (text) {
                     const data = JSON.parse(text);
-                    console.log("Fetched practice schedules data:", data);
+                    // console.log("Fetched practice schedules data:", data);
                     setPracticeSchedulesData(data);
                 } else {
                     console.log("No practice schedules found for this coach.");

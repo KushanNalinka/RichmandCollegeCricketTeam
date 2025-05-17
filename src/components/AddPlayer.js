@@ -500,7 +500,7 @@ const AddPlayer = ({ isOpen, selection }) => {
           "http://localhost:5000/api/auth/signupPlayer",
           playerData 
         );
-        console.log("Form submitted succedded: ", response.data);
+        // console.log("Form submitted succedded: ", response.data);
         message.success("Successfull!");
         setFormData({
           image: "",

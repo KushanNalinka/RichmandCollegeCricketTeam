@@ -976,10 +976,12 @@ const FormPopup = ({ onClose, isSumitted }) => {
     const newErrors = {};
     switch (name) {
       case "umpires":
-        //name validation
-        if (value.trim().length < 4 || value.trim().length > 25) {
-          newErrors.umpires = "Name must be between 4 and 25 characters long.";
-        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+        // //name validation
+        // if (value.trim().length < 4 || value.trim().length > 25) {
+        //   newErrors.umpires = "Name must be between 4 and 25 characters long.";
+        // } else
+        
+        if (!/^[a-zA-Z\s.]+$/.test(value)) {
           newErrors.umpires = "Name can only contain letters, spaces, and periods.";
         } else if (/^\s|\s$/.test(value)) {
           newErrors.umpires = "Name cannot start or end with a space.";
@@ -1355,10 +1357,11 @@ const FormPopup = ({ onClose, isSumitted }) => {
                 <option value="" disabled selected>
                   Select type
                 </option>
-                <option value="Test">Test</option>
+                {/* <option value="Test">Test</option> */}
                 <option value="3 Day">3 Day</option>
                 <option value="2 Day">2 Day</option>
-                <option value="ODI">ODI</option>
+                {/* <option value="ODI">ODI</option> */}
+                <option value="1 Day">1 Day</option>
                 <option value="T20">T20</option>
               </select>
             </div>

@@ -9,6 +9,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"; //
 import dayjs from 'dayjs';
 import { FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { GiClick } from "react-icons/gi";
+import { Select } from 'antd';
 
 const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   console.log("player data: ",player);
@@ -49,6 +50,37 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
   const [showPasswordError, setShowPasswordError] = useState(false);
   console.log("player to be edited: ", player);
   console.log("foemdata DOB: ", formData.dateOfBirth);
+
+  const bowlingStyles = [
+  
+    { value: "RAF", label: "RAF | Right-arm fast" },
+    { value: "RAFM", label: "RAFM | Right-arm fast-medium" },
+    { value: "RAMF", label: "RAMF | Right-arm medium-fast" },
+    { value: "RAM", label: "RAM | Right-arm medium" },
+    { value: "RAMS", label: "RAMS | Right-arm medium-slow" },
+    { value: "RASM", label: "RASM | Right-arm slow-medium" },
+    { value: "RAS", label: "RAS | Right-arm slow" },
+    { value: "RAOS", label: "RAOS | Right-arm off-spinner" },
+    { value: "RAL", label: "RAL | Right-arm Leg" },
+    { value: "RALS", label: "RALS | Right-arm Leg-spinner" },
+    { value: "LAF", label: "LAF | Left-arm fast" },
+    { value: "LAFM", label: "LAFM | Left-arm fast-medium" },
+    { value: "LAMF", label: "LAMF | Left-arm medium-fast" },
+    { value: "LAM", label: "LAM | Left-arm medium" },
+    { value: "LAMS", label: "LAMS | Left-arm medium-slow" },
+    { value: "LASM", label: "LASM | Left-arm slow-medium" },
+    { value: "LAL", label: "LAL | Left-arm Leg" },
+    { value: "LALS", label: "LALS | Left-arm Leg-spinner" },
+    { value: "OB", label: "OB | Off break" },
+    { value: "LB", label: "LB | Leg break" },
+    { value: "LBG", label: "LBG | Leg break googly" },
+    { value: "SLAO", label: "SLAO | Slow left-arm orthodox" },
+    { value: "SRAO", label: "SRAO | Slow right-arm orthodox" },
+    { value: "OS", label: "OS | Off spin" },
+    { value: "SLAWS", label: "SLAWS | Slow left-arm wrist spin" },
+    { value: "SRAWS", label: "SRAWS | Slow right-arm wrist spin" },
+    { value: "N/A", label: "N/A | Not applicable" }
+  ];
 
   const handleChange = e => {
     const { name, value, files } = e.target;
@@ -156,9 +188,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     switch(name){
       case "name":
         //name validation
-        if (value.trim().length < 4 || value.trim().length > 25) {
-          newErrors.name = "Name must be between 4 and 25 characters long.";
-        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+        // if (value.trim().length < 4 || value.trim().length > 25) {
+        //   newErrors.name = "Name must be between 4 and 25 characters long.";
+        // } else 
+        
+        if (!/^[a-zA-Z\s.]+$/.test(value)) {
           newErrors.name = "Name can only contain letters, spaces, and periods.";
         } else if (/^\s|\s$/.test(value)) {
           newErrors.name = "Name cannot start or end with a space.";
@@ -519,6 +553,11 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  const handleChangeway = (value) => {
+    setFormData((prev) => ({ ...prev, bowlingStyle: value }));  // ✅ Use 'bowlingStyle' directly
+  };
+  
+
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto py-10 min-h-screen">
       <div className="flex items-center justify-center">
@@ -642,7 +681,24 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value="RHB">Right-hand batting</option>
             </select>
           </div>
+
           <div className="col-span-1">
+                      <label className="block text-black text-sm font-semibold">Bowling Style</label>
+                      <Select
+            showSearch
+            placeholder="Select bowling style"
+            optionFilterProp="children"
+            value={formData.bowlingStyle || undefined}  // ✅ Ensure placeholder shows when no value is selected
+            onChange={handleChangeway}
+            className="w-full"
+            filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
+            options={bowlingStyles}
+          />
+          
+                </div>
+          {/* <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Bowling Style</label>
             <select
               name="bowlingStyle"
@@ -651,8 +707,8 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               className=" px-3 py-1 border text-gray-600 border-gray-300 rounded-md w-full focus:outline-none focus:ring-1 focus:ring-[#00175f]"
               required
             >
-               <option value='' disabled> Select bowling style</option>
-              <option value="RAF">Right-arm fast</option>
+               <option value='' disabled> Select bowling style</option> */}
+              {/* <option value="RAF">Right-arm fast</option>
               <option value="RAFM">Right-arm fast-medium</option>
               <option value="RAMF">Right-arm medium-fast</option>
               <option value="RAM">Right-arm medium</option>
@@ -675,9 +731,38 @@ const EditPlayerForm = ({ player, onClose, isSubmitted }) => {
               <option value="OS">Off spin</option>
               <option value="SLAWS">Slow left-arm wrist spin</option>
               <option value="SRAWS">Slow Right-arm wrist spin</option>
-              <option value='N/A'>Not applicable</option>
+              <option value='N/A'>Not applicable</option> */}
+              
+
+    {/* <option value="RAF">   RAF   | Right-arm fast</option>
+    <option value="RAFM">  RAFM  | Right-arm fast-medium</option>
+    <option value="RAMF">  RAMF  | Right-arm medium-fast</option>
+    <option value="RAM">   RAM   | Right-arm medium</option>
+    <option value="RAMS">  RAMS  | Right-arm medium-slow</option>
+    <option value="RASM">  RASM  | Right-arm slow-medium</option>
+    <option value="RAS">   RAS   | Right-arm slow</option>
+    <option value="RAOS">   RAOS   | Right-arm off-spiner</option>
+    <option value="RAL">   RAL   | Right-arm Leg</option>
+    <option value="RALS">   RALS   | Right-arm Leg-spinner</option>
+    <option value="LAF">   LAF   | Left-arm fast</option>
+    <option value="LAFM">  LAFM  | Left-arm fast-medium</option>
+    <option value="LAMF">  LAMF  | Left-arm medium-fast</option>
+    <option value="LAM">   LAM   | Left-arm medium</option>
+    <option value="LAMS">  LAMS  | Left-arm medium-slow</option>
+    <option value="LASM">  LASM  | Left-arm slow-medium</option>
+    <option value="LAL">   LAL   | Left-arm Leg</option>
+    <option value="LALS">  LALS   | Left-arm Leg-spinner</option>
+    <option value="OB">    OB    | Off break</option>
+    <option value="LB">    LB    | Leg break</option>
+    <option value="LBG">   LBG   | Leg break googly</option>
+    <option value="SLAO">  SLAO  | Slow left-arm orthodox</option>
+    <option value="SRAO">  SRAO  | Slow right-arm orthodox</option>
+    <option value="OS">    OS    | Off spin</option>
+    <option value="SLAWS"> SLAWS | Slow left-arm wrist spin</option>
+    <option value="SRAWS"> SRAWS | Slow right-arm wrist spin</option>
+    <option value="N/A">   N/A   | Not applicable</option>
             </select>
-          </div>
+          </div> */}
           <div className="col-span-1">
             <label className="block text-black text-sm font-semibold">Role</label>
             <select

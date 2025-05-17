@@ -362,6 +362,35 @@ html {
   box-shadow: 0 0 8px #00175f;  /* Optional: glowing effect for toolbar */
 }
 
+#bowlingStyle {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  text-align: left;
+}
+
+#bowlingStyle option {
+  font-size: 14px;
+  padding: 5px 10px;
+  display: flex;
+  justify-content: space-between; /* Aligns short name on the left and long name on the right */
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+#bowlingStyle option span.short-name {
+  text-align: left;
+  flex: 1; /* Ensures the short name stays left-aligned */
+}
+
+#bowlingStyle option span.long-name {
+  text-align: right;
+  flex: 1; /* Ensures the long name stays right-aligned */
+}
+
+
+
+
+
 /* Media queries for responsiveness */
 /* Large screens */
 @media (min-width: 1280px) {
@@ -446,6 +475,8 @@ html {
     display: block !important;
   }
 }
+
+
 
 
 

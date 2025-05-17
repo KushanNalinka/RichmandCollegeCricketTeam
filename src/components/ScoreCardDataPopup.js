@@ -5,12 +5,16 @@ import topImage from '../assets/images/BG3.png';
 import Footer from '../components/Footer';
 
 const ScorecardDataPopup = ({ onClose, data }) => {
-    console.log("taken2 ");
+    // console.log("taken2 ");
   const { match, teams, matchType } = data || {};
   const [playerStats, setPlayerStats] = useState([]);
   const API_URL = process.env.REACT_APP_API_URL;
   const [selectedInning, setSelectedInning] = useState('1st');
   const accessToken = localStorage.getItem('accessToken');
+  console.log('Teams Data:', teams);
+  console.log('Team 0:', teams[0]);
+  console.log('Team 1:', teams[1]);
+  console.log('Match Data:', match);
 
   useEffect(() => {
     if (match) {
@@ -37,10 +41,56 @@ const ScorecardDataPopup = ({ onClose, data }) => {
     return <div>No match data found</div>;
   }
 
+  const isValidPart = (value) => {
+    if (!value) return false;
+    const cleaned = value.trim().toLowerCase();
+    const invalidValues = ["null", "null/null", "null/", "/null", "/", "-", "undefined", "nan", ""];
+    return !invalidValues.some(invalid => cleaned === invalid || cleaned.includes("null"));
+  };
+  const extractValidPart = (value) => {
+    if (value == null) return "";
+  
+    try {
+      const stringValue = String(value);
+      let replaced = stringValue.replace(/null/gi, '-');
+      const matches = replaced.match(/\b\d+\/\d+\b|\b\d+(\.\d+)?\b|-|&/g);
+      return matches ? matches.join(" ") : "";
+    } catch (e) {
+      console.error("extractValidPart error:", e, "value:", value);
+      return "";
+    }
+  };
+  
+  
+  // // Filter batting and bowling data based on selected inning
+  // const filteredStats = playerStats.filter((stat) => stat.inning === (selectedInning === '1st' ? '1' : '2'));
+  // const battingStats = filteredStats.filter((stat) => stat.balls > 0); // Batting stats
+  // const bowlingStats = filteredStats.filter((stat) => stat.overs > 0); // Bowling stats
+
+  
   // Filter batting and bowling data based on selected inning
   const filteredStats = playerStats.filter((stat) => stat.inning === (selectedInning === '1st' ? '1' : '2'));
   const battingStats = filteredStats.filter((stat) => stat.balls > 0); // Batting stats
   const bowlingStats = filteredStats.filter((stat) => stat.overs > 0); // Bowling stats
+  const fieldingStats = filteredStats.filter(
+    (stat) => stat.catches > 0 || stat.stumps > 0 || stat.runOuts > 0
+  );
+
+  const extractAndFormat = (value) => {
+    if (value == null || value === 'N/A') return "";
+  
+    try {
+      const stringValue = String(value);
+      let replaced = stringValue.replace(/null/gi, '_');
+      const matches = replaced.match(/\b\d+\/\d+\b|\b\d+(\.\d+)?\b|_/g);
+      return matches ? matches.join(" ") : "";
+    } catch (e) {
+      console.error("extractAndFormat error:", e, "value:", value);
+      return "";
+    }
+  };
+  
+  
 
   // Calculate total runs for batting
   const totalRuns = battingStats.reduce((sum, batsman) => sum + batsman.runs, 0);
@@ -97,8 +147,19 @@ const ScorecardDataPopup = ({ onClose, data }) => {
                   <img src={teams[0].logo} alt={teams[0].name} className="w-10 h-10  text-xs" />
                   <div className="text-center">
                     <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[0].name.toUpperCase()}</h3>
-                    <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[0].score}</p>
-                    <p className="text-xxxs md:text-xs mt-1 font-semibold">{teams[0].overs}</p>
+                    {extractValidPart(teams[0].score) && (
+  <p className="text-xxxs md:text-xs mt-2 font-semibold">
+    {extractValidPart(teams[0].score)}
+  </p>
+)}
+
+{extractValidPart(teams[0].overs) && (
+  <p className="text-xxxs md:text-xs mt-1 font-semibold">
+    {extractValidPart(teams[0].overs)}
+  </p>
+)}
+
+
                   </div>
                 </div>
                 <div className="flex flex-col items-center justify-center mx-4">
@@ -114,8 +175,18 @@ const ScorecardDataPopup = ({ onClose, data }) => {
 
                   <div className="text-center">
                     <h3 className="text-xxxs md:text-xs tracking-wide font-semibold">{teams[1].name.toUpperCase()}</h3>
-                    <p className="text-xxxs md:text-xs mt-2 font-semibold">{teams[1].score}</p>
-                    <p className="text-xxxs md:text-xs mt-1 font-semibold">{teams[1].overs}</p>
+                  
+  <p className="text-xxxs md:text-xs mt-2 font-semibold">
+  {extractValidPart(teams[1].score)}
+</p>
+
+
+{extractValidPart(teams[0].overs) && (
+<p className="text-xxxs md:text-xs mt-1 font-semibold">
+  {extractValidPart(teams[1].overs)}
+</p>
+)}
+
                   </div>
                 </div>
               </div>
@@ -149,7 +220,7 @@ const ScorecardDataPopup = ({ onClose, data }) => {
     value={selectedInning}
     onChange={(e) => {
       setSelectedInning(e.target.value);
-      console.log('Selected Inning:', e.target.value);
+      // console.log('Selected Inning:', e.target.value);
     }}
   >
     <option value="1st">1st Inning</option>
@@ -157,18 +228,35 @@ const ScorecardDataPopup = ({ onClose, data }) => {
   </select>
 )}
               <div className="text-gray-700 font-medium text-xs sm:text-sm text-right">
-                {selectedInning === '1st' ? (
-                  <span>
-                    Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[0] : teams[0].score} 
-                    ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[0] : teams[0].overs} overs)
-                  </span>
-                ) : (
-                  <span>
-                    Score: {typeof teams[0].score === 'string' && teams[0].score.includes('&') ? teams[0].score.split(' & ')[1] : 'N/A'} 
-                    ({typeof teams[0].overs === 'string' && teams[0].overs.includes('&') ? teams[0].overs.split(' & ')[1] : 'N/A'} overs)
-                  </span>
-                )}
-              </div>
+  {selectedInning === '1st' ? (
+    <span>
+      Score: {extractAndFormat(
+        typeof teams[0].score === 'string' && teams[0].score.includes('&') 
+          ? teams[0].score.split(' & ')[0] 
+          : teams[0].score
+      ) || 'N/A'}
+      ({extractAndFormat(
+        typeof teams[0].overs === 'string' && teams[0].overs.includes('&') 
+          ? teams[0].overs.split(' & ')[0] 
+          : teams[0].overs
+      ) || 'N/A'} overs)
+    </span>
+  ) : (
+    <span>
+      Score: {extractAndFormat(
+        typeof teams[0].score === 'string' && teams[0].score.includes('&') 
+          ? teams[0].score.split(' & ')[1] 
+          : 'N/A'
+      ) || 'N/A'}
+      ({extractAndFormat(
+        typeof teams[0].overs === 'string' && teams[0].overs.includes('&') 
+          ? teams[0].overs.split(' & ')[1] 
+          : 'N/A'
+      ) || 'N/A'} overs)
+    </span>
+  )}
+</div>
+
             </div>
           </td>
         </tr>
@@ -282,8 +370,7 @@ const ScorecardDataPopup = ({ onClose, data }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {bowlingStats.map((fielding, index) => (
-            <tr key={index}>
+        {fieldingStats.map((fielding, index) => (     <tr key={index}>
             <td className="px-2 py-1 text-sm font-medium text-gray-900 ">{fielding.player.name}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.catches}</td>
               <td className="px-2 py-1 text-sm text-center text-gray-500">{fielding.stumps}</td>

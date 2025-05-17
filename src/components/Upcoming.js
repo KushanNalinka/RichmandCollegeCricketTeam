@@ -202,7 +202,7 @@ const isUpcomingMatch = (matchDate) => {
 
 
 const filterMatches = (data, selectedAgeGroup, selectedMatchType) => {
-  console.log("Filtering matches with:", { selectedAgeGroup, selectedMatchType });
+  // console.log("Filtering matches with:", { selectedAgeGroup, selectedMatchType });
   let filtered = data;
   
   if (selectedAgeGroup !== 'All') {

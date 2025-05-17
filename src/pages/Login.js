@@ -539,14 +539,14 @@ const Login = () => {
       const { password } = JSON.parse(savedUserData);
       setInputs((prev) => ({ ...prev, username, password }));
       setRememberMe(true); // assume they checked "Remember Me"
-      console.log("Pre-filled username:", username);
+      // console.log("Pre-filled username:", username);
     } else {
-      console.log("No saved user data found.");
+      // console.log("No saved user data found.");
     }
   }, []);
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    console.log("Input changed:", e.target.name, e.target.value);
+    // console.log("Input changed:", e.target.name, e.target.value);
 
   };
   const validateForm = () => {
@@ -565,23 +565,23 @@ const Login = () => {
     e.preventDefault();
     setError(null);
     dispatch({ type: "LOGIN_START" });
-    console.log("Form submitted with values:", inputs);
+    // console.log("Form submitted with values:", inputs);
 
     // Perform front-end validations
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
       setValidationError(errors);
-      console.log("Validation errors:", errors);
+      // console.log("Validation errors:", errors);
       return;
     } else {
       setValidationError({});
     }
     try {
-      console.log("data comes:", inputs);
+      // console.log("data comes:", inputs);
       // API call to backend for sign-in
       const res = await axios.post(`${API_URL}auth/signin`, inputs);
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
-      console.log("Response from API:", res.data);
+      // console.log("Response from API:", res.data);
       const accessToken = res.data.accessToken;
 
       localStorage.setItem('accessToken', accessToken);
@@ -590,10 +590,10 @@ const Login = () => {
       // Save token based on Remember Me option
       if (rememberMe) {
         localStorage.setItem("rememberMeData", JSON.stringify(inputs)); // persists even after closing browser
-        console.log("Saved user data to localStorage:", inputs);
+        // console.log("Saved user data to localStorage:", inputs);
       } else {
         sessionStorage.setItem("rememberMeData", JSON.stringify(inputs)); // only persists while the session is active
-        console.log("Saved user data to sessionStorage:", inputs);
+        // console.log("Saved user data to sessionStorage:", inputs);
       };
 
       const userData = {
@@ -605,7 +605,7 @@ const Login = () => {
       // Check if roles exist to navigate to admin or user dashboard
       const roles = res.data.roles;
 
-      console.log("userData In login: ", userData);
+      // console.log("userData In login: ", userData);
 
       if (roles.includes("ROLE_ADMIN")) {
         login("admin", userData);
@@ -627,7 +627,7 @@ const Login = () => {
       dispatch({ type: "LOGIN_FAILURE", payload: err.response });
       // Specific error handling for incorrect username or password
       if (err.response) {
-        console.error("Error response from API:", err.response);
+        // console.error("Error response from API:", err.response);
 
         if (err.response.status === 500) {
           setError("Invalid username or password. Please check your credentials and try again.");
@@ -641,7 +641,7 @@ const Login = () => {
       } else {
         setError("Network error. Please check your connection and try again.");
 
-        console.error("Network error:", err);
+        // console.error("Network error:", err);
       }
     }
   };

@@ -64,7 +64,7 @@ const TableComponent = () => {
 
           setTeams(sortedTeams);
           setFilteredTeams(sortedTeams);
-          console.log(sortedTeams);
+          // console.log(sortedTeams);
 
           // Extract unique year and under options
           const uniqueYears = [

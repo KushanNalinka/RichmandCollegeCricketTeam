@@ -45,7 +45,7 @@ const TableComponent = () => {
     playerRole: ""
   });
   const [searchingPlayer, setSearchingPlayer] = useState();
-  console.log("accessTocken in player :", accessToken);
+  // console.log("accessTocken in player :", accessToken);
 
   useEffect(
     () => {
@@ -76,10 +76,10 @@ const TableComponent = () => {
           setRoleOptions(
             [...new Set(players.map(player => player.playerRole))].sort()
           );
-          console.log("Player Data:", response.data);
+          // console.log("Player Data:", response.data);
         })
         .catch(error => {
-          console.error("There was an error fetching the player data!", error);
+          // console.error("There was an error fetching the player data!", error);
         });
       updateRowsPerPage(); // Initial setup
       window.addEventListener("resize", updateRowsPerPage);

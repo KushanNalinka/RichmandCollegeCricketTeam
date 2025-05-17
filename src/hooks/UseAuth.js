@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const savedUserData = localStorage.getItem("userData");
-    console.log("Saved user data: ", savedUserData);
+    // console.log("Saved user data: ", savedUserData);
 
     if (savedUserData) {
       try {
@@ -21,15 +21,15 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         setUserRole(roles.includes("ROLE_ADMIN") ? "admin" : roles[0]);
         setUser(parsedUserData);
-        console.log("User restored from storage:", username, roles);
+        // console.log("User restored from storage:", username, roles);
       } catch (error) {
-        console.error("Error parsing user data from storage:", error);
+        // console.error("Error parsing user data from storage:", error);
         localStorage.removeItem("userData");
         sessionStorage.removeItem("userData");
         setIsAuthenticated(false);
       }
     } else {
-      console.log("No user data found in storage.");
+      // console.log("No user data found in storage.");
       setIsAuthenticated(false);
     }
 

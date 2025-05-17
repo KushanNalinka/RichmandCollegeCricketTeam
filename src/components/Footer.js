@@ -496,11 +496,11 @@ const Footer = () => {
   
       emailjs.send(serviceID,templateID, formData, userID)
         .then((response) => {
-          console.log('SUCCESS!', response.status, response.text);
+          // console.log('SUCCESS!', response.status, response.text);
           alert('Your message has been sent successfully!');
         })
         .catch((error) => {
-          console.log('FAILED...', error);
+          // console.log('FAILED...', error);
           alert('Failed to send the message. Please try again later.');
         });
     };

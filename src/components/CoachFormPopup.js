@@ -81,10 +81,12 @@ const CoachForm = ({ onClose, isSubmitted }) => {
     const newErrors = {};
     switch (name) {
       case "name":
-        //name validation
-        if (value.trim().length < 4 || value.trim().length > 25) {
-          newErrors.name = "Name must be between 4 and 25 characters long.";
-        } else if (!/^[a-zA-Z\s.]+$/.test(value)) {
+        // //name validation
+        // if (value.trim().length < 4 || value.trim().length > 25) {
+        //   newErrors.name = "Name must be between 4 and 25 characters long.";
+        // } else 
+        // 
+        if (!/^[a-zA-Z\s.]+$/.test(value)) {
           newErrors.name =
             "Name can only contain letters, spaces, and periods.";
         } else if (/^\s|\s$/.test(value)) {
@@ -157,7 +159,7 @@ const CoachForm = ({ onClose, isSubmitted }) => {
                   }
                 }
               );
-              console.log("Email validation :", response.data);
+              // console.log("Email validation :", response.data);
               if (response.data.emailExists === true) {
                 setErrors(prevErrors => ({
                   ...prevErrors,
@@ -311,7 +313,7 @@ const CoachForm = ({ onClose, isSubmitted }) => {
           }
         }
       );
-      console.log("Form submitted succedded: ", response.data);
+      // console.log("Form submitted succedded: ", response.data);
       message.success("Successfull!");
       setFormData({
         status: "",

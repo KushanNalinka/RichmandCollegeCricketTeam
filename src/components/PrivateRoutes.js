@@ -7,8 +7,8 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   const { isAuthenticated, user, loading } = useAuth();
   const storedRoles = user?.roles || [];
 
-  console.log("isAuthenticated:", isAuthenticated);
-  console.log("User roles:", storedRoles);
+  // console.log("isAuthenticated:", isAuthenticated);
+  // console.log("User roles:", storedRoles);
 
   if(loading){
     return (
@@ -18,7 +18,7 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   )}
 
   if (!isAuthenticated) {
-    console.warn("User not authenticated. Redirecting to login.");
+    // console.warn("User not authenticated. Redirecting to login.");
     return <Navigate to="/login" replace />;
   }
 
@@ -26,7 +26,7 @@ const PrivateRoute = ({ allowedRoles, children }) => {
   const hasAccess = allowedRoles.some((role) => storedRoles.includes(role));
 
   if (!hasAccess) {
-    console.warn("Access denied. Redirecting to unauthorized page.");
+    // console.warn("Access denied. Redirecting to unauthorized page.");
     return <Navigate to="/unauthorized" replace />;
   }
 

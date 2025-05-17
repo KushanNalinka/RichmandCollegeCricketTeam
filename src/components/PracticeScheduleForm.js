@@ -129,10 +129,10 @@ const PracticeScheduleForm = ({ onClose, isSubmitted }) => {
         //venue validation
         if (!value || value.trim() === "") {
           newErrors.venue = "Venue is required.";
-        } else if (value.length < 3) {
-          newErrors.venue = "Venue name must be at least 3 characters.";
-        } else if (value.length > 50) {
-          newErrors.venue = "Venue name must not exceed 50 characters.";
+        // } else if (value.length < 3) {
+        //   newErrors.venue = "Venue name must be at least 3 characters.";
+        // } else if (value.length > 50) {
+        //   newErrors.venue = "Venue name must not exceed 50 characters.";
         } else if (!/^[a-zA-Z0-9\s,.'-]+$/.test(value)) {
           newErrors.venue =
             "Venue name contains invalid characters. Only letters, numbers, spaces, commas, periods, apostrophes, and hyphens are allowed.";

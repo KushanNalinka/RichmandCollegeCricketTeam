@@ -1060,59 +1060,168 @@
 // uMAYA CODE
 
 
+// import React, { useEffect, useState } from 'react';
+// import leftBadge from '../assets/images/RLogo.png'; 
+// import rightBadge from '../assets/images/MLogo.png'; 
+
+// const ScoreCard = ({ onMatchId }) => {
+//   const [lastMatch, setLastMatch] = useState(null);
+//   const [matchData, setMatchData] = useState(null);
+//   const [secondInningData, setSecondInningData] = useState(null);
+//   const API_URL = process.env.REACT_APP_API_URL;
+
+//   useEffect(() => {
+//     fetch(`${API_URL}matchSummary/all`)
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (!data || data.length === 0) return; // If there's no match data, exit
+
+//         const lastMatchIndex = data.length - 1;
+//         const lastMatch = data[lastMatchIndex]; // Get the last match data (1st inning)
+//         setLastMatch(lastMatch);
+
+//         if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
+//           setMatchData(lastMatch); // Use only the last match data for T20 and ODI
+//           onMatchId(lastMatch.matchId); // Pass matchId back to HomePage.js
+//         } else if (lastMatch.type === 'Test' || lastMatch.type === '2 Day' || lastMatch.type === '3 Day') {
+//           // Handle Test Match
+//           const matchId = lastMatch.matchId;
+//           setMatchData(lastMatch); // Set the first inning data
+
+//           const secondMatch = data.find(
+//             (match) => match.matchId === matchId && match.inning === '2'
+//           );
+
+//           if (secondMatch) {
+//             setSecondInningData(secondMatch);
+//             // console.log('Second Inning Match:', secondMatch);
+//           } else {
+//             // console.warn('No second inning data found for match:', matchId);
+//           }
+
+//           onMatchId(lastMatch.matchId); // Pass matchId back to HomePage.js
+//         }
+//       })
+//       .catch((error) => console.error('Error fetching match data:', error));
+//   }, [onMatchId]);
+
+//   if (!matchData) {
+//     return <p>Loading...</p>; 
+//   }
+
+//   const isTestMatch = matchData.type === 'Test' || matchData.type === '2 Day' || matchData.type === '3 Day';
+
+//   const richmondWon = matchData.runs > matchData.oppositionRuns;
+
+//   return (
+//     <>
+//       <div className="ml-5 md:ml-20 text-center mt-10">
+//         <p className="text-2xl md:text-[48px] font-extrabold text-[#00175F] stroke-2">RECENT MATCH RESULTS</p>
+//       </div>
+
+//       <div className="w-full h-auto flex flex-col items-center mt-1 px-2 md:px-0">
+//         <div className="bg-white shadow-lg rounded-xl py-6 px-6 md:py-10 md:px-10 flex flex-col md:flex-row justify-between items-center w-full md:w-[95%] mt-4 mb-8">
+//           <div className="flex items-center space-x-2 mb-4 md:mb-0">
+//             <img src={leftBadge} alt="Richmond College Badge" className="w-20 h-20 md:w-36 md:h-36" />
+//           </div>
+
+//           <div className="text-center w-full md:w-1/2">
+//             <div className="flex flex-col md:flex-row justify-center items-center space-x-0 md:space-x-8 space-y-4 md:space-y-0">
+//               {/* Winning Team */}
+//               <div className="flex flex-col items-center">
+//                 <span className={`text-lg font-bold ${richmondWon ? 'text-blue-600' : 'text-red-600'}`}>
+//                   {richmondWon ? 'WIN' : 'LOSE'}
+//                 </span>
+//                 <span className="text-gray-700 text-xl md:text-2xl font-bold mt-2">RICHMOND COLLEGE</span>
+//               </div>
+
+//               {/* Score Section */}
+//               <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6 space-y-4 md:space-y-0">
+//                 <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+//                   {isTestMatch ? `${matchData.runs}/${matchData.wickets} (1st)` : `${matchData.runs}/${matchData.wickets}`}
+//                 </span>
+//                 {isTestMatch && secondInningData && (
+//                   <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+//                     {`${secondInningData.runs}/${secondInningData.wickets} (2nd)`}
+//                   </span>
+//                 )}
+//                 <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+//                   {isTestMatch ? `${matchData.oppositionRuns}/${matchData.oppositionWickets} (1st)` : `${matchData.oppositionRuns}/${matchData.oppositionWickets}`}
+//                 </span>
+//                 {isTestMatch && secondInningData && (
+//                   <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+//                     {`${secondInningData.oppositionRuns}/${secondInningData.oppositionWickets} (2nd)`}
+//                   </span>
+//                 )}
+//               </div>
+
+//               {/* Losing Team */}
+//               <div className="flex flex-col items-center">
+//                 <span className={`text-lg font-bold ${!richmondWon ? 'text-blue-600' : 'text-red-600'}`}>
+//                   {!richmondWon ? 'WIN' : 'LOSE'}
+//                 </span>
+//                 <span className="text-gray-700 text-xl md:text-2xl font-bold mt-2">{matchData.opposition.toUpperCase()}</span>
+//               </div>
+//             </div>
+
+//             {/* Match Result */}
+//             <p className="text-gray-500 text-xs mt-6">
+//               {isTestMatch 
+//                 ? secondInningData?.result || 'Second inning score not available' 
+//                 : matchData?.result || 'Match data not available'}
+//             </p>
+//           </div>
+
+//           <div className="flex items-center space-x-2 mt-4 md:mt-0">
+//             <img src={`${`http://rcc.dockyardsoftware.com/images/${ matchData.logo ? matchData.logo.split('/').pop() : 'default.jpg'}`}?cacheBust=${Date.now()}`} alt={`${matchData.opposition} Badge`} className="w-20 h-20 md:w-36 md:h-36" />
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default ScoreCard;
+
 import React, { useEffect, useState } from 'react';
-import leftBadge from '../assets/images/RLogo.png'; 
-import rightBadge from '../assets/images/MLogo.png'; 
+import leftBadge from '../assets/images/RLogo.png';
+import rightBadge from '../assets/images/MLogo.png';
 
 const ScoreCard = ({ onMatchId }) => {
-  const [lastMatch, setLastMatch] = useState(null);
-  const [matchData, setMatchData] = useState(null);
-  const [secondInningData, setSecondInningData] = useState(null);
+  const [matchData, setMatchData] = useState(null); // First inning
+  const [secondInningData, setSecondInningData] = useState(null); // Second inning
   const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetch(`${API_URL}matchSummary/all`)
       .then((response) => response.json())
       .then((data) => {
-        if (!data || data.length === 0) return; // If there's no match data, exit
+        if (!data || data.length === 0) return;
 
-        const lastMatchIndex = data.length - 1;
-        const lastMatch = data[lastMatchIndex]; // Get the last match data (1st inning)
-        setLastMatch(lastMatch);
+        // Get the latest matchId from the last entry
+        const latestMatch = data[data.length - 1];
+        const matchId = latestMatch.matchId;
 
-        if (lastMatch.type === 'T20' || lastMatch.type === 'ODI') {
-          setMatchData(lastMatch); // Use only the last match data for T20 and ODI
-          onMatchId(lastMatch.matchId); // Pass matchId back to HomePage.js
-        } else if (lastMatch.type === 'Test' || lastMatch.type === '2 Day' || lastMatch.type === '3 Day') {
-          // Handle Test Match
-          const matchId = lastMatch.matchId;
-          setMatchData(lastMatch); // Set the first inning data
+        // Get all innings for the latest matchId
+        const matchEntries = data.filter(match => match.matchId === matchId);
 
-          const secondMatch = data.find(
-            (match) => match.matchId === matchId && match.inning === '2'
-          );
+        // Find the first and second innings
+        const firstInning = matchEntries.find(entry => entry.inning === '1') || matchEntries[0];
+        const secondInning = matchEntries.find(entry => entry.inning === '2');
 
-          if (secondMatch) {
-            setSecondInningData(secondMatch);
-            console.log('Second Inning Match:', secondMatch);
-          } else {
-            console.warn('No second inning data found for match:', matchId);
-          }
-
-          onMatchId(lastMatch.matchId); // Pass matchId back to HomePage.js
-        }
+        setMatchData(firstInning);
+        setSecondInningData(secondInning);
+        onMatchId(matchId);
       })
       .catch((error) => console.error('Error fetching match data:', error));
   }, [onMatchId]);
 
   if (!matchData) {
-    return <p>Loading...</p>; 
+    return <p>Loading...</p>;
   }
 
   const isTestMatch = matchData.type === 'Test' || matchData.type === '2 Day' || matchData.type === '3 Day';
-
   const richmondWon = matchData.runs > matchData.oppositionRuns;
-
   return (
     <>
       <div className="ml-5 md:ml-20 text-center mt-10">
@@ -1136,7 +1245,7 @@ const ScoreCard = ({ onMatchId }) => {
               </div>
 
               {/* Score Section */}
-              <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6 space-y-4 md:space-y-0">
+              {/* <div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6 space-y-4 md:space-y-0">
                 <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
                   {isTestMatch ? `${matchData.runs}/${matchData.wickets} (1st)` : `${matchData.runs}/${matchData.wickets}`}
                 </span>
@@ -1153,7 +1262,48 @@ const ScoreCard = ({ onMatchId }) => {
                     {`${secondInningData.oppositionRuns}/${secondInningData.oppositionWickets} (2nd)`}
                   </span>
                 )}
-              </div>
+
+
+              </div> */}
+
+<div className="flex flex-col md:flex-row items-center space-x-0 md:space-x-6 space-y-4 md:space-y-0">
+  {/* First Inning */}
+  <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+    {matchData.runs != null && matchData.wickets != null 
+      ? isTestMatch 
+        ? `${matchData.runs}/${matchData.wickets} (1st)` 
+        : `${matchData.runs}/${matchData.wickets}` 
+      : 'N/A'}
+  </span>
+
+  {/* Second Inning (if Test Match) */}
+  {isTestMatch && secondInningData && (
+    <span className="text-1xl md:text-2xl font-bold text-white bg-[#00175F] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+      {secondInningData.runs != null && secondInningData.wickets != null 
+        ? `${secondInningData.runs}/${secondInningData.wickets} (2nd)` 
+        : 'N/A'}
+    </span>
+  )}
+
+  {/* Opposition First Inning */}
+  <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+    {matchData.oppositionRuns != null && matchData.oppositionWickets != null 
+      ? isTestMatch 
+        ? `${matchData.oppositionRuns}/${matchData.oppositionWickets} (1st)` 
+        : `${matchData.oppositionRuns}/${matchData.oppositionWickets}` 
+      : 'N/A'}
+  </span>
+
+  {/* Opposition Second Inning (if Test Match) */}
+  {isTestMatch && secondInningData && (
+    <span className="text-1xl md:text-2xl font-bold text-white bg-[#4A0D34] w-20 h-16 md:w-28 md:h-20 flex items-center justify-center rounded-lg">
+      {secondInningData.oppositionRuns != null && secondInningData.oppositionWickets != null 
+        ? `${secondInningData.oppositionRuns}/${secondInningData.oppositionWickets} (2nd)` 
+        : 'N/A'}
+    </span>
+  )}
+</div>
+
 
               {/* Losing Team */}
               <div className="flex flex-col items-center">
@@ -1182,3 +1332,4 @@ const ScoreCard = ({ onMatchId }) => {
 };
 
 export default ScoreCard;
+

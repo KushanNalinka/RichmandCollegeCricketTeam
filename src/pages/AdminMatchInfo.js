@@ -177,7 +177,7 @@ export default function MatchInfo() {
     >
       <option>Test</option>
       <option>T20</option>
-      <option>ODI</option>
+      <option>1 Day</option>
       <option>All</option>
     </select>
   </div>

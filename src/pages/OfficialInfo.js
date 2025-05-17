@@ -228,9 +228,24 @@ const OfficialsTable = () => {
                       key={index}
                       className="hover:bg-gray-50 h-full lg:rounded-lg bg-white align-middle text-gray-900"
                     >
-                      <td className="px-4  py-4 h-14  lg:rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
+                      {/* <td className="px-4  py-4 h-14  lg:rounded-l-lg items-center text-wrap whitespace-nowrap text-sm font-bold text-black">
                         {item.name.split(" ").slice(-2).join(" ")}
-                      </td>
+                      </td> */}
+                       <td className="gap-4 px-4 py-2 items-center text-wrap justify-start text-sm font-bold text-gray-900">
+                            <div className="flex items-center justify-start gap-2 ">
+                              <img
+                                src={`${`http://rcc.dockyardsoftware.com/images/${item.image
+                                  ? item.image.split("/").pop()
+                                  : "default.jpg"}`}?cacheBust=${Date.now()}`}
+                                alt={item.name}
+                                className="h-12 w-12 rounded-full object-cover border border-gray-300"
+                              />
+
+                              <span className="truncate whitespace-nowrap">
+                                {item.name.split(" ").slice(-2).join(" ")}
+                              </span>
+                            </div>
+                          </td>
                       <td className="px-2 py-4 h-14  whitespace-nowrap text-sm ">
                         {item.username}
                       </td>

@@ -16,7 +16,7 @@ const Navbar = () => {
   const username = user?.username || ""; // Use optional chaining to access `username`
 
   
-  console.log("Username is : "+ username); 
+  // console.log("Username is : "+ username); 
 
   // Set active link based on the current location
   React.useEffect(() => {

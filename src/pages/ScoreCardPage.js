@@ -44,7 +44,7 @@ const ScoreCardPage = () => {
       .then(response => {
         const matchSummary = response.data;
         setMatchSummary(matchSummary);
-        console.log("Match summary Data:", matchSummary);
+        // console.log("Match summary Data:", matchSummary);
         setUploading(false);
       })
       .catch(error => {
@@ -76,7 +76,7 @@ const ScoreCardPage = () => {
     .sort((a, b) => new Date(b.date) - new Date(a.date));
 
   useEffect(() => {
-    console.log("matchID: ", currentMatchID);
+    // console.log("matchID: ", currentMatchID);
     if(currentMatchID){
       axios
         .get(`${API_URL}playerStats/match/player-stats?matchId=${currentMatchID}`, { 
